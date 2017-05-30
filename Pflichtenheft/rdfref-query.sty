@@ -1,0 +1,130 @@
+\ProvidesPackage{rdfref-query}
+\RequirePackage{rdfref-core}
+\def\Var#1{Variable: #1}
+\def\Value#1{Value: #1}
+
+\newcommand\BindVal[2]{%
+\IfBeginWith{#2}{?}{%
+\ifcsdef{rdfquery@#2}{\def#1{\Value{\csuse{rdfquery@#2}}}}{\def#1{\Var{#2}}}%
+}{\def#1{\Value{#2}}}%
+}
+
+\newcommand\SaveVal[2]{%
+\csedef{rdfquery@#1}{#2}%
+}
+
+\newcommand\GetValProperty[2]{%
+ \expandafter\GetProperty\expandafter{\GetVal{#1}}{#2}%
+}
+
+
+\newcommand\GetVal[1]{%
+\csuse{rdfquery@#1}%
+}
+
+
+\newcommand\QueryType[3]{%
+\bgroup%
+\def\Var##1{v}%
+\def\Value##1{l}%
+\xdef\qtype{#1#2#3}%
+\egroup%
+}
+\newcommand\DeclareQueryProcessor[2]{%
+\long\csgdef{rdfquery@proc@#1}##1{%
+\long\def\continue{##1}%
+#2}%
+}
+
+\DeclareQueryProcessor{vlv}{%
+% why we redefine \Value and \Var? I should write comments next time
+\def\Value##1{##1}%
+\def\Var##1{##1}%
+\MapPropertyList\predicate{%
+\SaveVal\subject{\ifx\\##1\\\else\First##1\fi}%
+\SaveVal\object{\ifx\\##1\\\else\Second##1\fi}%
+\continue
+}%
+}
+
+\DeclareQueryProcessor{vll}{%
+	% this is first querry processor after two years, I have no idea what 
+	% needs to be done
+\def\Value##1{##1}
+\def\Var##1{##1}
+\MapPropertyList\predicate{%
+	% only do action if searched \object is equal to current objeect
+	\IfStrEq{\object}{\ifx\\##1\\\else\Second##1\fi}{%
+	% ##1 is variable passed by \do, two tokens are here:
+	  \SaveVal\subject{\ifx\\##1\\\else\First##1\fi}%
+	  \SaveVal\object{\ifx\\##1\\\else\Second##1\fi}%
+    \continue}{}%
+ }%
+}
+
+
+\DeclareQueryProcessor{llv}{%
+  \def\Value##1{##1}%
+  \def\Var##1{##1}%
+  % Subject can have multiple values of property, so we need to loop over them
+  \MapPropertyList\predicate{%
+    \IfStrEq\subject{\ifx\\##1\\\else\First##1\fi}{%
+      \SaveVal\object{\ifx\\##1\\\else\Second##1\fi}%
+    \continue}{}%
+  }%
+}%
+
+
+\DeclareQueryProcessor{lvv}{%
+ \def\Value##1{##1}%
+ \def\Var##1{##1}%
+ \MapSubjectList\subject{%
+  \SaveVal\predicate{\ifx\\##1\\\else\First##1\fi}%
+  \SaveVal\object{\ifx\\##1\\\else\Second##1\fi}%
+  \continue%
+ }%
+}
+
+\DeclareQueryProcessor{lvl}{%
+ \def\Value##1{##1}%
+ \def\Var##1{##1}%
+ \MapSubjectList\subject{%
+   % \IfStrEq{\GetProperty{\subject}{##1}}{\object}{%
+   \IfStrEq{\ifx\\##1\\\else\Second##1\fi}{\object}{%
+    \SaveVal\predicate{\ifx\\##1\\\else\First##1\fi}% 
+    \continue%
+   }{}%
+ }% 
+}
+
+\DeclareQueryProcessor{lll}{%
+\def\Value##1{##1}%
+\def\Var##1{##1}%
+\IfStrEq{\GetProperty{\subject}{\predicate}}{\object}{\continue}{Neshoduj\'i se}
+}
+
+
+
+\newcommand\Bind[4]{%
+\bgroup%
+\BindVal\subject{#1}%
+\BindVal\predicate{#2}%
+\BindVal\object{#3}%
+\QueryType\subject\predicate\object%
+\ifcsdef{rdfquery@proc@\qtype}{\csuse{rdfquery@proc@\qtype}{#4}}{\typeout{\detokenize{Neznám procesor} \qtype}}%
+\egroup%
+}
+
+% what is the purpose of this command?
+\newcommand\OptionalBind[3]{%
+%\bgroup%
+\BindVal\subject{#1}%
+\BindVal\predicate{#2}%
+\BindVal\object{#3}%
+\QueryType\subject\predicate\object%
+\ifcsdef{rdfquery@proc@\qtype}{\csuse{rdfquery@proc@\qtype}{}}{\typeout{\detokenize{Neznám procesor} \qtype}}%
+%#4
+%\egroup%  
+}
+
+\endinput

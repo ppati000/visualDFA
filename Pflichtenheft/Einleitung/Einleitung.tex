@@ -1,0 +1,172 @@
+%note: don't split this document up with include{...}
+
+\section{Einleitung}
+
+Moderne Compiler übersetzen nich nur Quellcode, sondern bieten meist auch die Möglichkeit, eine Vielzahl an Optimierungen druchzuführen. 
+Viele dieser Optimierungen basieren auf Datenflussanalysen des Quellcodes bzw. eines geeigneten Zwischencodes.
+Um das Verständnis für auf Datenflussanalyse basierende Optimierungen zu erleichtern, soll hier ein Werkzeug entwickelt werden, welches ausgewählte Datenflussanalysen visualisiert.
+
+\subsection{Kontrollflussgraph}
+Das Konzept des Kontrollflussgraphen ist zentral für Datenflussanalysen und wird deshalb im Folgenden kurz erklärt.
+Ein Kontrollflussgraph zu einem Programm (oder einer Funktion/Methode) ist ein Graph, dessen Knoten genau die Grundblöcke des Programms sind.
+Ein Grundblock ist dabei eine maximale Sequenz von Instruktionen, sodass diese nur am Anfang betreten und am Ende verlassen werden kann. 
+Es gibt also im Programm keine Sprünge, deren Ziel nicht Anfang eines Grundblockes ist.
+Außerdem stehen Sprungbefehle höchstens am Ende eines Grundblocks.
+Zwischen zwei Grundblöcken $B_i$ und $B_j$ gibt es genau dann eine gerichtete Kante $(B_i,B_j)$, wenn der Kontrollfluss unmittelbar von $B_i$ nach $B_j$ wecheln kann.
+Dies ist z. B. der Fall, wenn am Ende von $B_i$ eine Sprunganweisung steht, deren Ziel der Anfang von $B_j$ ist.
+\begin{lstlisting}[frame=single]
+int gcd(int a, int b) {
+	int tmp;
+	while(b != 0) {
+		tmp = b;
+		b = a % b;
+		a = tmp;
+	}
+	return a;
+}
+\end{lstlisting}
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[%
+->,
+shorten >=2pt,
+>=stealth,
+node distance=1cm,
+noname/.style={%
+	ellipse,
+	minimum width=5em,
+	minimum height=3em,
+	draw
+}
+]
+\node [draw] (1) {
+\begin{lstlisting}[numbers=none]
+int x, b, tmp;
+if (b != 0)
+\end{lstlisting}
+};
+
+\node[draw] (2) [below left=of 1]   {
+\begin{lstlisting}[numbers=none]
+tmp = b;
+b = a % b;
+a = tmp;
+\end{lstlisting}
+};
+
+\node[draw] (3) [below right=of 1]   {
+\begin{lstlisting}[numbers=none]
+return a;
+\end{lstlisting}
+};
+
+
+\path (1) edge [bend right=20pt] node {} (2);
+\path (1) edge node {} (3);
+\path (2) edge [bend right=20pt] node {} (1);
+\end{tikzpicture}
+\caption{Kontrollflussgraph zu ?}
+\end{figure}
+
+
+\subsection{Datenflussanalyse}
+Eine Datenflussanalyse ist eine statische Code-Analyse, d. h. die Analyse erfolgt lediglich anhand der Struktur des Codes, ohne dass dieser ausgeführt wird. Datenflussanalysen arbeiten typischerweise auf dem Kontrollflussgraphen des zu analysierenden Codes.
+Mittels Datenflussanalyse können bestimmte Eigenschaften von Programmen approximiert werden.
+Im Folgenden werden einige Beispiele für Datenflussanalysen und die durch sie approximierten Eigenschaften angegeben.
+
+\subsubsection{Constant Folding}
+Beim Constant Folding werden die Werte von Ausdrücken, die bereits bei der Übersetzung ausgewertet werden können, ermittelt.
+Eine naheliegende Optimiereung ist dann, solche Ausdrücke durch die entsprechenden Werte zu ersetzen.
+Damit vermeidet man das Generieren der Instruktionen für diese Ausdrücke. Lediglich eine Instruktion zum Laden einer Konstanten muss dann generiert werden.
+\begin{lstlisting}[frame=single]
+int x = 2;
+int y = -4;
+int z = x * x + y * y; 
+\end{lstlisting}
+Hier steht der Wert von \lstinline{z} bereits bei der Übersetzung fest:
+\begin{lstlisting}[numbers=none]
+z = 2 * 2 + (-4) * (-4) = 4 + 16 = 20.
+\end{lstlisting}
+Obiger Code ist also äquivalent zu
+\begin{lstlisting}[frame=single]
+int x = 2;
+int y = -4;
+int z = 20; 
+\end{lstlisting}
+Hier tauscht man im Vergleich zum ursprünglichen Code zwei Multiplikationen und eine Addition gegen das Laden einer Konstanten ein.
+
+\subsubsection{Constant Bits}
+Die Constant Bits Analyse ist eng mit dem Constant Folding verwandt. 
+Hier interessiert man sich allerdings dafür, welche einzelnen Bits von Variablen konstant sind.
+Sind konstante Bits innerhalb von Variablen gefunden, kann diese Information zur Optimierung bestimmter Ausdrücke genutzt werden.
+\begin{lstlisting}[frame=single]
+int foo(int x) {
+	int y = 12 + 8 * x;
+	return y % 4 + 2 * x;
+} 
+\end{lstlisting}
+
+Hier ist \lstinline|y| \textbf{\%} \lstinline|4| immer gleich \lstinline{0}, sodass obiger Code vereinfacht wrden kann zu
+\begin{lstlisting}[frame=single]
+int foo(int x) {
+	int y = 8 * x;
+	return 2 * x;
+} 
+\end{lstlisting}
+
+\subsubsection{Reaching Definitions}
+Bei der Reching Definitions Analyse soll für jede Stelle im Programm die Menge der Definitionen (Zuweisungen), die diese Programmstelle erreichen, ermittelt werden.
+Eine Definition erreicht eine Stelle genau dann, wenn es einen Pfad im Kontrollflussgraphen gibt, sodass die Definition auf diesem vor besagter Stelle auftaucht und nicht wieder überschrieben wird.
+[use?]
+\begin{lstlisting}[frame=single]
+$def_1$: int x = 2;
+$def_2$: int y = -4;
+$def_3$: x = 2 * y + 10; 
+\end{lstlisting}
+Betrachtet man das Ende des obigen Codestücks, so sind $def_2$ und $def_3$ Reaching Definitions bezüglich dieser Programmstelle.
+$def_1$ erreicht das Ende des Programms nicht, da $def_3$ eine neue Definition von \lstinline{x} gibt, $def_1$ ist danach nicht mehr relevant.
+
+\subsubsection{Taint Analyse}
+In manchen Programmen ist es fatal, wenn Nutzereingaben ohne weitere Überprüfung verarbeitet werden. 
+Beispielsweise sollte niemals ein String der ganz oder teilweise von einem Nutzer stammt, direkt als Anfrage an ein Datenbanksystem weitergegeben werden.
+Dies ermöglicht Angriffe wie SQL-Injection, die das Datenbanksystem in ungewollter Weise beeinflussen.
+Um diese Angriffe zu vermeiden, sollten alle Anfragen, die aus Nutzereingaben hervorgehen, auf möglicherweise schädliche Effekte untersucht werden.
+Das Überprüfen, ob jedes Datenobjekt, das als potentiell schädlich eingestuft wird, vor Weitergabe an kritische Stellen (z. B. Anfrageschnittstelle eines Datenbanksystems) überprüft wurde, kann mittels Taint Analyse automatisiert geschehen.
+Dazu werden Stellen im Programm definiert, die Daten als 'bedenklich' (tainted) markieren.
+Weiter gibt es Stellen (z. B. spezielle Methodenaufrufe), die 'bedenkliche' Daten als 'unbedenklich' markieren.
+Schließlich gibt es noch Programmstellen, die als kritisch mrkiert sind.
+Ziel der Taint Analyse ist es nun, sicherzustellen, dass niemals als 'bedenklich' markierte Daten eine als kritisch markierten Programmstelle erreichen.
+
+\subsubsection{Live Variables [opt]}
+Bei der Live Variables Analyse interessiert man sich dafür, ob der Wert einer Variablen vor der nächsten Zuweisung an diese benötigt wird. 
+Ist dies nicht der Fall, kann diese Zuweisung (wenn Seiteneffektfrei) entfernt werden.
+
+\begin{lstlisting}[frame=single]
+int incMin(int x, int y) {
+	int min;
+	if (x < y) {
+		min = x;
+		x = x + 1;
+	} else {
+		min = y;
+		y = y + 1;
+	}
+	return min + 1;
+}
+\end{lstlisting}
+Hier haben die beiden Zuweisungen \lstinline{x = x + 1;} und \lstinline{y = y + 1} keinen Effekt und können daher entfernt werden.
+Folgender optimierter Code hat also den gleichen Effekt:
+\begin{lstlisting}[frame=single]
+int incMin(int x, int y) {
+	int min;
+	if (x < y) {
+		min = x;
+	} else {
+		min = y;
+	}
+	return min + 1;
+}
+\end{lstlisting}
+
+

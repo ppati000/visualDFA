@@ -1,0 +1,102 @@
+\ProvidesPackage{pflichtenheft}
+\RequirePackage{xcolor}
+\RequirePackage{rdfref-user,rdfref-query}
+
+% cross referencing
+\newcommand\tests[1]{%
+  \AddTripleEx{#1}{pfl:is-tested}{yeah}
+  \AddProperty{pfl:tests}{#1}}
+\newcommand\fulfills[1]{%
+  \AddTripleEx{#1}{pfl:is-fulfilled}{yeah}
+  \AddProperty{pfl:fulfills}{#1}}
+\newcommand\testlink[1]{\hyperref[#1]%
+  { \GetProperty{#1}{pfl:tstid} }}
+\newcommand\functionalitylink[1]{\hyperref[#1]%
+  { \GetProperty{#1}{pfl:fncid} }}
+\newcommand\criteriumlink[1]{\hyperref[#1]%
+  { \GetProperty{#1}{pfl:crtid} }}
+\newcommand\marginid[1]{\marginpar{\centering\textbf{#1}}}
+
+\newcommand\PrefixMussKriterium{M}
+\newcommand\PrefixKannKriterium{K}
+\newcommand\PrefixAbgrenzungsKriterium{A}
+\newcommand\PrefixFunktional{F}
+\newcommand\PrefixNichtFunktional{N}
+\newcommand\PrefixTest{T}
+
+\newcounter{criterium}
+\newcounter{criteriumOpt}
+\newcounter{criteriumNot}
+\newcounter{functionality}
+\newcounter{nonfunctionality}
+\newcounter{test}
+\newcounter{teststep}[test]
+
+% document macros
+\newcommand\criterium[2]{
+  \stepcounter{criterium}
+  \par\textbf{#1}\rdflabel{#2}
+  \marginid{\PrefixMussKriterium\arabic{criterium}}
+  \AddPropertyEx{pfl:crtname}{#1}
+  \AddPropertyEx{pfl:crtid}{\PrefixMussKriterium\arabic{criterium}}
+  \IfProperty{#2}{pfl:is-fulfilled}{%
+    \\ Implementiert durch: \Bind{?f}{pfl:fulfills}{#2}{ \functionalitylink{\GetVal{?f}} }
+  }{{\color{red}{NICHT IMPLEMENTIERT}}}
+  \par}
+
+\newcommand\criteriumOptional[2]{
+  \stepcounter{criteriumOpt}
+  \par\textbf{#1}\rdflabel{#2}
+  \marginid{\PrefixKannKriterium\arabic{criteriumOpt}}
+  \AddPropertyEx{pfl:crtname}{#1}
+  \AddPropertyEx{pfl:crtid}{\PrefixKannKriterium\arabic{criteriumOpt}}
+  \IfProperty{#2}{pfl:is-fulfilled}{%
+    \\ Implementiert durch: \Bind{?f}{pfl:fulfills}{#2}{ \functionalitylink{\GetVal{?f}} }
+  }{{\color{red} keine entsprechende Anforderung}}
+  \par}
+
+\newcommand\criteriumNot[2]{
+  \stepcounter{criteriumNot}
+  \par\textbf{#1}\rdflabel{#2}
+  \marginid{\PrefixAbgrenzungsKriterium\arabic{criteriumNot}}
+  \AddPropertyEx{pfl:crtname}{#1}
+  \AddPropertyEx{pfl:crtid}{\PrefixAbgrenzungsKriterium\arabic{criteriumNot}}
+  \par}
+
+\newcommand\functionality[2]{
+  \stepcounter{functionality}
+  \par\textbf{#1}\rdflabel{#2}
+  \marginid{\PrefixFunktional\arabic{functionality}}
+  \AddPropertyEx{pfl:fncname}{#1}
+  \AddPropertyEx{pfl:fncid}{\PrefixFunktional\arabic{functionality}}
+  \IfProperty{#2}{pfl:is-tested}{%
+    \\ Getestet durch: \Bind{?t}{pfl:tests}{#2}{ \testlink{\GetVal{?t}} }
+  }{{\color{red}{NICHT GETESTET}}\\}
+  Implementiert: \Bind{#2}{pfl:fulfills}{?c}{ \criteriumlink{\GetVal{?c}} }
+  \par}
+
+\newcommand\nonFunctionality[2]{
+  \stepcounter{nonfunctionality}
+  \par\textbf{#1}\rdflabel{#2}
+  \marginid{\PrefixNichtFunktional\arabic{nonfunctionality}}
+  \AddPropertyEx{pfl:fncname}{#1}
+  \AddPropertyEx{pfl:fncid}{\PrefixNichtFunktional\arabic{nonfunctionality}}
+  \par}
+
+\newcommand\test[2]{
+  \stepcounter{test}
+  \par\textbf{#1}\rdflabel{#2}
+  \marginid{\PrefixTest\arabic{test}}
+  \AddPropertyEx{pfl:tstname}{#1}
+  \AddPropertyEx{pfl:tstid}{\PrefixTest\arabic{test}}
+  \\ Testet: \Bind{#2}{pfl:tests}{?f}{ \functionalitylink{\GetVal{?f}} }
+  \par}
+
+\newcommand\teststep[3]{\stepcounter{teststep}
+{\PrefixTest\arabic{test}.\arabic{teststep}}
+\begin{minipage}[t]{0.8\textwidth}\raggedright
+\textbf{Stand:} #1\par
+\textbf{Aktion:} #2\par
+\textbf{Reaktion:} #3\par
+\end{minipage}
+\par}

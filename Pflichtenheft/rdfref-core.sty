@@ -1,0 +1,111 @@
+\ProvidesPackage{rdfref-core}
+\RequirePackage{etoolbox,xstring}
+\def\Nil{}%
+\def\First#1#2{#1}
+\def\Second#1#2{#2}
+
+\def\parsecolon#1:#2\relax{\ifx#2\Nil\Nil\else#1\fi}%
+\newcommand\RdfPrefix[1]{%
+\parsecolon#1:\Nil\relax%
+}
+\newcommand\AddTriple[3]{%
+%\edef\rdf@object{#3}
+\immediate\write\@auxout{\noexpand\LoadTriple{#1}{#2}{\expandafter\detokenize\expandafter{#3}}}%
+%\immediate\write\@auxout{\noexpand\LoadTriple{#1}{#2}{\rdf@object}}
+}
+
+% If we need to write something expanded, like \thepage
+\newcommand\AddTripleEx[3]{%
+% \edef\rdf@object{#3}%
+% \immediate\write\@auxout{\noexpand\LoadTriple{#1}{#2}{\rdf@object}}%
+\protected@write\@auxout{}{\protect\LoadTriple{#1}{#2}{#3}}
+}
+
+\newcommand\SetProperty[3]{%
+% \protected@csxdef{rdf@#1@#2}{#3}%
+  \listcsxadd{rdf@#1@#2}{#3}%
+}
+
+\newcommand\IfProperty[2]{%
+\ifcsdef{rdf@#1@#2}%
+}
+
+% we use etoolbox's list to store property array
+% character | is used to delimit the records, it has
+% changed catcode, so we must do some trickery to parse 
+% it correctly
+\@tempcnta=\the\catcode`\|
+\catcode`\|=3
+\def\MatchFirstProperty#1|#2\@nil{#1}
+
+\newcommand\GetFirstProperty[1]{%
+  \MatchFirstProperty#1|\@nil
+}
+\catcode`\|=\the\@tempcnta
+
+% Object can have multiple occassions of an property, 
+% we get only the first one with \GetProperty command
+% You need to use looping commands to get also the other 
+% values
+\newcommand\GetProperty[2]{%
+  \IfProperty{#1}{#2}{%
+    \edef\@temp{\csname rdf@#1@#2\endcsname}%
+    \expandafter\GetFirstProperty\expandafter{\@temp}%
+    }{%
+    \PropertyNotDef{#1}{#2}%
+  }%
+}
+\newcommand\PropertyNotDef[2]{%
+???%
+\typeout{rdf warning: subject #1 has no property #2}%
+}
+
+% #1 object, #2 property
+\newcommand\MapObjectList[3]{%
+  \def\do##1{#3}%
+  \ifcsdef{rdf@#1@#2}{%
+    \dolistcsloop{rdf@#1@#2}%
+  }{}%
+}
+
+\edef\Hash{\string#}
+
+\newcommand\Prefix[2]{%
+%\edef\fuf{Prefix #2}
+\ifcsdef{rdfprefix@#1}{%
+\IfStrEq{\csuse{rdfprefix@#1}}{#2}{%
+\typeout{Prefix #1 already exists for #2}%
+}{\typeout{Prefix clash, uri #2 has already prefix \csuse{rdfprefix@#1}, #1 provided}%
+}}{%
+\csgdef{rdfprefix@#1}{#2}%
+}
+}
+\newcommand\SubjectListAdd[3]{%
+  \listcsgadd{sbjlst@#1}{{#2}{#3}}%
+}
+\newcommand\MapSubjectList[2]{%
+  % \def\tmp@sbj{\MapObjectList{
+  \def\do##1{#2}%
+  \ifcsdef{sbjlst@#1}{%
+    \dolistcsloop{sbjlst@#1}%
+  }{}%
+}
+
+\newcommand\PropertyListAdd[3]{%
+\listcsgadd{prprtlst@#2}{{#1}{#3}}%
+}
+\newcommand\MapPropertyList[2]{%
+\def\do##1{#2}%
+\ifcsdef{prprtlst@#1}{%
+\dolistcsloop{prprtlst@#1}%
+}{}%
+}
+
+
+\newcommand\LoadTriple[3]{%
+\SetProperty{#1}{#2}{#3}%
+\SubjectListAdd{#1}{#2}{#3}%
+\PropertyListAdd{#1}{#2}{#3}%
+}
+
+

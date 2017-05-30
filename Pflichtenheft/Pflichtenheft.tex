@@ -1,0 +1,77 @@
+\documentclass[parskip=full,11pt]{scrartcl}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[german]{babel}
+
+\usepackage[yyyymmdd]{datetime} % must be after babel
+\renewcommand{\dateseparator}{-} % ISO8601 date format
+
+\usepackage{hyperref}
+\usepackage{csquotes}
+\usepackage{glossaries}
+
+\usepackage[nameinlink]{cleveref}
+
+\usepackage{xcolor}
+\usepackage{graphicx}
+\hypersetup{
+	pdftitle={Pflichtenheft}
+}
+
+\usepackage{pflichtenheft}
+
+\usepackage{float}
+
+% we might want to reconsider this but by dafault there is a LOT of white space at the end of pages
+\usepackage[top=2cm, bottom=3cm, left=2cm, right=2cm]{geometry}
+
+
+\usepackage{listings}
+\lstset{
+	mathescape,
+	numbers=left, 
+	numberstyle=\tiny, 
+	breaklines=true,
+	numbersep=5pt,
+	xleftmargin=10pt,
+	xrightmargin=5pt,
+	tabsize=2} 
+
+\usepackage{tikz}
+\usetikzlibrary{positioning,shapes.geometric}
+
+\makeindex
+\makeglossaries
+
+% so wird ein Glossareintrag definiert
+%\newglossaryentry{computer}{
+%	name=computer,
+%	description={is a programmable machine that receives input,
+%		stores and manipulates data, and provides
+%		output in a useful format}
+%}
+
+\begin{document}
+	\title{Pflichtenheft: Programmanalyse zum Durchklicken}
+	\author{Nils Jessen \and Anika Nietzer \and Patrick Petrovic \and Sebastian Rauch \and Michael Schieber}
+	
+	\maketitle
+
+
+	\include{Einleitung/Einleitung}
+	\include{Kriterien/Kriterien}
+	\include{Produkteinsatz/Produkteinsatz}
+	\include{Produktumgebung/Produktumgebung}
+	\include{FunktionaleAnforderungen/FunktionaleAnforderungen}
+	\include{NichtfunktionaleAnforderungen/NichtfunktionaleAnforderungen}
+	\include{Tests/Tests}
+	\include{GUIEntwuerfe/GUIEntwuerfe}
+	
+	% if you want to have the full glossary, not only the mentioned stuff
+	% \glsaddall 
+	
+	\printglossaries
+	
+	
+\end{document}

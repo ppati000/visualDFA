@@ -34,7 +34,7 @@ Der Benutzer kann die Analyse abbrechen und zur Code-Eingabe zurückkehren.
 
 \subsection{Kann}
 
-\criteriumOptional{Erweitertes Java-Subset 1}{crt:extendedSubset1o}
+\criteriumOptional{Erweitertes Java-Subset 1 - Priorität 1}{crt:extendedSubset1o}
 Das Programm kann Java-Code einlesen und verarbeiten, wenn dieser folgende Operatoren und Konstrukte beinhaltet:
 
 Modulo Operator: \%
@@ -43,50 +43,50 @@ Bit-shift Operatoren: <<, >>
 
 Logisches \glqq Und\grqq und \glqq Oder\grqq : \&, |
 
-\criteriumOptional{Erweitertes Java-Subset 2}{crt:extendedSubset2o}
+\criteriumOptional{Erweitertes Java-Subset 2 - Priorität 2}{crt:extendedSubset2o}
 Das Programm kann Java-Code einlesen und verarbeiten, wenn dieser folgende Operatoren und Konstrukte beinhaltet:
 
 for - Schleife (nicht for each)
 
 else if - Bedingung
 
-\criteriumOptional{Erweitertes Java-Subset 3}{crt:extendedSubset3o}
+\criteriumOptional{Erweitertes Java-Subset 3 - Priorität 2}{crt:extendedSubset3o}
 Das Programm kann Java-Code einlesen und verarbeiten, wenn dieser folgende Operatoren und Konstrukte beinhaltet:
 
 Zuweisungen: +=, -=, *=, /=, \% =
 
-\criteriumOptional{Zeilenangabe bei Fehlermeldungen}{crt:lineNmbrErrorO}
+\criteriumOptional{Zeilenangabe bei Fehlermeldungen - Priorität 2}{crt:lineNmbrErrorO}
 Entstehen beim Kompilieren des eingelesenen Codes Fehlermeldungen, so wird für den Nutzer ersichtlich, in welcher Zeile seines Java-Codes er den Fehler gemacht hat.
 
-\criteriumOptional{Breakpoints in Datenflussanalyse}{crt:BreakpointsO}
+\criteriumOptional{Breakpoints in Datenflussanalyse - Priorität 2}{crt:BreakpointsO}
 Der Nutzer kann in seiner Datenflussanalyse Breakpoints setzen. Beim automatisierten Durchlaufen der Analyse stoppt diese am nächsten gesetzten Breakpoint.
 
-\criteriumOptional{Analyse einzelner Zeilen innerhalb der Knoten}{crt:lineAnalysisO}
+\criteriumOptional{Analyse einzelner Zeilen innerhalb der Knoten - Priorität 1}{crt:lineAnalysisO}
 Beim Durchlaufen der Datenflussanalyse erhält der Nutzer nicht nur In- und Out-
 Informationen zu den Knoten als Ganzes sondern auch zu den einzelnen Zeilen
 innerhalb der Knoten.
 
-\criteriumOptional{Dynamisches Graph-Layout}{crt:GraphLayoutO}
+\criteriumOptional{Dynamisches Graph-Layout - Priorität 1}{crt:GraphLayoutO}
 Der Nutzer hat die Möglichkeit das zunächst automatisierte Layout des
 Kontrollflussgraphen selbst zu verändern, in dem er in den Graphen rein- und
 rauszoomt und in dem er die einzelnen Knoten hin und her beweget.
 
-\criteriumOptional{Einlesen von Code aus .java Datei}{crt:CodeInputExto}
+\criteriumOptional{Einlesen von Code aus .java Datei - Priorität 3}{crt:CodeInputExto}
 Der Nutzer hat die Möglichkeit, eine .java Datei in das Programm zu laden, welche
 den zu analysierenden Code enthält. Den eingelesenen Code kann er anschließend
 auch im Programm bearbeiten.
 
-\criteriumOptional{Delay-Optionen zwischen Autoplay-Schritten}{crt:DelayO}
+\criteriumOptional{Delay-Optionen zwischen Autoplay-Schritten - Priorität 1}{crt:DelayO}
 Der Nutzer kann einstellen, wie lange die einzelnen Schritte im automatisierten
 Durchlaufen der Datenflussanalyse angezeigt werden sollen. Hierbei reicht der
 Optionsumfang von 0 Sekunden Delay (so schnell wie möglich zum Fixpunkt) bis hin
 zu einigen Sekunden Anzeigezeit pro Schritt.
 
-\criteriumOptional{Rückwärtsschritte in der Datenflussanalyse}{crt:backwardsAnalysisO}
+\criteriumOptional{Rückwärtsschritte in der Datenflussanalyse - Priorität 1}{crt:backwardsAnalysisO}
 Der Nutzer hat die Möglichkeit, in der Datenflussanalyse Schritte zurück zu gehen
 und sich einen vorherigen Analysezustand erneut anzeigen zu lassen.
 
-\criteriumOptional{Auswahlmöglichkeit der Worklistalgorithmen}{crt:WorklistO}
+\criteriumOptional{Auswahlmöglichkeit der Worklistalgorithmen - Priorität 2}{crt:WorklistO}
 Der Nutzer kann zwischen verschiedenen Worklistalgorithmen wählen. Diese
 entscheiden, in welcher Reihenfolge die Knoten in der Datenflussanalyse behandelt
 werden. Es stehen folgende Algorithmen zur Auswahl:
@@ -102,24 +102,24 @@ Die Reihenfolge der Abarbeitung der Blöcke wird optimiert, indem beispielsweise
 zuerst innere Schleifen durchlaufen werden, bis ein lokaler Fixpunkt gefunden wurde, bevor die äußere Schleife weiter analysiert wird.
 \end{enumerate}
 
-\criteriumOptional{Speichern in .java Datei}{crt:saveO}
+\criteriumOptional{Speichern in .java Datei - Priorität 3}{crt:saveO}
 Der Nutzer kann den eingelesenen oder eingetippten Java-Code als .java Datei
 speichern.
 
-\criteriumOptional{.java File mit mehreren Funktionen}{crt:moreFncO}
+\criteriumOptional{.java File mit mehreren Funktionen - Priorität 3}{crt:moreFncO}
 Der Nutzer kann Java-Code einlesen oder eingeben, welcher mehrere Funktionen
 enthält. Vor der Datenflussanalyse kann er dann auswählen, welche Methode
 analysiert werden soll.
 
-\criteriumOptional{\glqq Jump to action\grqq -Funktion}{crt:JumpToActionO}
+\criteriumOptional{\glqq Jump to action\grqq -Funktion - Priorität 2}{crt:JumpToActionO}
 Der Nutzer hat die Möglichkeit mit nur einem Mausklick den aktuell analysierten
 Knoten beziehungsweise die aktuell analysierte Zeile als seinen ausgewählten Knoten beziehungsweise seine ausgewählte Zeile zu setzen, egal welchen anderen Knoten und in welcher Zeile im Graphen er sich zuvor befunden hat. Dabei wird auch die Ansicht automatisch auf den fraglichen Knoten ausgerichtet.
 
-\criteriumOptional{Hotkeys für Datenflussanalyse}{crt:DFAo}
+\criteriumOptional{Hotkeys für Datenflussanalyse - Priorität 3}{crt:DFAo}
 Dem Nutzer steht eine Reihe von Hotkeys zur Navigation durch die
 Datenflussanalyse zur Verfügung.
 
-\criteriumOptional{Weitere Datenflussanalysearten}{crt:DFAArtenO}
+\criteriumOptional{Weitere Datenflussanalysearten - Priorität 2}{crt:DFAArtenO}
 Der Nutzer kann zur Analyse seines eingegebenen oder eingelesenen Java-Codes
 zusätzlich zu den Analysearten aus M7 aus 3 weiteren Arten der Datenflussanalyse
 auswählen:
@@ -129,7 +129,7 @@ auswählen:
 \item Available Expression Analysis
 \end{enumerate}
 
-\criteriumOptional{Färbung des Graphen}{crt:HighlightingO}
+\criteriumOptional{Färbung des Graphen - Priorität 1}{crt:HighlightingO}
 Die Knoten des angezeigten Kontrollflussgraphen im Graph-Panel werden in
 Abhängigkeit des aktuellen Analysestandes in 4 verschiedenen Farben eingefärbt:
 \begin{enumerate}[label=(\alph*)]
@@ -139,23 +139,23 @@ Abhängigkeit des aktuellen Analysestandes in 4 verschiedenen Farben eingefärbt
 \item Visited and not on Worklist
 \end{enumerate}
 
-\criteriumOptional{Exportieren des Graphen als Bild-Datei}{crt:exportPicO}
+\criteriumOptional{Exportieren des Graphen als Bild-Datei - Priorität 3}{crt:exportPicO}
 Der Nutzer hat die Möglichkeit den aktuell im Graph-Panel angezeigten Kontrollflussgraphen als Bilddatei zu exportieren. Er kann auch automatisiert mehrere Analyseschritte der Datenflussanalyse als Batch-Export exportieren.
 
-\criteriumOptional{\glqq Speichern?\grqq -Meldung vor schließen}{crt:unsavedChangesO}
+\criteriumOptional{\glqq Speichern?\grqq -Meldung vor schließen - Priorität 3}{crt:unsavedChangesO}
 Der Nutzer wird gefragt, ob ungespeicherte Änderungen des .java files im Textfeld
 speichern möchte, wenn er das Programm schließt und ungespeicherte Änderungen vorliegen.
 
-\criteriumOptional{\glqq Ungespeicherte Änderungen verfallen\grqq -Meldung bei Laden einer neuen Datei}{crt:loadUnsavedO}
+\criteriumOptional{\glqq Ungespeicherte Änderungen\grqq -Meldung bei Laden einer neuen Datei - Priorität 3}{crt:loadUnsavedO}
 Der Nutzer bekommt eine Meldung, dass ungespeicherte Änderungen verfallen,
 wenn eine neue .java Datei im Textfeld geladen werden soll und ungespeicherte
 Änderungen vorliegen.
 
-\criteriumOptional{Manual Page}{crt:ManPageO}
+\criteriumOptional{Manual Page - Priorität 1}{crt:ManPageO}
 Dem Programm liegt eine Manual Page bei, in welcher der Benutzer über die wichtigsten Funktionen des Programms informiert wird.
 
-\criteriumOptional{Fortschrittsanzeige}{crt:ProgressBarO}
+\criteriumOptional{Fortschrittsanzeige - Priorität 2}{crt:ProgressBarO}
 Der Benutzer kann ablesen wie weit die Datenflussanalyse fortgeschritten ist.
 
-\criteriumOptional{Springen zu beliebigem Analysepunkt}{crt:SliderO}
+\criteriumOptional{Springen zu beliebigem Analysepunkt - Priorität 2}{crt:SliderO}
 Der Benutzer kann an einen beliebigen Punkt der Datenflussanalyse springen.

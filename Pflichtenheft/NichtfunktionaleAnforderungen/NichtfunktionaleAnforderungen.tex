@@ -2,4 +2,36 @@
 
 \section{Nichtfunktionale Anforderungen}
 
-... hier die nichtfunktionalen Anforderungen ...
+\nonFunctionality{Benutzeroberfläche reagiert zu jedem Zeitpunkt}{nfc:reactivity}
+
+Die Benutzeroberfläche reagiert in jedem Zustand des Programms (also auch während der Berechnung der Datenflussanalyse) innerhalb von einer Sekunde auf Eingaben des Nutzers.
+
+\nonFunctionality{Visuelles Feedback}{nfc:feedback}
+
+Nach Betätigung eines Buttons erhält der Nutzer innerhalb von einer Sekunde visuelles Feedback.
+
+\nonFunctionality{Konsistenz zwischen Code und Graph}{nfc:consistency}
+
+Der eingelesene oder eingegebene Java-Code ist zu jedem Zeitpunkt konsistent zum angezeigten Kontrollflussgraphen, sofern ein Kontrollflussgraph angezeigt wird.
+
+\nonFunctionality{Aussagekräftige Fehlermeldungen}{nfc:errors}
+
+Java-Kenntnisse und ein Verständnis für das Konzept von Datenflussanalysen vorausgesetzt, enthalten die durch das Programm angezeigten Fehlermeldungen sowohl zum eingegebenen Java-Code als auch zu den Einstellungen des Programms in Kombination mit der Manual Page ausreichend Informationen, dass die Ursache des jeweiligen Fehlers präzise festgestellt werden kann.
+
+\nonFunctionality{Garantierte Funktionalität}{nfc:guarantees}
+
+Die Funktionalität des Programmes ist garantiert, solange keine der folgenden Grenzen überschritten wird:
+\begin{enumerate}[label=(\alph*)]
+\item Der Kontrollflussgraph hat maximal 10 Knoten
+\item Jeder Knoten beinhaltet maximal 10 Zwischencode-Zeilen
+\item Die Datenflussanalyse benötigt maximal 5000 (Zeilen-)Schritte
+\item Der eingegebene Java-Code besteht aus maximal 5000 Zeichen
+\end{enumerate}
+
+\nonFunctionality{Skalierbarkeit der GUI}{nfc:scalability}
+
+Die GUI ist beliebig skalierbar für Fenstergrößen größer oder gleich der geforderten Mindestauflösung (siehe Produktumgebung).
+
+\nonFunctionality{Äquivalenz von Einlesen und Eingabe}{nfc:equivalence}
+
+Das Programm behandelt direkt eingegebenen Java-Code vollständig äquivalent zu aus einer .java Datei eingelesenem Java-Code.

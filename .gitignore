@@ -22,10 +22,11 @@
 hs_err_pid*
 
 # Latex intermediate stuff
-.aux
-.glo
-.idx
-.ist
-.log
-.out
+*.aux
+*.glo
+*.idx
+*.ist
+*.log
+*.out
+Pflichtenheft.pdf
 

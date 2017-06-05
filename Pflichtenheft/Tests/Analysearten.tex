@@ -206,6 +206,240 @@ Out = {$n= \perp, x = 6, y = \perp$}
 
 \subsection{Reaching Definitions}
 
+Zu analysierender Code: \par
+
+\begin{lstlisting}[frame=single]
+int reachingDefs(boolean c) {
+	int a, b;
+	a = 1;
+	b = 2;
+	a = 2;
+	if (c) {
+	  a = 3;
+	} else {
+	  a = 5;
+	  b = 10;
+	}
+	return b;
+}
+\end{lstlisting}
+
+\par
+
+\begin{figure}[H]
+
+\centering
+\begin{tikzpicture}[%
+->,
+shorten >=2pt,
+>=stealth,
+node distance=1cm,
+noname/.style={%
+	ellipse,
+	minimum width=5em,
+	minimum height=3em,
+	draw
+}
+]
+
+\node [draw] (1) {
+\begin{lstlisting}[numbers=none]
+In = {}
+[*int a, b;
+a = 1;
+b = 2;
+a = 2;*]
+Out = {}
+\end{lstlisting}
+};
+
+\node [draw] (5) [below = 1 of 1] {
+\begin{lstlisting}[numbers=none]
+In = {}
+[*if (c)*]
+Out = {}
+\end{lstlisting}
+};
+
+\node [draw] (2) [below left = 3.7 cm and 4 cm =of 5] {
+\begin{lstlisting}[numbers=none]
+In = {}
+[*a = 3;*]
+Out = {}
+\end{lstlisting}
+};
+
+\node[draw] (3) [below right = 3.5 cm and 4 cm =of 5] {
+\begin{lstlisting}[numbers=none]
+In = {}
+[*a = 5;
+b = 10;*]
+Out = {}
+\end{lstlisting}
+};
+
+\node[draw] (4) [below = 1 of 5] {
+\begin{lstlisting}[numbers=none]
+In = {}
+[*return b;*]
+Out = {}
+\end{lstlisting}
+};
+
+\path (1) edge node {} (5);
+\path (5) edge node {} (2);
+\path (5) edge node {} (3);
+\path (3) edge node {} (4);
+\path (2) edge node {} (4);
+\end{tikzpicture}
+
+\caption{Kontrollflussgraph im Initialzustand der Reaching Definitions Analyse}
+\end{figure}
+
+\par
+
+\begin{figure}[H]
+
+\centering
+\begin{tikzpicture}[%
+->,
+shorten >=2pt,
+>=stealth,
+node distance=1cm,
+noname/.style={%
+	ellipse,
+	minimum width=5em,
+	minimum height=3em,
+	draw
+}
+]
+
+\node [draw] (1) {
+\begin{lstlisting}[numbers=none]
+In = {}
+[*int a, b;
+a = 1;
+b = 2;
+a = 2;*]
+Out = {b = 2, a = 2}
+\end{lstlisting}
+};
+
+\node [draw] (5) [below = 1 of 1] {
+\begin{lstlisting}[numbers=none]
+In = {}
+[*if (c)*]
+Out = {}
+\end{lstlisting}
+};
+
+\node [draw] (2) [below left = 3.7 cm and 4 cm =of 5] {
+\begin{lstlisting}[numbers=none]
+In = {}
+[*a = 3;*]
+Out = {}
+\end{lstlisting}
+};
+
+\node[draw] (3) [below right = 3.5 cm and 4 cm =of 5] {
+\begin{lstlisting}[numbers=none]
+In = {}
+[*a = 5;
+b = 10;*]
+Out = {}
+\end{lstlisting}
+};
+
+\node[draw] (4) [below = 1 of 5] {
+\begin{lstlisting}[numbers=none]
+In = {}
+[*return b;*]
+Out = {}
+\end{lstlisting}
+};
+
+\path (1) edge node {} (5);
+\path (5) edge node {} (2);
+\path (5) edge node {} (3);
+\path (3) edge node {} (4);
+\path (2) edge node {} (4);
+\end{tikzpicture}
+
+\caption{Kontrollflussgraph nach dem 1. Schritt der Reaching Definitions Analyse}
+\end{figure}
+
+\par
+
+\begin{figure}[H]
+
+\centering
+\begin{tikzpicture}[%
+->,
+shorten >=2pt,
+>=stealth,
+node distance=1cm,
+noname/.style={%
+	ellipse,
+	minimum width=5em,
+	minimum height=3em,
+	draw
+}
+]
+
+\node [draw] (1) {
+\begin{lstlisting}[numbers=none]
+In = {}
+[*int a, b;
+a = 1;
+b = 2;
+a = 2;*]
+Out = {b = 2, a = 2}
+\end{lstlisting}
+};
+
+\node [draw] (5) [below = 1 of 1] {
+\begin{lstlisting}[numbers=none]
+In = {b = 2, a = 2}
+[*if (c)*]
+Out = {b = 2, a = 2}
+\end{lstlisting}
+};
+
+\node [draw] (2) [below left = 5.2 cm and 2 cm =of 5] {
+\begin{lstlisting}[numbers=none]
+In = {b = 2, a = 2}
+[*a = 3;*]
+Out = {a = 3, b = 2}
+\end{lstlisting}
+};
+
+\node[draw] (3) [below right = 5 cm and 2 cm =of 5] {
+\begin{lstlisting}[numbers=none]
+In = {b = 2, a = 2}
+[*a = 5;
+b = 10;*]
+Out = {a = 5, b = 10}
+\end{lstlisting}
+};
+
+\node[draw] (4) [below = 3.5 of 5] {
+\begin{lstlisting}[numbers=none]
+In = {a = 3, b = 2, a = 5, b = 10}
+[*return b;*]
+Out = {a = 3, b = 2, a = 5, b = 10}
+\end{lstlisting}
+};
+
+\path (1) edge node {} (5);
+\path (5) edge node {} (2);
+\path (5) edge node {} (3);
+\path (3) edge node {} (4);
+\path (2) edge node {} (4);
+\end{tikzpicture}
+
+\caption{Kontrollflussgraph im Fixpunkt der Reaching Definitions Analyse}
+\end{figure}
+
 \subsection{Taint Analysis}
 
 Zu analysierender Code: \par

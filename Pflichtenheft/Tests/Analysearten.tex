@@ -1,5 +1,9 @@
 \section{Tests (Analysearten)}
 
+Im Folgenden wird die Analyse als Beispiel für den Worklistalgorithmus \glqq Naiv \grqq\ angegeben. %%Der Fixpunkt bei der Anwendung anderer Algorithmen ist gleich.
+ In diesem Beispiel wird davon ausgegangen, dass das erweiterte Java-Subset 1 implementiert wurde. Der Kontrollflussgraph wird exemplarisch in Java-Code angegeben und nicht in Zwischencode wie in der implementierten Analyse. Hierbei wird angenommen, dass bei einer Verzweigung der linke Pfad bei einer wahren Bedingung und der rechte Pfad bei einer nicht erfüllten Bedingung genommen wird.
+
+
 \subsection{Constant Folding}
 
 Zu analysierender Code: \par
@@ -17,11 +21,186 @@ int constFolding(int n) {
 }
 \end{lstlisting}
 
-Zustand des CFG vor der Analyse (In und Out des ersten Blocks): \par
+\par
 
-Zustand des CFG nach dem zweiten Block (In und Out des entsprechenden Blocks): \par
+\begin{figure}[H]
 
-Zustand nach Ende der Analyse: \par
+\centering
+\begin{tikzpicture}[%
+->,
+shorten >=2pt,
+>=stealth,
+node distance=1cm,
+noname/.style={%
+	ellipse,
+	minimum width=5em,
+	minimum height=3em,
+	draw
+}
+]
+
+\node [draw] (1) {
+\begin{lstlisting}[numbers=none]
+In = {$n= \perp, x = \perp, y = \perp$}
+[*int x = 6;
+int y = 2 * n;*]
+Out = {$n= \perp, x = \perp, y = \perp$}
+\end{lstlisting}
+};
+
+\node [draw] (2) [below =of 1] {
+\begin{lstlisting}[numbers=none]
+In = {$n= \perp, x = \perp, y = \perp$}
+[*if (n > 0)*]
+Out = {$n= \perp, x = \perp, y = \perp$}
+\end{lstlisting}
+};
+
+\node[draw] (3) [below left = 5 cm and 1 cm =of 2] {
+\begin{lstlisting}[numbers=none]
+In = {$n= \perp, x = \perp, y = \perp$}
+[*return y;*]
+Out = {$n= \perp, x = \perp, y = \perp$}
+\end{lstlisting}
+};
+
+\node[draw] (4) [below right = 5 cm and 1 cm =of 2] {
+\begin{lstlisting}[numbers=none]
+In = {$n= \perp, x = \perp, y = \perp$}
+[*y = y - x;
+x = 3 * (x % 4);
+n = n - 1;*]
+Out = {$n= \perp, x = \perp, y = \perp$}
+\end{lstlisting}
+};
+
+\path (1) edge node {} (2);
+\path (2) edge [bend right=20pt] node {} (3);
+\path (2) edge [bend right=20pt] node {} (4);
+\path (4) edge [bend right=20pt] node {} (2);
+\end{tikzpicture}
+
+\caption{Kontrollflussgraph im initialen Zustand der Constant Folding Analyse}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[%
+->,
+shorten >=2pt,
+>=stealth,
+node distance= 1cm,
+noname/.style={%
+	ellipse,
+	minimum width=5em,
+	minimum height=3em,
+	draw
+}
+]
+
+\node [draw] (1) {
+\begin{lstlisting}[numbers=none]
+In = {$n= \perp, x = \perp, y = \perp$}
+[*int x = 6;
+int y = 2 * n;*]
+Out = {$n= \perp, x = 6, y = \perp$}
+\end{lstlisting}
+};
+
+\node [draw] (2) [below =of 1] {
+\begin{lstlisting}[numbers=none]
+In = {$n= \perp, x = \perp, y = \perp$}
+[*if (n > 0)*]
+Out = {$n= \perp, x = \perp, y = \perp$}
+\end{lstlisting}
+};
+
+\node[draw] (3) [below left  = 5 cm and 1 cm =of 2] {
+\begin{lstlisting}[numbers=none]
+In = {$n= \perp, x = \perp, y = \perp$}
+[*return y;*]
+Out = {$n= \perp, x = \perp, y = \perp$}
+\end{lstlisting}
+};
+
+\node[draw] (4) [below right = 5 cm and 1 cm=of 2] {
+\begin{lstlisting}[numbers=none]
+In = {$n= \perp, x = \perp, y = \perp$}
+[*y = y - x;
+x = 3 * (x % 4);
+n = n - 1;*]
+Out = {$n= \perp, x = \perp, y = \perp$}
+\end{lstlisting}
+};
+
+\path (1) edge node {} (2);
+\path (2) edge [bend right=20pt] node {} (3);
+\path (2) edge [bend right=20pt] node {} (4);
+\path (4) edge [bend right=20pt] node {} (2);
+\end{tikzpicture}
+\caption{Kontrollflussgraph nach Abarbeitung des ersten Blocks der Constant Folding Analyse}
+\end{figure}
+
+\par
+
+\begin{figure}[H]
+
+\centering
+\begin{tikzpicture}[%
+->,
+shorten >=2pt,
+>=stealth,
+node distance=1cm,
+noname/.style={%
+	ellipse,
+	minimum width=5em,
+	minimum height=3em,
+	draw
+}
+]
+
+\node [draw] (1) {
+\begin{lstlisting}[numbers=none]
+In = {$n= \perp, x = \perp, y = \perp$}
+[*int x = 6;
+int y = 2 * n;*]
+Out = {$n= \perp, x = 6, y = \perp$}
+\end{lstlisting}
+};
+
+\node [draw] (2) [below =of 1] {
+\begin{lstlisting}[numbers=none]
+In = {$n= \perp, x = 6, y = \perp$}
+[*if (n > 0)*]
+Out = {$n= \perp, x = 6, y = \perp$}
+\end{lstlisting}
+};
+
+\node[draw] (3) [below left  = 5 cm and 1 cm=of 2] {
+\begin{lstlisting}[numbers=none]
+In = {$n= \perp, x = 6, y = \perp$}
+[*return y;*]
+Out = {$n= \perp, x = 6, y = \perp$}
+\end{lstlisting}
+};
+
+\node[draw] (4) [below right  = 5 cm and 1 cm=of 2] {
+\begin{lstlisting}[numbers=none]
+In = {$n= \perp, x = 6, y = \perp$}
+[*y = y - x;
+x = 3 * (x % 4);
+n = n - 1;*]
+Out = {$n= \perp, x = 6, y = \perp$}
+\end{lstlisting}
+};
+
+\path (1) edge node {} (2);
+\path (2) edge [bend right=20pt] node {} (3);
+\path (2) edge [bend right=20pt] node {} (4);
+\path (4) edge [bend right=20pt] node {} (2);
+\end{tikzpicture}
+\caption{Kontrollflussgraph im Fixpunkt der Analyse Constant Folding}
+\end{figure}
 
 \subsection{Const Bits}
 
@@ -29,8 +208,451 @@ Zustand nach Ende der Analyse: \par
 
 \subsection{Taint Analysis}
 
+Zu analysierender Code: \par
+
+\begin{lstlisting}[frame=single]
+void taintAnalysis(int z) {
+	int y = 3;
+	int x = foo();
+	_taint(x)
+	if(z > 0) {
+		_clean(x);
+	}
+	y = x + 5;
+	_sensitive(y);
+}
+\end{lstlisting}
+
+\par
+
+\begin{figure}[H]
+
+\centering
+\begin{tikzpicture}[%
+->,
+shorten >=2pt,
+>=stealth,
+node distance=1cm,
+noname/.style={%
+	ellipse,
+	minimum width=5em,
+	minimum height=3em,
+	draw
+}
+]
+
+\node [draw] (1) {
+\begin{lstlisting}[numbers=none]
+In = {taint = $\emptyset$, violation = false}
+[*int y = 3;
+int x = foo();
+_taint(x);*]
+Out = {taint = $\emptyset$, violation = false}}
+\end{lstlisting}
+};
+
+\node [draw] (2) [below =of 1] {
+\begin{lstlisting}[numbers=none]
+In = {taint = $\emptyset$, violation = false}
+[*if ( z > 0)*]
+Out = {taint = $\emptyset$, violation = false}}
+\end{lstlisting}
+};
+
+\node[draw] (3) [below left = 5.5 cm and 0 cm = of 2] {
+\begin{lstlisting}[numbers=none]
+In = {taint = $\emptyset$, violation = false}
+[*_clean(x);*]
+Out = {taint = $\emptyset$, violation = false}}
+\end{lstlisting}
+};
+
+\node[draw] (4) [below right = 8.5 cm and -5 cm =of 2] {
+\begin{lstlisting}[numbers=none]
+In = {taint = $\emptyset$, violation = false}
+[*y = x + 5;
+_sensitive(y);*]
+Out = {taint = $\emptyset$, violation = false}}
+\end{lstlisting}
+};
+
+\path (1) edge node {} (2);
+\path (2) edge [bend right=20pt] node {} (3);
+\path (2) edge [bend left=20pt] node {} (4);
+\path (3) edge [bend right=20pt] node {} (4);
+\end{tikzpicture}
+
+\caption{Kontrollflussgraph im initialen Zustand der Taint Analyse}
+\end{figure}
+
+\par
+\begin{figure}[H]
+
+\centering
+\begin{tikzpicture}[%
+->,
+shorten >=2pt,
+>=stealth,
+node distance=1cm,
+noname/.style={%
+	ellipse,
+	minimum width=5em,
+	minimum height=3em,
+	draw
+}
+]
+
+\node [draw] (1) {
+\begin{lstlisting}[numbers=none]
+In = {taint = $\emptyset$, violation = false}
+[*int y = 3;
+int x = foo();
+_taint(x);*]
+Out = {taint = {x}, violation = false}}
+\end{lstlisting}
+};
+
+\node [draw] (2) [below =of 1] {
+\begin{lstlisting}[numbers=none]
+In = {taint = {x}, violation = false}
+[*if ( z > 0)*]
+Out = {taint = {x}, violation = false}}
+\end{lstlisting}
+};
+
+\node[draw] (3) [below left = 5.5 cm and 0 cm = of 2] {
+\begin{lstlisting}[numbers=none]
+In = {taint = {x}, violation = false}
+[*_clean(x);*]
+Out = {taint = $\emptyset$, violation = false}}
+\end{lstlisting}
+};
+
+\node[draw] (4) [below right = 8.5 cm and -5 cm =of 2] {
+\begin{lstlisting}[numbers=none]
+In = {taint = $\emptyset$, violation = false}
+[*y = x + 5;
+_sensitive(y);*]
+Out = {taint = $\emptyset$, violation = false}}
+\end{lstlisting}
+};
+
+\path (1) edge node {} (2);
+\path (2) edge [bend right=20pt] node {} (3);
+\path (2) edge [bend left=20pt] node {} (4);
+\path (3) edge [bend right=20pt] node {} (4);
+\end{tikzpicture}
+
+\caption{Kontrollflussgraph nach Abarbeitung des dritten Blocks der Taint Analyse}
+\end{figure}
+\par
+\begin{figure}[H]
+
+\centering
+\begin{tikzpicture}[%
+->,
+shorten >=2pt,
+>=stealth,
+node distance=1cm,
+noname/.style={%
+	ellipse,
+	minimum width=5em,
+	minimum height=3em,
+	draw
+}
+]
+
+\node [draw] (1) {
+\begin{lstlisting}[numbers=none]
+In = {taint = $\emptyset$, violation = false}
+[*int y = 3;
+int x = foo();
+_taint(x);*]
+Out = {taint = {x}, violation = false}}
+\end{lstlisting}
+};
+
+\node [draw] (2) [below =of 1] {
+\begin{lstlisting}[numbers=none]
+In = {taint = {x}, violation = false}
+[*if ( z > 0)*]
+Out = {taint = {x}, violation = false}}
+\end{lstlisting}
+};
+
+\node[draw] (3) [below left = 5.5 cm and 0 cm = of 2] {
+\begin{lstlisting}[numbers=none]
+In = {taint = {x}, violation = false}
+[*_clean(x);*]
+Out = {taint = $\emptyset$, violation = false}}
+\end{lstlisting}
+};
+
+\node[draw] (4) [below right = 8.5 cm and -5 cm =of 2] {
+\begin{lstlisting}[numbers=none]
+In = {taint = {x}, violation = false}
+[*y = x + 5;
+_sensitive(y);*]
+Out = {taint = {x, y}, violation = true}}
+\end{lstlisting}
+};
+
+\path (1) edge node {} (2);
+\path (2) edge [bend right=20pt] node {} (3);
+\path (2) edge [bend left=20pt] node {} (4);
+\path (3) edge [bend right=20pt] node {} (4);
+\end{tikzpicture}
+
+\caption{Kontrollflussgraph am Fixpunkt der Taint Analyse}
+\end{figure}
+
+
 \subsection{Live Variables}
 
 \subsection{Definite Assignment}
 
 \subsection{Available Expressions}
+Zu analysierender Code: \par
+
+\begin{lstlisting}[frame=single]
+int availableExpressions(int x, int y) {
+	int s,t;
+	if((x+1)*(x+1)==y){
+		s=x+y;
+	}
+	if(x*x+2*x+1!=y){
+		t=x+y;
+	}
+	return x+y;
+}
+\end{lstlisting}
+
+\par
+
+\begin{figure}[H]
+
+\centering
+\begin{tikzpicture}[%
+->,
+shorten >=2pt,
+>=stealth,
+node distance=0.5cm,
+noname/.style={%
+	ellipse,
+	minimum width=5em,
+	minimum height=3em,
+	draw
+}
+]
+
+\node [draw] (1) {
+\begin{lstlisting}[numbers=none]
+In$_1$ = {}
+[*int s,t;*]
+Out$_1$ = {}
+\end{lstlisting}
+};
+
+\node [draw] (2) [below=of 1] {
+\begin{lstlisting}[numbers=none]
+In$_2$ = {}
+[*if ((x+1) * (x+1) == y)*]
+Out$_2$ = {}
+\end{lstlisting}
+};
+
+\node[draw] (3) [below left=3.9cm and 0 cm=of 2]   {
+\begin{lstlisting}[numbers=none]
+In$_3$ = {}
+[*s = x+y;*]
+Out$_3$ = {}
+\end{lstlisting}
+};
+
+\node[draw] (4) [below=6.3cm and 0 cm=of 2]   {
+\begin{lstlisting}[numbers=none]
+In$_4$ = {}
+[*if (x*x + 2*x + 1 != y)*]
+Out$_4$ = {}
+\end{lstlisting}
+};
+
+\node[draw] (5) [below left=8.7cm and 0cm=of 4]   {
+\begin{lstlisting}[numbers=none]
+In$_5$ = {}
+[*t = x+y;*]
+Out$_5$ = {}
+\end{lstlisting}
+};
+
+\node[draw] (6) [below=11.1cm and 0 cm=of 2]   {
+\begin{lstlisting}[numbers=none]
+In$_6$ = {}
+[*return x+y;*]
+Out$_6$ = {}
+\end{lstlisting}
+};
+
+\path (1) edge node {} (2);
+\path (2) edge [bend right=15pt]node {} (3);
+\path (2) edge [bend left=25pt] node {} (4);
+\path (3) edge [bend right=15pt]node {} (4);
+\path (4) edge [bend right=15pt]node {} (5);
+\path (5) edge [bend right=15pt]node {} (6);
+\path (4) edge [bend left=25pt] node {} (6);
+\end{tikzpicture}
+
+\caption{Kontrollflussgraph im Initialzustand der Available Expression Analyse}
+\end{figure}
+
+\begin{figure}[H]
+
+\centering
+\begin{tikzpicture}[%
+->,
+shorten >=2pt,
+>=stealth,
+node distance=0.5cm,
+noname/.style={%
+	ellipse,
+	minimum width=5em,
+	minimum height=3em,
+	draw
+}
+]
+
+\node [draw] (1) {
+\begin{lstlisting}[numbers=none]
+In$_1$ = {$x,$ $y$}
+[*int s,t;*]
+Out$_1$ = In$_1$
+\end{lstlisting}
+};
+
+\node [draw] (2) [below=of 1] {
+\begin{lstlisting}[numbers=none]
+In$_2$ = Out$_1$
+[*if ((x+1) * (x+1) == y)*]
+Out$_2$ = In$_2$ $\cup$ {$x+1,$ $(x+1)*(x+1),$ $(x+1)*(x+1)==y$}
+\end{lstlisting}
+};
+
+\node[draw] (3) [below left=3.9cm and 0 cm=of 2]   {
+\begin{lstlisting}[numbers=none]
+In$_3$ = {}
+[*s = x+y;*]
+Out$_3$ = {}
+\end{lstlisting}
+};
+
+\node[draw] (4) [below=6.3cm and 0 cm=of 2]   {
+\begin{lstlisting}[numbers=none]
+In$_4$ = {}
+[*if (x*x + 2*x + 1 != y)*]
+Out$_4$ = {}
+\end{lstlisting}
+};
+
+\node[draw] (5) [below left=8.7cm and 0cm=of 4]   {
+\begin{lstlisting}[numbers=none]
+In$_5$ = {}
+[*t = x+y;*]
+Out$_5$ = {}
+\end{lstlisting}
+};
+
+\node[draw] (6) [below=11.1cm and 0 cm=of 2]   {
+\begin{lstlisting}[numbers=none]
+In$_6$ = {}
+[*return x+y;*]
+Out$_6$ = {}
+\end{lstlisting}
+};
+
+\path (1) edge node {} (2);
+\path (2) edge [bend right=15pt]node {} (3);
+\path (2) edge [bend left=25pt] node {} (4);
+\path (3) edge [bend right=15pt]node {} (4);
+\path (4) edge [bend right=15pt]node {} (5);
+\path (5) edge [bend right=15pt]node {} (6);
+\path (4) edge [bend left=25pt] node {} (6);
+\end{tikzpicture}
+
+\caption{Kontrollflussgraph nach 2 Schritten der Available Expression Analyse}
+\end{figure}
+
+\begin{figure}[H]
+
+\centering
+\begin{tikzpicture}[%
+->,
+shorten >=2pt,
+>=stealth,
+node distance=0.5cm,
+noname/.style={%
+	ellipse,
+	minimum width=5em,
+	minimum height=3em,
+	draw
+}
+]
+
+\node [draw] (1) {
+\begin{lstlisting}[numbers=none]
+In$_1$ = {$x,$ $y$}
+[*int s,t;*]
+Out$_1$ = In$_1$
+\end{lstlisting}
+};
+
+\node [draw] (2) [below=of 1] {
+\begin{lstlisting}[numbers=none]
+In$_2$ = Out$_1$
+[*if ((x+1) * (x+1) == y)*]
+Out$_2$ = In$_2$ $\cup$ {$x+1,$ $(x+1)*(x+1),$ $(x+1)*(x+1)==y$}
+\end{lstlisting}
+};
+
+\node[draw] (3) [below left=3.9cm and 0 cm=of 2]   {
+\begin{lstlisting}[numbers=none]
+In$_3$ = Out$_2$
+[*s = x+y;*]
+Out$_3$ = In$_3$ $\cup$ {$x+y,$ $s$}
+\end{lstlisting}
+};
+
+\node[draw] (4) [below=6.3cm and 0 cm=of 2]   {
+\begin{lstlisting}[numbers=none]
+In$_4$ = Out$_2$ $\cap$ Out$_3$ = Out$_2$
+[*if (x*x + 2*x + 1 != y)*]
+Out$_4$ = In$_4$ $\cup$ {$x*x,$ $2*x,$ $x*x+2*x,$ $x*x+2*x+1,$ $x*x+2*x+1!=y$}
+\end{lstlisting}
+};
+
+\node[draw] (5) [below left=8.7cm and 0cm=of 4]   {
+\begin{lstlisting}[numbers=none]
+In$_5$ = Out$_4$
+[*t = x+y;*]
+Out$_5$ = In$_5$ $\cup$ {$x+y,$ $t$}
+\end{lstlisting}
+};
+
+\node[draw] (6) [below=11.1cm and 0 cm=of 2]   {
+\begin{lstlisting}[numbers=none]
+In$_6$ = Out$_4$ $\cap$ Out$_5$ = Out$_4$
+[*return x+y;*]
+Out$_6$ = In$_6$ $\cup$ {$x+y$}
+\end{lstlisting}
+};
+
+\path (1) edge node {} (2);
+\path (2) edge [bend right=15pt]node {} (3);
+\path (2) edge [bend left=25pt] node {} (4);
+\path (3) edge [bend right=15pt]node {} (4);
+\path (4) edge [bend right=15pt]node {} (5);
+\path (5) edge [bend right=15pt]node {} (6);
+\path (4) edge [bend left=25pt] node {} (6);
+\end{tikzpicture}
+
+\caption{Kontrollflussgraph im Fixpunkt der Available Expression Analyse}
+\end{figure}

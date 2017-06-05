@@ -1,3 +1,4 @@
+%TODO Anführungszeichen richtig machen
 \section{Tests (Allgemein)}
 
 \test{Interaktion mit dem Programm unabhängig von aktueller Analyse}{tst:general}
@@ -31,11 +32,11 @@
 {Dieser Code steht für die Analyse zur Verfügung.}
 
 \teststep{[opt] Der Benutzer befindet sich nicht in einer aktuellen Analyse und hat noch keinen Java-Code für die Analyse zur Verfügung.}
-{Der Benutzer klickt auf "Open...".}
+{\glqq Open...\grqq\ wird geklickt.}
 {Ein File-Chooser öffnet sich und der Benutzer kann in seinem Dateisystem nach der zu verwendenden Java-Datei suchen.}
 
 \teststep{[opt] Der Benutzer befindet sich nicht in einer aktuellen Analyse und hat nicht gespeicherten Code in seinem Editor.}
-{Der Benutzer klickt auf "Open...".}
+{\glqq Open...\grqq\ wird geklickt.}
 {In einem Fenster wird darauf hingewiesen, dass die Änderungen bei Fortsetzung der Aktion verloren gehen und eine Möglichkeit, den Vorgang abzubrechen wird gegeben. Wenn kein Abbruch erfolgt, öffnet sich der File-Chooser.}
 
 \teststep{[opt]Der File-Chooser ist geöffnet.}
@@ -47,8 +48,8 @@
 {Der File-Chooser schließt sich und die Datei wird im Textfeld angezeigt.}
 
 \teststep{[opt]Ein Code-Stück ist im Textfeld dargestellt.}
-{Der Benutzer klickt auf "Save...".}
-{Ein Fenster öffnet sich, in dem der Nutzer den Namen der Datei und ihren Speicherort auswählen kann. Durch klicken des "Speicher"-Buttons wird die Datei gespeichert und das Fenster schließt sich wieder.}
+{\glqq Save... \grqq\ wird geklickt.}
+{Ein Fenster öffnet sich, in dem der Nutzer den Namen der Datei und ihren Speicherort auswählen kann. Durch klicken des \glqq Speicher\grqq -Buttons wird die Datei gespeichert und das Fenster schließt sich wieder.}
 
 
 \test{Auswahl der Analyseart}{tst:anaopt}
@@ -56,26 +57,26 @@
 
 \teststep{Der Benutzer befindet sich nicht in einer aktuellen Analyse.}
 {Der Benutzer wählt eine Programmanalyseart aus.}
-{Diese Analyseart wird bei dem nächsten Aufruf von "Build and Analyse" verwendet.}
+{Diese Analyseart wird bei dem nächsten Aufruf von \glqq Start Analysis \grqq\ verwendet.}
 
 \teststep{[opt] Der Benutzer befindet sich nicht in einer aktuellen Analyse.}
 {Der Nutzer wählt einen Worklist-Algorithmus aus.}
-{Diese Art von Worklist-Algorithmus wird beim nächsten Aufruf von "Build and Analyse" verwendet.}
+{Diese Art von Worklist-Algorithmus wird beim nächsten Aufruf von \glqq Start Analysis \grqq\ verwendet.}
 
 
 \test{Erstellen eines Kontrollflussgraphen}{tst:creategraph}
 \tests{}
 
 \teststep{[ggf. opt] Ein Code-Stück, welches nur gültige Java-Syntax aus dem von uns unterstützen Java-Subset enthält, ist im Textfeld dargestellt. Es besteht aus nur einer Methode.}
-{Der Benutzer klickt auf "Build and Analyse".}
+{\glqq Start Analysis \grqq\ wird geklickt}
 {Der Kontrollflussgraph wird im Graph-Panel dargestellt und die Animation kann jetzt mit \faStepForward\ oder \faPlay\ gestartet werden. Eine Änderung der Analyseart oder des Codes ist nur noch durch einen Abbruch mit \faStop\ möglich.}
 
 \teststep{Ein Code-Stück ist im Textfeld dargestellt, das entweder nicht gültige Java-Syntax enthält, oder solchen Java-Code, dessen übersetzter Zwischencode nicht identisch zum Zwischencode eines Parts unseres unterstützen Java-Subsets ist.}
-{Der Benutzer klickt auf "Build and Analyse".}
+{\glqq Start Analysis \grqq\ wird geklickt.}
 {Der Graph wird nicht erstellt, eine aussagekräftige Fehlermeldung wird ausgegeben, in der der Java-Error oder ein Hinweis auf das von uns unterstützte Java-Subset gegeben wird.}
 
 \teststep{[opt]Ein Code-Stück ist im Textfeld dargestellt, das gültige Java-Syntax aus dem von uns unterstützen Java-Subset enthält. Es besteht aus mehreren Methoden.}
-{Der Benutzer klickt auf "Build and Analyse".}
+{\glqq Start Analysis \grqq\ wird geklickt.}
 {Ein Fenster öffnet sich, in dem die Methode ausgewählt werden soll, für welche der Kontrollflussgraph erstellt und die Analyse durchgeführt werden soll.}
 
 
@@ -88,26 +89,22 @@
 
 %Wirklich?, habe das jetzt mal so festgelegt, müsste eventuell noch in die funktionalen Anforderungen mit aufgenommen werden
 \teststep{[opt]Ein Graph wurde erstellt.}
-{Der Benutzer verschiebt per "Drag and Drop" einen Knoten.}
+{Der Benutzer verschiebt per \glqq Drag and Drop \grqq einen Knoten.}
 {Der Knoten verschiebt sich an die entsprechende Stelle und alle Kanten werden entsprechend mit verschoben. Überlappen sich nun 2 Knoten befindet sich der Knoten, welcher zuletzt verschoben wurde, im Vordergrund.}
 
 \test{Bildexport}{tst:graph}
 \tests{}
 
-%TODO müssen wir nochmal genauer Besprechen wie wird das visualisieren wollen
 \teststep{[opt]Ein Graph wurde erstellt.}
-{Der Benutzer klickt auf "Graph exportieren".}
-{Ein Fenster öffnet sich, in dem der Benutzer wählen kann, ob er den aktuell angezeigten Zwischenschritt oder alle Zwischenschritte speichern möchte. Außerdem kann er hier zwischen der Auflösung "low", "standard" und "high wählen. Nach bestätigen dieser Eingabe öffnet sich ein File-Explorer, in dem der Name und der Speicherort der Datei festgelegt werden kann. Alle Bilder werden als .png gespeichert. Nach Bestätigung dieser Eingabe mit "Speichern" wurde das Bild dort abgelegt.}
+{\glqq Graph exportieren \grqq\. wird geklickt.}
+{Ein Fenster öffnet sich, in dem der Benutzer wählen kann, ob er den aktuell angezeigten Zwischenschritt oder alle Zwischenschritte speichern möchte und gegebenenfalls, ob diese zeilenweise oder blockweise gespeichert werden. Außerdem kann er hier zwischen der Auflösung \glqq low \grqq\, \glqq standard \grqq\ und  \glqq  high \grqq\ wählen. Nach bestätigen dieser Eingabe öffnet sich ein File-Explorer, in dem der Name und der Speicherort der Datei festgelegt werden kann. Alle Bilder werden als .png gespeichert. Nach Bestätigung dieser Eingabe mit  \glqq Speichern \grqq\ wurde das Bild dort abgelegt.}
 
-\test{Funktion der Programmanalysen}{tst:algowork}
-\tests{}
-%TODO hier soll die "Korrektheit" anhand kleiner Beispiele für jeden Algorithmus gezeigt werden
 
 \test{Animationsmöglichkeiten}{tst:aniposs}
 \tests{}
 
 
-\teststep{Der "Build and Analyse" Button wurde geklickt.}
+\teststep{Der \glqq Start Analysis \grqq\ Button wurde geklickt.}
 {Es wird \faStop\ geklickt.}
 {Der Nutzer wird gefragt ob er seine Analyse wirklich abbrechen möchte und wird darüber informiert, dass dieser Schritt den bisherigen Graph löscht. Bei Bestätigung dieser Meldung wird der Graph gelöscht und das Graph-Panel und Animations-Button ausgegraut. Eine Änderung des Codes und der Analyseart sind jetzt wieder möglich.}
 
@@ -121,13 +118,13 @@
 
 \teststep{[opt]Es wurde in der Zeitauswahl ein von 0 verschiedenes Delay ausgewählt, es wurden keine Breakpoints gesetzt.}
 {Es wird der Button \faPlay\ geklickt.}
-{Die einzelnen Schritte der Analyse werden mit einem zeitlichen Abstand, der dem ausgewählten Delay entspricht, dargestellt. Die Farben der Blöcke ändern sich je nach Zustand zwischen den verschiedenen Schritten. Zusätzlich ändert sich bei jedem Schritt die linke Leiste, welche "in" und "out" des aktuellen Schritts, sowie den aktuellen Schritt selbst anzeigt.}
+{Die einzelnen Schritte der Analyse werden mit einem zeitlichen Abstand, der dem ausgewählten Delay entspricht, dargestellt. Die Farben der Blöcke ändern sich je nach Zustand zwischen den verschiedenen Schritten. Zusätzlich ändert sich bei jedem Schritt die linke Leiste, welche \glqq in \grqq\ und \glqq out \grqq\ des aktuellen Schritts, sowie den aktuellen Schritt selbst anzeigt.}
 
 \teststep{[opt]Es wurden Breakpoints innerhalb des Graphen gesetzt.}
 {Es wird der Button \faPlay\ geklickt.}
 {Die Analyse läuft schrittweise mit dem jeweiligen Delay ab, wobei garantiert wird, dass bei jedem Erreichen des Breakpoints die Analyse automatisch pausiert wird.}
 
-\teststep{[opt]Die Analyse wurde gestartet und der "jump to current" Haken ist gesetzt.}
+\teststep{[opt]Die Analyse wurde gestartet und der \glqq jump to action \grqq\ Haken ist gesetzt.}
 {Es wird der Button \faPlay\ geklickt.}
 {Bei jedem neuen Analyseschritt, der angezeigt wird, wird der Graph so zentriert, dass der aktuell analysierte Knoten in der Mitte liegt. Passt der Graph komplett in das Graph-Panel wird nichts verändert.}
 
@@ -139,19 +136,19 @@
 {Der \faStop\ Button wird gedrückt.}
 {Die Analyse pausiert im aktuellen Zustand.}
 
-\teststep{Die Analyse wurde durchgeführt und befindet sich im Zustand "Pause".}
+\teststep{Die Analyse wurde durchgeführt und befindet sich im Zustand Pause.}
 {Der Button \faForward\ wird geklickt.}
-{Der Graph-Panel zeigt den Zustand der Analyse zu Beginn der nächsten Zeile an. Die Farben der Blöcke ändern sich, sowie auch das "in" und "out" der rechten Informationsleiste.}
+{Der Graph-Panel zeigt den Zustand der Analyse zu Beginn der nächsten Zeile an. Die Farben der Blöcke ändern sich, sowie auch das \glqq in \grqq\ und \glqq out \grqq\ der rechten Informationsleiste.}
 
-\teststep{[opt]Die Analyse wurde durchgeführt und befindet sich im Zustand "Pause".}
+\teststep{[opt]Die Analyse wurde durchgeführt und befindet sich im Zustand Pause.}
 {Der Button \faFastForward\ wird geklickt.}
-{Der Graph-Panel zeigt den Zustand der Analyse zu Beginn des nächsten Blocks an. Die Farben der Blöcke ändern sich, sowie auch das "in" und "out" der rechten Informationsleiste.}
+{Der Graph-Panel zeigt den Zustand der Analyse zu Beginn des nächsten Blocks an. Die Farben der Blöcke ändern sich, sowie auch das \glqq in \grqq\ und \glqq out \grqq\ der rechten Informationsleiste.}
 
-\teststep{Die Analyse wurde durchgeführt und befindet sich im Zustand "Pause".}
+\teststep{Die Analyse wurde durchgeführt und befindet sich im Zustand Pause.}
 {Es wird der Button \faBackward\ geklickt.}
 {Es wird der Zustand der Analyse in der vorhergehende Zeile angezeigt. Die Farben der Blöcke und die Informationen in der rechten Leiste zeigen wieder diesen Zustand an.}
 
-\teststep{[opt]Die Analyse wurde durchgeführt und befindet sich im Zustand "Pause".}
+\teststep{[opt]Die Analyse wurde durchgeführt und befindet sich im Zustand Pause.}
 {Der Button \faFastBackward\ wird geklickt.}
 {Es wird der Zustand der Analyse zu Beginn des aktuellen Blocks angezeigt oder der Beginn des letzten Blocks, falls derzeit die erste Zeile eines Blocks dargestellt wird. Gibt es keinen vorherigen Block wird der Startzustand angezeigt.}
 
@@ -164,8 +161,8 @@
 
 \teststep{Die Analyse wurde an einer beliebigen Stelle angehalten.}
 {Der Benutzer klickt im Graphen auf einen bestimmten Block.}
-{Der "in" und "out" State zum aktuellen Analysezeitpunkt des gewählten Blocks wird in der Informationsleiste rechts eingeblendet.}
+{Der \glqq in \grqq\ und \glqq out \grqq\ State zum aktuellen Analysezeitpunkt des gewählten Blocks wird in der Informationsleiste rechts eingeblendet.}
 
 \teststep{Die Analyse wurde an einer beliebigen Stelle angehalten.}
 {Der Benutzer klickt im Graphen auf eine bestimmte Zeile.}
-{Der "in" und "out" State zum aktuellen Analysezeitpunkt der gewählten Zeile und des zugehörigen Blocks wird in der Informationsleiste rechts eingeblendet.}
+{Der \glqq in \grqq\ und \glqq out \grqq\ State zum aktuellen Analysezeitpunkt der gewählten Zeile und des zugehörigen Blocks wird in der Informationsleiste rechts eingeblendet.}

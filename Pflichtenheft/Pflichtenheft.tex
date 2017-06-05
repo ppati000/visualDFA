@@ -21,6 +21,8 @@
 \usepackage{hyperref}
 \usepackage{csquotes}
 \usepackage{glossaries}
+%%Mathpackage
+\usepackage{amsmath}
 
 \usepackage[nameinlink]{cleveref}
 
@@ -35,11 +37,12 @@
 \usepackage{float}
 
 % geändert, damit die Verlinkungen in den Testfällen nicht außerhalb des Seitenrands stehen
-\usepackage[bottom = 4.5 cm]{geometry}
+\usepackage[bottom = 3 cm, top = 3 cm]{geometry}
 
 
 \usepackage{listings}    
 \lstset{
+	moredelim=[is][\bfseries]{[*}{*]},
 	mathescape,
 	numbers=left, 
 	numberstyle=\tiny, 

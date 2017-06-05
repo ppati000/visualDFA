@@ -29,4 +29,5 @@ hs_err_pid*
 *.log
 *.out
 Pflichtenheft.pdf
-
+Pflichtenheft.dvi
+Pflichtenheft.synctex.gz

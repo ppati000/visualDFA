@@ -2,4 +2,129 @@
 
 \section{Funktionale Anforderungen}
 
-... hier die funktionalen Anforderungen ...
+\functionality{Zeilennummerierung}{fnc:LineNumbers}
+Im Textfeld für die Eingabe des Codes gibt es eine Zeilennummerierung.
+
+\functionality{Code Eingabe mit Editor}{fnc:CodeInputIntern}
+Es gibt ein Textfeld in welches der Benutzer Code eingeben kann, welcher dann zu einem Kontrollflussgraphen (CFG) verarbeitet werden kann.
+
+\functionality{Datei Eingabe}{fnc:CodeInputExt}
+Benutzer kann einzulesenden Code aus einer .java Datei laden.
+
+\functionality{Java-Subset}{fnc:minimalSubset}
+Das Programm unterstützt ein minimales Subset von Java.
+Unterstützt werden:
+\begin{enumerate}[label=(\alph*)]
+\item Die Arithmetischen Operationen +, -, *, /,
+\item die Kontrollflussstrukturen if, else, while,
+\item die Vergleichsoperatoren <, >, ==,
+\item die Datentypen Integer und Byte,
+\item die Zuweisung =.
+\end{enumerate}
+
+\functionality{Erweitertes Subset 1}{fnc:extendedSubset1}
+Das Programm unterstützt zusätzlich zum minimalen Subset noch:
+Die Operatoren \%, <<, >>, |, \&.
+
+\functionality{Erweitertes Subset 2}{fnc:extendedSubset2}
+Das Programm unterstützt zusätzlich zum minimalen Subset noch:
+For-Schleifen und else-if.
+
+\functionality{Erweitertes Subset 3}{fnc:extendedSubset3}
+Das Programm unterstützt zusätzlich zum minimalen Subset noch:
+Die Zuweisungen +=, -=, *=, /=, \%=.
+
+\functionality{Syntaxfehler}{fnc:syntaxError}
+Enthält der vom Benutzer eingegebene Code Syntaxfehler, so erhält der Benutzer eine Fehlermeldung, welche bezüglich des Informationsgehaltes der Fehlermeldung des Compilers entspricht.
+
+\functionality{Nichtunterstützte Operationen}{fnc:OpsError}
+Der Benutzer bekommt eine Fehlermeldung, wenn in der zu analysierenden Funktion Operationen und Kontrollflusskonstrukten vorhanden sind welche nicht dem definierten Subset von Java entsprechen. Die Fehlermeldung weißt auf das unterstütze Java-Subset hin.
+
+\functionality{Anzeigen des Kontrollflussgraphen (CFG)}{fnc:showCFGf}
+Die GUI hat kann den aus dem Java-Code erstellten Graphen in einem Zwischencode anzeigen. Dieser Graph ist in einem Panel dargestellt.
+
+\functionality{Interaktion mit dem Kontrollflussgraphen 1}{fnc:interactCFG1f}
+Der Benutzer kann mit der GUI des CFG interagieren, um Breakpoints zu setzen.
+
+\functionality{Interaktion mit dem Kontrollflussgraphen 2}{fnc:interactCFG2f}
+Der Benutzer kann mit der GUI des CFG interagieren, um zu scrollen und zu zoomen.
+
+\functionality{Interaktion mit dem Kontrollflussgraphen 3}{fnc:interactCFG3f}
+Der Benutzer kann mit der GUI des CFG interagieren, um Blöcke, beziehungsweise Zeilen auszuwählen.
+
+\functionality{Auswahl der Analysearten}{fnc:pickAnalysis}
+Der Benutzer kann zwischen allen implementierten Analysearten auswählen und sie auf den Graph anwenden.
+
+\functionality{Blockweise durchlaufen der Analyse}{fnc:blockAnalysis}
+Der Benutzer kann die Analyse blockweise durchlaufen. Dafür stehen ihm Buttons zur Verfügung.\par
+\faFastForward\ : Springt einen Block weiter.\par
+\faFastBackward\ : Springt einen Block zurück.
+
+\functionality{Zeilenweise durchlaufen der Analyse}{fnc:lineAnalysis}
+Der Benutzer kann die Analyse zeilenweise durchlaufen. Dafür stehen ihm Buttons zur Verfügung.\par
+\faForward\ : springt eine Zeile weiter.\par
+\faBackward\ : springt eine Zeile zurück.
+
+\functionality{Abbrechen der Analyse}{fnc:stopAnalysisf}
+Der Benutzer kann eine laufende Analyse abbrechen, um neuen Code analysieren zu lassen.
+
+\functionality{Automatisches durchlaufen der Analyse}{fnc:automaticAnalysis}
+Der Benutzer kann den \faPlay\ Button betätigen, um die Analyse automatisch bis zum Fixpunkt Durchzulaufen.
+
+\functionality{Automatisches durchlaufen bis Breakpoint}{fnc:breakAnalysisf}
+Die Analyse kann den \faPlay\ Button betätigen, um automatisch bis zu einem gesetzten Breakpoint laufen.
+
+\functionality{Worklistalgorithmen}{fnc:worklistNaive}
+Das Programm kann zur Fixpunktanalyse den naiven Worklistalgorithmus anwenden.
+
+\functionality{Erweiterte Worklistalgorithmen}{fnc:moreWorklist}
+Der Nutzer kann zwischen verschiedenen Worklistalgorithmen wählen. Diese
+entscheiden, in welcher Reihenfolge die Knoten in der Datenflussanalyse behandelt
+werden. Es stehen folgende Algorithmen zur Auswahl:
+\begin{enumerate}[label=(\alph*)]
+\item \textbf{Naiv} \par
+Von oben nach unten, von links nach rechts werden all Knoten in der Reihenfolge in
+die Worklist geschrieben, in welcher sie „entdeckt“ werden und dann in dieser
+Reihenfolge abgearbeitet.
+\item \textbf{Random} \par
+Die Blöcke werden wie naiven Worklistalgorithmus auf die Worklist geschrieben. Am Ende der Abarbeitung jedes Knotens in der Analyse wird ein
+zufälliger neuer dieser Blöcke gewählt und behandelt.
+\item \textbf{Efficient} \par
+Die Reihenfolge der Abarbeitung der Blöcke wird optimiert, indem beispielsweise
+zuerst innere Schleifen durchlaufen werden, bis ein lokaler Fixpunkt gefunden wurde, bevor die äußere Schleife weiter analysiert wird.
+\end{enumerate}
+
+\functionality{Code speichern}{fnc:saveCode}
+Der Benutzer kann den Inhalt des Textfeldes zur Codeeingabe in einer .java Datei abspeichern.
+
+\functionality{Hotkeys}{fnc:Hotkeys}
+Dem Benutzer stehen Hotkeys zur Verfügung mit Hilfe derer er die Datenflussanalyse steuern kann.
+
+\functionality{Optisches Hervorheben der Blöcke}{fnc:Highlights}
+Je nach Status werden die Blöcke im Kontrollflussgraphen farbig hervorgehoben.
+\begin{enumerate}[label=(\alph*)]
+\item Es gibt die Zustände:
+\item Noch nicht besucht.
+\item Auf der Worklist.
+\item Gerade ausgewählt.
+\item Bereits besucht und nicht mehr auf der Worklist.
+\end{enumerate}
+
+\functionality{Eingangs- und Ausgangszustand von Blöcken}{fnc:inOutBlockf}
+Dem Benutzer werden Eingangs- und Ausgangszustand des ausgewählten Blocks in einem GUI-Element angezeigt.
+
+\functionality{Eingans- und Ausgangszustand von Zeilen}{fnc:inOutLinef}
+Dem Benutzer werden Eingangs- und Ausgangszustand der ausgewählten Zeile in einem GUI-Element angezeigt.
+
+\functionality{Graphen exportieren}{fnc:exportAsPicf}
+Der Benutzer kann von allen Schritten der Analyse ein Bild des Graphen abspeichern.
+
+\functionality{Ungespeicherte Änderungen}{fnc:unsavedChangesf}
+Gibt es ungespeicherte Änderungen im Editor, wenn der Benutzer das Programm schließen möchte, so wird er gefragt, ob er diese speichern möchte.
+Falls der Benutzer eine neue .java Datei öffnen möchte und ungespeicherte Änderungen vorliegen, so wird der Benutzer gewarnt, dass diese Änderungen verfallen.
+
+\functionality{Jump to Action}{fnc:jumpToActionf}
+Der Benutzer kann mit Hilfe eines Buttons das automatische Springen zum aktiven Block, beziehungsweise zur aktiven Zeile aktivieren. Dieses bleibt so lange aktiv bis er den Button erneut betätigt.
+
+\functionality{Manual Page}{fnc:ManPagef}
+Dem Programm liegt eine Manual Page bei, in welcher der Benutzer über die wichtigsten Funktionen des Programms informiert wird.

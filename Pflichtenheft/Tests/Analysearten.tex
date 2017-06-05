@@ -1,0 +1,36 @@
+\section{Tests (Analysearten)}
+
+\subsection{Constant Folding}
+
+Zu analysierender Code: \par
+
+\begin{lstlisting}[frame=single]
+int constFolding(int n) {
+	int x = 6;
+	int y = 2*n;
+	while (n > 0) {
+		y = y - x;
+		x = 3 * (x % 4);
+		n = n - 1;
+	}
+	return y;
+}
+\end{lstlisting}
+
+Zustand des CFG vor der Analyse (In und Out des ersten Blocks): \par
+
+Zustand des CFG nach dem zweiten Block (In und Out des entsprechenden Blocks): \par
+
+Zustand nach Ende der Analyse: \par
+
+\subsection{Const Bits}
+
+\subsection{Reaching Definitions}
+
+\subsection{Taint Analysis}
+
+\subsection{Live Variables}
+
+\subsection{Definite Assignment}
+
+\subsection{Available Expressions}

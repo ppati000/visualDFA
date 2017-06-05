@@ -410,6 +410,192 @@ Out = {taint = {x, y}, violation = true}}
 \subsection{Live Variables}
 
 \subsection{Definite Assignment}
+Zu analysierender Code: \par
+
+\begin{lstlisting}[frame=single]
+void definiteAssignmentAnalysis(int r) {
+	int x, y;
+	if (r > 0){
+		y = 5;
+	}
+	x = r + 1;
+}
+\end{lstlisting}
+
+d.a. $\hat{=}$ definitely assigned \\
+d.u. $\hat{=}$ definitely unassigned \\
+unk. $\hat{=}$ unknown
+
+\begin{figure}[H]
+
+\centering
+\begin{tikzpicture}[%
+->,
+shorten >=2pt,
+>=stealth,
+node distance=0.5cm,
+noname/.style={%
+	ellipse,
+	minimum width=5em,
+	minimum height=3em,
+	draw
+}
+]
+
+\node [draw] (1) {
+\begin{lstlisting}[numbers=none]
+In$_1$ = {r = unk., x = unk., y = unk.}
+[*int x,y;*]
+Out$_1$ = [{r = unk. x = unk., y = unk.}
+\end{lstlisting}
+};
+
+\node [draw] (2) [below=of 1] {
+\begin{lstlisting}[numbers=none]
+In$_2$ = = {r = unk., x = unk., y = unk.}
+[*if (r > 0)*]
+Out$_2$ = = {r = unk., x = unk., y = unk.}
+\end{lstlisting}
+};
+
+\node[draw] (3) [below left=3.7cm and -1cm=of 2]   {
+\begin{lstlisting}[numbers=none]
+In$_3$ = = {r = unk., x = unk., y = unk.}
+[*y = 5;*]
+Out$_3$ = = {r = unk., x = unk., y = unk.}
+\end{lstlisting}
+};
+
+\node[draw] (4) [below=6cm and 10cm=of 2]   {
+\begin{lstlisting}[numbers=none]
+In$_4$ = = {r = unk., x = unk., y = unk.}
+[*x = r + 1;*]
+Out$_4$ = = {r = unk., x = unk., y = unk.}
+\end{lstlisting}
+};
+
+\path (1) edge node {} (2);
+\path (2) edge node {} (3);
+\path (2) edge [bend left=60pt] node {} (4);
+\path (3) edge node {} (4);
+\end{tikzpicture}
+
+\caption{Kontrollflussgraph im Initialzustand der Definite Assignment Analyse}
+\end{figure}
+
+\begin{figure}[H]
+
+\centering
+\begin{tikzpicture}[%
+->,
+shorten >=2pt,
+>=stealth,
+node distance=0.5cm,
+noname/.style={%
+	ellipse,
+	minimum width=5em,
+	minimum height=3em,
+	draw
+}
+]
+
+\node [draw] (1) {
+\begin{lstlisting}[numbers=none]
+In$_1$ = {r = d.a., x = d.u., y = d.u.}
+[*int x,y;*]
+Out$_1$ = [{r = d.a. x = d.u., y = d.u.}
+\end{lstlisting}
+};
+
+\node [draw] (2) [below=of 1] {
+\begin{lstlisting}[numbers=none]
+In$_2$ = = {r = unk., x = unk., y = unk.}
+[*if (r > 0)*]
+Out$_2$ = = {r = unk., x = unk., y = unk.}
+\end{lstlisting}
+};
+
+\node[draw] (3) [below left=3.7cm and -1cm=of 2]   {
+\begin{lstlisting}[numbers=none]
+In$_3$ = = {r = unk., x = unk., y = unk.}
+[*y = 5;*]
+Out$_3$ = = {r = unk., x = unk., y = unk.}
+\end{lstlisting}
+};
+
+\node[draw] (4) [below=6cm and 10cm=of 2]   {
+\begin{lstlisting}[numbers=none]
+In$_4$ = = {r = unk., x = unk., y = unk.}
+[*x = r + 1;*]
+Out$_4$ = = {r = unk., x = unk., y = unk.}
+\end{lstlisting}
+};
+
+\path (1) edge node {} (2);
+\path (2) edge node {} (3);
+\path (2) edge [bend left=60pt] node {} (4);
+\path (3) edge node {} (4);
+\end{tikzpicture}
+
+\caption{Kontrollflussgraph nach einem Schritt der Definite Assignment Analyse}
+\end{figure}
+
+\begin{figure}[H]
+
+\centering
+\begin{tikzpicture}[%
+->,
+shorten >=2pt,
+>=stealth,
+node distance=0.5cm,
+noname/.style={%
+	ellipse,
+	minimum width=5em,
+	minimum height=3em,
+	draw
+}
+]
+
+\node [draw] (1) {
+\begin{lstlisting}[numbers=none]
+In$_1$ = {r = d.a., x = d.u., y = d.u.}
+[*int x,y;*]
+Out$_1$ = [{r = d.a. x = d.u., y = d.u.}
+\end{lstlisting}
+};
+
+\node [draw] (2) [below=of 1] {
+\begin{lstlisting}[numbers=none]
+In$_2$ = = {r = d.a., x = d.u., y = d.u.}
+[*if (r > 0)*]
+Out$_2$ = = {r = d.a., x = d.u., y = d.u.}
+\end{lstlisting}
+};
+
+\node[draw] (3) [below left=3.7cm and -1cm=of 2]   {
+\begin{lstlisting}[numbers=none]
+In$_3$ = = {r = d.a., x = d.u., y = d.u.}
+[*y = 5;*]
+Out$_3$ = = {r = d.a., x = d.a., y = d.u.}
+\end{lstlisting}
+};
+
+\node[draw] (4) [below=6cm and 10cm=of 2]   {
+\begin{lstlisting}[numbers=none]
+In$_4$ = = {r = d.a., x = d.u., y = unk.}
+[*x = r + 1;*]
+Out$_4$ = = {r = d.a., x = d.a., y = unk.}
+\end{lstlisting}
+};
+
+\path (1) edge node {} (2);
+\path (2) edge node {} (3);
+\path (2) edge [bend left=60pt] node {} (4);
+\path (3) edge node {} (4);
+\end{tikzpicture}
+
+\caption{Kontrollflussgraph im Fixpunkt der Definite Assignment Analyse}
+\end{figure}
 
 \subsection{Available Expressions}
 Zu analysierender Code: \par

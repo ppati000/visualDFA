@@ -159,3 +159,23 @@ Der Benutzer kann ablesen wie weit die Datenflussanalyse fortgeschritten ist.
 
 \criteriumOptional{Springen zu beliebigem Analysepunkt - Priorität 2}{crt:SliderO}
 Der Benutzer kann an einen beliebigen Punkt der Datenflussanalyse springen.
+
+\subsection{Abgrenzung}
+
+\criteriumNot{Kein Tutorial}{crt:noTutorial}
+Das Programm erklärt nicht, wie Datenflussanalysen und Kontrollflussgraphen funktionieren.
+
+\criteriumNot{Konsistenz zwischen Graph und Eingabe}{crt:consistency}
+Während die Analyse läuft, sind keine Änderungen an Code oder Analyseart möglich.
+
+\criteriumNot{Keine Optimierung}{crt:noOptimize}
+Das Programm ist zur Veranschaulichung von Datenflussanalysen gedacht. Es kann keine Programme optimieren.
+
+\criteriumNot{Funktionalität}{crt:functionality}
+Werden folgende Grenzen überschritten, so ist die Funktionalität des Programms nicht mehr garantiert:
+\begin{enumerate}[label=(\alph*)]
+\item Der Kontrollflussgraph hat maximal 10 Knoten
+\item Jeder Knoten beinhaltet maximal 10 Zeilen Zwischencode
+\item Die Datenflussanalyse benötigt maximal 5000 (Zeilen-)Schritte
+\item Der eingegebene Java-Code besteht aus maximal 5000 Zeichen
+\end{enumerate}

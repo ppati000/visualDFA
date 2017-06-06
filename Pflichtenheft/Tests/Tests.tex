@@ -1,8 +1,10 @@
-%TODO Anführungszeichen richtig machen
 \section{Tests (Allgemein)}
 
 \test{Interaktion mit dem Programm unabhängig von aktueller Analyse}{tst:general}
-\tests{}
+\tests{fnc:LineNumbers}
+\tests{fnc:unsavedChangesf}
+\tests{fnc:ManPagef}
+
 
 \teststep{Der Benutzer hat das Programm noch nicht geöffnet.}
 {Der Benutzer klickt auf die entsprechende Ausführungsdatei.}
@@ -13,23 +15,35 @@
 {Der Inhalt des Fensters wird dynamisch angepasst.}
 
 \teststep{[opt] Der Benutzer befindet sich an einer beliebigen Stelle des Arbeitsflusses.}
-{Der Benutzer ruft über den Hilfebutton die Hilfefunktion auf.}
+{Der Benutzer ruft die Hilfefunktion auf.}
 {Die Manual Page öffnet sich, welche die wichtigsten Funktionen unseres Programms kurz zusammenfasst.}
 
 \teststep{[opt]Der Benutzer befindet sich an einer beliebigen Stelle des Arbeitsflusses.}
-{Er klickt entweder rechts oder links auf einen Pfeil/Button, der die Leiste verkleinern soll.}
-{Die entsprechend ausgewählte Leiste wir ausgeblendet und das Graph-Panel wird um den frei gewordenen Platz erweitert.}
+{Er klickt rechts auf einen Pfeil/Button, der die Leiste verkleinern soll.}
+{Die linke Leiste wir ausgeblendet und das Graph-Panel wird um den frei gewordenen Platz erweitert.}
 
 \teststep{[opt]Der Benutzer befindet sich an einer beliebigen Stelle des Arbeitsflusses. Im Editor steht Java-Code der bisher nicht gespeichert wurde.}
 {Der Benutzer klickt auf einen Button, der zum schließen des Programms führt.}
 {In einem Fenster wird darauf hingewiesen, dass die Änderungen, bei Fortsetzung der Aktion, verloren gehen und eine Möglichkeit, den Vorgang abzubrechen wird gegeben.}
 
-\test{Importieren, schreiben und speichern von Code für die Analyse}{test:code}
-\tests{}
+
+
+\test{Schreiben und speichern von Code für die Analyse}{test:writeSave }
+\tests{fnc:CodeInputIntern}
+\tests{fnc:saveCode}
 
 \teststep{Der Benutzer befindet sich nicht in einer aktuellen Analyse und hat noch keinen Java-Code für die Analyse zur Verfügung.}
 {Der Benutzer tippt den zu analysierenden Code in ein Textfeld.}
 {Dieser Code steht für die Analyse zur Verfügung.}
+
+\teststep{[opt]Ein Code-Stück ist im Textfeld dargestellt.}
+{\glqq Save... \grqq\ wird geklickt.}
+{Ein Fenster öffnet sich, in dem der Nutzer den Namen der Datei und ihren Speicherort auswählen kann. Durch klicken des \glqq Speicher\grqq -Buttons wird die Datei gespeichert und das Fenster schließt sich wieder.}
+
+
+\test{Importieren von Code für die Analyse}{test:import}
+\tests{fnc:CodeInputExt}
+
 
 \teststep{[opt] Der Benutzer befindet sich nicht in einer aktuellen Analyse und hat noch keinen Java-Code für die Analyse zur Verfügung.}
 {\glqq Open...\grqq\ wird geklickt.}
@@ -47,13 +61,11 @@
 {Eine korrekte Java-Datei wird zum importieren ausgewählt.}
 {Der File-Chooser schließt sich und die Datei wird im Textfeld angezeigt.}
 
-\teststep{[opt]Ein Code-Stück ist im Textfeld dargestellt.}
-{\glqq Save... \grqq\ wird geklickt.}
-{Ein Fenster öffnet sich, in dem der Nutzer den Namen der Datei und ihren Speicherort auswählen kann. Durch klicken des \glqq Speicher\grqq -Buttons wird die Datei gespeichert und das Fenster schließt sich wieder.}
-
 
 \test{Auswahl der Analyseart}{tst:anaopt}
-\tests{}
+\tests{fnc:pickAnalysis}
+\tests{fnc:worklistNaive}
+\tests{fnc:moreWorklist}
 
 \teststep{Der Benutzer befindet sich nicht in einer aktuellen Analyse.}
 {Der Benutzer wählt eine Programmanalyseart aus.}
@@ -65,11 +77,19 @@
 
 
 \test{Erstellen eines Kontrollflussgraphen}{tst:creategraph}
-\tests{}
+\tests{fnc:syntaxError}
+\tests{fnc:OpsError}
+\tests{fnc:showCFGf}
+\tests{fnc:Highlights}
+\tests{fnc:moreFncf}
+\tests{fnc:minimalSubset}
+\tests{fnc:extendedSubset1}
+\tests{fnc:extendedSubset2}
+\tests{fnc:extendedSubset3}
 
 \teststep{[ggf. opt] Ein Code-Stück, welches nur gültige Java-Syntax aus dem von uns unterstützen Java-Subset enthält, ist im Textfeld dargestellt. Es besteht aus nur einer Methode.}
 {\glqq Start Analysis \grqq\ wird geklickt}
-{Der Kontrollflussgraph wird im Graph-Panel dargestellt und die Animation kann jetzt mit \faStepForward\ oder \faPlay\ gestartet werden. Eine Änderung der Analyseart oder des Codes ist nur noch durch einen Abbruch mit \faStop\ möglich.}
+{Der Kontrollflussgraph wird im Graph-Panel dargestellt und die Animation kann jetzt mit \faStepForward\ oder \faPlay\ gestartet werden. Eine Änderung der Analyseart oder des Codes ist nur noch durch einen Abbruch mit \faStop\  möglich.}
 
 \teststep{Ein Code-Stück ist im Textfeld dargestellt, das entweder nicht gültige Java-Syntax enthält, oder solchen Java-Code, dessen übersetzter Zwischencode nicht identisch zum Zwischencode eines Parts unseres unterstützen Java-Subsets ist.}
 {\glqq Start Analysis \grqq\ wird geklickt.}
@@ -81,27 +101,27 @@
 
 
 \test{Interaktion mit dem Kontrollflussgraphen}{tst:intcfg}
-\tests{}
+\tests{fnc:interactCFG2f}
+\tests{fnc:interactCFG3f}
 
 \teststep{[opt]Ein Kontrollflussgraph wurde erstellt.}
 {Der Benutzer scrollt mit dem Mausrad nach oben bzw. unten, während sich der Mauszeiger im Graph-Panel befindet.}
 {Der gesamte Graph wird entsprechend skaliert. Falls der Graph nicht vollständig im Graph-Panel angezeigt werden kann erscheinen Scroll-Leisten.}
 
-%Wirklich?, habe das jetzt mal so festgelegt, müsste eventuell noch in die funktionalen Anforderungen mit aufgenommen werden
 \teststep{[opt]Ein Graph wurde erstellt.}
 {Der Benutzer verschiebt per \glqq Drag and Drop \grqq einen Knoten.}
 {Der Knoten verschiebt sich an die entsprechende Stelle und alle Kanten werden entsprechend mit verschoben. Überlappen sich nun 2 Knoten befindet sich der Knoten, welcher zuletzt verschoben wurde, im Vordergrund.}
 
 \test{Bildexport}{tst:graph}
-\tests{}
+\tests{fnc:exportAsPicf}
 
 \teststep{[opt]Ein Graph wurde erstellt.}
 {\glqq Graph exportieren \grqq\. wird geklickt.}
-{Ein Fenster öffnet sich, in dem der Benutzer wählen kann, ob er den aktuell angezeigten Zwischenschritt oder alle Zwischenschritte speichern möchte und gegebenenfalls, ob diese zeilenweise oder blockweise gespeichert werden. Außerdem kann er hier zwischen der Auflösung \glqq low \grqq\, \glqq standard \grqq\ und  \glqq  high \grqq\ wählen. Nach bestätigen dieser Eingabe öffnet sich ein File-Explorer, in dem der Name und der Speicherort der Datei festgelegt werden kann. Alle Bilder werden als .png gespeichert. Nach Bestätigung dieser Eingabe mit  \glqq Speichern \grqq\ wurde das Bild dort abgelegt.}
+{Ein Fenster öffnet sich, in dem der Benutzer wählen kann, ob er den aktuell angezeigten Zwischenschritt oder alle Zwischenschritte speichern möchte und gegebenenfalls, ob diese zeilenweise oder blockweise gespeichert werden. Außerdem kann er hier zwischen der Auflösung \glqq low \grqq\, \glqq standard \grqq\ und  \glqq  high \grqq\ wählen. Nach bestätigen dieser Eingabe öffnet sich ein File-Explorer, in dem der Name und der Speicherort der Datei festgelegt werden kann. Alle Bilder werden als PNG-Datei gespeichert. Nach Bestätigung dieser Eingabe mit  \glqq Speichern \grqq\ wurde das Bild dort abgelegt.}
 
 
-\test{Animationsmöglichkeiten}{tst:aniposs}
-\tests{}
+\test{Abbrechen der Analyse}{tst:aniposs}
+\tests{fnc:stopAnalysisf}
 
 
 \teststep{Der \glqq Start Analysis \grqq\ Button wurde geklickt.}
@@ -110,7 +130,11 @@
 
 
 \test{Animation in Zusammenhang mit der Delay-Auswahl}{tst:delay}
-\tests{}
+\tests{fnc:interactCFG1f}
+\tests{fnc:automaticAnalysis}
+\tests{fnc:breakAnalysisf}
+\tests{fnc:jumpToActionf}
+\tests{fnc:Delayf}
 
 \teststep{Es wurde in der Zeitauswahl 0 Sekunden als Delay ausgewählt und es wurden keine Breakpoints gesetzt.}
 {Es wird \faPlay\ geklickt.}
@@ -130,10 +154,15 @@
 
 
 \test{Animation bei schrittweiser Berechnung}{tst:calcpart}
-\tests{}
+\tests{fnc:blockAnalysis}
+\tests{fnc:lineAnalysis}
+\tests{fnc:stopAnalysisf}
+\tests{fnc:inOutBlockf}
+\tests{fnc:inOutLinef}
+
 
 \teststep{Der \faPlay\ Button ist gedrückt.}
-{Der \faStop\ Button wird gedrückt.}
+{Der \faPause\ Button wird gedrückt.}
 {Die Analyse pausiert im aktuellen Zustand.}
 
 \teststep{Die Analyse wurde durchgeführt und befindet sich im Zustand Pause.}
@@ -157,7 +186,10 @@
 {Es wird der Zustand der Analyse im Fixpunkt angezeigt und es wird eine Meldung gegeben, die über das Erreichen des Fixpunktes informiert.}
 
 \test{Interaktion mit Graphen während Analyse}{tst:interaction}
-\tests{}
+\tests{fnc:inOutBlockf}
+\tests{fnc:inOutLinef}
+\tests{fnc:Hotkeys}
+
 
 \teststep{Die Analyse wurde an einer beliebigen Stelle angehalten.}
 {Der Benutzer klickt im Graphen auf einen bestimmten Block.}
@@ -166,3 +198,15 @@
 \teststep{Die Analyse wurde an einer beliebigen Stelle angehalten.}
 {Der Benutzer klickt im Graphen auf eine bestimmte Zeile.}
 {Der \glqq in \grqq\ und \glqq out \grqq\ State zum aktuellen Analysezeitpunkt der gewählten Zeile und des zugehörigen Blocks wird in der Informationsleiste rechts eingeblendet.}
+
+\teststep{[opt] Der Benutzer befindet sich an einer beliebigen Stelle des Arbeitsflusses}
+{Der Benutzer verwendet einen der definierten Hotkeys}
+{Die entsprechende, hinterlegte Funktion wird ausgeführt}
+
+\test{Animation durch Verwendung des Sliders}{tst:Slider}
+\tests{fnc:ProgressBarf}
+\tests{fnc:Sliderf}
+
+\teststep{[opt]Die Analyse wurde an einer beliebigen Stelle angehalten}
+{Der Benutzer bewegt den Slider in eine beliebige Richtung}
+{Die Analyse springt zu dem dadurch bestimmten Punkt}

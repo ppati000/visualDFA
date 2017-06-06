@@ -199,7 +199,7 @@ Out = {$n= \perp, x = 6, y = \perp$}
 \path (2) edge [bend right=20pt] node {} (4);
 \path (4) edge [bend right=20pt] node {} (2);
 \end{tikzpicture}
-\caption{Kontrollflussgraph im Fixpunkt der Analyse Constant Folding}
+\caption{Kontrollflussgraph im Fixpunkt der Constant Folding Analyse}
 \end{figure}
 
 \subsection{Const Bits}
@@ -637,13 +637,13 @@ Out = {taint = {x, y}, violation = true}}
 \path (3) edge [bend right=20pt] node {} (4);
 \end{tikzpicture}
 
-\caption{Kontrollflussgraph am Fixpunkt der Taint Analyse}
+\caption{Kontrollflussgraph im Fixpunkt der Taint Analyse}
 \end{figure}
 
 
-\subsection{Live Variables}
+\subsection{Live Variables[opt]}
 
-\subsection{Definite Assignment}
+\subsection{Definite Assignment[opt]}
 Zu analysierender Code: \par
 
 \begin{lstlisting}[frame=single]
@@ -831,7 +831,7 @@ Out$_4$ = = {r = d.a., x = d.a., y = unk.}
 \caption{Kontrollflussgraph im Fixpunkt der Definite Assignment Analyse}
 \end{figure}
 
-\subsection{Available Expressions}
+\subsection{Available Expressions[opt]}
 Zu analysierender Code: \par
 
 \begin{lstlisting}[frame=single]

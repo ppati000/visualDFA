@@ -1,6 +1,6 @@
 \section{Tests (Allgemein)}
 
-\test{Interaktion mit dem Programm unabhängig von aktueller Analyse}{tst:general}
+\test{Interaktion mit dem Programm unabhängig von der aktuellen Analyse}{tst:general}
 \tests{fnc:LineNumbers}
 \tests{fnc:unsavedChangesf}
 \tests{fnc:ManPagef}
@@ -15,16 +15,16 @@
 {Der Inhalt des Fensters wird dynamisch angepasst.}
 
 \teststep{[opt] Der Benutzer befindet sich an einer beliebigen Stelle des Arbeitsflusses.}
-{Der Benutzer ruft die Hilfefunktion auf.}
-{Die Manual Page öffnet sich, welche die wichtigsten Funktionen unseres Programms kurz zusammenfasst.}
+{Der Benutzer möchte sich über die wichtigsten Funktionen des Programms informieren.}
+{Eine Manual Page ist dem Programm beigelegt, die diese Information enthält.}
 
 \teststep{[opt]Der Benutzer befindet sich an einer beliebigen Stelle des Arbeitsflusses.}
 {Er klickt rechts auf einen Pfeil/Button, der die Leiste verkleinern soll.}
-{Die linke Leiste wir ausgeblendet und das Graph-Panel wird um den frei gewordenen Platz erweitert.}
+{Die rechte Leiste wir ausgeblendet und das Graph-Panel wird um den frei gewordenen Platz erweitert.}
 
 \teststep{[opt]Der Benutzer befindet sich an einer beliebigen Stelle des Arbeitsflusses. Im Editor steht Java-Code der bisher nicht gespeichert wurde.}
 {Der Benutzer klickt auf einen Button, der zum schließen des Programms führt.}
-{In einem Fenster wird darauf hingewiesen, dass die Änderungen, bei Fortsetzung der Aktion, verloren gehen und eine Möglichkeit, den Vorgang abzubrechen wird gegeben.}
+{In einem Fenster wird darauf hingewiesen, dass die Änderungen bei Fortsetzung der Aktion verloren gehen und eine Möglichkeit, den Vorgang abzubrechen wird gegeben.}
 
 
 
@@ -62,14 +62,14 @@
 {Der File-Chooser schließt sich und die Datei wird im Textfeld angezeigt.}
 
 
-\test{Auswahl der Analyseart}{tst:anaopt}
+\test{Auswahl der Datenflussanalyse}{tst:anaopt}
 \tests{fnc:pickAnalysis}
 \tests{fnc:worklistNaive}
 \tests{fnc:moreWorklist}
 
 \teststep{Der Benutzer befindet sich nicht in einer aktuellen Analyse.}
-{Der Benutzer wählt eine Programmanalyseart aus.}
-{Diese Analyseart wird bei dem nächsten Aufruf von \glqq Start Analysis \grqq\ verwendet.}
+{Der Benutzer wählt eine Datenflussanalyse aus.}
+{Diese Datenflussanalyse wird bei dem nächsten Aufruf von \glqq Start Analysis \grqq\ verwendet.}
 
 \teststep{[opt] Der Benutzer befindet sich nicht in einer aktuellen Analyse.}
 {Der Nutzer wählt einen Worklist-Algorithmus aus.}
@@ -89,11 +89,11 @@
 
 \teststep{[ggf. opt] Ein Code-Stück, welches nur gültige Java-Syntax aus dem von uns unterstützen Java-Subset enthält, ist im Textfeld dargestellt. Es besteht aus nur einer Methode.}
 {\glqq Start Analysis \grqq\ wird geklickt}
-{Der Kontrollflussgraph wird im Graph-Panel dargestellt und die Animation kann jetzt mit \faStepForward\ oder \faPlay\ gestartet werden. Eine Änderung der Analyseart oder des Codes ist nur noch durch einen Abbruch mit \faStop\  möglich.}
+{Der Kontrollflussgraph wird im Graph-Panel dargestellt und die Animation kann jetzt mit \faStepForward\ oder \faPlay\ gestartet werden. Eine Änderung der Datenflussanalyse oder des Codes ist nur durch Abbruch der Analyse mit \faStop\  möglich.}
 
-\teststep{Ein Code-Stück ist im Textfeld dargestellt, das entweder nicht gültige Java-Syntax enthält, oder solchen Java-Code, dessen übersetzter Zwischencode nicht identisch zum Zwischencode eines Parts unseres unterstützen Java-Subsets ist.}
+\teststep{Ein Code-Stück ist im Textfeld dargestellt, das entweder nicht gültige Java-Syntax enthält, oder solchen Java-Code, dessen übersetzter Zwischencode nicht identisch zum Zwischencode eines Teils unseres unterstützen Java-Subsets ist.}
 {\glqq Start Analysis \grqq\ wird geklickt.}
-{Der Graph wird nicht erstellt, eine aussagekräftige Fehlermeldung wird ausgegeben, in der der Java-Error oder ein Hinweis auf das von uns unterstützte Java-Subset gegeben wird.}
+{Der CFG wird nicht erstellt, eine aussagekräftige Fehlermeldung wird ausgegeben, in der der Java-Error oder ein Hinweis auf das von uns unterstützte Java-Subset gegeben wird.}
 
 \teststep{[opt]Ein Code-Stück ist im Textfeld dargestellt, das gültige Java-Syntax aus dem von uns unterstützen Java-Subset enthält. Es besteht aus mehreren Methoden.}
 {\glqq Start Analysis \grqq\ wird geklickt.}
@@ -102,21 +102,22 @@
 
 \test{Interaktion mit dem Kontrollflussgraphen}{tst:intcfg}
 \tests{fnc:interactCFG2f}
+\tests{fnc:interactCFG2bf}
 \tests{fnc:interactCFG3f}
 
 \teststep{[opt]Ein Kontrollflussgraph wurde erstellt.}
 {Der Benutzer scrollt mit dem Mausrad nach oben bzw. unten, während sich der Mauszeiger im Graph-Panel befindet.}
-{Der gesamte Graph wird entsprechend skaliert. Falls der Graph nicht vollständig im Graph-Panel angezeigt werden kann erscheinen Scroll-Leisten.}
+{Der gesamte CFG wird entsprechend skaliert. Falls der CFG nicht vollständig im Graph-Panel angezeigt werden kann erscheinen Scroll-Leisten.}
 
-\teststep{[opt]Ein Graph wurde erstellt.}
+\teststep{[opt]Ein CFG wurde erstellt.}
 {Der Benutzer verschiebt per \glqq Drag and Drop \grqq einen Knoten.}
 {Der Knoten verschiebt sich an die entsprechende Stelle und alle Kanten werden entsprechend mit verschoben. Überlappen sich nun 2 Knoten befindet sich der Knoten, welcher zuletzt verschoben wurde, im Vordergrund.}
 
 \test{Bildexport}{tst:graph}
 \tests{fnc:exportAsPicf}
 
-\teststep{[opt]Ein Graph wurde erstellt.}
-{\glqq Graph exportieren \grqq\. wird geklickt.}
+\teststep{[opt]Ein CFG wurde erstellt.}
+{\glqq CFG exportieren \grqq\. wird geklickt.}
 {Ein Fenster öffnet sich, in dem der Benutzer wählen kann, ob er den aktuell angezeigten Zwischenschritt oder alle Zwischenschritte speichern möchte und gegebenenfalls, ob diese zeilenweise oder blockweise gespeichert werden. Außerdem kann er hier zwischen der Auflösung \glqq low \grqq\, \glqq standard \grqq\ und  \glqq  high \grqq\ wählen. Nach bestätigen dieser Eingabe öffnet sich ein File-Explorer, in dem der Name und der Speicherort der Datei festgelegt werden kann. Alle Bilder werden als PNG-Datei gespeichert. Nach Bestätigung dieser Eingabe mit  \glqq Speichern \grqq\ wurde das Bild dort abgelegt.}
 
 
@@ -126,7 +127,7 @@
 
 \teststep{Der \glqq Start Analysis \grqq\ Button wurde geklickt.}
 {Es wird \faStop\ geklickt.}
-{Der Nutzer wird gefragt ob er seine Analyse wirklich abbrechen möchte und wird darüber informiert, dass dieser Schritt den bisherigen Graph löscht. Bei Bestätigung dieser Meldung wird der Graph gelöscht und das Graph-Panel und Animations-Button ausgegraut. Eine Änderung des Codes und der Analyseart sind jetzt wieder möglich.}
+{Der Nutzer wird gefragt ob er seine Analyse wirklich abbrechen möchte und wird darüber informiert, dass dieser Schritt den bisherigen CFG löscht. Bei Bestätigung dieser Meldung wird der CFG gelöscht und das Graph-Panel mit den Animations-Buttons ausgegraut. Eine Änderung des Codes und der Datenflussanalyse ist jetzt wieder möglich.}
 
 
 \test{Animation in Zusammenhang mit der Delay-Auswahl}{tst:delay}
@@ -142,15 +143,15 @@
 
 \teststep{[opt]Es wurde in der Zeitauswahl ein von 0 verschiedenes Delay ausgewählt, es wurden keine Breakpoints gesetzt.}
 {Es wird der Button \faPlay\ geklickt.}
-{Die einzelnen Schritte der Analyse werden mit einem zeitlichen Abstand, der dem ausgewählten Delay entspricht, dargestellt. Die Farben der Blöcke ändern sich je nach Zustand zwischen den verschiedenen Schritten. Zusätzlich ändert sich bei jedem Schritt die linke Leiste, welche \glqq in \grqq\ und \glqq out \grqq\ des aktuellen Schritts, sowie den aktuellen Schritt selbst anzeigt.}
+{Die einzelnen Schritte der Analyse werden mit einem zeitlichen Abstand, der dem ausgewählten Delay entspricht, dargestellt. Die Farben der Blöcke ändern sich je nach Zustand zwischen den verschiedenen Schritten. Zusätzlich ändert sich bei jedem Schritt die rechte Leiste, welche \glqq in \grqq\ und \glqq out \grqq\ des aktuellen Schritts, sowie den aktuellen Schritt selbst anzeigt.}
 
-\teststep{[opt]Es wurden Breakpoints innerhalb des Graphen gesetzt.}
+\teststep{[opt]Es wurden Breakpoints innerhalb des CFG gesetzt.}
 {Es wird der Button \faPlay\ geklickt.}
 {Die Analyse läuft schrittweise mit dem jeweiligen Delay ab, wobei garantiert wird, dass bei jedem Erreichen des Breakpoints die Analyse automatisch pausiert wird.}
 
 \teststep{[opt]Die Analyse wurde gestartet und der \glqq jump to action \grqq\ Haken ist gesetzt.}
 {Es wird der Button \faPlay\ geklickt.}
-{Bei jedem neuen Analyseschritt, der angezeigt wird, wird der Graph so zentriert, dass der aktuell analysierte Knoten in der Mitte liegt. Passt der Graph komplett in das Graph-Panel wird nichts verändert.}
+{Bei jedem neuen Analyseschritt, der angezeigt wird, wird der CFG so zentriert, dass der aktuell analysierte Knoten in der Mitte liegt. Passt der CFG komplett in das Graph-Panel wird nichts verändert.}
 
 
 \test{Animation bei schrittweiser Berechnung}{tst:calcpart}
@@ -185,28 +186,35 @@
 {Der Button \faForward\ oder \faFastForward\ wird geklickt.}
 {Es wird der Zustand der Analyse im Fixpunkt angezeigt und es wird eine Meldung gegeben, die über das Erreichen des Fixpunktes informiert.}
 
-\test{Interaktion mit Graphen während Analyse}{tst:interaction}
+\test{Interaktion mit dem CFG während der Analyse}{tst:interaction}
 \tests{fnc:inOutBlockf}
 \tests{fnc:inOutLinef}
 \tests{fnc:Hotkeys}
 
 
 \teststep{Die Analyse wurde an einer beliebigen Stelle angehalten.}
-{Der Benutzer klickt im Graphen auf einen bestimmten Block.}
-{Der \glqq in \grqq\ und \glqq out \grqq\ State zum aktuellen Analysezeitpunkt des gewählten Blocks wird in der Informationsleiste rechts eingeblendet.}
+{Der Benutzer klickt im CFG auf einen bestimmten Block.}
+{Der \glqq in \grqq\ und \glqq out \grqq\ State zum aktuellen Analysezeitpunkt des gewählten Blocks wird in der Informationsleiste rechts angezeigt.}
 
 \teststep{Die Analyse wurde an einer beliebigen Stelle angehalten.}
-{Der Benutzer klickt im Graphen auf eine bestimmte Zeile.}
-{Der \glqq in \grqq\ und \glqq out \grqq\ State zum aktuellen Analysezeitpunkt der gewählten Zeile und des zugehörigen Blocks wird in der Informationsleiste rechts eingeblendet.}
+{Der Benutzer klickt im CFG auf eine bestimmte Zeile.}
+{Der \glqq in \grqq\ und \glqq out \grqq\ State zum aktuellen Analysezeitpunkt der gewählten Zeile und des zugehörigen Blocks wird in der Informationsleiste rechts angezeigt.}
 
-\teststep{[opt] Der Benutzer befindet sich an einer beliebigen Stelle des Arbeitsflusses}
-{Der Benutzer verwendet einen der definierten Hotkeys}
-{Die entsprechende, hinterlegte Funktion wird ausgeführt}
+\teststep{[opt] Der Benutzer befindet sich an einer beliebigen Stelle des Arbeitsflusses.}
+{Der Benutzer verwendet einen der definierten Hotkeys.}
+{Die entsprechende, hinterlegte Funktion wird ausgeführt.}
 
 \test{Animation durch Verwendung des Sliders}{tst:Slider}
 \tests{fnc:ProgressBarf}
 \tests{fnc:Sliderf}
 
-\teststep{[opt]Die Analyse wurde an einer beliebigen Stelle angehalten}
-{Der Benutzer bewegt den Slider in eine beliebige Richtung}
-{Die Analyse springt zu dem dadurch bestimmten Punkt}
+\teststep{[opt]Die Analyse wurde an einer beliebigen Stelle angehalten.}
+{Der Benutzer bewegt den Slider in eine beliebige Richtung.}
+{Die Analyse springt zu dem dadurch bestimmten Punkt.}
+
+\test{Implementierung einer eigenen Datenflussanalyse}{tst:OwnAnalyse}
+\tests{fnc:OwnAnalysef}
+
+\teststep{[opt]Der Benutzer befindet sich nicht in einer aktuellen Analyse.}
+{Der Benutzer lädt ein Plugin, welches eine andere, funktionierende Datenflussanalyse enthält.}
+{Diese Datenflussanalyse kann nun auf den CFG angewendet werden.}

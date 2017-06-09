@@ -7,7 +7,7 @@ Einige dieser Optimierungen basieren auf Datenflussanalysen des Quellcodes bzw. 
 Um das Verständnis für auf Datenflussanalyse basierende Optimierungen zu erleichtern, soll hier ein Werkzeug entwickelt werden, welches ausgewählte Datenflussanalysen visualisiert.
 
 \subsection{Kontrollflussgraph}
-Das Konzept des Kontrollflussgraphen ist zentral für Datenflussanalysen und wird deshalb im Folgenden kurz erklärt.
+Das Konzept des Kontrollflussgraphen (CFG) ist zentral für Datenflussanalysen und wird deshalb im Folgenden kurz erklärt.
 Ein Kontrollflussgraph zu einem Programm (oder einer Funktion / Methode) ist ein Graph, dessen Knoten genau die Grundblöcke des Programms sind.
 Ein Grundblock $B$ ist eine maximal lange Folge von Instruktionen, sodass der Kontrollfluss $B$ an höchstens einer Stelle betreten und an höchstens einer Stelle verlassen kann.
 Es gibt also im Programm keine Sprünge, deren Ziel nicht Anfang eines Grundblockes ist.
@@ -89,7 +89,7 @@ Mittels Datenflussanalyse können bestimmte Eigenschaften von Programmen approxi
 \subsubsection{Theoretische Grundlagen}
 
 Datenflussanalysen arbeiten typischerweise auf dem Kontrollflussgraphen des zu analysierenden Codes.
-Im Folgenden werden Grundblöcke als kleinste Einheiten betrachtet, auf denen die Analyse operiert.
+Im Folgenden werden Grundblöcke als kleinste Einheit betrachtet, auf denen die Analyse operiert.
 Für eine Datenflussanalyse benötigt man zunächst eine Grundmenge $D$.
 Diese Grundmenge stellt die möglichen Fakten dar, die vor bzw. nach einem Grundblock gelten können.
 Zu jedem diskreten Schritt $t$ der Analyse ist jedem Grundblock $B$ ein Eingangszustand $in_B[t] \in D$ und ein Austrittszustand $out_B[t] \in D$ zugeordnet.
@@ -103,7 +103,7 @@ Deshalb genügt es, zu jeder Instruktion eine Überführungsfunktion zu definier
 
 Ziel einer Datenflussanalyse ist nun, für jeden Grundblock $B$ ein Faktum $d\in D$ zu finden, das nach $B$ gilt und sich bei obiger Iteration ($out_B[t+1]=f_B(in_B[t])$) nicht mehr ändert.
 Dies kann mittels Fixpunktiteration erreicht werden.
-Dazu benötigt man zusätzlich zu den Überführungsfunktionen der Grundblöcke noch Überführungsfunktionen zwischen den Grundblöcken.
+Dazu benötigt man zusätzlich zu den Überführungsfunktionen innerhalb der Grundblöcke noch Überführungsfunktionen zwischen den Grundblöcken.
 Im Allgemeinen kann ein Grundblock mehrere Vorgänger haben.
 Deshalb benötigt man eine Operation, um die Austrittszustände mehrerer Grundblöcke zusammenzuführen.
 Diese Operation wird im Folgenden als Join-Operator $\vee :D\times D \to D$ bezeichnet.
@@ -170,7 +170,7 @@ int foo(int x) {
 
 \subsubsection{Reaching Definitions}
 Bei der Reaching-Definitions-Analyse soll für jede Stelle im Programm die Menge der Definitionen (Zuweisungen), die diese Programmstelle erreichen, ermittelt werden.
-Eine Definition erreicht eine Stelle genau dann, wenn es einen Pfad im Kontrollflussgraphen gibt, sodass die Definition auf diesem vor besagter Stelle auftaucht und nicht wieder überschrieben wird.
+Eine Definition erreicht eine Stelle genau dann, wenn es einen Pfad im Kontrollflussgraphen gibt, sodass die Definition auf diesem Pfad vor besagter Stelle auftaucht und nicht wieder überschrieben wird.
 
 \par
 
@@ -240,6 +240,6 @@ Wie bereits zu Anfang formuliert, soll hier ein Werkzeug zur Visualisierung ausg
 Dazu kann der Benutzer Java-ähnlichen Code (eine Teilmenge der primitiven Datentypen sowie Operatoren und Kontrollflusskonstrukte von Java werden unterstützt) zur Analyse angeben.
 Aus diesem Code wird zunächst ein Kontrollflussgraph generiert und dem Benutzer angezeigt.
 Dann kann der Benutzer die zu visualisierende Datenflussanalyse auswählen.
-Es werden mindestens Constant Folding, Constant Bits, Reaching Definitions und Taint-Analyse unterstützt.
+Es werden mindestens Constant-Folding-, Constant-Bits-, Reaching-Definitions- und Taint-Analyse unterstützt.
 Die ausgewählte Datenflussanalyse wird dann ausgeführt und schrittweise anhand des Kontrollflussgraphen visualisiert.
 Zusätzlich hat der Benutzer noch die Möglichkeit, den Fixpunkt der Analyse direkt berechnen zu lassen.

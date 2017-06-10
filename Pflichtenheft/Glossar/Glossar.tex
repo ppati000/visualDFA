@@ -1,0 +1,71 @@
+\newglossaryentry{CFG}{
+	name=Kontrollflussgraph (CFG),
+	description={Ein Graph bestehend aus Knoten und Kanten. Die Knoten bestehen aus zusammenhängenden Code-Zeilen. Gibt es Kontrollflussstrukturen im Code, so werden diese durch durch Kanten zwischen den Blöcken dargestellt.}
+}
+
+\newglossaryentry{Blocks}{
+	name=Grundblock,
+	description={Ein Knoten des Kontrollflussgraphen}
+}
+
+\newglossaryentry{Datenflussanalyse}{
+	name=Datenflussanalyse,
+	description={Eine Analyse, um den CFG auf bestimmte 			Merkmale (zum Beispiel Optimierbarkeit) zu untersuchen.}
+}
+
+\newglossaryentry{InOutState}{
+	name=Eingangs- und Ausgangszustand,
+	description={Jeder Block des Kontrollflussgraphen hat einen Eingangszustand und einen Ausgangszustand. Diese enthalten die Datenwerte vor und nach Durchlaufen des Blocks.}
+}
+
+\newglossaryentry{Uebergangsfunktion}{
+	name=Übergangsfunktion,
+	description={Eine Übergangsfunktion für einen Block bildet dessen Eingangszustand auf seinen Ausgangszustand ab. Sie ist je nach Datenflussanalyse und Code im jeweiligen Block unterschiedlich.}
+}
+
+\newglossaryentry{Fixpunkt}{
+	name=Fixpunkt,
+	description={Der Fixpunkt einer Datenflussanalyse ist der Punkt, an welchem sich bei keiner Übergangsfunktion im gesamten Kontrollflussgraphen eine Veränderung des Ausgangszustandes des jeweiligen Knotens ergibt.}
+}
+
+\newglossaryentry{Java}{
+	name=Java,
+	description={Eine weit verbreitete Programmiersprache, welche in diesem Programm dazu benutzt werden kann, den zu analysierenden Code in das Programm einzugeben.}
+}
+
+\newglossaryentry{GUI}{
+	name=GUI,
+	description={Graphical User Interface oder Graphische Benutzeroberfläche. Alle Programmelemente, die für den Benutzer sichtbar sind und Interaktion mit dem Programm ermöglichen.}
+}
+
+\newglossaryentry{GraphPanel}{
+	name=Graph-Panel,
+	description={Das GUI-Element, in welchem der CFG dem Benutzer angezeigt wird.}
+}
+
+\newglossaryentry{Worklist}{
+	name=Worklist,
+	description={Die Worklist beinhaltet die Reihenfolge, in welcher die Blöcke des Kontrollflussgraphen in der Analyse abgearbeitet werden.}
+}
+
+\newglossaryentry{Worklistalgorithmus}{
+	name=Worklistalgorithmus,
+	description={Ein Algorithmus, welcher eine Datenflussanalyse unter Verwendung einer Worklist ausführt.}
+}
+
+\newglossaryentry{naiv}{
+	name=Naiver Worklistalgorithmus,
+	description={Es werden alle Knoten in der Reihenfolge in der sie \enquote{entdeckt} werden (Breitensuche)
+in die Worklist geschrieben und anschließend in dieser Reihenfolge abgearbeitet.}
+}
+
+\newglossaryentry{random}{
+	name=Zufälliger Worklistalgorithmus,
+	description={Die Blöcke werden wie bei dem naiven Worklistalgorithmus auf die Worklist geschrieben. Am Ende der Abarbeitung jedes Knotens in der Analyse wird ein zufälliger neuer dieser Blöcke gewählt und behandelt.}
+}
+
+\newglossaryentry{efficient}{
+	name=Effizienter Worklistalgorithmus,
+	description={Die Reihenfolge der Abarbeitung der Blöcke wird optimiert, indem zuerst innere Schleifen durchlaufen werden, bis ein lokaler Fixpunkt gefunden wurde, bevor die äußere Schleife weiter analysiert wird.
+}
+}

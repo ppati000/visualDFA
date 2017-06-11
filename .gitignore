@@ -28,6 +28,8 @@ hs_err_pid*
 *.ist
 *.log
 *.out
+*.glg
+*.gls
 Pflichtenheft.pdf
 Pflichtenheft.dvi
 Pflichtenheft.synctex.gz

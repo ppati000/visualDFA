@@ -92,11 +92,11 @@ Datenflussanalysen arbeiten typischerweise auf dem CFG des zu analysierenden Cod
 Im Folgenden werden Grundblöcke als kleinste Einheit betrachtet, auf denen die Analyse operiert.
 Für eine Datenflussanalyse benötigt man zunächst eine Grundmenge $D$.
 Diese Grundmenge stellt die möglichen Fakten dar, die vor bzw. nach einem Grundblock gelten können.
-Zu jedem diskreten Schritt $t$ der Analyse ist jedem Grundblock $B$ ein Eingangszustand $in_B[t] \in D$ und ein Austrittszustand $out_B[t] \in D$ zugeordnet.
+Zu jedem diskreten Schritt $t$ der Analyse ist jedem Grundblock $B$ ein Eingangszustand $in_B[t] \in D$ und ein Ausgangszustand $out_B[t] \in D$ zugeordnet.
 Der Eingangszustand von $B$ repräsentiert die bei Eintritt in $B$ geltenden Fakten.
-Analog entspricht der Austrittszustand von $B$ den geltenden Fakten bei Verlassen von $B$.
+Analog entspricht der Ausgangszustand von $B$ den geltenden Fakten bei Verlassen von $B$.
 
-Weiter ist zu jedem Grundblock $B$ eine Überführungsfunktion $f_B:D\to D$ gegeben, die den Austrittszustand in Schritt $t+1$ aus dem Eingangszustand im vorherigen Schritt $t$ berechnet: $out_B[t+1]=f_B(in_B[t])$.
+Weiter ist zu jedem Grundblock $B$ eine Überführungsfunktion $f_B:D\to D$ gegeben, die den Ausgangszustand in Schritt $t+1$ aus dem Eingangszustand im vorherigen Schritt $t$ berechnet: $out_B[t+1]=f_B(in_B[t])$.
 Diese Überführungsfunktion setzt sich aus den Überführungsfunktionen der einzelnen Instruktionen innerhalb dieses Grundblocks zusammen:
 Besteht der Grundblock $B$ aus den Instruktionen $I_1,...,I_m$ in dieser Reihenfolge und ist für jede dieser Instruktionen eine Überführungsfunktion $f_{I_k}:D\to D, k\in \{1,..,m\}$ gegeben, so ist $f_B$ als Komposition dieser gegeben: $f_B=f_{I_m}\circ ... \circ f_{I_1}$.
 Deshalb genügt es, zu jeder Instruktion eine Überführungsfunktion zu definieren, die die Wirkung dieser Instruktion beschreibt.
@@ -105,14 +105,14 @@ Ziel einer Datenflussanalyse ist nun, für jeden Grundblock $B$ ein Faktum $d\in
 Dies kann mittels Fixpunktiteration erreicht werden.
 Dazu benötigt man zusätzlich zu den Überführungsfunktionen innerhalb der Grundblöcke noch Überführungsfunktionen zwischen den Grundblöcken.
 Im Allgemeinen kann ein Grundblock mehrere Vorgänger haben.
-Deshalb benötigt man eine Operation, um die Austrittszustände mehrerer Grundblöcke zusammenzuführen.
+Deshalb benötigt man eine Operation, um die Ausgangszustände mehrerer Grundblöcke zusammenzuführen.
 Diese Operation wird im Folgenden als Join-Operator $\vee :D\times D \to D$ bezeichnet.
 Ausgehend davon kann man den Join-Operator für endlich viele $d_1,...,d_n \in D$ definieren: $\bigvee (d_1,..,d_n):=(\bigvee(d_1,...,d_{n-1})) \vee d_n$ für $n \geq 3$ und $\bigvee(d_1,d_2):=d_1 \vee d_2$ (formal kann man noch $\bigvee (d_1):=d_1$ setzen).
 Damit kann man Überführungsfunktionen zwischen Grundblöcken definieren: 
-Hat der Grundblock $B$ die Vorgänger $P_1,...,P_r$, so ist der Eingangszustand von $B$ im Schritt $t+1$ gegeben als Join der Austrittszustände von $P_1,...,P_r$ im Schritt $t$: $in_B[t+1]=\bigvee(out_{P_1}[t],...,out_{P_r}[t])$.
+Hat der Grundblock $B$ die Vorgänger $P_1,...,P_r$, so ist der Eingangszustand von $B$ im Schritt $t+1$ gegeben als Join der Ausgangszustände von $P_1,...,P_r$ im Schritt $t$: $in_B[t+1]=\bigvee(out_{P_1}[t],...,out_{P_r}[t])$.
 
-Bei der Fixpunktiteration wird für $t \in \mathbb{N}$ und jeden Grundblock $B$ der Austrittszustand aus dem Eingangszustand berechnet: $out_B[t+1]=f_B(in_B[t])$. 
-Dies wird fortgesetzt, bis erstmals für ein $t_0 \in \mathbb{N}$ für jeden Grundblock $B$ der Austrittszustand konstant bleibt: $out_B[t_0+1]=f_B(in_B[t_0])$.
+Bei der Fixpunktiteration wird für $t \in \mathbb{N}$ und jeden Grundblock $B$ der Ausgangszustand aus dem Eingangszustand berechnet: $out_B[t+1]=f_B(in_B[t])$. 
+Dies wird fortgesetzt, bis erstmals für ein $t_0 \in \mathbb{N}$ für jeden Grundblock $B$ der Ausgangszustand konstant bleibt: $out_B[t_0+1]=f_B(in_B[t_0])$.
 Damit gilt wegen der Rechtseindeutigkeit der Überführungsfunktionen für die Grundblöcke $f_{B_i}$ sowie der Überführungsfunktionen zwischen den Grundblöcken: $out_B[s+k]=f_B(in_B[s])$ für alle $s,k \in \mathbb{N}$ mit $s \geq t_0$.
 Es ändern sich also bei obiger Iteration die Eingangszustände und Ausgangszustände nach Schritt $t_0$ nicht mehr.
 Dies bezeichnet man als Fixpunkt des hier beschriebenen iterativen Verfahrens.

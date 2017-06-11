@@ -205,6 +205,8 @@ Out = {$n= \top, x = 6, y = \top$}
 \caption{CFG im Fixpunkt der Constant-Folding-Analyse}
 \end{figure}
 
+\newpage
+
 \subsection{Constant Bits}
 
 Zu analysierender Code: \par
@@ -381,7 +383,7 @@ Out$_1$ = $\{p=\top, x=(\top,..., \top,0,0,0), y=(0,...,0) \}$
 \end{lstlisting}
 };
 
-\node [draw] (2) [below=of 1] {
+\node [draw] (2) [below=0.8 cm of 1] {
 \begin{lstlisting}[numbers=none]
 In$_2$ = $\{p=\top, x=(\top,..., \top,0,0,0), y=(0,...,0) \}$
 [*if (p > 0)*]
@@ -389,7 +391,7 @@ Out$_2$ = $\{p=\top, x=(\top,..., \top,0,0,0), y=(0,...,0) \}$
 \end{lstlisting}
 };
 
-\node[draw] (3) [below left=1cm and -4cm of 2]   {
+\node[draw] (3) [below left=0.8cm and -4cm of 2]   {
 \begin{lstlisting}[numbers=none]
 In$_3$ = $\{p=\top, x=(\top,..., \top,0,0,0), y=(0,...,0) \}$
 [*y = x % 2;*]
@@ -397,7 +399,7 @@ Out$_3$ = $\{p=\top, x=(\top,..., \top,0,0,0), y=(0,...,0) \}$
 \end{lstlisting}
 };
 
-\node[draw] (4) [below right=1cm and -4cm of 3]   {
+\node[draw] (4) [below right=0.8cm and -4cm of 3]   {
 \begin{lstlisting}[numbers=none]
 In$_4$ = $\{p=\top, x=(\top,..., \top,0,0,0), y=(0,...,0) \}$
 [*y = x % 4;*]
@@ -405,7 +407,7 @@ Out$_4$ = $\{p=\top, x=(\top,..., \top,0,0,0), y=(0,...,0) \}$
 \end{lstlisting}
 };
 
-\node[draw] (5) [below left=1cm and -4cm of 4]   {
+\node[draw] (5) [below left=0.8cm and -4cm of 4]   {
 \begin{lstlisting}[numbers=none]
 In$_5$ = $\{p=\top, x=(\top,..., \top,0,0,0), y=(0,...,0) \}$
 [*return x + y;*]
@@ -863,7 +865,7 @@ Out = {taint = {x, y}, violation = true}
 \end{figure}
 
 
-\subsection{Live Variables[opt]}
+\subsection{Live Variables [opt]}
 
 Zu analysierender Code: \par
 
@@ -1081,7 +1083,7 @@ Out$_5$ = $\{x,y,z \}$
 \caption{CFG im Fixpunkt der Live-Variables-Analyse}
 \end{figure}
 
-\subsection{Definite Assignment[opt]}
+\subsection{Definite Assignment [opt]}
 Zu analysierender Code: \par
 
 \begin{lstlisting}[frame=single]
@@ -1269,7 +1271,7 @@ Out$_4$ = = {r = d.a., x = d.a., y = unk.}
 \caption{CFG im Fixpunkt der Definite-Assignment-Analyse}
 \end{figure}
 
-\subsection{Available Expressions[opt]}
+\subsection{Available Expressions [opt]}
 Zu analysierender Code: \par
 
 \begin{lstlisting}[frame=single]

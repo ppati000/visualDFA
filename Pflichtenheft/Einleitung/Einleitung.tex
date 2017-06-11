@@ -183,7 +183,7 @@ $def_3$: x = 2 * y + 10;
 \par
 
 Betrachtet man das Ende des obigen Codestücks, so sind $def_2$ und $def_3$ Reaching Definitions bezüglich dieser Programmstelle.
-$def_1$ erreicht das Ende des Programms nicht, da $def_3$ eine neue Definition von \lstinline{x} gibt, $def_1$ ist danach nicht mehr relevant.
+$def_1$ erreicht das Ende des Programms nicht, da $def_3$ eine neue Definition von \lstinline{x} gibt. $def_1$ ist danach nicht mehr relevant.
 
 \subsubsection{Taint-Analyse}
 In manchen Programmen ist es fatal, wenn Benutzereingaben ohne weitere Überprüfung verarbeitet werden. 
@@ -218,7 +218,7 @@ int incMin(int x, int y) {
 
 \par
 
-Hier haben die beiden Zuweisungen \lstinline{x = x + 1;} und \lstinline{y = y + 1} keinen Effekt und können daher entfernt werden.
+Hier haben die beiden Zuweisungen \lstinline{x = x + 1;} und \lstinline{y = y + 1;} keinen Effekt und können daher entfernt werden.
 Folgender optimierter Code ist also äquivalent:
 
 \par
@@ -237,9 +237,9 @@ int incMin(int x, int y) {
 
 \subsection{Zielsetzung}
 Wie bereits zu Anfang formuliert, soll hier ein Werkzeug zur Visualisierung ausgewählter Datenflussanalysen entwickelt werden.
-Dazu kann der Benutzer Java-ähnlichen Code (eine Teilmenge der primitiven Datentypen sowie Operatoren und Kontrollflusskonstrukte von Java werden unterstützt) zur Analyse angeben.
+Dazu kann der Benutzer Java-ähnlichen Code (eine Teilmenge der primitiven Datentypen sowie Operatoren und Kontrollflussstrukturen von Java werden unterstützt) zur Analyse angeben.
 Aus diesem Code wird zunächst ein CFG generiert und dem Benutzer angezeigt.
 Dann kann der Benutzer die zu visualisierende Datenflussanalyse auswählen.
 Es werden mindestens Constant-Folding-, Constant-Bits-, Reaching-Definitions- und Taint-Analyse unterstützt.
-Die ausgewählte Datenflussanalyse wird dann ausgeführt und schrittweise anhand des CFG visualisiert.
-Zusätzlich hat der Benutzer noch die Möglichkeit, den Fixpunkt der Analyse direkt berechnen zu lassen.
+Die ausgewählte Datenflussanalyse wird ausgeführt und schrittweise anhand des CFG visualisiert.
+Zusätzlich hat der Benutzer die Möglichkeit, den Fixpunkt der Analyse direkt berechnen zu lassen.

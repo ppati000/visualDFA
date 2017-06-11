@@ -8,7 +8,7 @@
 Eingegebener Java-Code kann zu einem CFG verarbeitet werden.
 
 \criterium{Java-Subset}{crt:minSubset}
-Der zu analysierende Code benutzt eine minimale Teilmenge an Java-Operatoren, Kontrollflussstrukturen und Datentypen der Java Version 1.7. Bei Fehlern wird eine Fehlermeldung ausgegeben.
+Der zu analysierende Code benutzt eine minimale Teilmenge an Java-Operatoren, Kontrollflussstrukturen und Datentypen der Java-Version 1.7. Bei Fehlern wird eine Fehlermeldung ausgegeben.
 
 \criterium{CFG}{crt:CFG}
 Generierter Zwischencode wird dem Benutzer in einem CFG angezeigt.
@@ -44,16 +44,13 @@ Entstehen beim Kompilieren des eingelesenen Codes Fehlermeldungen, so wird dem B
 Der Benutzer kann Breakpoints in den erstellten CFG setzen. Beim automatisierten Durchlaufen der Analyse stoppt diese am nächsten gesetzten Breakpoint.
 
 \criteriumOptional{Analyse einzelner Zeilen innerhalb der Blöcke - Priorität 1}{crt:lineAnalysisO}
-Beim Durchlaufen der Datenflussanalyse erhält der Benutzer zusätzlich zu den In- und Out-
-Informationen der Blöcke als Ganzes, diese auch zu den einzelnen Zeilen
-innerhalb der Blöcke.
+Beim Durchlaufen der Datenflussanalyse erhält der Benutzer zusätzlich zu den In- und Out-Informationen der Blöcke auch In- und Out-Informationen zu den einzelnen Zeilen innerhalb der Blöcke.
 
 \criteriumOptional{Dynamisches Graph-Layout - Priorität 1}{crt:GraphLayoutO}
-Der Benutzer hat die Möglichkeit das zunächst automatisiert erstellte Layout des
-CFG selbst zu verändern, in dem er zoomen und Blöcke bewegen kann.
+Der Benutzer hat die Möglichkeit, das zunächst automatisiert erstellte Layout des CFG selbst zu verändern, indem er zoomen und Blöcke bewegen kann.
 
-\criteriumOptional{Einlesen von Code aus .java Datei und Speichern von Code in .java-Datei - Priorität 3 (niedrig)}{crt:CodeInputExto}
-Der Benutzer hat die Möglichkeit, eine .java Datei in das Programm zu laden, welche
+\criteriumOptional{Einlesen von Code aus .java-Datei und Speichern von Code in .java-Datei - Priorität 3 (niedrig)}{crt:CodeInputExto}
+Der Benutzer hat die Möglichkeit, eine .java-Datei in das Programm zu laden, welche
 den zu analysierenden Code enthält. Außerdem kann er im Editor des Programms geschriebenen Code in einer .java-Datei speichern.
 
 \criteriumOptional{Delay-Optionen zwischen Autoplay-Schritten - Priorität 1}{crt:DelayO}
@@ -61,19 +58,18 @@ Der Benutzer kann einstellen, wie lange die einzelnen Schritte im automatisierte
 Durchlaufen der Datenflussanalyse angezeigt werden sollen.
 
 \criteriumOptional{Rückwärtsschritte in der Datenflussanalyse - Priorität 1}{crt:backwardsAnalysisO}
-Der Benutzer hat die Möglichkeit, in der Datenflussanalyse Schritte zurück zu gehen
-und sich einen vorherigen Analysezustand erneut anzeigen zu lassen.
+Der Benutzer hat die Möglichkeit, in der Datenflussanalyse Schritte zurückzugehen und sich einen vorherigen Analysezustand erneut anzeigen zu lassen.
 
 \criteriumOptional{Auswahlmöglichkeit der Worklistalgorithmen - Priorität 2}{crt:WorklistO}
 Der Benutzer kann zwischen verschiedenen Worklistalgorithmen wählen. Diese
 entscheiden, in welcher Reihenfolge die Blöcke in der Datenflussanalyse behandelt
 werden.
 
-\criteriumOptional{.java File mit mehreren Funktionen - Priorität 3}{crt:moreFncO}
+\criteriumOptional{.java-File mit mehreren Funktionen - Priorität 3}{crt:moreFncO}
 Der Benutzer kann Java-Code einlesen oder eingeben, welcher mehrere Funktionen
 enthält.
 
-\criteriumOptional{\glqq Jump to action\grqq -Funktion - Priorität 2}{crt:JumpToActionO}
+\criteriumOptional{\glqq Jump to Action\grqq -Funktion - Priorität 2}{crt:JumpToActionO}
 Der Benutzer hat die Möglichkeit den aktuell analysierten Block beziehungsweise die aktuell analysierte Zeile als seinen ausgewählten Block beziehungsweise seine ausgewählte Zeile zu setzen.
 
 \criteriumOptional{Hotkeys für Datenflussanalyse - Priorität 3}{crt:DFAo}
@@ -96,13 +92,13 @@ Der Benutzer hat die Möglichkeit, den aktuell im Graph-Panel angezeigten CFG al
 Dem Programm liegt eine Manual Page bei, in welcher der Benutzer über die wichtigsten Funktionen des Programms informiert wird.
 
 \criteriumOptional{Fortschrittsanzeige - Priorität 2}{crt:ProgressBarO}
-Dem Benutzer wird angezeigt wie weit die Datenflussanalyse fortgeschritten ist.
+Dem Benutzer wird angezeigt, wie weit die Datenflussanalyse fortgeschritten ist.
 
 \criteriumOptional{Springen zu beliebigem Analysepunkt - Priorität 2}{crt:SliderO}
 Der Benutzer kann an einen beliebigen Punkt der Datenflussanalyse springen.
 
 \criteriumOptional{Implementieren einer eigenen Datenflussanalyse - Priorität 3}{crt:OwnAnalyseO}
-Der Benutzer kann den CFG mit einer eigene Datenflussanalyse analysieren.
+Der Benutzer kann den CFG mit einer eigenen Datenflussanalyse analysieren.
 
 \subsection{Abgrenzung}
 

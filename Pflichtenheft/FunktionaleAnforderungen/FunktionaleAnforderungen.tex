@@ -7,7 +7,7 @@ Im Textfeld für die Eingabe des Codes gibt es eine Zeilennummerierung.
 
 \functionality{Code-Eingabe mit Editor}{fnc:CodeInputIntern}
 \fulfills{crt:CodeInput}
-Es gibt ein Textfeld, in welches der Benutzer Code eingeben kann, welcher anschließend zu einem Kontrollflussgraphen (CFG) verarbeitet werden kann.
+Es gibt ein Textfeld, in welches der Benutzer Code eingeben kann, welcher anschließend zu einem CFG verarbeitet werden kann.
 
 \functionality{Datei-Eingabe}{fnc:CodeInputExt}
 \fulfills{crt:CodeInputExto}
@@ -44,24 +44,24 @@ Enthält der vom Benutzer eingegebene Code Syntaxfehler, so erhält der Benutzer
 \fulfills{crt:lineNmbrErrorO}
 Der Benutzer erhält eine Fehlermeldung, falls in der zu analysierenden Funktion Operationen oder Kontrollflusskonstrukte vorhanden sind, welche nicht dem definierten Subset von Java entsprechen. Die Fehlermeldung weist auf das unterstützte Java-Subset hin.
 
-\functionality{Anzeigen des Kontrollflussgraphen (CFG)}{fnc:showCFGf}
+\functionality{Anzeigen des CFG}{fnc:showCFGf}
 \fulfills{crt:CFG}
 Die GUI kann den aus dem Java-Code erstellten CFG in einem Zwischencode anzeigen. Der CFG ist in einem Panel (im Folgenden als Graph-Panel bezeichnet) dargestellt.
 
-\functionality{Interaktion mit dem Kontrollflussgraphen 1}{fnc:interactCFG1f}
+\functionality{Interaktion mit dem CFG 1}{fnc:interactCFG1f}
 \fulfills{crt:GraphLayoutO}
 \fulfills{crt:BreakpointsO}
 Der Benutzer kann mit der GUI des CFG interagieren, um Breakpoints in einzelnen Zeilen zu setzen.
 
-\functionality{Interaktion mit dem Kontrollflussgraphen 2}{fnc:interactCFG2f}
+\functionality{Interaktion mit dem CFG 2}{fnc:interactCFG2f}
 \fulfills{crt:GraphLayoutO}
 Der Benutzer kann mit der GUI des CFG interagieren, um zu scrollen.
 
-\functionality{Interaktion mit dem Kontrollflussgraphen 3}{fnc:interactCFG2bf}
+\functionality{Interaktion mit dem CFG 3}{fnc:interactCFG2bf}
 \fulfills{crt:GraphLayoutO}
 Der Benutzer kann mit der GUI des CFG interagieren, um zu zoomen.
 
-\functionality{Interaktion mit dem Kontrollflussgraphen 4}{fnc:interactCFG3f}
+\functionality{Interaktion mit dem CFG 4}{fnc:interactCFG3f}
 \fulfills{crt:GraphLayoutO}
 Der Benutzer kann mit der GUI des CFG interagieren, um Blöcke, beziehungsweise Zeilen auszuwählen.
 
@@ -124,7 +124,7 @@ Dem Benutzer stehen Hotkeys zur Verfügung, mithilfe derer er die Datenflussanal
 
 \functionality{Optisches Hervorheben der Blöcke}{fnc:Highlights}
 \fulfills{crt:HighlightingO}
-Je nach Status werden die Blöcke im Kontrollflussgraphen farbig hervorgehoben. Folgende Zustände werden unterschieden:
+Je nach Status werden die Blöcke im CFG farbig hervorgehoben. Folgende Zustände werden unterschieden:
 \begin{enumerate}[label=(\alph*)]
 \item Noch nicht besucht.
 \item Auf der Worklist.

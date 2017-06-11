@@ -5,16 +5,16 @@
 \subsection{Muss}
 
 \criterium{Eingabe von Code}{crt:CodeInput}
-Eingegebener Java-Code kann zu einem Kontrollflussgraphen (CFG) verarbeitet werden.
+Eingegebener Java-Code kann zu einem CFG verarbeitet werden.
 
 \criterium{Java-Subset}{crt:minSubset}
-Das Programm benutzt eine minimale Teilmenge an Java-Operatoren, Kontrollflussstrukturen und Datentypen der Java Version 1.7. Bei Fehlern wird eine Fehlermeldung ausgegeben.
+Der zu analysierende Code benutzt eine minimale Teilmenge an Java-Operatoren, Kontrollflussstrukturen und Datentypen der Java Version 1.7. Bei Fehlern wird eine Fehlermeldung ausgegeben.
 
-\criterium{Kontrollflussgraph}{crt:CFG}
+\criterium{CFG}{crt:CFG}
 Generierter Zwischencode wird dem Benutzer in einem CFG angezeigt.
 
 \criterium{Datenflussanalysen}{crt:DFA}
-Das Programm beherrscht mehrere Datenflussanalysen, mit welchen es den Kontrollflussgraphen analysieren kann.
+Das Programm kann mehrere Datenflussanalysen ausführen und anhand des CFG visualisieren.
 Diese sind:\par
 \begin{enumerate}[label=(\alph*)]
 \item Constant Folding
@@ -24,7 +24,7 @@ Diese sind:\par
 \end{enumerate}
 
 \criterium{Anzeigen der Analyse}{crt:ShowAnalysis}
-Die Schritte der Datenflussanalysen können dem Benutzer blockweise animiert im Kontrollflussgraphen angezeigt werden.
+Die Schritte der Datenflussanalysen können dem Benutzer blockweise animiert im CFG angezeigt werden.
 
 \criterium{Fixpunkt}{crt:Fixpunkt}
 Das Programm kann den Fixpunkt der Analyse automatisch berechnen.
@@ -38,76 +38,76 @@ Der Benutzer kann die Analyse abbrechen und zur Code-Eingabe zurückkehren.
 Das Programm kann Java-Code einlesen und verarbeiten, welcher weitere Operatoren und Konstrukte beinhaltet.
 
 \criteriumOptional{Zeilenangabe bei Fehlermeldungen - Priorität 2 (mittel)}{crt:lineNmbrErrorO}
-Entstehen beim Kompilieren des eingelesenen Codes Fehlermeldungen, so wird dem Nutzer angezeigt, in welcher Zeile des Java-Codes der Fehler gemacht wurde.
+Entstehen beim Kompilieren des eingelesenen Codes Fehlermeldungen, so wird dem Benutzer angezeigt, in welcher Zeile des Java-Codes der Fehler gemacht wurde.
 
 \criteriumOptional{Breakpoints in Datenflussanalyse - Priorität 2}{crt:BreakpointsO}
-Der Nutzer kann Breakpoints in den erstellten CFG setzen. Beim automatisierten Durchlaufen der Analyse stoppt diese am nächsten gesetzten Breakpoint.
+Der Benutzer kann Breakpoints in den erstellten CFG setzen. Beim automatisierten Durchlaufen der Analyse stoppt diese am nächsten gesetzten Breakpoint.
 
 \criteriumOptional{Analyse einzelner Zeilen innerhalb der Blöcke - Priorität 1}{crt:lineAnalysisO}
-Beim Durchlaufen der Datenflussanalyse erhält der Nutzer zusätzlich zu den In- und Out-
+Beim Durchlaufen der Datenflussanalyse erhält der Benutzer zusätzlich zu den In- und Out-
 Informationen der Blöcke als Ganzes, diese auch zu den einzelnen Zeilen
-innerhalb der Blöcken.
+innerhalb der Blöcke.
 
 \criteriumOptional{Dynamisches Graph-Layout - Priorität 1}{crt:GraphLayoutO}
-Der Nutzer hat die Möglichkeit das zunächst automatisiert erstellte Layout des
-Kontrollflussgraphen selbst zu verändern, in dem er zoomen und Blöcke bewegen kann.
+Der Benutzer hat die Möglichkeit das zunächst automatisiert erstellte Layout des
+CFG selbst zu verändern, in dem er zoomen und Blöcke bewegen kann.
 
 \criteriumOptional{Einlesen von Code aus .java Datei und Speichern von Code in .java-Datei - Priorität 3 (niedrig)}{crt:CodeInputExto}
-Der Nutzer hat die Möglichkeit, eine .java Datei in das Programm zu laden, welche
+Der Benutzer hat die Möglichkeit, eine .java Datei in das Programm zu laden, welche
 den zu analysierenden Code enthält. Außerdem kann er im Editor des Programms geschriebenen Code in einer .java-Datei speichern.
 
 \criteriumOptional{Delay-Optionen zwischen Autoplay-Schritten - Priorität 1}{crt:DelayO}
-Der Nutzer kann einstellen, wie lange die einzelnen Schritte im automatisierten
+Der Benutzer kann einstellen, wie lange die einzelnen Schritte im automatisierten
 Durchlaufen der Datenflussanalyse angezeigt werden sollen.
 
 \criteriumOptional{Rückwärtsschritte in der Datenflussanalyse - Priorität 1}{crt:backwardsAnalysisO}
-Der Nutzer hat die Möglichkeit, in der Datenflussanalyse Schritte zurück zu gehen
+Der Benutzer hat die Möglichkeit, in der Datenflussanalyse Schritte zurück zu gehen
 und sich einen vorherigen Analysezustand erneut anzeigen zu lassen.
 
 \criteriumOptional{Auswahlmöglichkeit der Worklistalgorithmen - Priorität 2}{crt:WorklistO}
-Der Nutzer kann zwischen verschiedenen Worklistalgorithmen wählen. Diese
+Der Benutzer kann zwischen verschiedenen Worklistalgorithmen wählen. Diese
 entscheiden, in welcher Reihenfolge die Blöcke in der Datenflussanalyse behandelt
 werden.
 
 \criteriumOptional{.java File mit mehreren Funktionen - Priorität 3}{crt:moreFncO}
-Der Nutzer kann Java-Code einlesen oder eingeben, welcher mehrere Funktionen
+Der Benutzer kann Java-Code einlesen oder eingeben, welcher mehrere Funktionen
 enthält.
 
 \criteriumOptional{\glqq Jump to action\grqq -Funktion - Priorität 2}{crt:JumpToActionO}
-Der Nutzer hat die Möglichkeit den aktuell analysierten Block beziehungsweise die aktuell analysierte Zeile als seinen ausgewählten Block beziehungsweise seine ausgewählte Zeile zu setzen.
+Der Benutzer hat die Möglichkeit den aktuell analysierten Block beziehungsweise die aktuell analysierte Zeile als seinen ausgewählten Block beziehungsweise seine ausgewählte Zeile zu setzen.
 
 \criteriumOptional{Hotkeys für Datenflussanalyse - Priorität 3}{crt:DFAo}
-Dem Nutzer steht eine Reihe von Hotkeys zur Navigation durch die
+Dem Benutzer steht eine Reihe von Hotkeys zur Navigation durch die
 Datenflussanalyse zur Verfügung.
 
 \criteriumOptional{Weitere Datenflussanalysen - Priorität 2}{crt:DFAArtenO}
-Der Nutzer kann zur Analyse seines eingegebenen oder eingelesenen Java-Codes
+Der Benutzer kann zur Analyse seines eingegebenen oder eingelesenen Java-Codes
 zusätzlich zu den Datenflussanalysen aus M7 aus weiteren Arten der Datenflussanalyse
 wählen.
 
 \criteriumOptional{Färbung des CFG - Priorität 1}{crt:HighlightingO}
-Die Blöcke des angezeigten Kontrollflussgraphen im Graph-Panel werden in
+Die Blöcke des angezeigten CFG im Graph-Panel werden in
 Abhängigkeit des aktuellen Analysestandes in verschiedenen Farben eingefärbt.
 
 \criteriumOptional{Exportieren des CFG als Bild-Datei - Priorität 3}{crt:exportPicO}
-Der Nutzer hat die Möglichkeit, den aktuell im Graph-Panel angezeigten Kontrollflussgraphen als Bilddatei zu exportieren. 
+Der Benutzer hat die Möglichkeit, den aktuell im Graph-Panel angezeigten CFG als Bilddatei zu exportieren. 
 
 \criteriumOptional{Manual Page - Priorität 1}{crt:ManPageO}
 Dem Programm liegt eine Manual Page bei, in welcher der Benutzer über die wichtigsten Funktionen des Programms informiert wird.
 
 \criteriumOptional{Fortschrittsanzeige - Priorität 2}{crt:ProgressBarO}
-Der Benutzer kann ablesen wie weit die Datenflussanalyse fortgeschritten ist.
+Dem Benutzer wird angezeigt wie weit die Datenflussanalyse fortgeschritten ist.
 
 \criteriumOptional{Springen zu beliebigem Analysepunkt - Priorität 2}{crt:SliderO}
 Der Benutzer kann an einen beliebigen Punkt der Datenflussanalyse springen.
 
 \criteriumOptional{Implementieren einer eigenen Datenflussanalyse - Priorität 3}{crt:OwnAnalyseO}
-Der Nutzer kann den CFG mit einer eigene Datenflussanalyse analysieren.
+Der Benutzer kann den CFG mit einer eigene Datenflussanalyse analysieren.
 
 \subsection{Abgrenzung}
 
 \criteriumNot{Kein Tutorial}{crt:noTutorial}
-Das Programm erklärt nicht, wie Datenflussanalysen funktionieren oder was Kontrollflussgraphen sind.
+Das Programm erklärt nicht, wie Datenflussanalysen funktionieren oder was ein CFG ist.
 
 \criteriumNot{Keine Optimierung}{crt:noOptimize}
 Das Programm ist zur Veranschaulichung von Datenflussanalysen gedacht. Es kann keine Programme optimieren.
@@ -115,8 +115,8 @@ Das Programm ist zur Veranschaulichung von Datenflussanalysen gedacht. Es kann k
 \criteriumNot{Funktionalität}{crt:functionality}
 Werden folgende Grenzen überschritten, so ist die Funktionalität des Programms nicht mehr garantiert:
 \begin{enumerate}[label=(\alph*)]
-\item Der Kontrollflussgraph hat maximal 10 Knoten
-\item Jeder Knoten beinhaltet maximal 10 Zeilen Zwischencode
+\item Der CFG hat maximal 10 Blöcke
+\item Jeder Block beinhaltet maximal 10 Zeilen Zwischencode
 \item Die Datenflussanalyse benötigt maximal 5000 (Zeilen-)Schritte
 \item Der eingegebene Java-Code besteht aus maximal 5000 Zeichen
 \end{enumerate}

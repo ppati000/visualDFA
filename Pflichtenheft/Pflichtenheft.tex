@@ -13,7 +13,7 @@
 
 \usepackage{hyperref}
 \usepackage{csquotes}
-\usepackage{glossaries}
+\usepackage[nopostdot]{glossaries}
 \usepackage{amsmath}
 \usepackage{amssymb}
 
@@ -53,6 +53,7 @@
 
 \makeindex
 \makeglossaries
+\loadglsentries{Glossar/Glossar}
 
 % so wird ein Glossareintrag definiert
 %\newglossaryentry{computer}{
@@ -80,7 +81,7 @@
 	\include{GUIEntwuerfe/GUIEntwuerfe}
 	
 	% if you want to have the full glossary, not only the mentioned stuff
-	% \glsaddall 
+	\glsaddall 
 	
 	\printglossaries
 	

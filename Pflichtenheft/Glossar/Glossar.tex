@@ -1,0 +1,104 @@
+\newglossaryentry{CFG}{
+	name=Kontrollflussgraph (CFG),
+	description={
+	Ein Graph, dessen Knoten die Grundblöcke eines Programms oder einer Methode sind. Die Kanten des CFG geben an, wie der Kontrollfluss zwischen den Grundblöcken wechseln kann.
+	}
+}
+
+\newglossaryentry{Block}{
+	name=Grundblock,
+	description={
+	Ein Knoten des Kontrollflussgraphen.
+	}
+}
+
+%todo umformulieren, präziser
+\newglossaryentry{DFA}{
+	name=Datenflussanalyse,
+	description={
+	Eine statische Analyse, die den CFG auf bestimmte Merkmale (zum Beispiel Optimierbarkeit) untersucht.
+	}
+}
+
+\newglossaryentry{InOutState}{
+	name=Eingangs- und Ausgangszustand,
+	description={
+	Jeder Block des Kontrollflussgraphen hat einen Eingangszustand und einen Ausgangszustand.
+	Diese entsprechen den Informationen, die vor bzw. nach Durchlaufen des Blocks bekannt sind.
+	}
+}
+
+\newglossaryentry{UeFkt}{
+	name=Übergangsfunktion,
+	description={
+	Eine Übergangsfunktion für einen Block bildet dessen Eingangszustand auf seinen Ausgangszustand ab. 
+	Sie unterscheidet sich je nach Datenflussanalyse und Code des zugehörigen Blocks.
+	}
+}
+
+\newglossaryentry{FP}{
+	name=Fixpunkt,
+	description={
+	Der Fixpunkt einer Datenflussanalyse ist der Punkt, an welchem sich bei keiner Übergangsfunktion im gesamten Kontrollflussgraphen eine Veränderung des Ausgangszustandes des jeweiligen Knotens ergibt.
+	}
+}
+
+\newglossaryentry{Java}{
+	name=Java,
+	description={
+	Eine weit verbreitete Programmiersprache, welche in diesem Programm dazu benutzt werden kann, den zu analysierenden Code einzugeben.
+	}
+}
+
+\newglossaryentry{GUI}{
+	name=GUI,
+	description={
+	Graphical User Interface oder Graphische Benutzeroberfläche.
+	Alle Programmelemente, die für den Benutzer sichtbar sind und Interaktion mit dem Programm ermöglichen.
+	}
+}
+
+\newglossaryentry{GraphPanel}{
+	name=Graph-Panel,
+	description={
+	Das GUI-Element, in welchem dem Benutzer der CFG angezeigt wird.
+	}
+}
+
+\newglossaryentry{Worklist}{
+	name=Worklist,
+	description={
+	Eine Datenstruktur, die die noch zu bearbeitenden Grundblöcke während einer Datenflussanalyse enthält und die Abarbeitungsreihenfolge festlegt.
+	}
+}
+
+\newglossaryentry{WLAlgo}{
+	name=Worklistalgorithmus,
+	description={
+	Ein Algorithmus, welcher eine Datenflussanalyse unter Verwendung einer Worklist ausführt.
+	Nach Abarbeitung eines Blockes werden alle Blöcke, deren Eingangszustand sich dadurch geändert hat, zur Worklist hinzugefügt.
+	}
+}
+
+\newglossaryentry{naiv}{
+	name=Naiver Worklistalgorithmus,
+	description={
+	Es werden alle Knoten in der Reihenfolge, in der sie \enquote{entdeckt} werden (Breitensuche),
+	in die Worklist eingefügt und anschließend in dieser Reihenfolge abgearbeitet.
+	}
+}
+
+\newglossaryentry{random}{
+	name=Zufälliger Worklistalgorithmus,
+	description={
+	Die Blöcke werden wie bei dem naiven Worklistalgorithmus in die Worklist eingefügt.
+	Nach Abarbeitung jedes Knotens in der Analyse wird ein zufälliger neuer dieser Blöcke gewählt und behandelt.
+	}
+}
+
+\newglossaryentry{efficient}{
+	name=Effizienter Worklistalgorithmus,
+	description={
+	Die Reihenfolge der Abarbeitung der Blöcke wird optimiert, sodass der Fixpunkt mit möglichst wenig Iterationsschritten gefunden wird.
+	}
+}

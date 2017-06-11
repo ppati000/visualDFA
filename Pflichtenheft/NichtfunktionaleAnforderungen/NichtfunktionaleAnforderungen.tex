@@ -4,15 +4,15 @@
 
 \nonFunctionality{Benutzeroberfläche reagiert zu jedem Zeitpunkt}{nfc:reactivity}
 
-Die Benutzeroberfläche reagiert in jedem Zustand des Programms (also auch während der Berechnung der Datenflussanalyse) innerhalb von einer Sekunde auf Eingaben des Nutzers.
+Die Benutzeroberfläche reagiert in jedem Zustand des Programms (also auch während der Berechnung der Datenflussanalyse) innerhalb von einer Sekunde auf Eingaben des Benutzers.
 
 \nonFunctionality{Visuelles Feedback}{nfc:feedback}
 
-Nach Betätigung eines Buttons erhält der Nutzer innerhalb von einer Sekunde visuelles Feedback.
+Nach Betätigung eines Buttons erhält der Benutzer innerhalb von einer Sekunde visuelles Feedback.
 
 \nonFunctionality{Konsistenz zwischen Code und CFG}{nfc:consistency}
 
-Der eingelesene oder eingegebene Java-Code ist zu jedem Zeitpunkt konsistent zum angezeigten Kontrollflussgraphen, sofern ein Kontrollflussgraph angezeigt wird.
+Der eingelesene oder eingegebene Java-Code ist zu jedem Zeitpunkt konsistent zum angezeigten CFG, sofern ein CFG angezeigt wird.
 
 \nonFunctionality{Aussagekräftige Fehlermeldungen}{nfc:errors}
 
@@ -22,16 +22,16 @@ Java-Kenntnisse und ein Verständnis für das Konzept von Datenflussanalysen vor
 
 Die Funktionalität der Analyse ist garantiert, solange keine der folgenden Grenzen überschritten wird:
 \begin{enumerate}[label=(\alph*)]
-\item Der Kontrollflussgraph hat maximal 10 Knoten
-\item Jeder Knoten beinhaltet maximal 10 Zwischencode-Zeilen
+\item Der CFG hat maximal 10 Blöcke
+\item Jeder Block beinhaltet maximal 10 Zwischencode-Zeilen
 \item Die Datenflussanalyse benötigt maximal 5000 (Zeilen-)Schritte
 \item Der eingegebene Java-Code besteht aus maximal 5000 Zeichen
 \end{enumerate}
 
 Die übersichtliche Darstellung des CFG ist gewährleistet, solange zusätzlich zu den oben genannten Grenzen keine der folgenden Grenzen überschritten wird:
 \begin{enumerate}[label=(\alph*)]
-\item Der Kontrollflussgraph hat insgesamt maximal 7 Knoten
-\item Jeder Knoten beinhaltet maximal 5 Zwischencode-Zeilen
+\item Der CFG hat insgesamt maximal 7 Blöcke
+\item Jeder Block beinhaltet maximal 5 Zwischencode-Zeilen
 \end{enumerate}
 
 \nonFunctionality{Skalierbarkeit der GUI}{nfc:scalability}

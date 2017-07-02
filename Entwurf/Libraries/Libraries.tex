@@ -1,0 +1,28 @@
+%note: don't split this document up with include{...}
+
+\section{Verwendete Libraries}
+
+\subsection{JGraphX}
+
+JGraphX (\url{https://github.com/jgraph/jgraphx}) ist eine Java-Libraray zum automatischen Layouten und zum Zeichnen von Graphen. 
+Damit eignet sich JGraphX gut, um den im Rahmen der Animation von Datenflussanalysen erstellten Kontrollflussgraphen zu visualisieren.
+Insbesondere bietet JGraphX die Möglichkeit, Knoten weiter in Zellen (\lstinline{mxCell}) zu unterteilen.
+Dies ermöglicht die zeilenweise Animation der Datenflussanalysen.
+
+\subsection{Reflections}
+
+Reflections (\url{https://github.com/ronmamo/reflections}) ist eine Java-Library, die es erlaubt, zur Laufzeit neue Java-Klassen zu laden sowie Metainformation über diese zu erhalten.
+Dies wird dazu benutzt, um zur Laufzeit neue Datenflussanalysen zu laden.
+Dazu wird ein festgelegter Ordner bei Programmstart auf kompilierte Java-Dateien (.class-Dateien) aus einem bestimmten Package [?! noch festlegen !?] untersucht. 
+Dann werden alle Klassen, die von \lstinline{DataFlowExecution} erben geladen und als Datenflussanalysen bereitgestellt. 
+
+
+\subsection{Soot}
+
+Soot (\url{https://github.com/Sable/soot}) ist eine Java-Library, die viele Funktionalitäten für statische Programmanalysen bereitstellt. 
+Insbesondere bietet Soot mehrere Zwischencode-Formate an, in die gegebener Java-Bytecode übersetzt werden kann. 
+In diesem Projekt wird Jimple als Zwischencode verwendet, auf dem die Datenflussanalysen erfolgen.
+Bei Jimple handelt es sich um einen Expression-basierten typisierte Drei-Adress-Code.
+Die elementaren Codeeinheiten sind also Expressions (Ausdrücke), die jeweils maximal drei Operanden haben.
+Neben einer Zwischencode-Repräsentation bietet Soot die Möglichkeit, einen Kontrollflussgraphen aus Java-Bytecode zu erzeugen.
+Die Grundblöcke des erzeugten Kontrollflussgraphen enthalten dann entsprechenden Zwischencode (hier Jimple).

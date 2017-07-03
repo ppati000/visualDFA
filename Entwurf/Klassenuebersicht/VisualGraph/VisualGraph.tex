@@ -1,3 +1,38 @@
 %note: don't split this document up with include{...}
 
 \section{VisualGraph}
+
+Das VisualGraph-Package ist dafür zuständig, aktuelle Daten aus dem DFAFramework abzufragen und diese visuell in einem Graphen darzustellen. 
+Zusätzlich ermöglicht es dem Nutzer, Breakpoints für die Analyse zu setzen und den Graphen als PNG-Datei zu exportieren.
+
+Als zentrale logische Schnittstelle bietet das VisualGraph-Package die Klasse GraphUIController an. 
+Dieser muss vom Controller-Package über den Aufruf von start() oder refresh() darüber benachrichtigt werden, dass es Änderungen in der Analyse des DFAFrameworks gegeben hat.
+Ist diese Benachrichtigung erfolgt, so beschafft sich der GraphUIController selbsttätig alle benötigten Daten vom DFAFramework, um die Objektstruktur für den visuellen Graphen zu erstellen und den Graphen zu rendern.
+
+Die zweite nach außen wichtige Schnittstelle ist die Klasse VisualGraphPanel. Diese erbt von JPanel und beherbergt direkt den visuellen Graphen.
+Zusätzlich stehen für die Visualisierung wichtige Methoden wie zoomIn(), zoomOut() und setActivated() zu Verfügung.
+Die übrigen Methoden des VisualGraphPanels werden ausschließlich von den Klassen GraphUIController, GraphExporter und (Subklassen von) ActionListener aufgerufen.
+
+Bemerkenswert am Entwurf des VisualGraph-Package ist die Entkopplung der Visualisierungslogik von der benutzten Library JGraphX.
+So arbeiten weder VisualGraphPanel noch GraphUIController direkt mit der Klasse mxCell, welche alle visuellen Komponenten in JGraphX repräsentiert.
+Stattdessen wird auf eine eigene Struktur mit der Klasse VisualGraphElement und ihren Unterklassen UIEdge, UIAbstractBlock, UIBasicBlock und UILineBlock gesetzt.
+Jedes VisualGraphElement besitzt eine Referenz auf das mxGraph-Objekt, eine Referenz auf den zugehörigen logischen Block aus dem DFAFramework und eine render()-Methode.
+Beim ersten Aufruf von render() wird nun dafür gesorgt, dass die entsprechende mxCell erstellt und in den mxGraph eingefügt wird.
+Wird render() erneut beim selben Objekt aufgerufen, so aktualisiert es seine Daten, indem es diese beim DFAFramework abfragt.
+Anschließend aktualisiert es seine zugehörige mxCell, um den angezeigten Graphen neu zu rendern.
+
+Für den Entwurf ergeben sich folgende Vorteile:
+\begin{itemize}
+	\item GraphUIController und VisualGraphPanel müssen sich nicht mit Layouts, Größen oder Koordinaten auseinandersetzen, da dies von den VisualGraphElement-Subklassen erledigt wird.
+	    Die Erstellung eines visuellen Grundblocks mit JGraphX ist komplex (für jede Zeile eines Grundblocks wird eine eigene verschachtelte mxCell benötigt, und Zeilen müssen alle untereinander gerendert werden).
+	    Durch die gegebene Entwurfsarchitektur wird diese Komplexität versteckt, sodass der visuelle Graph sehr einfach erstellt werden kann.
+	\item Durch die Entkopplung wird ein Austausch von JGraphX stark erleichtert, da in diesem Fall hauptsächlich die Subklassen von VisualGraphElement geändert werden müssen.
+        Das VisualGraphPanel hat zwar ebenfalls eine Referenz auf mxGraph, allerdings nur, um diesen in den mxGraphComponent einzufügen. 
+        Auch die getGraph()-Methode im VisualGraphPanel ist nur für den Batch-Export notwendig.
+        Abgesehen davon wäre es also ausreichend, die Subklassen von VisualGraphElement und wenige Zeilen im VisualGraphPanel zu ändern, um JGraphX gegen eine andere Library auszutauschen.
+        
+\end{itemize}
+
+
+
+\subsection{Klassenbeschreibung}

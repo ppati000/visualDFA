@@ -1,0 +1,46 @@
+\documentclass[parskip=full,11pt]{scrartcl}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[german]{babel}
+
+\usepackage[yyyymmdd]{datetime} % must be after babel
+\renewcommand{\dateseparator}{-} % ISO8601 date format
+\usepackage{hyperref}
+\usepackage{listings}
+\usepackage{float}
+\usepackage{enumitem}
+\renewcommand{\familydefault}{\sfdefault}
+\usepackage{graphicx}
+\usepackage{placeins}
+
+
+\RedeclareSectionCommand[style=section,indent=0pt,font=\usekomafont{partnumber}]{part}
+\renewcommand*{\partformat}{\thepart\enskip}
+
+\usepackage[bottom = 3 cm, top = 3 cm]{geometry}
+
+
+\begin{document}
+	\title{Entwurf: Programmanalyse zum Durchklicken}
+	\author{Nils Jessen \and Anika Nietzer \and Patrick Petrovic \and Sebastian Rauch \and Michael Schieber}
+	
+	\maketitle
+	
+	\include{Entwurfsentscheidungen/Entwurfsentscheidungen}
+	
+	\include{Klassenuebersicht/Klassenuebersicht}
+	\include{Klassenuebersicht/Controller/Controller}
+	\include{Klassenuebersicht/CodeProcessor/CodeProcessor}
+	\include{Klassenuebersicht/DFAFramework/DFAFramework}
+	\include{Klassenuebersicht/Analysen/Analysen}
+	\include{Klassenuebersicht/GUI/GUI}
+	\include{Klassenuebersicht/VisualGraph/VisualGraph}
+	\include{Klassenuebersicht/GraphExport/GraphExport}
+
+	\include{Sequenzdiagramme/Sequenzdiagramme}
+	\include{AenderungenPflichtenheft/AenderungenPflichtenheft}
+	\include{Klassendiagramm/Klassendiagramm}
+
+
+\end{document}

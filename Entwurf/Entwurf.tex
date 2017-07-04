@@ -14,18 +14,32 @@
 \usepackage{graphicx}
 \usepackage{placeins}
 
+\usepackage{lmodern}
+\usepackage{courier}
+\lstset{basicstyle=\footnotesize\ttfamily,breaklines=true}
+\lstset{framextopmargin=50pt,frame=bottomline,showstringspaces=false}
+
 
 \RedeclareSectionCommand[style=section,indent=0pt,font=\usekomafont{partnumber}]{part}
 \renewcommand*{\partformat}{\thepart\enskip}
 
+\RedeclareSectionCommand[beforeskip=0pt ,afterskip=0pt]{subparagraph}
+
 \usepackage[bottom = 3 cm, top = 3 cm]{geometry}
 
+% command for an attribute
+\newcommand{\attr}[4]{\lstinline{[#3]} \textbf{\lstinline{#1 : #2}} \newline #4}
 
-\begin{document}
+% command for a method
+\newcommand{\method}[5]{\lstinline{[#4]} \textbf{\lstinline{#1 (#3) : #2}} \newline #5}
+
+
+	\begin{document}
 	\title{Entwurf: Programmanalyse zum Durchklicken}
 	\author{Nils Jessen \and Anika Nietzer \and Patrick Petrovic \and Sebastian Rauch \and Michael Schieber}
 	
 	\maketitle
+	
 	
 	\include{Entwurfsentscheidungen/Entwurfsentscheidungen}
 	
@@ -41,6 +55,5 @@
 	\include{Sequenzdiagramme/Sequenzdiagramme}
 	\include{AenderungenPflichtenheft/AenderungenPflichtenheft}
 	\include{Klassendiagramm/Klassendiagramm}
-
 
 \end{document}

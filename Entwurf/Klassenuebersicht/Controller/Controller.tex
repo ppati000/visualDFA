@@ -1,3 +1,29 @@
 %note: don't split this document up with include{...}
 
 \section{Controller}
+
+Das Controller-Modul ist dafür verantwortlich, die Kommunikation zwischen der Graphischen Benutzeroberfläche (GUI) und dem Datenflussanalyse-Framework (DFAFramework) sowie dem CodeProcessor zu übernehmen.
+Außerdem bietet es eine Schnittstelle zum VisualGraph-Modul.
+
+Die Grundidee des Controllers basiert auf dem Model-View-Controller Muster (MVC).
+
+Der Controller wird benutzt sobald der Benutzer ein GUI-Element benutzt, welches eine Veränderung des Models (DFAFramework) nach sich ziehen muss. Darunter fällt zum Beispiel das Starten der Analyse oder die Steuerung der Analyseschritte.
+Nicht darunter fällt eine reine Änderung der GUI-Anzeige, wie beispielsweise das Ändern der Größe des Fensters.
+
+Wird nun beispielsweise eine neue Analyse gestartet, so wird der Controller von der GUI aufgerufen und beschafft sich alle nötigen Informationen von der GUI.
+Dann lässt er den CodeProcessor den zu analysierenden Code in einen Kontrollflussgraphen umbauen und gibt diesen dann dem DFAFramework. Dieses berechnet dann die Datenflussanalyse.
+Sobald dies abgeschlossen ist, lässt der Controller die GUI aktualisieren, wobei er auf dem VisualGraph-Controller die start()-Methode aufruft.
+Diese sorgt dafür, dass der Benutzer den Graph im VisualGraphPanel sehen kann. Alle anderen Panels steuert der Controller selbst an.
+
+Während der Analyse wird der Controller weiterhin von der GUI aufgerufen, um die Analyse zu steuern. Der Controller lässt dabei immer das DFAFramework aktualisieren und dann die GUI die neuen Informationen anzeigen.
+
+Bei Aktionen die möglicherweise viel Zeit benötigen, erzeugt der Controller einen neuen Thread um diese Aktion abzuarbeiten.
+Dadurch soll die Reaktionsfähigkeit des Programms garantiert werden.
+
+Für den Entwurf ergeben sich folgende Vorteile:
+\begin{itemize}
+	\item Durch den Controller ist die Anwendungslogik klar von den Darstellungen und Benutzerinteraktionen getrennt.
+	Dadurch kann die Benutzeroberfläche leicht ausgetauscht werden.
+	\item Der Status der Datenflussanalyse kann leicht in unterschiedlichen Darstellungsmodulen repräsentiert werden, wie zum Beispiel als Graph (VisualGraphPanel) und als Status eines Knotens(StatePanel).
+	\item Das bestehende System kann leicht erweitert werden indem neue Teile zum Model (DFAFramework) oder View (GUI) hinzugefügt werden.
+\end{itemize}

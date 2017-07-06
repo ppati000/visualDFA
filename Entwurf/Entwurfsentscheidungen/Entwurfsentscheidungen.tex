@@ -16,24 +16,24 @@ Die Präsentationsschicht beinhaltet die für die Darstellung und die Interaktio
 Sie wird durch die Benutzerinteraktion angesprochen und informiert das Modell über die zu ändernden Daten oder notwendigen Vorgänge.
 
 \section{Modulübersicht}
-Der Entwurf setzt sich aus den in der folgenden Graphik dargestellten Paketen gemäß dem MVC-Muster zusammen.
-Dabei gehören das DFAFramework-Package, das Analysen-Package, das Soot-Package und das Reflections-Package zum Modell. 
-Der View wird durch das UI-Package, das VisualGraph-Package und das MXGraph-Package gebildet. \par
+Der Entwurf setzt sich aus den in der folgenden Graphik dargestellten Module gemäß dem MVC-Muster zusammen.
+Dabei gehören das DFAFramework-Modul, das Analysen-Modul, das CodeProcessor-Modul und das Reflections-Modul zum Modell. 
+Der View wird durch das GUI-Modul, das VisualGraph-Modul und das JGraphX-Modul gebildet. \par
 Das DFAFramework liefert die Logik für die Funktionalität des Programms. 
-Es benutzt dabei das Analyse-Package, in welchem sich die von uns implementierten Datenflussanalysen befinden. 
-Diese Datenflussanalysen implementieren ein zentrales Interface des DFA Frameworks. 
+Es benutzt dabei das Analyse-Modul, in welchem sich die von uns implementierten Datenflussanalysen befinden. 
+Diese Datenflussanalysen implementieren ein zentrales Interface des DFAFrameworks. 
 Des Weiteren ist es abhängig von den externen Libraries Soot und Reflections (siehe unten). 
 Der Controller ist für die Kommunikation zwischen dem DFAFramework und dem User Interface zuständig. 
-Dabei benutzt er das InputProcessor-Package, welches zwischen dem Controller und Soot vermittelt. 
+Dabei benutzt er das InputProcessor-Modul, welches zwischen dem Controller und Soot vermittelt. 
 Durch diesen Input-Prozessor ist der Controller weitestgehend unabhängig von der verwendeten Library Soot. \par 
-Das UI-Package ist für die Darstellung der Information und für die Interaktion mit dem Benutzer zuständig. D
-abei verwendet es das VisualGraph-Package, welches für die Kommunikation zwischen der logischen Struktur des DFAFrameworks und der visuellen Information im Graph-Panel inklusive der Interaktion des Benutzers mit diesem verantwortlich ist. 
-Das VisualGraph-Package verwendet die Libary JGraphX und wird seinerseits vom Graph-Export Package verwendet. 
+Das GUI-Modul ist für die Darstellung der Information und für die Interaktion mit dem Benutzer zuständig. 
+Dabei verwendet es das VisualGraph-Modul, welches für die Kommunikation zwischen der logischen Struktur des DFAFrameworks und der visuellen Information im \inlinecode{VisualGraphPanel} inklusive der Interaktion des Benutzers mit diesem verantwortlich ist. 
+Das VisualGraph-Modul verwendet die Libary JGraphX und ist ebenfalls für den Export von Graphen verantwortlich
 
 \begin{figure}[htbp] 
   \centering
      \includegraphics[width=1\textwidth]{Entwurfsentscheidungen/PackageOverview}
-  \caption{Paketübersicht}
+  \caption{Modulübersicht}
   \label{fig:Ubersicht}
 \end{figure}
 

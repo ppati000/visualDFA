@@ -16,8 +16,8 @@ Die Präsentationsschicht beinhaltet die für die Darstellung und die Interaktio
 Sie wird durch die Benutzerinteraktion angesprochen und informiert das Modell über die zu ändernden Daten oder notwendigen Vorgänge.
 
 \section{Modulübersicht}
-Der Entwurf setzt sich aus den in der folgenden Graphik dargestellten Module gemäß dem MVC-Muster zusammen.
-Dabei gehören das DFAFramework-Modul, das Analysen-Modul, das CodeProcessor-Modul und das Reflections-Modul zum Modell. 
+Der Entwurf setzt sich aus den in der folgenden Graphik dargestellten Modulen gemäß dem MVC-Muster zusammen.
+Dabei gehören das DFAFramework-Modul, das Analysen-Modul, das CodeProcessor-Modul und das Reflections-Modul zum Model. 
 Der View wird durch das GUI-Modul, das VisualGraph-Modul und das JGraphX-Modul gebildet. \par
 Das DFAFramework liefert die Logik für die Funktionalität des Programms. 
 Es benutzt dabei das Analyse-Modul, in welchem sich die von uns implementierten Datenflussanalysen befinden. 
@@ -28,7 +28,7 @@ Dabei benutzt er das InputProcessor-Modul, welches zwischen dem Controller und S
 Durch diesen Input-Prozessor ist der Controller weitestgehend unabhängig von der verwendeten Library Soot. \par 
 Das GUI-Modul ist für die Darstellung der Information und für die Interaktion mit dem Benutzer zuständig. 
 Dabei verwendet es das VisualGraph-Modul, welches für die Kommunikation zwischen der logischen Struktur des DFAFrameworks und der visuellen Information im \inlinecode{VisualGraphPanel} inklusive der Interaktion des Benutzers mit diesem verantwortlich ist. 
-Das VisualGraph-Modul verwendet die Libary JGraphX und ist ebenfalls für den Export von Graphen verantwortlich
+Das VisualGraph-Modul verwendet die Libary JGraphX und ist ebenfalls für den Export von Graphen verantwortlich.
 
 \begin{figure}[htbp] 
   \centering

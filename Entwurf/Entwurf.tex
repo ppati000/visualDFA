@@ -8,6 +8,8 @@
 \renewcommand{\dateseparator}{-} % ISO8601 date format
 \usepackage{hyperref}
 \usepackage{listings}
+\usepackage{textcomp}
+
 \usepackage{float}
 \usepackage{enumitem}
 \renewcommand{\familydefault}{\sfdefault}
@@ -39,7 +41,7 @@
 \setlength{\parindent}{0pt}% Just for this example
 
 \lstset{basicstyle=\footnotesize\ttfamily,breaklines=true}
-\lstset{framextopmargin=50pt,frame=bottomline,showstringspaces=false}
+\lstset{framextopmargin=50pt,frame=bottomline,showstringspaces=false,upquote=true}
 
 
 \RedeclareSectionCommand[style=section,indent=0pt,font=\usekomafont{partnumber}]{part}
@@ -65,9 +67,13 @@
 % make the bullet symbol in lists a circle for level 2
 \renewcommand{\labelitemii}{$\circ$}
 
+% for double quotation marks in listings
+\newcommand{\qq}[1]{``#1``}
 
 
-	\begin{document}
+
+
+\begin{document}
 	\title{Entwurf: Programmanalyse zum Durchklicken}
 	\author{Nils Jessen \and Anika Nietzer \and Patrick Petrovic \and Sebastian Rauch \and Michael Schieber}
 	
@@ -80,7 +86,7 @@
 	\include{Klassenuebersicht/Controller/Controller}
 	\include{Klassenuebersicht/CodeProcessor/CodeProcessor}
 	\include{Klassenuebersicht/DFAFramework/DFAFramework}
-	\include{Klassenuebersicht/Analysen/Analysen}
+	\include{Klassenuebersicht/Analyses/Analyses}
 	\include{Klassenuebersicht/GUI/GUI}
 	\include{Klassenuebersicht/VisualGraph/VisualGraph}
 

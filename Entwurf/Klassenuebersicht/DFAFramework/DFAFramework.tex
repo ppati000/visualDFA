@@ -22,14 +22,15 @@ Analog zu zeilenweisen Schritten können auch blockweise Schritte mittels \inlin
 Zudem kann mit \inlinecode{getCurrentAnalysisState() : AnalysisState} zu jedem Zeitpunkt der aktuelle Analysezustand erfragt werden.
 Ein \inlinecode{AnalysisState} speichert dabei für jeden \inlinecode{AbstractBlock} (also sowohl für \inlinecode{ElementaryBlock}s als auch \inlinecode{BasicBlock}s) den aktuellen In- und Out-State, den aktuellen Zustand der \inlinecode{Worklist} sowie bei welchem \inlinecode{ElementaryBlock} bzw. \inlinecode{BasicBlock} sich die Analyse aktuell befindet.
 
-Das Interface \inlinecode{Worklist} sowie die implementierenden Klassen \inlinecode{EfficientWorklist}, \inlinecode{NaiveWorklist} und \inlinecode{RandomWorklist} legen die Analysereihenfolge der einzelnen \inlinecode{BasicBlock}s fest.
+Das Interface \inlinecode{Worklist} sowie die implementierenden Klassen \inlinecode{EfficientWorklist}, \inlinecode{NaiveWorklist} und \inlinecode{RandomWorklist} legen die Analysereihenfolge der einzelnen \inlinecode{BasicBlock}s fest und setzen damit das Entwurfsmuster der Strategie um.
 
 Für die Implementierung konkreter Datenflussanalysen ist die Klasse \inlinecode{DataFlowAnalysis} essentiell.
 Sie legt die Analyserichtung (\inlinecode{DFADirection}) sowie den Namen, unter dem eine Datenflussanalyse in der GUI auftaucht, fest.
 Weiter bestimmt eine \inlinecode{DataFlowAnalysis} mittels \inlinecode{getLattice(blockGraph : BlockGraph) : Lattice} den für die Analyse verwendeten Verband.
 Ein \inlinecode{Lattice} realisiert den Join-Operator mittels \inlinecode{join(elements : Set<LatticeElement>) : LatticeElement}.
 Weiter gibt er zu allen unterstützten Expressions eine Übergangsfunktion mittels \inlinecode{transition(in : LatticeElement, unit : soot.Unit) : LatticeElement} an.
-Schließlich gibt ein \inlinecode{Lattice} zu jedem Grundblock mittels \inlinecode{getInitialStates() : Map<Block, BlockState>} einen Initialzustand an.
+Schließlich gibt ein \inlinecode{Lattice} zu jedem Grundblock mittels \inlinecode{getInitialStates() : Map<Block, BlockState>} einen Initialzustand an. 
+Mit den verschiedenen Implementierungen des Interfaces \inlinecode{Lattice} und den damit verbundenen Algorithmen für \inlinecode{join(elements : Set<LatticeElement>) : LatticeElement} und \inlinecode{transition(in : LatticeElement, unit : soot.Unit) : LatticeElement} kommt auch hier das Entwurfsmuster der Strategie fulminant zur Anwendung.
 
 Ein \inlinecode{AnalysisLoader} ist für das Laden von Datenflussanalysen zuständig.
 Mittels \inlinecode{loadAnalyses(logger : java.util.logging.Logger)} werden alle Unterklassen von \inlinecode{DataFlowAnalysis}, die an einem festgelegten Speicherort als .class-Dateien abgelegt sind, geladen.
@@ -113,6 +114,7 @@ Ein \inlinecode{Lattice} repräsentiert einen Verband, der für Datenflussanalys
 Ein \inlinecode{Lattice} legt die Join-Operation fest, die bestimmt, wie mehrere \inlinecode{LatticeElement}s (\inlinecode{E}) zusammengeführt werden.
 Weiter legt ein \inlinecode{Lattice} die Übergangsfunktionen fest, die bestimmt, wie ein \inlinecode{LatticeElement} von einer \inlinecode{soot.Unit} in ein neues \inlinecode{LatticeElement} überführt wird.
 Schließlich bestimmt ein \inlinecode{Lattice} noch den Initialzustand (In- und Out-State) jedes \inlinecode{Block}s des der Analyse zugrunde liegenden \inlinecode{BlockGraph}s.
+Damit setzt das Interface \inlinecode{Lattice} das Entwurfsmuster der Strategie um. 
 
 \paragraph*{Methoden}
 \begin{itemize}
@@ -360,7 +362,7 @@ Sowohl der In- und Out-State sind dabei jeweils ein \inlinecode{LatticeElement}.
 
 \class{interface Worklist extends Cloneable}
 Eine \inlinecode{Worklist} legt fest, welche \inlinecode{BasicBlock}s noch zu bearbeiten sind und in welcher Reihenfolge dies geschieht.
-Von einer \inlinecode{Worklist} kann mittels \inlinecode{clone()} stets eine tiefe Kopie angefertigt werden.
+Von einer \inlinecode{Worklist} kann mittels \inlinecode{clone()} stets eine tiefe Kopie angefertigt werden. Das Interface \inlinecode{Worklist} entspricht dem Entwurfsmuster der Strategie.
 
 \paragraph*{Methoden}
 \begin{itemize}

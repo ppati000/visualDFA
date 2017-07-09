@@ -2,9 +2,8 @@
 
 \part{Sequenzdiagramme}
 
-\section{Starten des Programms}
-\FloatBarrier
-\begin{figure}
+\section*{Starten des Programms}
+\begin{figure}[H]
   \centering
     \includegraphics[width=1\textwidth]{Sequenzdiagramme/ProgramStart}
   \caption{Starten des Programms}
@@ -14,55 +13,77 @@
 \clearpage
 
 
-\section{Konstruktor der DFAExecution}
+\section*{Konstruktor der DFAExecution}
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=1\textwidth]{Sequenzdiagramme/KonstruktorDFAExecution}
+	\caption{Konstruktoraufruf bei der DFAExecution}
+	\label{fig:dfactor}
+\end{figure}
+\FloatBarrier
 \clearpage
 
 
-\section{Erstellen eines neuen Graphen}
-\begin{figure}[!htp]
+\section*{Erstellen eines neuen Graphen}
+\begin{figure}[H]
   \centering
-    \includegraphics[width=1\textwidth]{Sequenzdiagramme/CreateNewGraph}
-  \caption{Konstruktor der DFAExecution}
-  \label{fig:constructor}
+    \includegraphics[width=1\textwidth]{Sequenzdiagramme/CreateGraph}
+  \caption{Erstellen eines neuen Graphen}
+  \label{fig:creategraph}
 \end{figure}
 \newpage
-\clearpage
 
-\section{Starten der Analyse}
-\begin{figure} [!htp]
+\section*{Graphen aktualisieren}
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=1\textwidth]{Sequenzdiagramme/RefreshGraph}
+	\caption{Aktualisieren des Graphen}
+	\label{fig:graphrefresh}
+\end{figure}
+\newpage
+
+\section*{Starten der Analyse}
+\begin{figure}[H]
   \centering
     \includegraphics[width=1\textwidth]{Sequenzdiagramme/AnalysisStart}
   \caption{Starten der Analyse}
   \label{fig:anaStart}
 \end{figure}
-\FloatBarrier
-\clearpage
+\newpage
 
-\section{Stoppen der Analyse}
-\begin{figure}[!htp]
+\section*{Stoppen der Analyse}
+\begin{figure}[H]
   \centering
     \includegraphics[width=1\textwidth]{Sequenzdiagramme/AnalysisStop}
   \caption{Stoppen der Analyse}
   \label{fig:anaStop}
 \end{figure}
-\clearpage
+\newpage
 
-\section{Den folgenden Block analysieren}
-\begin{figure}[!htp]
+\section*{Den folgenden Block analysieren}
+\begin{figure}[H]
   \centering
     \includegraphics[width=1\textwidth]{Sequenzdiagramme/NextBlock}
   \caption{Den folgenden Block analysieren}
   \label{fig:nextblock}
 \end{figure}
-\FloatBarrier
-\clearpage
+\newpage
 
-\section{Breakpoint setzen}
-\begin{figure}[!htp]
+\section*{Breakpoint setzen}
+\begin{figure}[H]
   \centering
     \includegraphics[width=1\textwidth]{Sequenzdiagramme/SetBreakpoint}
   \caption{Breakpoint setzen}
   \label{fig:breakpoint}
 \end{figure}
-\clearpage
-\FloatBarrier
+\newpage
+
+
+\section*{Graphexport}
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=1\textwidth]{Sequenzdiagramme/GraphExport}
+	\caption{Export des Graphen}
+	\label{fig:graphexport}
+\end{figure}
+\newpage

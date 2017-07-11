@@ -2,6 +2,7 @@ package controller;
 
 import dfa.framework.DFAExecution;
 import dfa.framework.DataFlowAnalysis;
+import dfa.framework.SimpleBlockGraph;
 import dfa.framework.Worklist;
 import soot.toolkits.graph.BlockGraph;
 

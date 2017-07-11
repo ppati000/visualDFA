@@ -11,7 +11,7 @@
 .mtj.tmp/
 
 # Package Files #
-*.jar
+# *.jar # we need some local libraries
 *.war
 *.ear
 *.zip
@@ -35,3 +35,10 @@ Pflichtenheft.dvi
 Pflichtenheft.synctex.gz
 Entwurf.pdf
 Entwurf.synctex.gz
+
+# IDE stuff
+.metadata/
+RemoteSystemTempFiles/
+.project
+.classpath
+.settings

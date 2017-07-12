@@ -4,7 +4,7 @@ import java.util.Map;
 import java.util.Set;
 
 import soot.Unit;
-import soot.toolkits.graph.Block;
+import soot.toolkits.graph.Block; 
 
 /**
  * @author Sebastian Rauch

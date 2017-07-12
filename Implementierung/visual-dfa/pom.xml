@@ -65,13 +65,13 @@
   
   
   <dependencies>
-  	<dependency>  
+    <dependency>  
       <groupId>soot</groupId>
       <artifactId>soot-trunk</artifactId>
       <version>3.0.0</version>
       <scope>system</scope>
       <systemPath>${project.basedir}/src/main/resources/libs/soot-trunk.jar</systemPath>
-  	</dependency>
+    </dependency>
     
     <dependency>  
       <groupId>jgraphx</groupId>

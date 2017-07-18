@@ -18,7 +18,7 @@
       <systemPath>${project.basedir}/src/main/resources/libs/soot-trunk.jar</systemPath>
     </dependency>
     
-     <dependency>  
+    <dependency>  
       <groupId>jgraphx</groupId>
       <artifactId>jgraphx-custom</artifactId>
       <version>1.0</version>

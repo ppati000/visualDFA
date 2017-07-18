@@ -11,6 +11,11 @@ import javax.swing.border.EmptyBorder;
 //TODO
 //import controller.Controller;
 
+/**
+ * 
+ * @author Michael
+ *
+ */
 public class ProgramFrame extends JFrame {
 
 	/**
@@ -26,21 +31,7 @@ public class ProgramFrame extends JFrame {
 	//TODO
 	//private Controller ctrl;
 
-	/**
-	 * Launch the application.
-	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					ProgramFrame frame = new ProgramFrame();
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
+	
 
 	/**
 	 * Creates a JFrame and its content. Sets the minimum Size to 1920x1080 Pixels and the Layout of the ContentPane.
@@ -56,7 +47,7 @@ public class ProgramFrame extends JFrame {
 	public ProgramFrame() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(0, 0, 1920, 1080);
-		setMinimumSize(new Dimension(1920, 1080));
+		//setMinimumSize(new Dimension(1920, 1080));
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		contentPane.setLayout(new BorderLayout(0, 0));
@@ -95,14 +86,32 @@ public class ProgramFrame extends JFrame {
 		//TODO
 	}
 	
+	/**
+	 * This method will return the InputPanel.
+	 * 
+	 * @return The InputPanel
+	 * @see InputPanel
+	 */
 	public JPanel getInputPanel() {
 		return inPan;
 	}
 	
+	/**
+	 * This method will return the ControlPanel.
+	 * 
+	 * @return The ControlPanel
+	 * @see ControlPanel
+	 */
 	public JPanel getControlPanel() {
 		return ctrlPan;
 	}
 	
+	/**
+	 * This method will return the StatePanelOpen.
+	 * 
+	 * @return The StatePanelOpen
+	 * @see StatePanelOpen
+	 */
 	public JPanel getStatePanelOpen() {
 		return statPanOpen;
 	}

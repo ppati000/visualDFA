@@ -6,13 +6,13 @@ import soot.toolkits.graph.BlockGraph;
 /**
  * @author Anika Nietzer 
  * 			A {@code GraphBuilder} represents a unit, that
- *          translates java-bytecode of one method to a Soot-SimpleBlockGraph.
+ *          translates java-bytecode of one method to a {@code SimpleBlockGraph}.
  */
 public class GraphBuilder {
 
 	/**
 	 * Creates a new {@code GraphBuilder} that works with the file present in
-	 * the package with packageName with the name className.
+	 * the package with {@code packageName} with the name {@code className}.
 	 * 
 	 * @param packageName
 	 *            name of the package

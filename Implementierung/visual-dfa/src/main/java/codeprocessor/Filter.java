@@ -2,7 +2,8 @@ package codeprocessor;
 
 /**
  * 
- * @author Anika Nietzer Interface, that represents a filter for methods.
+ * @author Anika Nietzer 
+ * 			Interface, that represents a filter for methods.
  *
  */
 public interface Filter {

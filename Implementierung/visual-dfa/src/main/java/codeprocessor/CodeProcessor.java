@@ -50,7 +50,7 @@ public class CodeProcessor {
 	}
 
 	/**
-	 * True if the compiling process was successful, false otherwise.
+	 * Returns {@code true} if the compiling process was successful or {@code false} in the other case.
 	 * 
 	 * @return if the compiling process was successful
 	 */

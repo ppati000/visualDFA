@@ -1,8 +1,9 @@
 package codeprocessor;
 
 /**
- * @author Anika Nietzer A {@code CodeProcessor} represents a unit for compiling
- *         and processing java-sourcecode to java-bytecode.
+ * @author Anika Nietzer 
+ * 			A {@code CodeProcessor} represents a unit for compiling
+ *         	and processing java-sourcecode to java-bytecode.
  */
 public class CodeProcessor {
 

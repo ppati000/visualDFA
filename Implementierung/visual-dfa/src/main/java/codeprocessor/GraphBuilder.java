@@ -4,8 +4,9 @@ import java.util.List;
 import soot.toolkits.graph.BlockGraph;
 
 /**
- * @author Anika Nietzer A {@code GraphBuilder} represents a unit, that
- *         translates java-bytecode of one method to a Soot-SimpleBlockGraph.
+ * @author Anika Nietzer 
+ * 			A {@code GraphBuilder} represents a unit, that
+ *          translates java-bytecode of one method to a Soot-SimpleBlockGraph.
  */
 public class GraphBuilder {
 

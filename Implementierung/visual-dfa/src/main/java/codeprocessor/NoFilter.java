@@ -2,8 +2,9 @@ package codeprocessor;
 
 /**
  * 
- * @author Anika Nietzer Implementation of the Interface {@code Filter}. Used if
- *         no methods should be filtered out.
+ * @author Anika Nietzer 
+ * 			Implementation of the Interface {@code Filter}. Used if
+ *          no methods should be filtered out.
  *
  */
 public class NoFilter implements Filter {

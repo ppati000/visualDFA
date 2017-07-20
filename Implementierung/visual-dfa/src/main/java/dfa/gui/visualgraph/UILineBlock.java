@@ -11,7 +11,7 @@ import com.mxgraph.view.mxGraph;
  */
 class UILineBlock extends UIAbstractBlock {
     private final String text;
-    private final BasicBlock parent;
+    private final UIBasicBlock parent;
     private UILineBlock previous;
 
     /**
@@ -22,7 +22,7 @@ class UILineBlock extends UIAbstractBlock {
      * @param previous
      *         the {@code LineBlock} which will be rendered directly above this one
      */
-    public UILineBlock(mxGraph graph, BasicBlock parent, UILineBlock previous) { // TODO: Add DFAFramework.ElementaryBlock parameter.
+    public UILineBlock(mxGraph graph, UIBasicBlock parent, UILineBlock previous) { // TODO: Add DFAFramework.ElementaryBlock parameter.
         this.previous = previous;
         this.parent = parent;
         this.text = "Test Text"; // TODO: Get text from corresponding DFAFramework block.

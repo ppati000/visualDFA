@@ -3,10 +3,8 @@ package dfa.gui.visualgraph;
 import com.mxgraph.layout.hierarchical.mxHierarchicalLayout;
 import com.mxgraph.swing.mxGraphComponent;
 import com.mxgraph.view.mxGraph;
-import polyglot.ast.JL;
 
 import javax.swing.*;
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,8 +14,8 @@ import java.util.List;
  *         Panel used to display the visual graph.
  */
 public class VisualGraphPanel extends JPanel {
-    private List<BasicBlock> basicBlocks;
-    private List<Edge> edges;
+    private List<UIBasicBlock> basicBlocks;
+    private List<UIEdge> edges;
     private mxGraphComponent graphComponent;
     private JButton jumpToAction;
     private JButton graphExport;
@@ -36,22 +34,22 @@ public class VisualGraphPanel extends JPanel {
         graphExport = new JButton("Export Graph");
     }
 
-    public void insertBasicBlock(BasicBlock block) {
+    public void insertBasicBlock(UIBasicBlock block) {
         basicBlocks.add(block);
     }
 
-    public void insertEdge(Edge edge) {
+    public void insertEdge(UIEdge edge) {
         edges.add(edge);
     }
 
     public void renderGraph() {
         graph.getModel().beginUpdate();
 
-        for (BasicBlock block : basicBlocks) {
+        for (UIBasicBlock block : basicBlocks) {
             block.render();
         }
 
-        for (Edge edge : edges) {
+        for (UIEdge edge : edges) {
             edge.render();
         }
 
@@ -99,7 +97,7 @@ public class VisualGraphPanel extends JPanel {
      *
      * @return list of {@code BasicBlock}s
      */
-    public List<BasicBlock> getBasicBlocks() {
+    public List<UIBasicBlock> getBasicBlocks() {
         return basicBlocks;
     }
 

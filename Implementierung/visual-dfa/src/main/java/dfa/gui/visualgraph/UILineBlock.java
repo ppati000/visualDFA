@@ -9,10 +9,10 @@ import com.mxgraph.view.mxGraph;
  *
  *         Represents a child block (i.e. a clickable line of code) of a basic block in the visual graph.
  */
-class LineBlock extends AbstractBlock {
+class UILineBlock extends UIAbstractBlock {
     private final String text;
     private final BasicBlock parent;
-    private LineBlock previous;
+    private UILineBlock previous;
 
     /**
      * Creates a new {@code LineBlock}.
@@ -22,7 +22,7 @@ class LineBlock extends AbstractBlock {
      * @param previous
      *         the {@code LineBlock} which will be rendered directly above this one
      */
-    public LineBlock(mxGraph graph, BasicBlock parent, LineBlock previous) { // TODO: Add DFAFramework.ElementaryBlock parameter.
+    public UILineBlock(mxGraph graph, BasicBlock parent, UILineBlock previous) { // TODO: Add DFAFramework.ElementaryBlock parameter.
         this.previous = previous;
         this.parent = parent;
         this.text = "Test Text"; // TODO: Get text from corresponding DFAFramework block.

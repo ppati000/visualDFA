@@ -8,9 +8,9 @@ import com.mxgraph.view.mxGraph;
  *
  *         Represents an edge in the visual graph.
  */
-class Edge extends VisualGraphElement {
+class UIEdge extends VisualGraphElement {
 
-    private BasicBlock from, to;
+    private UIBasicBlock from, to;
 
     /**
      * Creates a new edge between two given {@code BasicBlock}s.
@@ -22,7 +22,7 @@ class Edge extends VisualGraphElement {
      * @param to
      *         the BasicBlock to which this edge will lead
      */
-    public Edge(mxGraph graph, BasicBlock from, BasicBlock to) {
+    public UIEdge(mxGraph graph, UIBasicBlock from, UIBasicBlock to) {
         this.graph = graph;
         this.from = from;
         this.to = to;

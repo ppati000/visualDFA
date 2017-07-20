@@ -11,7 +11,7 @@ import java.util.List;
  *
  *         This class represents a basic block in the visual graph.
  */
-class BasicBlock extends UIAbstractBlock {
+class UIBasicBlock extends UIAbstractBlock {
 
     private List<UILineBlock> lineBlocks;
 
@@ -48,7 +48,7 @@ class BasicBlock extends UIAbstractBlock {
     /**
      * Constructs a new basic block which will operate on the given {@code mxGraph}.
      */
-    public BasicBlock(mxGraph graph) {
+    public UIBasicBlock(mxGraph graph) {
         this.graph = graph;
         lineBlocks = new ArrayList<>();
     }

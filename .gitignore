@@ -42,3 +42,4 @@ RemoteSystemTempFiles/
 .project
 .classpath
 .settings
+.idea/*

@@ -11,9 +11,9 @@ import java.util.List;
  *
  *         This class represents a basic block in the visual graph.
  */
-class BasicBlock extends AbstractBlock {
+class BasicBlock extends UIAbstractBlock {
 
-    private List<LineBlock> lineBlocks;
+    private List<UILineBlock> lineBlocks;
 
     /**
      * Creates and inserts a new {@code mxCell} into the {@code mxGraph}, or updates the {@code mxCell} if it already
@@ -30,7 +30,7 @@ class BasicBlock extends AbstractBlock {
             // TODO: Set style of mxCell based on DFAFramework's logical color.
         }
 
-        for (LineBlock lineBlock : lineBlocks) {
+        for (UILineBlock lineBlock : lineBlocks) {
             lineBlock.render();
         }
     }
@@ -41,7 +41,7 @@ class BasicBlock extends AbstractBlock {
      * @param block
      *         the {@code LineBlock} to insert
      */
-    public void insertLineBlock(LineBlock block) {
+    public void insertLineBlock(UILineBlock block) {
         this.lineBlocks.add(block);
     }
 

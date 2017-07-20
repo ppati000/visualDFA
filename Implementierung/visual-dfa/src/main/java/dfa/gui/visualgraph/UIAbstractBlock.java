@@ -5,6 +5,6 @@ package dfa.gui.visualgraph;
  *
  *         Represents a parent ({@code BasicBlock}) or child block ({@code LineBlock}) in the visual graph.
  */
-abstract class AbstractBlock extends VisualGraphElement {
+abstract class UIAbstractBlock extends VisualGraphElement {
 
 }

@@ -54,12 +54,6 @@ public class VisualGraphPanel extends JPanel {
         }
 
         graph.getModel().endUpdate();
-
-        if (graphComponent == null) {
-            graphComponent = new mxGraphComponent(graph);
-            graphComponent.setVisible(true);
-            add(graphComponent);
-        }
     }
 
     /**
@@ -89,7 +83,10 @@ public class VisualGraphPanel extends JPanel {
     public void autoLayout() {
         // TODO: Not working as expected yet
         new mxHierarchicalLayout(graph).execute(graph.getDefaultParent());
+        graphComponent = new mxGraphComponent(graph);
+        graphComponent.setVisible(true);
         graphComponent.doLayout();
+        add(graphComponent);
     }
 
     /**

@@ -1,3 +1,4 @@
 /target/
 .checkstyle
 visual-dfa.iml
+.idea/*

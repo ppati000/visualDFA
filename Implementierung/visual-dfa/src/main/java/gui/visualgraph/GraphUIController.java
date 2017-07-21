@@ -23,11 +23,24 @@ public class GraphUIController {
     private mxGraph graph;
     private DFAExecution dfa;
 
+    /**
+     * Creates a new {@code GraphUIController}.
+     *
+     * @param panel
+     *         the {@code VisualGraphPanel} this controller should operate on
+     */
     public GraphUIController(VisualGraphPanel panel) {
         this.panel = panel;
         this.graph = panel.getMxGraph();
     }
 
+    /**
+     * Gets all relevant data from DFAFramework and orders {@code VisualGraphPanel} to create and render the
+     * corresponding visual graph.
+     *
+     * @param dfa
+     *         the {@code DFAExecution} of the current data-flow analysis
+     */
     public void start(DFAExecution dfa) {
         this.dfa = dfa;
 
@@ -71,18 +84,24 @@ public class GraphUIController {
             }
         }
 
-        panel.renderGraph();
-        panel.autoLayout();
+        panel.renderGraph(true);
     }
 
+    /**
+     * Refreshes the (already rendered) visual graph using the {@code DFAExecution} instance previously given to {@code
+     * start()}.
+     */
     public void refresh() {
         if (dfa == null) {
             throw new IllegalStateException("Graph has not been built using start() yet.");
         }
 
-        panel.renderGraph();
+        panel.renderGraph(false);
     }
 
+    /**
+     * Deletes the current visual graph and clears the {@code DFAExecution} previously given to {@code start()}
+     */
     public void stop() {
         dfa = null;
         panel.deleteGraph();

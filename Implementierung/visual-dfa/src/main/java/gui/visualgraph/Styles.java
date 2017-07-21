@@ -1,11 +1,11 @@
-package dfa.gui.visualgraph;
+package gui.visualgraph;
 
 /**
  * @author Patrick Petrovic
  *
  *         Helper class containing style constants for {@code mxGraph}.
  */
-class Styles {
+public class Styles {
     public final static int BLOCK_WIDTH = 100;
     public final static int LINE_HEIGHT = 25;
 

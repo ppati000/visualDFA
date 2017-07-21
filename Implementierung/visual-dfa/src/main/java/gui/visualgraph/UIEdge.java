@@ -1,4 +1,4 @@
-package dfa.gui.visualgraph;
+package gui.visualgraph;
 
 import com.mxgraph.model.mxCell;
 import com.mxgraph.view.mxGraph;
@@ -8,7 +8,7 @@ import com.mxgraph.view.mxGraph;
  *
  *         Represents an edge in the visual graph.
  */
-class UIEdge extends VisualGraphElement {
+public class UIEdge extends VisualGraphElement {
 
     private UIBasicBlock from, to;
 

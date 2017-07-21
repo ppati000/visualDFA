@@ -1,4 +1,4 @@
-package dfa.gui.visualgraph;
+package gui.visualgraph;
 
 import com.mxgraph.model.mxCell;
 import com.mxgraph.view.mxGraph;

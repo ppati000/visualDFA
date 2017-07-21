@@ -1,4 +1,4 @@
-package dfa.gui.visualgraph;
+package gui.visualgraph;
 
 import com.mxgraph.model.mxCell;
 import com.mxgraph.model.mxGeometry;
@@ -9,7 +9,7 @@ import com.mxgraph.view.mxGraph;
  *
  *         Represents a child block (i.e. a clickable line of code) of a basic block in the visual graph.
  */
-class UILineBlock extends UIAbstractBlock {
+public class UILineBlock extends UIAbstractBlock {
     private final String text;
     private final UIBasicBlock parent;
     private UILineBlock previous;

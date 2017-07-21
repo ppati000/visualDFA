@@ -1,4 +1,4 @@
-package dfa.gui.visualgraph;
+package gui.visualgraph;
 
 import com.mxgraph.model.mxCell;
 import com.mxgraph.view.mxGraph;
@@ -11,7 +11,7 @@ import java.util.List;
  *
  *         This class represents a basic block in the visual graph.
  */
-class UIBasicBlock extends UIAbstractBlock {
+public class UIBasicBlock extends UIAbstractBlock {
 
     private List<UILineBlock> lineBlocks;
 

@@ -44,11 +44,10 @@
           </additionalConfig>
         </configuration>
       </plugin>
-      
+
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>
-        
         <configuration>
           <archive>
             <manifest>
@@ -57,13 +56,10 @@
             </manifest>
           </archive>
         </configuration>
-        
       </plugin>
     </plugins>
-      
   </build>
-  
-  
+
   <dependencies>
   	<dependency>  
       <groupId>soot</groupId>
@@ -86,6 +82,12 @@
       <artifactId>reflections</artifactId>
       <version>0.9.11</version>
     </dependency>
+
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.12</version>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
-  
 </project>

@@ -1,4 +1,4 @@
-package dfa.gui.visualgraph;
+package gui.visualgraph;
 
 /**
  * @author Patrick Petrovic

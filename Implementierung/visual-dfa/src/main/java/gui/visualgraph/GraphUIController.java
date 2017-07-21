@@ -1,4 +1,4 @@
-package dfa.gui.visualgraph;
+package gui.visualgraph;
 
 import com.mxgraph.view.mxGraph;
 import dfa.framework.DFAExecution;

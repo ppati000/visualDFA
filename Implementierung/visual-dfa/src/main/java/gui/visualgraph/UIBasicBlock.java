@@ -29,7 +29,14 @@ public class UIBasicBlock extends UIAbstractBlock {
         } else {
             // TODO: Set style of mxCell based on DFAFramework's logical color.
         }
+    }
 
+    /**
+     * Renders all {@code UILineBlock}s that have previously been added. This isn't done in {@code render()} so the
+     * auto-layouter can be run before child cells are rendered (otherwise the layouter would change children which is
+     * not wanted)
+     */
+    public void renderChildren() {
         for (UILineBlock lineBlock : lineBlocks) {
             lineBlock.render();
         }

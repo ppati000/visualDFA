@@ -29,8 +29,7 @@ class RestrictedMxGraph extends mxGraph {
         return false;
     }
 
-    // TODO: Make only parent cells movable
     public boolean isCellMovable(Object cell) {
-        return ((mxCell) cell).isVertex();
+        return ((mxCell) cell).isVertex() && !getModel().isVertex(getModel().getParent(cell));
     }
 }

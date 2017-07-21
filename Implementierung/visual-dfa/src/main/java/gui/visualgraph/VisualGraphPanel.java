@@ -22,6 +22,9 @@ public class VisualGraphPanel extends JPanel {
     private mxGraph graph;
     private JLayeredPane buttonPane;
 
+    /**
+     * Creates a new {@code VisualGraphPanel}.
+     */
     public VisualGraphPanel() {
         this.basicBlocks = new ArrayList<>();
         this.edges = new ArrayList<>();
@@ -34,15 +37,33 @@ public class VisualGraphPanel extends JPanel {
         graphExport = new JButton("Export Graph");
     }
 
+    /**
+     * Inserts a given {@code UIBasicBlock} which will be rendered when {@code renderGraph()} is called.
+     *
+     * @param block
+     *         the block to be added
+     */
     public void insertBasicBlock(UIBasicBlock block) {
         basicBlocks.add(block);
     }
 
+    /**
+     * Inserts a given {@code UIEdge} which will be rendered when {@code renderGraph()} is called.
+     *
+     * @param edge
+     *         the edge to be added
+     */
     public void insertEdge(UIEdge edge) {
         edges.add(edge);
     }
 
-    public void renderGraph() {
+    /**
+     * Renders all previously inserted blocks and edges.
+     *
+     * @param applyLayout
+     *         If {@code true}, the auto-layouter is called after inserting all parent blocks. Used on first render.
+     */
+    public void renderGraph(boolean applyLayout) {
         graph.getModel().beginUpdate();
 
         for (UIBasicBlock block : basicBlocks) {
@@ -51,6 +72,15 @@ public class VisualGraphPanel extends JPanel {
 
         for (UIEdge edge : edges) {
             edge.render();
+        }
+
+        // Apply layout before rendering child blocks, so that the layouter doesn't mess with them.
+        if (applyLayout) {
+            autoLayout();
+        }
+
+        for (UIBasicBlock block : basicBlocks) {
+            block.renderChildren();
         }
 
         graph.getModel().endUpdate();
@@ -78,10 +108,9 @@ public class VisualGraphPanel extends JPanel {
     }
 
     /**
-     * Applies the auto-layouter on the graph.
+     * Applies the auto-layouter on the graph and adds the graph component to this panel to make it visible.
      */
     public void autoLayout() {
-        // TODO: Not working as expected yet
         new mxHierarchicalLayout(graph).execute(graph.getDefaultParent());
         graphComponent = new mxGraphComponent(graph);
         graphComponent.setVisible(true);

@@ -1,14 +1,14 @@
 package gui;
 
 import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.EventQueue;
+
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
 import controller.Controller;
+import gui.visualgraph.VisualGraphPanel;
 
 /**
  * The frame which contains all panels.
@@ -19,13 +19,13 @@ import controller.Controller;
 public class ProgramFrame extends JFrame {
 
     private static final long serialVersionUID = 5047834266753718967L;
-    // TODO use complete names
+    
     private JPanel contentPane;
-    private JPanel inPan;
-    private JPanel ctrlPan;
-    private JPanel statPanOpen;
-    private JPanel statPanClosed;
-    private JPanel vgPan;
+    private InputPanel inputPanel;
+    private ControlPanel controlPanel;
+    private StatePanelOpen statePanelOpen;
+    private StatePanelClosed statePanelClosed;
+    private VisualGraphPanel visualGraphPanel;
 
     private Controller ctrl;
 
@@ -41,6 +41,8 @@ public class ProgramFrame extends JFrame {
      */
 
     public ProgramFrame(Controller ctrl) {
+        
+        this.ctrl = ctrl;
 
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         // TODO constants for resolution
@@ -51,8 +53,8 @@ public class ProgramFrame extends JFrame {
         contentPane.setLayout(new BorderLayout(0, 0));
         setContentPane(contentPane);
 
-        inPan = new InputPanel(ctrl);
-        contentPane.add(inPan, BorderLayout.WEST);
+        inputPanel = new InputPanel(ctrl);
+        contentPane.add(inputPanel, BorderLayout.WEST);
 
         JPanel centerPan = new JPanel();
         contentPane.add(centerPan, BorderLayout.CENTER);
@@ -64,13 +66,13 @@ public class ProgramFrame extends JFrame {
          * BorderLayout.CENTER);
          */
 
-        ctrlPan = new ControlPanel(ctrl);
-        centerPan.add(ctrlPan, BorderLayout.SOUTH);
+        controlPanel = new ControlPanel(ctrl);
+        centerPan.add(controlPanel, BorderLayout.SOUTH);
 
-        statPanOpen = new StatePanelOpen(this);
-        contentPane.add(statPanOpen, BorderLayout.EAST);
+        statePanelOpen = new StatePanelOpen(this);
+        contentPane.add(statePanelOpen, BorderLayout.EAST);
 
-        statPanClosed = new StatePanelClosed(this);
+        statePanelClosed = new StatePanelClosed(this);
     }
 
     /**
@@ -90,8 +92,8 @@ public class ProgramFrame extends JFrame {
      * @return The InputPanel
      * @see InputPanel
      */
-    public JPanel getInputPanel() {
-        return inPan;
+    public InputPanel getInputPanel() {
+        return inputPanel;
     }
 
     /**
@@ -100,8 +102,8 @@ public class ProgramFrame extends JFrame {
      * @return The ControlPanel
      * @see ControlPanel
      */
-    public JPanel getControlPanel() {
-        return ctrlPan;
+    public ControlPanel getControlPanel() {
+        return controlPanel;
     }
 
     /**
@@ -110,7 +112,7 @@ public class ProgramFrame extends JFrame {
      * @return The StatePanelOpen
      * @see StatePanelOpen
      */
-    public JPanel getStatePanelOpen() {
-        return statPanOpen;
+    public StatePanelOpen getStatePanelOpen() {
+        return statePanelOpen;
     }
 }

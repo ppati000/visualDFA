@@ -15,7 +15,7 @@ import soot.toolkits.graph.Block;
  * @param <E>
  *        the type of {@code LatticeElement} used in this {@code DataFlowAnalysis}
  */
-public interface DataFlowAnalysis<E extends LatticeElement> extends Transition<E>, Join<E> {
+public interface DataFlowAnalysis<E extends LatticeElement> extends Transition<E>, Join<E>, Initializer<E> {
 
     /**
      * {@inheritDoc}
@@ -28,9 +28,7 @@ public interface DataFlowAnalysis<E extends LatticeElement> extends Transition<E
     E join(Set<E> elements);
 
     /**
-     * Determines the initial states for the basic blocks.
-     * 
-     * @return the initial states for the basic blocks
+     * {@inheritDoc}
      */
     Map<Block, BlockState<E>> getInitialStates();
 

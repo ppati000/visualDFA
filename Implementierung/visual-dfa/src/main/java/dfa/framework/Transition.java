@@ -21,6 +21,6 @@ public interface Transition<E extends LatticeElement> {
      *        the {@code Unit} that determines how exactly the transition works
      * @return the result of the transition
      */
-    E execute(E element, Unit unit);
+    E transition(E element, Unit unit);
 
 }

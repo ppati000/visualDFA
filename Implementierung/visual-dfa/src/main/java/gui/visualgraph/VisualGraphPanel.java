@@ -108,14 +108,13 @@ public class VisualGraphPanel extends JPanel {
     }
 
     /**
-     * Applies the auto-layouter on the graph and adds the graph component to this panel to make it visible.
+     * Sets the {@code VisualGraphPanel}'s activation state
+     *
+     * @param activated
+     *         Iff {@code true}, user interaction is allowed.
      */
-    public void autoLayout() {
-        new mxHierarchicalLayout(graph).execute(graph.getDefaultParent());
-        graphComponent = new mxGraphComponent(graph);
-        graphComponent.setVisible(true);
-        graphComponent.doLayout();
-        add(graphComponent);
+    public void setActivated(boolean activated) {
+        // TODO implement
     }
 
     /**
@@ -134,6 +133,14 @@ public class VisualGraphPanel extends JPanel {
      */
     public mxGraph getMxGraph() {
         return graph;
+    }
+
+    private void autoLayout() {
+        new mxHierarchicalLayout(graph).execute(graph.getDefaultParent());
+        graphComponent = new mxGraphComponent(graph);
+        graphComponent.setVisible(true);
+        graphComponent.doLayout();
+        add(graphComponent);
     }
 
     private void initialGraphState() {

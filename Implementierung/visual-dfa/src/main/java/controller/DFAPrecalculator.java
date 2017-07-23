@@ -1,10 +1,9 @@
 package controller;
 
 import dfa.framework.DFAExecution;
-import dfa.framework.DataFlowAnalysis;
+import dfa.framework.DFAFactory;
 import dfa.framework.SimpleBlockGraph;
 import dfa.framework.Worklist;
-import soot.toolkits.graph.BlockGraph;
 
 /**
  * 
@@ -16,6 +15,9 @@ import soot.toolkits.graph.BlockGraph;
 public class DFAPrecalculator implements Runnable {
 	
 	private DFAExecution dfaExecution;
+	private DFAFactory factory;
+	private Worklist worklist;
+	private SimpleBlockGraph simpleBlockGraph;
 
 	/**
 	 * Creates a new {@code DFAPrecalculator} to calculate all steps at the
@@ -29,16 +31,19 @@ public class DFAPrecalculator implements Runnable {
 	 *            {@code SimpleBlockGraph} on that the analysis will be
 	 *            performed
 	 */
-	public DFAPrecalculator(DataFlowAnalysis dfa, Worklist worklist, SimpleBlockGraph simpleBlockGraph) {
-
+	public DFAPrecalculator(DFAFactory factory, Worklist worklist, SimpleBlockGraph simpleBlockGraph) {
+		this.factory = factory;
+		this.worklist = worklist;
+		this.simpleBlockGraph = simpleBlockGraph;
 	}
 
+	@Override
 	/**
 	 * Used during creation of a new thread, that performs the steps of the
 	 * analysis.
 	 */
 	public void run() {
-
+		this.dfaExecution = new DFAExecution(factory, worklist, simpleBlockGraph);
 	}
 
 	/**

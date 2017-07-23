@@ -26,7 +26,12 @@ public class DFAExecution {
         return 0;
     }
 
-    public void setCurentElementaryStep(int eStep) {
+    public int getCurrentElementaryStep() {
+        // TODO
+        return 0;
+    }
+    
+    public void setCurrentElementaryStep(int eStep) {
         // TODO implement
     }
 

@@ -15,7 +15,7 @@ public class WorklistManager {
         return singleInstance;
     }
 
-    public Worklist getWorkist(String worklistName, SimpleBlockGraph blockGraph) {
+    public Worklist getWorklist(String worklistName, SimpleBlockGraph blockGraph) {
         switch (worklistName) {
         case WL_NAME_NAIVE:
             return new NaiveWorklist();

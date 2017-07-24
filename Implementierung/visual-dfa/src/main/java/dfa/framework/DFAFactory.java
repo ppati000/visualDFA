@@ -5,8 +5,11 @@ package dfa.framework;
  *
  *         A {@code DFAFactory} provides the name and direction of a dataflow analysis. It creates a
  *         {@code DataFlowAnalysis} from a given {@code SingleTailedBlockGraph}.
+ *
+ * @param <E>
+ *        the type of {@code LatticeElement} used by this {@code DFAFactory}
  */
-public abstract class DFAFactory {
+public abstract class DFAFactory<E extends LatticeElement> {
 
     /**
      * Returns the name of the dataflow analysis represented by this {@code DFAFactory}.
@@ -30,5 +33,5 @@ public abstract class DFAFactory {
      * 
      * @return a {@code DataFlowAnalysis} for the given {@code SimpleBlockGraph}
      */
-    public abstract DataFlowAnalysis<? extends LatticeElement> getAnalysis(SimpleBlockGraph blockGraph);
+    public abstract DataFlowAnalysis<E> getAnalysis(SimpleBlockGraph blockGraph);
 }

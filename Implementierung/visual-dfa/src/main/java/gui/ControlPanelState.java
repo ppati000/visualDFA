@@ -8,5 +8,5 @@ package gui;
  * @see ControlPanel
  */
 public enum ControlPanelState {
-    ACTIVATED, PLAYING, DEACTIVATED
+    ACTIVATED, PRECALCULATING, PLAYING, DEACTIVATED
 }

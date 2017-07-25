@@ -36,8 +36,8 @@ public class VisualGraphPanelTest {
     @Test
     public void graphShouldContainChildBlocks() {
         UIBasicBlock basicBlock = new UIBasicBlock(graph);
-        UILineBlock firstLineBlock = new UILineBlock(graph, basicBlock, null);
-        UILineBlock secondLineBlock = new UILineBlock(graph, basicBlock, firstLineBlock);
+        UILineBlock firstLineBlock = new UILineBlock(panel.getGraphComponent(), graph, basicBlock, null);
+        UILineBlock secondLineBlock = new UILineBlock(panel.getGraphComponent(), graph, basicBlock, firstLineBlock);
         basicBlock.insertLineBlock(firstLineBlock);
         basicBlock.insertLineBlock(secondLineBlock);
 
@@ -54,9 +54,13 @@ public class VisualGraphPanelTest {
         Object[] childCellObjects = graph.getChildVertices(parentCell);
         mxCell[] childCells = Arrays.copyOf(childCellObjects, childCellObjects.length, mxCell[].class);
 
-        assertEquals(2, childCells.length);
+        assertEquals(3, childCells.length); // 1 separator + 2 cells.
+        assertEquals(0, childCells[0].getGeometry().getHeight(), DELTA);
         assertEquals(Styles.LINE_HEIGHT, childCells[0].getGeometry().getY(), DELTA);
-        assertEquals(2 * Styles.LINE_HEIGHT, childCells[1].getGeometry().getY(), DELTA);
+        assertEquals(Styles.LINE_HEIGHT, childCells[1].getGeometry().getHeight(), DELTA);
+        assertEquals(Styles.LINE_HEIGHT, childCells[1].getGeometry().getY(), DELTA);
+        assertEquals(Styles.LINE_HEIGHT, childCells[2].getGeometry().getHeight(), DELTA);
+        assertEquals(2 * Styles.LINE_HEIGHT, childCells[2].getGeometry().getY(), DELTA);
     }
 
     @Test

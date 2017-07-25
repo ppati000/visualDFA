@@ -1,6 +1,8 @@
 package gui.visualgraph;
 
 import com.mxgraph.model.mxCell;
+import com.mxgraph.model.mxGeometry;
+import com.mxgraph.util.mxConstants;
 import com.mxgraph.view.mxGraph;
 
 import java.util.ArrayList;
@@ -25,20 +27,28 @@ public class UIBasicBlock extends UIAbstractBlock {
             cell = (mxCell) graph.insertVertex(graph.getDefaultParent(), null, "", 10, 10, Styles.BLOCK_WIDTH,
                     (lineBlocks.size() + 1) * Styles.LINE_HEIGHT, "");
 
-            cell.setStyle(Styles.INITIAL_COLOR);
+            graph.setCellStyles(mxConstants.STYLE_FILLCOLOR, Styles.INITIAL_COLOR, new Object[]{cell});
         } else {
             // TODO: Set style of mxCell based on DFAFramework's logical color.
         }
     }
 
     /**
-     * Renders all {@code UILineBlock}s that have previously been added. This isn't done in {@code render()} so the
-     * auto-layouter can be run before child cells are rendered (otherwise the layouter would change children which is
-     * not wanted)
+     * Renders all {@code UILineBlock}s that have previously been added. Additionally, it inserts a top bar above the
+     * first {@code UILineBlock}. This isn't done in {@code render()} so the auto-layouter can be run before child cells
+     * are rendered (otherwise the layouter would change children which is not wanted)
      */
     public void renderChildren() {
-        for (UILineBlock lineBlock : lineBlocks) {
-            lineBlock.render();
+        if (lineBlocks.size() > 0) {
+            mxGeometry topBarGeometry = new mxGeometry(0, Styles.LINE_HEIGHT, Styles.BLOCK_WIDTH, 0);
+            topBarGeometry.setRelative(false);
+            mxCell topBar = new mxCell("", topBarGeometry, Styles.TRANSPARENT_COLOR);
+            topBar.setVertex(true);
+            graph.addCell(topBar, cell);
+
+            for (UILineBlock lineBlock : lineBlocks) {
+                lineBlock.render();
+            }
         }
     }
 

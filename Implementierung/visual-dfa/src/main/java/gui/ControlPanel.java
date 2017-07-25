@@ -78,7 +78,7 @@ public class ControlPanel extends JPanel {
         GridBagConstraints gbc_btnStopAnalysis = GridBagConstraintFactory.getStandardGridBagConstraints(0, 1, 1, 3);
         add(btnStopAnalysis, gbc_btnStopAnalysis);
         
-        JButton btnPreviousBlock = new JButton("Previous Block");
+        JButton btnPreviousBlock = new JButton();
         jBuDecorator.decorateIconButton(btnPreviousBlock, "icons/rewind-button.png", 0.5, null, null);
         GridBagConstraints gbc_btnPreviousBlock = GridBagConstraintFactory.getStandardGridBagConstraints(2, 1, 1, 3);
         add(btnPreviousBlock, gbc_btnPreviousBlock);

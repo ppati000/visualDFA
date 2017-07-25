@@ -22,7 +22,7 @@ public class JComponentDecorator {
      */
     public void decorate(JComponent comp) {
         comp.setBackground(new Color(0, 0, 102));
-        comp.setBorder(new EmptyBorder(2, 2, 2, 2));
+        comp.setBorder(new EmptyBorder(5, 5, 5, 5));
         comp.setForeground(new Color(255, 255, 255));
         comp.setFont(new Font("Trebuchet MS", Font.BOLD, 16));
     }

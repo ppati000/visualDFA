@@ -14,9 +14,8 @@ import gui.*;
 import gui.visualgraph.VisualGraphPanel;
 import gui.visualgraph.GraphUIController;
 
-// TODO Exceptions hinzufügen
+// TODO Exceptions wo genau
 // TODO Logger
-// TODO Breakpoint
 // TODO bei Autoplay blocksteps anzeigen
 
 /**
@@ -48,9 +47,17 @@ public class Controller {
      * and a {@code GraphUIController}.
      */
     public Controller() {
-        this.analysisLoader = new AnalysisLoader(analysisPackageName, classPath);
+        try {
+            this.analysisLoader = new AnalysisLoader(analysisPackageName, classPath);
+        } catch (IllegalStateException e) {
+            e.printStackTrace();
+        }
         Logger logger = Logger.getAnonymousLogger(); // TODO
-        this.analysisLoader.loadAnalyses(logger);
+        try {
+            this.analysisLoader.loadAnalyses(logger);
+        } catch (UnsupportedOperationException e) {
+            e.printStackTrace();
+        }
         this.visualGraphPanel = new VisualGraphPanel();
         this.graphUIController = new GraphUIController(visualGraphPanel);
     }
@@ -115,7 +122,12 @@ public class Controller {
     }
 
     private void refreshProgramFrame() {
-        this.graphUIController.refresh();
+        try {
+            this.graphUIController.refresh();
+        } catch (IllegalStateException e) {
+            e.printStackTrace();
+        }
+
         this.programFrame.getControlPanel().setSliderStep(this.dfaExecution.getCurrentElementaryStep());
     }
 
@@ -142,17 +154,27 @@ public class Controller {
      */
     public void play() {
         if (getDelay() == 0
-                || this.dfaExecution.getTotalElementarySteps() -1 == this.dfaExecution.getCurrentElementaryStep()) {
-            this.dfaExecution.setCurrentElementaryStep(this.dfaExecution.getTotalElementarySteps()-1);
-            this.programFrame.getControlPanel().setSliderStep(this.dfaExecution.getTotalElementarySteps()-1);
+                || this.dfaExecution.getTotalElementarySteps() - 1 == this.dfaExecution.getCurrentElementaryStep()) {
+            this.dfaExecution.setCurrentElementaryStep(this.dfaExecution.getTotalElementarySteps() - 1);
+            this.programFrame.getControlPanel().setSliderStep(this.dfaExecution.getTotalElementarySteps() - 1);
             return;
         }
-        AutoplayDriver autoplayDriver = new AutoplayDriver(this);
+        AutoplayDriver autoplayDriver = null;
+        try {
+            autoplayDriver = new AutoplayDriver(this);
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
+        }
+
         this.programFrame.getControlPanel().setActivated(ControlPanelState.PLAYING);
         this.getVisualGraphPanel().setActivated(false);
         this.autoplay = new Thread(autoplayDriver);
         this.continueAutoplay = true;
-        this.autoplay.start();
+        try {
+            this.autoplay.start();
+        } catch (IllegalThreadStateException e) {
+            e.printStackTrace();
+        }
 
     }
 
@@ -166,6 +188,9 @@ public class Controller {
     }
 
     public boolean shouldAutoplayContinue() {
+        if (this.dfaExecution.isAtBreakpoint()) {
+            return false;
+        }
         return this.continueAutoplay;
     }
 
@@ -187,7 +212,7 @@ public class Controller {
      * {@code VisualGraphPanel} are activated and the {@code InputPanel} is
      * deactivated.
      */
-    //TODO warum wird stop benötigt
+    // TODO warum wird stop benötigt
     @SuppressWarnings("deprecation")
     public void startAnalysis() {
         // Collect information
@@ -219,12 +244,31 @@ public class Controller {
         String methodSignature = selectionBox.getSelectedMethod();
         SimpleBlockGraph blockGraph = graphBuilder.buildGraph(methodSignature);
         WorklistManager manager = new WorklistManager();
-        Worklist worklist = manager.getWorklist(worklistName, blockGraph);
+        Worklist worklist = null;
+        try {
+            worklist = manager.getWorklist(worklistName, blockGraph);
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
+        }
 
-        DFAFactory dfaFactory = analysisLoader.getDFAFactory(analysisName);
-        DFAPrecalculator precalculator = new DFAPrecalculator(dfaFactory, worklist, blockGraph);
+        DFAFactory dfaFactory = null;
+        try {
+            dfaFactory = analysisLoader.getDFAFactory(analysisName);
+        } catch (IllegalStateException e) {
+            e.printStackTrace();
+        }
+        DFAPrecalculator precalculator = null;
+        try {
+            new DFAPrecalculator(dfaFactory, worklist, blockGraph);
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
+        }
         Thread precalc = new Thread(precalculator);
-        precalc.start();
+        try {
+            precalc.start();
+        } catch (IllegalThreadStateException e) {
+            e.printStackTrace();
+        }
         this.graphUIController.start(dfaExecution);
         while (precalc.isAlive()) {
             try {
@@ -235,13 +279,13 @@ public class Controller {
             OptionBox optionBox = new OptionBox(this.programFrame, calcMessage);
             if (optionBox.getOption() == Option.YES_OPTION) {
                 precalc.stop();
-                precalculator = null;
                 this.programFrame.getInputPanel().setActivated(true);
                 return;
             }
         }
 
         this.dfaExecution = precalculator.getDFAExecution();
+        precalculator = null;
         this.visualGraphPanel.setActivated(true);
         this.programFrame.getControlPanel().setActivated(ControlPanelState.ACTIVATED);
         this.programFrame.getStatePanelOpen().setActivated(true);

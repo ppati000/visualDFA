@@ -259,7 +259,7 @@ public class Controller {
         }
         DFAPrecalculator precalculator = null;
         try {
-            new DFAPrecalculator(dfaFactory, worklist, blockGraph);
+            precalculator = new DFAPrecalculator(dfaFactory, worklist, blockGraph);
         } catch (IllegalArgumentException e) {
             e.printStackTrace();
         }

@@ -57,11 +57,11 @@ public class GraphUIController {
                 List<UILineBlock> lineBlocks = new ArrayList<>();
 
                 // The first lineBlock is a special case: it has no predecessor.
-                lineBlocks.add(new UILineBlock(graph, basicBlock, null));
+                lineBlocks.add(new UILineBlock(panel.getGraphComponent(), graph, basicBlock, null));
                 basicBlock.insertLineBlock(lineBlocks.get(0));
 
                 for (int i = 1; i < elementaryBlocks.size(); i++) {
-                    lineBlocks.add(new UILineBlock(graph, basicBlock, lineBlocks.get(i - 1)));
+                    lineBlocks.add(new UILineBlock(panel.getGraphComponent(), graph, basicBlock, lineBlocks.get(i - 1)));
                     basicBlock.insertLineBlock(lineBlocks.get(i));
                 }
             }

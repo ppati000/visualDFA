@@ -35,6 +35,8 @@ public class VisualGraphPanel extends JPanel {
         // TODO: Find a replacement for GlassPane to make buttons visible
         jumpToAction = new JButton("Jump to Action");
         graphExport = new JButton("Export Graph");
+
+        initialGraphState();
     }
 
     /**
@@ -135,9 +137,17 @@ public class VisualGraphPanel extends JPanel {
         return graph;
     }
 
+    /**
+     * Returns this panel's {@code mxGraphComponent}.
+     *
+     * @return {@code mxGraphComponent}
+     */
+    public mxGraphComponent getGraphComponent() {
+        return graphComponent;
+    }
+
     private void autoLayout() {
         new mxHierarchicalLayout(graph).execute(graph.getDefaultParent());
-        graphComponent = new mxGraphComponent(graph);
         graphComponent.setVisible(true);
         graphComponent.doLayout();
         add(graphComponent);
@@ -147,7 +157,9 @@ public class VisualGraphPanel extends JPanel {
         basicBlocks = new ArrayList<>();
         edges = new ArrayList<>();
         graph = new RestrictedMxGraph();
-        remove(graphComponent);
-        graphComponent = null;
+        if (graphComponent != null) {
+            remove(graphComponent);
+        }
+        graphComponent = new mxGraphComponent(graph);
     }
 }

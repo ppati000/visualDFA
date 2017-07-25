@@ -76,7 +76,7 @@ public class AnalysisState<E extends LatticeElement> {
      * @throws IllegalArgumentException
      *         if {@code basicBlock} is not associated with any {@code LogicalColor}
      */
-    LogicalColor getColor(BasicBlock basicBlock) {
+    public LogicalColor getColor(BasicBlock basicBlock) {
         return colorMap.get(basicBlock);
     }
 

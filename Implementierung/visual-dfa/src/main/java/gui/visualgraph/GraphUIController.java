@@ -50,18 +50,18 @@ public class GraphUIController {
 
         // First step: Build all visual blocks from DFAFramework data.
         for (BasicBlock dfaBasicBlock : dfaBasicBlocks) {
-            UIBasicBlock basicBlock = new UIBasicBlock(graph);
+            UIBasicBlock basicBlock = new UIBasicBlock(graph, dfaBasicBlock, dfa);
             List<ElementaryBlock> elementaryBlocks = dfaBasicBlock.getElementaryBlocks();
 
             if (elementaryBlocks.size() != 0) {
                 List<UILineBlock> lineBlocks = new ArrayList<>();
 
                 // The first lineBlock is a special case: it has no predecessor.
-                lineBlocks.add(new UILineBlock(panel.getGraphComponent(), graph, basicBlock, null));
+                lineBlocks.add(new UILineBlock(elementaryBlocks.get(0), panel.getGraphComponent(), graph, basicBlock));
                 basicBlock.insertLineBlock(lineBlocks.get(0));
 
                 for (int i = 1; i < elementaryBlocks.size(); i++) {
-                    lineBlocks.add(new UILineBlock(panel.getGraphComponent(), graph, basicBlock, lineBlocks.get(i - 1)));
+                    lineBlocks.add(new UILineBlock(elementaryBlocks.get(i), panel.getGraphComponent(), graph, basicBlock, lineBlocks.get(i - 1)));
                     basicBlock.insertLineBlock(lineBlocks.get(i));
                 }
             }
@@ -84,7 +84,7 @@ public class GraphUIController {
             }
         }
 
-        panel.renderGraph(true);
+        panel.renderGraph(dfa.getCurrentAnalysisState(), true);
     }
 
     /**
@@ -96,7 +96,7 @@ public class GraphUIController {
             throw new IllegalStateException("Graph has not been built using start() yet.");
         }
 
-        panel.renderGraph(false);
+        panel.renderGraph(dfa.getCurrentAnalysisState(), false);
     }
 
     /**

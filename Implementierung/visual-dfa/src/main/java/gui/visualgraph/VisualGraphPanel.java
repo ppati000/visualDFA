@@ -4,6 +4,7 @@ import com.mxgraph.layout.hierarchical.mxHierarchicalLayout;
 import com.mxgraph.swing.mxGraphComponent;
 import com.mxgraph.view.mxGraph;
 import gui.*;
+import dfa.framework.AnalysisState;
 
 import javax.swing.*;
 import javax.swing.border.LineBorder;
@@ -96,18 +97,20 @@ public class VisualGraphPanel extends JPanel {
     /**
      * Renders all previously inserted blocks and edges.
      *
+     * @param analysisState
+     *         the {@code analysisState} that should be used to render this graph
      * @param applyLayout
      *         If {@code true}, the auto-layouter is called after inserting all parent blocks. Used on first render.
      */
-    public void renderGraph(boolean applyLayout) {
+    public void renderGraph(AnalysisState analysisState, boolean applyLayout) {
         graph.getModel().beginUpdate();
 
         for (UIBasicBlock block : basicBlocks) {
-            block.render();
+            block.render(analysisState);
         }
 
         for (UIEdge edge : edges) {
-            edge.render();
+            edge.render(analysisState);
         }
 
         // Apply layout before rendering child blocks, so that the layouter doesn't mess with them.
@@ -116,7 +119,7 @@ public class VisualGraphPanel extends JPanel {
         }
 
         for (UIBasicBlock block : basicBlocks) {
-            block.renderChildren();
+            block.renderChildren(analysisState);
         }
 
         graph.getModel().endUpdate();
@@ -188,7 +191,9 @@ public class VisualGraphPanel extends JPanel {
         new mxHierarchicalLayout(graph).execute(graph.getDefaultParent());
         graphComponent.setVisible(true);
         graphComponent.doLayout();
+
         add(graphComponent, BorderLayout.CENTER);
+        revalidate();
     }
 
     private void initialGraphState() {

@@ -28,7 +28,10 @@ public class CodeProcessor {
 	 * @return the className
 	 */
 	public String getClassName() {
-		return className;
+	    if(success && this.className == null) {
+            throw new IllegalStateException("className must be set if succes is true");
+        }
+		return this.className;
 	}
 
 	/**
@@ -37,7 +40,10 @@ public class CodeProcessor {
 	 * @return the errorMessage
 	 */
 	public String getErrorMessage() {
-		return errorMessage;
+	    if(!success && this.errorMessage == null) {
+            throw new IllegalStateException("errorMessage must be set if succes is false");
+        }
+		return this.errorMessage;
 	}
 
 	/**
@@ -46,7 +52,10 @@ public class CodeProcessor {
 	 * @return the packageName.
 	 */
 	public String getPackageName() {
-		return packageName;
+	    if(success && this.packageName == null) {
+	        throw new IllegalStateException("packageName must be set if succes is true");
+	    }
+		return this.packageName;
 	}
 
 	/**
@@ -55,6 +64,6 @@ public class CodeProcessor {
 	 * @return if the compiling process was successful
 	 */
 	public boolean wasSuccessful() {
-		return success;
+		return this.success;
 	}
 }

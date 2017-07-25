@@ -1,10 +1,16 @@
 import com.mxgraph.model.mxCell;
 import com.mxgraph.view.mxGraph;
+import dfa.framework.AnalysisState;
+import dfa.framework.BasicBlock;
+import dfa.framework.DFAExecution;
+import dfa.framework.ElementaryBlock;
 import gui.visualgraph.*;
 
 import static org.junit.Assert.*;
-
 import org.junit.*;
+import soot.Unit;
+
+import static org.mockito.Mockito.mock;
 
 import java.util.Arrays;
 
@@ -14,17 +20,23 @@ public class VisualGraphPanelTest {
     private VisualGraphPanel panel;
     private mxGraph graph;
 
+    private ElementaryBlock mockBlock = new ElementaryBlock(mock(Unit.class));
+    private AnalysisState mockState = mock(AnalysisState.class);
+    private BasicBlock mockBasicBlock = mock(BasicBlock.class);
+    private DFAExecution dfa = mock(DFAExecution.class);
+
     @Before
     public void createPanel() {
         panel = new VisualGraphPanel();
         graph = panel.getMxGraph();
     }
 
+    // TODO: Mockito mocks for ElementaryBlock and AnalysisState
     @Test
     public void graphShouldContainBasicBlock() {
-        panel.insertBasicBlock(new UIBasicBlock(graph));
+        panel.insertBasicBlock(new UIBasicBlock(graph, mockBasicBlock, dfa));
 
-        panel.renderGraph(true);
+        panel.renderGraph(mockState, true);
         Object[] cells = graph.getChildVertices(graph.getDefaultParent());
 
         assertEquals(1, cells.length);
@@ -35,14 +47,14 @@ public class VisualGraphPanelTest {
 
     @Test
     public void graphShouldContainChildBlocks() {
-        UIBasicBlock basicBlock = new UIBasicBlock(graph);
-        UILineBlock firstLineBlock = new UILineBlock(panel.getGraphComponent(), graph, basicBlock, null);
-        UILineBlock secondLineBlock = new UILineBlock(panel.getGraphComponent(), graph, basicBlock, firstLineBlock);
+        UIBasicBlock basicBlock = new UIBasicBlock(graph, mockBasicBlock, dfa);
+        UILineBlock firstLineBlock = new UILineBlock(mockBlock, panel.getGraphComponent(), graph, basicBlock, null);
+        UILineBlock secondLineBlock = new UILineBlock(mockBlock, panel.getGraphComponent(), graph, basicBlock, firstLineBlock);
         basicBlock.insertLineBlock(firstLineBlock);
         basicBlock.insertLineBlock(secondLineBlock);
 
         panel.insertBasicBlock(basicBlock);
-        panel.renderGraph(true);
+        panel.renderGraph(mockState, true);
 
         Object[] cells = graph.getChildVertices(graph.getDefaultParent());
         mxCell parentCell = (mxCell) cells[0];
@@ -65,14 +77,14 @@ public class VisualGraphPanelTest {
 
     @Test
     public void graphShouldContainEdges() {
-        UIBasicBlock basicBlock1 = new UIBasicBlock(graph);
-        UIBasicBlock basicBlock2 = new UIBasicBlock(graph);
+        UIBasicBlock basicBlock1 = new UIBasicBlock(graph, mockBasicBlock, dfa);
+        UIBasicBlock basicBlock2 = new UIBasicBlock(graph, mockBasicBlock, dfa);
         UIEdge edge = new UIEdge(graph, basicBlock1, basicBlock2);
 
         panel.insertBasicBlock(basicBlock1);
         panel.insertBasicBlock(basicBlock2);
         panel.insertEdge(edge);
-        panel.renderGraph(true);
+        panel.renderGraph(mockState, true);
 
         Object[] cells = graph.getChildVertices(graph.getDefaultParent());
         mxCell firstCell = (mxCell) cells[0];

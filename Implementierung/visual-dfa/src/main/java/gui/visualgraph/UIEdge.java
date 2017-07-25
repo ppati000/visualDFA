@@ -2,6 +2,7 @@ package gui.visualgraph;
 
 import com.mxgraph.model.mxCell;
 import com.mxgraph.view.mxGraph;
+import dfa.framework.AnalysisState;
 
 /**
  * @author Patrick Petrovic
@@ -30,9 +31,12 @@ public class UIEdge extends VisualGraphElement {
 
     /**
      * Inserts edge into {@code mxGraph}, if it wasn't already inserted.
+     *
+     * @param analysisState
+     *         the analysisState that should be used to render this edge (reserved for future uses)
      */
     @Override
-    public void render() {
+    public void render(AnalysisState analysisState) {
         if (cell == null) {
             cell = (mxCell) graph.insertEdge(graph.getDefaultParent(), null, null, from.getMxCell(), to.getMxCell());
         }

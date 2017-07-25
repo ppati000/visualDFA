@@ -15,12 +15,13 @@ public class Styles {
     public final static int BREAKPOINT_PADDING = 5;
     public final static int BREAKPOINT_SIZE = 10;
 
-    public final static String INITIAL_COLOR = "#e7f1f7";
+    public final static String INITIAL_COLOR = "eff7fb";
     public final static String BREAKPOINT_COLOR = "#dd7063";
+    public final static String CURRENT_COLOR = "d0febf";
+    public final static String ON_WORKLIST_COLOR = "fff7a9";
+    public final static String VISITED_COLOR = "c6dafd";
     public final static String TRANSPARENT_COLOR = "rgba(255, 255, 255, 0)";
-
-    public final static String CURRENT_COLOR = "fillColor=rgb(0, 255, 0);";
-    public final static String HIGHLIGHT_COLOR = "fillColor=rgba(255, 255, 255, 0.2);";
+    public final static String HIGHLIGHT_COLOR = "rgba(255, 255, 255, 0.4)";
 
     public final static String NO_BORDER = "strokeColor=none;";
     public final static Color SELECTION_STROKE_COLOR = new Color(78, 146, 223);

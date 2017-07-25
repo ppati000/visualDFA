@@ -1,20 +1,27 @@
 import com.mxgraph.view.mxGraph;
+import dfa.framework.AnalysisState;
+import dfa.framework.BasicBlock;
+import dfa.framework.DFAExecution;
 import gui.visualgraph.*;
 
 import static org.junit.Assert.*;
 
 import org.junit.*;
 
+import static org.mockito.Mockito.mock;
+
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
 
 public class GraphExporterTest {
     private VisualGraphPanel panel;
     private JPanel fakeStatePanel;
+    private AnalysisState analysisStateMock = mock(AnalysisState.class);
+    private DFAExecution dfa = mock(DFAExecution.class);
+    private BasicBlock basicBlock = mock(BasicBlock.class);
     private mxGraph graph;
 
     @Before
@@ -22,12 +29,12 @@ public class GraphExporterTest {
         panel = new VisualGraphPanel();
         graph = panel.getMxGraph();
 
-        UIBasicBlock basicBlock1 = new UIBasicBlock(graph);
-        UIBasicBlock basicBlock2 = new UIBasicBlock(graph);
-        UIBasicBlock basicBlock3 = new UIBasicBlock(graph);
-        UIBasicBlock basicBlock4 = new UIBasicBlock(graph);
-        UIBasicBlock basicBlock5 = new UIBasicBlock(graph);
-        UIBasicBlock basicBlock6 = new UIBasicBlock(graph);
+        UIBasicBlock basicBlock1 = new UIBasicBlock(graph, basicBlock, dfa);
+        UIBasicBlock basicBlock2 = new UIBasicBlock(graph, basicBlock, dfa);
+        UIBasicBlock basicBlock3 = new UIBasicBlock(graph, basicBlock, dfa);
+        UIBasicBlock basicBlock4 = new UIBasicBlock(graph, basicBlock, dfa);
+        UIBasicBlock basicBlock5 = new UIBasicBlock(graph, basicBlock, dfa);
+        UIBasicBlock basicBlock6 = new UIBasicBlock(graph, basicBlock, dfa);
 
         UIEdge edge1 = new UIEdge(graph, basicBlock1, basicBlock2);
         UIEdge edge2 = new UIEdge(graph, basicBlock2, basicBlock3);
@@ -50,7 +57,7 @@ public class GraphExporterTest {
         panel.insertEdge(edge5);
         panel.insertEdge(edge6);
 
-        panel.renderGraph(true);
+        panel.renderGraph(analysisStateMock, true);
 
         fakeStatePanel = new JPanel();
         fakeStatePanel.setLayout(new BorderLayout());

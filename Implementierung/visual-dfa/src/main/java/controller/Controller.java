@@ -179,7 +179,7 @@ public class Controller {
     }
 
     /**
-     * Returns the chosen delay
+     * Returns the chosen delay.
      * 
      * @return delay, the user has set
      */

@@ -1,5 +1,7 @@
 package codeprocessor;
 
+import soot.SootMethod;
+
 /**
  * 
  * @author Anika Nietzer 
@@ -16,10 +18,10 @@ public class NoFilter implements Filter {
 	 * 
 	 * @param signature
 	 *            signature of the method
-	 * @return if the method should be filtered out or not
+	 * @return if the method passes the filter or not
 	 */
-	public boolean filter(String signature) {
-		return false;
+	public boolean filter(SootMethod method) {
+		return true;
 	}
 
 }

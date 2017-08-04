@@ -22,8 +22,8 @@ public class DFAPrecalculator implements Runnable {
      * Creates a new {@code DFAPrecalculator} to calculate all steps at the
      * beginning of the analysis.
      * 
-     * @param dfa
-     *            {@code DataFlowAnalysis} that will be performed
+     * @param factory
+     *            {@code DFAFactory} that will be used
      * @param worklist
      *            {@code Worklist} that will be used for the analysis
      * @param simpleBlockGraph

@@ -13,7 +13,7 @@ public class AutoplayDriver implements Runnable {
 
     /**
      * Performs the automatic replay of the analysis by using methods of the
-     * {@code Controller).
+     * {@code Controller}.
      * 
      * @param controller
      *            instance of {@code Controller}
@@ -31,12 +31,11 @@ public class AutoplayDriver implements Runnable {
      * analysis.
      */
     public void run() {
-        boolean hasNextLine = true;
+        boolean hasNextLine = controller.nextLine();
         while (hasNextLine && this.controller.shouldAutoplayContinue()) {
             try {
                 Thread.sleep((long) (controller.getDelay() * 1000));
             } catch (InterruptedException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
             hasNextLine = controller.nextLine();

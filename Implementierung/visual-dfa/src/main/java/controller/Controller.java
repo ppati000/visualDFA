@@ -16,7 +16,9 @@ import gui.visualgraph.GraphUIController;
 
 // TODO Exceptions wo genau
 // TODO Logger
-// TODO bei Autoplay blocksteps anzeigen
+// TODO @code by true und false
+// TODO maybe change some exception to assert
+// TODO stop button activ halten bei precalc
 
 /**
  * 
@@ -29,10 +31,9 @@ public class Controller {
     private static final String analysisPackageName = "dfa.Analyses"; // TODO
                                                                       // define
                                                                       // packageName
-    private static final String classPath = "dontKnow"; // TODO define
+    private static final String classPath = System.getProperty("user.dir");
     private static final String calcMessage = "This calculation is taking longer than expected. Do you want to continue?";
     private static final String abortMessage = "This process leads to a complete deletion of the graph and the calculation. Do you want to continue?";
-
     private ProgramFrame programFrame;
     private DFAExecution dfaExecution;
     private GraphUIController graphUIController;
@@ -127,7 +128,6 @@ public class Controller {
         } catch (IllegalStateException e) {
             e.printStackTrace();
         }
-
         this.programFrame.getControlPanel().setSliderStep(this.dfaExecution.getCurrentElementaryStep());
     }
 
@@ -138,13 +138,13 @@ public class Controller {
      * 
      * @param step
      *            step to show in the animation
-     * @return whether the step can be shown or not
      */
     public void jumpToStep(int step) {
-        if (0 < step || step > this.dfaExecution.getTotalElementarySteps() - 1) {
-            throw new IllegalArgumentException("step is out of range");
+        try {
+            this.dfaExecution.setCurrentElementaryStep(step);
+        } catch (IndexOutOfBoundsException e) {
+            e.printStackTrace();
         }
-        this.dfaExecution.setCurrentElementaryStep(step);
     }
 
     /**
@@ -187,6 +187,13 @@ public class Controller {
         return this.programFrame.getControlPanel().getDelaySliderPosition();
     }
 
+    /**
+     * Method, that checks if the analysis is in a state in that a breakpoint
+     * was set.
+     * 
+     * @return {@code true} if no breakpoint was set or {@code false} in the
+     *         other case.
+     */
     public boolean shouldAutoplayContinue() {
         if (this.dfaExecution.isAtBreakpoint()) {
             return false;
@@ -225,10 +232,10 @@ public class Controller {
         // Process code with instance of CodeProcessor
         CodeProcessor processor = new CodeProcessor(code);
         if (!processor.wasSuccessful()) {
-            // TODO implement Error
+            new MessageBox(programFrame, "Compilation Error", processor.getErrorMessage());
             return;
         }
-        String packageName = processor.getPackageName();
+        String packageName = processor.getPathName();
         String className = processor.getClassName();
 
         // build Graph with {@code GraphBuilder}
@@ -244,25 +251,16 @@ public class Controller {
         String methodSignature = selectionBox.getSelectedMethod();
         SimpleBlockGraph blockGraph = graphBuilder.buildGraph(methodSignature);
         WorklistManager manager = new WorklistManager();
-        Worklist worklist = null;
-        try {
-            worklist = manager.getWorklist(worklistName, blockGraph);
-        } catch (IllegalArgumentException e) {
-            e.printStackTrace();
-        }
 
-        DFAFactory dfaFactory = null;
-        try {
-            dfaFactory = analysisLoader.getDFAFactory(analysisName);
-        } catch (IllegalStateException e) {
-            e.printStackTrace();
-        }
         DFAPrecalculator precalculator = null;
         try {
+            Worklist worklist = manager.getWorklist(worklistName, blockGraph);
+            DFAFactory dfaFactory = analysisLoader.getDFAFactory(analysisName);
             precalculator = new DFAPrecalculator(dfaFactory, worklist, blockGraph);
         } catch (IllegalArgumentException e) {
             e.printStackTrace();
         }
+
         Thread precalc = new Thread(precalculator);
         try {
             precalc.start();
@@ -272,7 +270,7 @@ public class Controller {
         this.graphUIController.start(dfaExecution);
         while (precalc.isAlive()) {
             try {
-                wait(6000); // TODO which value do we want to use
+                wait(6000); // TODO which value do we want to use, stop
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -330,13 +328,24 @@ public class Controller {
      * 
      * @return list of names of the found analyses
      */
-    public List<String> getAnalysis() {
+    public List<String> getAnalyses() {
         return this.analysisLoader.getAnalysesNames();
     }
 
     /**
-     * Returns the {@code VisualGraphPanel} created by the
-     * {@code GraphUIController).
+     * Returns a list of names of the {@code Worklist} currently available in
+     * the {@code WorklistManager}.
+     * 
+     * @return a list of names of the available {@code Worklist}s
+     */
+    public List<String> getWorklists() {
+        // TODO after Sebastian implemented the getWorlists method in the
+        // WorklistManager
+        return null;
+    }
+
+    /**
+     * Returns the {@code VisualGraphPanel}.
      * 
      * @return the instance of {@code VisualGraphPanel}
      */

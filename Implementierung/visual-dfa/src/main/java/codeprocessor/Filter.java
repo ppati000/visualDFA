@@ -1,5 +1,7 @@
 package codeprocessor;
 
+import soot.SootMethod;
+
 /**
  * 
  * @author Anika Nietzer 
@@ -12,10 +14,10 @@ public interface Filter {
 	 * Filter for a given method, that decides whether the method should be filtered
 	 * out or not.
 	 * 
-	 * @param signature
-	 *            signature of the method
+	 * @param method
+	 *            test this method
 	 * @return whether the method should be filtered out or not
 	 */
-	public boolean filter(String signature);
+	public boolean filter(SootMethod method);
 
 }

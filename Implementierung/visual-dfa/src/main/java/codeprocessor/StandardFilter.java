@@ -1,5 +1,7 @@
 package codeprocessor;
 
+import soot.SootMethod;
+
 /**
  * 
  * @author Anika Nietzer 
@@ -14,12 +16,12 @@ public class StandardFilter implements Filter {
 	 * Filter for a given method, that decides if the method should be filtered
 	 * out or not.
 	 * 
-	 * @param signature
+	 * @param method
 	 *            signature of the method
-	 * @return if the method should be filtered out or not
+	 * @return if the method passes the filter or not
 	 */
-	public boolean filter(String signature) {
-		return false;
+	public boolean filter(SootMethod method) {
+	    return !method.isJavaLibraryMethod();
 	}
 
 }

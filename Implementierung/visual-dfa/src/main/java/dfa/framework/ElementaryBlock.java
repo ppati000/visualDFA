@@ -8,7 +8,7 @@ import soot.Unit;
  *         An {@code ElementaryBlock} represents one {@code Unit} ('line') inside a {@code BasicBlock}. An
  *         {@code ElementaryBlock} can also be marked with a breakpoint.
  */
-public class ElementaryBlock {
+public class ElementaryBlock extends AbstractBlock {
 
     private Unit unit;
 

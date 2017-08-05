@@ -110,7 +110,7 @@ public class AnalysisState<E extends LatticeElement> {
     /**
      * Returns the {@code BlockState} associated with the given {@code BasicBlock}.
      * 
-     * @param basicBlock
+     * @param block
      *        the {@code BasicBlock} for which to retrieve the {@code BasicBlock}
      * 
      * @return the {@code BlockState} associated with {@code basicBlock}
@@ -118,12 +118,20 @@ public class AnalysisState<E extends LatticeElement> {
      * @throws IllegalArgumentException
      *         if {@code basicBlock} is not associated with any {@code BlockState}
      */
-    public BlockState<E> getBlockState(BasicBlock basicBlock) {
-        if (!stateMap.containsKey(basicBlock)) {
-            throw new IllegalArgumentException("there is no BlockState associated with basicBlock");
+    public BlockState<E> getBlockState(AbstractBlock block) {
+        if (!stateMap.containsKey(block)) {
+            throw new IllegalArgumentException("there is no BlockState associated with block");
         }
 
-        return stateMap.get(basicBlock);
+        return stateMap.get(block);
+    }
+
+    public void setBlockState(AbstractBlock block, BlockState<E> blockState) {
+        if (!stateMap.containsKey(block)) {
+            throw new IllegalArgumentException("there is no BlockState associated with block");
+        }
+        
+        stateMap.put(block, blockState);
     }
 
     /**

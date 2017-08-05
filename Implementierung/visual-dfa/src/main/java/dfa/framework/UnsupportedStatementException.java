@@ -10,6 +10,7 @@ public class UnsupportedStatementException extends DFAException {
     private final Unit unit;
 
     public UnsupportedStatementException(String stmtName, Unit unit) {
+        super("unsupported statement: " + stmtName);
         this.stmtName = stmtName;
         this.unit = unit;
     }

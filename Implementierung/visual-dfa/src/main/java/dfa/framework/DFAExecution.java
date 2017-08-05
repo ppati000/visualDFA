@@ -2,7 +2,12 @@ package dfa.framework;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import soot.toolkits.graph.Block;
 
 /**
  * @author Sebastian Rauch
@@ -61,7 +66,9 @@ public class DFAExecution<E extends LatticeElement> {
 
         this.cfg = new ControlFlowGraph(blockGraph);
 
-        precalc();
+        // TODO use DFAPrecalcController (changes signature of constructor)
+        DFAPrecalcController dummyCtrl = new DFAPrecalcController();
+        precalc(dummyCtrl);
     }
 
     private DFAExecution(DFAExecution<E> copyFrom) {
@@ -269,9 +276,245 @@ public class DFAExecution<E extends LatticeElement> {
         return new DFAExecution<E>(this);
     }
 
-    private void precalc() {
-        // TODO implement
-        // this is where the magic happens
+    private void precalc(DFAPrecalcController precalcCtrl) {
+        Map<Block, BlockState<E>> initialStates = dfa.getInitialStates();
+
+        BasicBlock startBlock = getStartBlock();
+        if (startBlock == null) {
+            throw new DFAException("there is no start block");
+        }
+
+        AnalysisState<E> initialState = new AnalysisState<E>(initialWorklist, startBlock, -1);
+
+        List<BasicBlock> basicBlocks = cfg.getBasicBlocks();
+        for (BasicBlock bBlock : basicBlocks) {
+            Block sootBlock = bBlock.getSootBlock();
+            BlockState<E> state = initialStates.get(sootBlock);
+
+            LogicalColor lColor = bBlock.equals(startBlock) ? LogicalColor.CURRENT : LogicalColor.NOT_VISITED;
+            initialState.setBlockState(bBlock, state);
+            initialState.setColor(bBlock, lColor);
+
+            // set all in- and out-states to null for the elementary-blocks
+            List<ElementaryBlock> elementaryBlocks = bBlock.getElementaryBlocks();
+            BlockState<E> nullState = new BlockState<E>(null, null);
+            for (ElementaryBlock eBlock : elementaryBlocks) {
+                initialState.setBlockState(eBlock, nullState);
+            }
+
+        }
+
+        analysisStates.add(initialState);
+
+        // elementary step 0 is always a block step
+        blockSteps.add(0);
+
+        iterateToFixpoint(initialState, precalcCtrl);
+    }
+
+    private void iterateToFixpoint(AnalysisState<E> initialState, DFAPrecalcController precalcCtrl) {
+        Set<BasicBlock> visitedBasicBlocks = new HashSet<BasicBlock>();
+        visitedBasicBlocks.add(getStartBlock());
+
+        int elementaryStep = 1;
+        AnalysisState<E> prevAnalysisState = initialState;
+
+        while (true) {
+            switch (precalcCtrl.getPrecalcState()) {
+            case CALCULATING:
+                break; // break switch
+            case COMPLETED:
+                return;
+            case PAUSED:
+                try {
+                    Thread.sleep(precalcCtrl.getWaitTime());
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                continue;
+            case STOPPED:
+                precalcCtrl.setResult(this, false);
+                return;
+            default:
+                throw new IllegalStateException("unknown precalc state: " + precalcCtrl.getPrecalcState());
+            }
+
+            BasicBlock prevBasicBlock = prevAnalysisState.getCurrentBasicBlock();
+
+            AnalysisState<E> newAnalysisState = null;
+            Worklist prevWorklist = prevAnalysisState.getWorklist();
+            if (prevBasicBlock == null) {
+                // no basic block currently selected, this begins a new basic block step (or completes calculation)
+
+                if (prevWorklist.isEmpty()) {
+                    // we are at a fixpoint
+                    precalcCtrl.setResult(this, true);
+                    return;
+                }
+
+                Worklist newWorklist = prevWorklist.clone();
+                BasicBlock newBasicBlock = newWorklist.poll();
+                visitedBasicBlocks.add(newBasicBlock);
+
+                newAnalysisState = newState(prevAnalysisState, newWorklist, newBasicBlock, -1);
+
+                // join predecessors out-states
+                List<BasicBlock> preds = getPredecessors(newBasicBlock);
+                Set<E> predOutStates = new HashSet<E>();
+                for (BasicBlock p : preds) {
+                    predOutStates.add(prevAnalysisState.getBlockState(p).getOutState());
+                }
+                E outStatesJoin = dfa.join(predOutStates);
+
+                BlockState<E> prevBlockState = prevAnalysisState.getBlockState(prevBasicBlock);
+                BlockState<E> newBlockState = new BlockState<E>(outStatesJoin, prevBlockState.getOutState());
+                newAnalysisState.setBlockState(newBasicBlock, newBlockState);
+
+                updateColors(prevAnalysisState, newAnalysisState, visitedBasicBlocks);
+
+                analysisStates.add(newAnalysisState);
+                
+                // this begins a new block step
+                blockSteps.add(elementaryStep++);
+                continue;
+            }
+
+            // prevBasicBlock is not null (so this is not a new block step)
+            int eBlockIdx = prevAnalysisState.getCurrentElementaryBlockIndex();
+            if (prevBasicBlock.getElementaryBlockCount() == 0) {
+                // handle empty basic block [e. g. artificial end block]
+                E inState = prevAnalysisState.getBlockState(prevBasicBlock).getInState();
+                newAnalysisState = finishBasicBlock(prevBasicBlock, inState, prevAnalysisState, visitedBasicBlocks);
+            } else if (eBlockIdx < prevBasicBlock.getElementaryBlockCount()) {
+                // handle non-empty basic block
+                E prevOutState;
+                ElementaryBlock nextElementaryBlock;
+                if (eBlockIdx < 0) {
+                    // first elementary block
+                    prevOutState = prevAnalysisState.getBlockState(prevBasicBlock).getInState();
+                    nextElementaryBlock = getElementaryBlock(prevBasicBlock, 0);
+                } else if (eBlockIdx < prevBasicBlock.getElementaryBlockCount() - 1) {
+                    // some elementary block that is not the first or last in the basic block
+                    ElementaryBlock prevElementaryBlock = getElementaryBlock(prevBasicBlock, eBlockIdx);
+                    prevOutState = prevAnalysisState.getBlockState(prevElementaryBlock).getOutState();
+                    nextElementaryBlock = getElementaryBlock(prevBasicBlock, eBlockIdx + 1);
+                } else {
+                    ElementaryBlock prevElementaryBlock = getElementaryBlock(prevBasicBlock, eBlockIdx);
+                    prevOutState = prevAnalysisState.getBlockState(prevElementaryBlock).getOutState();
+                    nextElementaryBlock = null;
+                }
+
+                if (nextElementaryBlock == null) {
+                    E basicBlockInState = prevAnalysisState.getBlockState(prevBasicBlock).getInState();
+                    newAnalysisState =
+                            finishBasicBlock(prevBasicBlock, basicBlockInState, prevAnalysisState, visitedBasicBlocks);
+                } else {
+                    E nextOutState = dfa.transition(prevOutState, nextElementaryBlock.getUnit());
+                    BlockState<E> nextBlockState = new BlockState<E>(prevOutState, nextOutState);
+                    newAnalysisState = newState(prevAnalysisState, prevWorklist.clone(), prevBasicBlock, ++eBlockIdx);
+                    newAnalysisState.setBlockState(prevBasicBlock, nextBlockState);
+                }
+                
+                analysisStates.add(newAnalysisState);
+                prevAnalysisState = newAnalysisState;
+                ++elementaryStep;
+            }
+        }
+    }
+
+    private BasicBlock getStartBlock() {
+        switch (getDirection()) {
+        case FORWARD:
+            return cfg.getStartBlock();
+        case BACKWARD:
+            return cfg.getEndBlock();
+        default:
+            throw new IllegalStateException("unknown direction: " + getDirection());
+        }
+    }
+
+    private List<BasicBlock> getPredecessors(BasicBlock bBlock) {
+        switch (direction) {
+        case FORWARD:
+            return cfg.getPredecessors(bBlock);
+        case BACKWARD:
+            return cfg.getSuccessors(bBlock);
+        default:
+            throw new IllegalStateException();
+        }
+    }
+
+    private List<BasicBlock> getSuccessors(BasicBlock bBlock) {
+        switch (direction) {
+        case FORWARD:
+            return cfg.getSuccessors(bBlock);
+        case BACKWARD:
+            return cfg.getPredecessors(bBlock);
+        default:
+            throw new IllegalStateException("unknown direction: " + getDirection());
+        }
+    }
+
+    private AnalysisState<E> newState(AnalysisState<E> state, Worklist newWorklist, BasicBlock currentBBlock,
+            int eBlockIdx) {
+        AnalysisState<E> newState = new AnalysisState<E>(newWorklist, currentBBlock, eBlockIdx);
+        return newState;
+    }
+
+    /*
+     * updates the color-mapping in newState according to prevState and the worklist and current BasicBlock of newState
+     */
+    private void updateColors(AnalysisState<E> prevState, AnalysisState<E> newState, Set<BasicBlock> visited) {
+        List<BasicBlock> basicBlocks = cfg.getBasicBlocks();
+        Worklist newWorklist = newState.getWorklist();
+
+        for (BasicBlock basicBlock : basicBlocks) {
+            LogicalColor newColor;
+            if (basicBlock.equals(newState.getCurrentBasicBlock())) {
+                newColor = LogicalColor.CURRENT;
+            } else if (newWorklist.contains(basicBlock)) {
+                newColor = LogicalColor.ON_WORKLIST;
+            } else {
+                if (visited.contains(basicBlock)) {
+                    newColor = LogicalColor.VISITED_NOT_ON_WORKLIST;
+                } else {
+                    newColor = LogicalColor.NOT_VISITED;
+                }
+            }
+            newState.setColor(basicBlock, newColor);
+        }
+    }
+
+    private AnalysisState<E> finishBasicBlock(BasicBlock currentBBlock, E outState, AnalysisState<E> prevAnalysisState,
+            Set<BasicBlock> visited) {
+        Worklist newWorklist = prevAnalysisState.getWorklist().clone();
+        BlockState<E> prevBlockState = prevAnalysisState.getBlockState(currentBBlock);
+
+        List<BasicBlock> successors = getSuccessors(currentBBlock);
+        if (!outState.equals(prevBlockState.getOutState())) {
+            for (BasicBlock bSucc : successors) {
+                newWorklist.add(bSucc);
+            }
+        }
+
+        AnalysisState<E> newAnalysisState = newState(prevAnalysisState, newWorklist, null, -1);
+        BlockState<E> newBlockState = new BlockState<E>(prevBlockState.getInState(), outState);
+        newAnalysisState.setBlockState(currentBBlock, newBlockState);
+
+        updateColors(prevAnalysisState, newAnalysisState, visited);
+        return newAnalysisState;
+    }
+
+    private ElementaryBlock getElementaryBlock(BasicBlock bBlock, int eBlockIdx) {
+        List<ElementaryBlock> elementaryBlocks = bBlock.getElementaryBlocks();
+        switch (direction) {
+        case FORWARD:
+            return elementaryBlocks.get(eBlockIdx);
+        case BACKWARD:
+            return elementaryBlocks.get(bBlock.getElementaryBlockCount() - 1 - eBlockIdx);
+        default:
+            throw new IllegalStateException("unknown direction: " + getDirection());
+        }
     }
 
 }

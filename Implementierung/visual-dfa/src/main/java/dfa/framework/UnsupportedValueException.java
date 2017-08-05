@@ -23,6 +23,7 @@ public class UnsupportedValueException extends DFAException {
      *        the encountered {@code soot.Value}
      */
     public UnsupportedValueException(String valueDsc, Value value) {
+        super("unsupported value: " + valueDsc);
         this.valueDsc = valueDsc;
         this.value = value;
     }

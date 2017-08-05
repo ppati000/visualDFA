@@ -11,7 +11,7 @@ import soot.toolkits.graph.Block;
  *         A {@code BasicBlock} represents a basic block in a {@code ControlFlowGraph}. It consists of multiple
  *         (possible zero) {@code ElementaryBlock}s.
  */
-public class BasicBlock {
+public class BasicBlock extends AbstractBlock {
 
     private List<ElementaryBlock> elementaryBlocks;
 

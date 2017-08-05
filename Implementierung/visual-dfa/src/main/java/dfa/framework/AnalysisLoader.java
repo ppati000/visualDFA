@@ -36,7 +36,7 @@ public class AnalysisLoader {
     
     public void loadAnalyses(Logger logger) {
         // TODO implement
-        throw new UnsupportedOperationException("not yet implemented");
+//        throw new UnsupportedOperationException("not yet implemented");
     }
     
     public List<String> getAnalysesNames() {

@@ -219,7 +219,7 @@ public class Controller {
      * {@code VisualGraphPanel} are activated and the {@code InputPanel} is
      * deactivated.
      */
-    // TODO warum wird stop benötigt
+    // TODO warum wird stop benÃ¶tigt
     @SuppressWarnings("deprecation")
     public void startAnalysis() {
         // Collect information
@@ -250,7 +250,7 @@ public class Controller {
         MethodSelectionBox selectionBox = new MethodSelectionBox(programFrame, methodList);
         String methodSignature = selectionBox.getSelectedMethod();
         SimpleBlockGraph blockGraph = graphBuilder.buildGraph(methodSignature);
-        WorklistManager manager = new WorklistManager();
+        WorklistManager manager = WorklistManager.getInstance();
 
         DFAPrecalculator precalculator = null;
         try {

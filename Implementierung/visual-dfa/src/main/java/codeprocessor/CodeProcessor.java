@@ -43,7 +43,7 @@ public class CodeProcessor {
         }
 
         String codeToCompile = originalCode;
-        // TODO testen auf platformunabhängigkeit
+        // TODO testen auf platformunabhÃ¤ngigkeit
         this.pathName = System.getProperty("user.home") + "\\visualDfa\\";
         File dir = new File(this.pathName);
         if (!dir.exists()) {
@@ -87,7 +87,7 @@ public class CodeProcessor {
             return;
         }
 
-        // TODO braucht man diesen Teil überhaupt
+        // TODO braucht man diesen Teil Ã¼berhaupt
         /**
          * load class ClassLoader classLoader = null; try { classLoader = new
          * URLClassLoader(new URL[] { new

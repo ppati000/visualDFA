@@ -7,6 +7,7 @@ import codeprocessor.*;
 import dfa.framework.AnalysisLoader;
 import dfa.framework.DFAExecution;
 import dfa.framework.DFAFactory;
+import dfa.framework.LatticeElement;
 import dfa.framework.SimpleBlockGraph;
 import dfa.framework.Worklist;
 import dfa.framework.WorklistManager;
@@ -17,7 +18,6 @@ import gui.visualgraph.GraphUIController;
 // TODO Exceptions wo genau
 // TODO Logger
 // TODO @code by true und false
-// TODO maybe change some exception to assert
 // TODO stop button activ halten bei precalc
 
 /**
@@ -31,14 +31,16 @@ public class Controller {
     private static final String analysisPackageName = "dfa.Analyses"; // TODO
                                                                       // define
                                                                       // packageName
-    private static final String classPath = System.getProperty("user.dir");
-    private static final String calcMessage = "This calculation is taking longer than expected. Do you want to continue?";
-    private static final String abortMessage = "This process leads to a complete deletion of the graph and the calculation. Do you want to continue?";
+    private static final String CLASS_PATH = System.getProperty("user.dir");
+    private static final String CALC_MESSAGE = "This calculation is taking longer than expected. Do you want to continue?";
+    private static final String ABORT_MESSAGE = "This process leads to a complete deletion of the graph and the calculation. Do you want to continue?";
+    private static final int TIME_TO_WAIT = 30000;
     private ProgramFrame programFrame;
-    private DFAExecution dfaExecution;
+    private DFAExecution<? extends LatticeElement> dfaExecution;
     private GraphUIController graphUIController;
     private VisualGraphPanel visualGraphPanel;
     private AnalysisLoader analysisLoader;
+    private WorklistManager worklistManager;
     private Thread autoplay;
     private boolean continueAutoplay;
 
@@ -49,7 +51,7 @@ public class Controller {
      */
     public Controller() {
         try {
-            this.analysisLoader = new AnalysisLoader(analysisPackageName, classPath);
+            this.analysisLoader = new AnalysisLoader(analysisPackageName, CLASS_PATH);
         } catch (IllegalStateException e) {
             e.printStackTrace();
         }
@@ -59,8 +61,19 @@ public class Controller {
         } catch (UnsupportedOperationException e) {
             e.printStackTrace();
         }
+        // TODO has Logger error message
         this.visualGraphPanel = new VisualGraphPanel();
         this.graphUIController = new GraphUIController(visualGraphPanel);
+    }
+
+    /**
+     * Sets the status of the panels
+     */
+    public void setInitialActivatedStatus() {
+        this.programFrame.getInputPanel().setActivated(true);
+        this.programFrame.getStatePanelOpen().setActivated(false);
+        this.visualGraphPanel.setActivated(false);
+        this.programFrame.getControlPanel().setActivated(ControlPanelState.DEACTIVATED);
     }
 
     /**
@@ -217,9 +230,11 @@ public class Controller {
      * {@code GraphUIController} is invoked to display the CFG. The
      * {@code ControlPanel}, the {@code StatePanel} and the
      * {@code VisualGraphPanel} are activated and the {@code InputPanel} is
-     * deactivated.
+     * deactivated. Deprecated method thread.stop is needed to deal with
+     * infinite loops in the precalculation. The used Dataflow Analysis can be
+     * implemented by the user and we cannot assume the correctness of theses
+     * analyses.
      */
-    // TODO warum wird stop benötigt
     @SuppressWarnings("deprecation")
     public void startAnalysis() {
         // Collect information
@@ -229,7 +244,7 @@ public class Controller {
         String code = programFrame.getInputPanel().getCode();
         boolean hasFilter = programFrame.getInputPanel().isFilterSelected();
 
-        // Process code with instance of CodeProcessor
+        // Process code with instance of {@code CodeProcessor}
         CodeProcessor processor = new CodeProcessor(code);
         if (!processor.wasSuccessful()) {
             new MessageBox(programFrame, "Compilation Error", processor.getErrorMessage());
@@ -250,12 +265,12 @@ public class Controller {
         MethodSelectionBox selectionBox = new MethodSelectionBox(programFrame, methodList);
         String methodSignature = selectionBox.getSelectedMethod();
         SimpleBlockGraph blockGraph = graphBuilder.buildGraph(methodSignature);
-        WorklistManager manager = WorklistManager.getInstance();
 
+        this.worklistManager = WorklistManager.getInstance();
         DFAPrecalculator precalculator = null;
         try {
-            Worklist worklist = manager.getWorklist(worklistName, blockGraph);
-            DFAFactory dfaFactory = analysisLoader.getDFAFactory(analysisName);
+            Worklist worklist = this.worklistManager.getWorklist(worklistName, blockGraph);
+            DFAFactory<LatticeElement> dfaFactory = analysisLoader.getDFAFactory(analysisName);
             precalculator = new DFAPrecalculator(dfaFactory, worklist, blockGraph);
         } catch (IllegalArgumentException e) {
             e.printStackTrace();
@@ -267,15 +282,17 @@ public class Controller {
         } catch (IllegalThreadStateException e) {
             e.printStackTrace();
         }
+        // this.programFrame.getControlPanel().setActivated(ControlPanelStates.PRECALCULATING);
+        // TODO
         this.graphUIController.start(dfaExecution);
         while (precalc.isAlive()) {
             try {
-                wait(6000); // TODO which value do we want to use, stop
+                wait(TIME_TO_WAIT); // wait for half a minute
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            OptionBox optionBox = new OptionBox(this.programFrame, calcMessage);
-            if (optionBox.getOption() == Option.YES_OPTION) {
+            OptionBox optionBox = new OptionBox(this.programFrame, CALC_MESSAGE);
+            if (optionBox.getOption() == Option.NO_OPTION) {
                 precalc.stop();
                 this.programFrame.getInputPanel().setActivated(true);
                 return;
@@ -297,7 +314,7 @@ public class Controller {
      * activated.
      */
     public void stopAnalysis() {
-        OptionBox option = new OptionBox(this.programFrame, abortMessage);
+        OptionBox option = new OptionBox(this.programFrame, ABORT_MESSAGE);
         if (!(option.getOption() == Option.YES_OPTION)) {
             return;
         }
@@ -339,9 +356,7 @@ public class Controller {
      * @return a list of names of the available {@code Worklist}s
      */
     public List<String> getWorklists() {
-        // TODO after Sebastian implemented the getWorlists method in the
-        // WorklistManager
-        return null;
+        return this.worklistManager.getWorklistNames();
     }
 
     /**

@@ -47,7 +47,7 @@ public class AnalysisLoader {
         return Collections.unmodifiableList(analysisNames);
     }
     
-    public DFAFactory getDFAFactory(String analysisName) {
+    public DFAFactory<LatticeElement> getDFAFactory(String analysisName) {
         if (analysisNames == null) {
             throw new IllegalStateException("no analyses have been loaded");
         }

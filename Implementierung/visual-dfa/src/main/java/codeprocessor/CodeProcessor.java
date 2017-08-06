@@ -14,21 +14,20 @@ import javax.tools.StandardJavaFileManager;
 import javax.tools.StandardLocation;
 import javax.tools.ToolProvider;
 
-//TODO update JavaDoc
-
 /**
  * @author Anika Nietzer A {@code CodeProcessor} represents a unit for compiling
  *         and processing java-sourcecode to java-bytecode.
  */
 public class CodeProcessor {
 
-    private String className;
+    private String className = "";
     private String errorMessage = "";
-    private String pathName;
+    private String pathName = "";
     private boolean success = false;
-    private static final String defaultClassName = "defaultClassName";
-    private static final String defaultClassSignature = "public class defaultClassName {";
-    private static final String defaulMethodSignature = "public void defaultMethodName() {";
+    private static final String DEFAULT_CLASS_NAME = "DefaultClass";
+    private static final String DEFAULT_CLASS_SIGNATURE = "public class DefaultClass {";
+    private static final String DEFAULT_METHOD_SIGNATURE = "public void defaultMethod() {";
+    private static final String PATH_SEPARATOR = System.getProperty("os.name").contains("windows") ? "\\" : "/";
 
     /**
      * Creates a {@code CodeProcessor} with the given code fragment and compiles
@@ -43,8 +42,7 @@ public class CodeProcessor {
         }
 
         String codeToCompile = originalCode;
-        // TODO testen auf platformunabhängigkeit
-        this.pathName = System.getProperty("user.home") + "\\visualDfa\\";
+        this.pathName = System.getProperty("user.home") + PATH_SEPARATOR + "visualDfa" + PATH_SEPARATOR;
         File dir = new File(this.pathName);
         if (!dir.exists()) {
             dir.mkdir();
@@ -68,15 +66,15 @@ public class CodeProcessor {
             diagnosticCollector = compile(this.className, codeToCompile);
         } else {
             if (!this.success) {
-                String codeToCompileWrapClass = defaultClassSignature + codeToCompile + "}";
-                this.className = defaultClassName;
-                diagnosticCollector = compile(defaultClassName, codeToCompileWrapClass);
+                String codeToCompileWrapClass = DEFAULT_CLASS_SIGNATURE + codeToCompile + "}";
+                this.className = DEFAULT_CLASS_NAME;
+                diagnosticCollector = compile(DEFAULT_CLASS_NAME, codeToCompileWrapClass);
             }
             if (!this.success) {
-                String codeToCompileWrapMethodClass = defaultClassSignature + defaulMethodSignature + codeToCompile
+                String codeToCompileWrapMethodClass = DEFAULT_CLASS_SIGNATURE + DEFAULT_METHOD_SIGNATURE + codeToCompile
                         + "}}";
-                this.className = defaultClassName;
-                compile(defaultClassName, codeToCompileWrapMethodClass);
+                this.className = DEFAULT_CLASS_NAME;
+                compile(DEFAULT_CLASS_NAME, codeToCompileWrapMethodClass);
             }
         }
         if (!success) {
@@ -87,28 +85,20 @@ public class CodeProcessor {
             return;
         }
 
-        // TODO braucht man diesen Teil überhaupt
-        /**
-         * load class ClassLoader classLoader = null; try { classLoader = new
-         * URLClassLoader(new URL[] { new
-         * File(".").getAbsoluteFile().toURI().toURL() }); } catch
-         * (MalformedURLException e) { System.out.println("no new class loader"
-         * ); } try { Class.forName(this.className, true, classLoader); } catch
-         * (ClassNotFoundException e) { System.out.println("no class found"); }
-         **/
     }
 
     private String getClassNameOfCode(String codeToCompile) {
-        int start = codeToCompile.indexOf("class");
-        String tryToFindName = codeToCompile.substring(start + 5).trim();
-        String[] split = tryToFindName.split(" ");
-        tryToFindName = split[0].trim();
-        // case of no break between className and {
-        split = tryToFindName.split("\\{");
-        tryToFindName = split[0].trim();
-        // delete generic type argument
-        split = tryToFindName.split("<");
-        String nameOfClass = split[0].trim();
+        int startOfClassName = codeToCompile.indexOf("class");
+        String tryToFindName = codeToCompile.substring(startOfClassName + 5).trim();
+        int endOfClassName;
+        for (endOfClassName = 0; endOfClassName < tryToFindName.length(); ++endOfClassName) {
+            char c = tryToFindName.charAt(endOfClassName);
+            if (c == '{' || c == '<' || Character.isWhitespace(c)) {
+                break;
+            }
+        }
+
+        String nameOfClass = tryToFindName.substring(0, endOfClassName).trim();
         return nameOfClass;
     }
 
@@ -154,9 +144,6 @@ public class CodeProcessor {
      * @return the className
      */
     public String getClassName() {
-        if (success && this.className == null) {
-            throw new IllegalStateException("className must be set if succes is true");
-        }
         return this.className;
     }
 
@@ -166,9 +153,6 @@ public class CodeProcessor {
      * @return the errorMessage
      */
     public String getErrorMessage() {
-        if (!success && this.errorMessage == null) {
-            throw new IllegalStateException("errorMessage must be set if succes is false");
-        }
         return this.errorMessage;
     }
 
@@ -178,9 +162,6 @@ public class CodeProcessor {
      * @return the pathName.
      */
     public String getPathName() {
-        if (success && this.pathName == null) {
-            throw new IllegalStateException("packageName must be set if succes is true");
-        }
         return this.pathName;
     }
 

@@ -16,7 +16,6 @@ import javax.swing.SwingConstants;
 import java.awt.GridBagConstraints;
 import javax.swing.JButton;
 import javax.swing.JLabel;
-import java.awt.Color;
 
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.BevelBorder;
@@ -61,10 +60,10 @@ public class ControlPanel extends JPanel {
      * @see ActionListener
      */
     public ControlPanel(Controller ctrl) {
-        // TODO Constants for colors?
-        setBorder(new CompoundBorder(new BevelBorder(BevelBorder.RAISED, new Color(153, 204, 204), null, null, null),
-                new EmptyBorder(5, 5, 5, 5)));
-        setBackground(new Color(0, 0, 102));
+
+        setBorder(new CompoundBorder(new BevelBorder(BevelBorder.RAISED, Colors.GREY_BORDER.getColor(), null, null, null), new EmptyBorder(5, 5, 5, 5)));
+        setBackground(Colors.BACKGROUND.getColor());
+
         this.ctrl = ctrl;
 
         JComponentDecorator jCompDecorator = new JComponentDecorator();
@@ -89,12 +88,12 @@ public class ControlPanel extends JPanel {
         jLaDecorator.decorateLabel(lblDelayInSeconds, "Step delay (seconds)");
         GridBagConstraints gbc_lblDelayInSeconds = GridBagConstraintFactory.getStandardGridBagConstraints(7, 1, 2, 1);
         add(lblDelayInSeconds, gbc_lblDelayInSeconds);
+        
+        JButton btnStopAnalysis = new JButton("Stop");
+        jBuDecorator.decorateIconButton(btnStopAnalysis, "icons/rounded-black-square-shape.png", 0.5, null, "Stop");
+        btnStopAnalysis.setBackground(Colors.WHITE_BACKGROUND.getColor());
+        btnStopAnalysis.setForeground(Colors.DARK_TEXT.getColor());
 
-        btnStopAnalysis = new JButton("Stop");
-        jBuDecorator.decorateIconButton(btnStopAnalysis, "icons/rounded-black-square-shape.png", 0.5,
-                new StopListener(), "Stop");
-        btnStopAnalysis.setBackground(new Color(255, 255, 255));
-        btnStopAnalysis.setForeground(new Color(0, 0, 0));
         btnStopAnalysis.setHorizontalTextPosition(SwingConstants.CENTER);
         btnStopAnalysis.setVerticalTextPosition(SwingConstants.BOTTOM);
         GridBagConstraints gbc_btnStopAnalysis = GridBagConstraintFactory.getStandardGridBagConstraints(0, 1, 1, 3);

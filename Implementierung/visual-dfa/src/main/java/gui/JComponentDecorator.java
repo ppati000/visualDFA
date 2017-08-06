@@ -1,6 +1,5 @@
 package gui;
 
-import java.awt.Color;
 import java.awt.Font;
 
 import javax.swing.JComponent;
@@ -21,9 +20,9 @@ public class JComponentDecorator {
      * @see JComponent
      */
     public void decorate(JComponent comp) {
-        comp.setBackground(new Color(0, 0, 102));
+        comp.setBackground(Colors.BACKGROUND.getColor());
         comp.setBorder(new EmptyBorder(5, 5, 5, 5));
-        comp.setForeground(new Color(255, 255, 255));
+        comp.setForeground(Colors.WHITE_BACKGROUND.getColor());
         comp.setFont(new Font("Trebuchet MS", Font.BOLD, 16));
     }
     

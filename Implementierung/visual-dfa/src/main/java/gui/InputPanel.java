@@ -1,6 +1,5 @@
 package gui;
 
-import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.ActionListener;
 
@@ -43,8 +42,8 @@ public class InputPanel extends JPanel {
     public InputPanel(Controller ctrl) {
         this.ctrl = ctrl;
         
-        setBorder(new CompoundBorder(new BevelBorder(BevelBorder.RAISED, new Color(153, 204, 204), null, null, null), new EmptyBorder(5, 5, 5, 5)));
-        setBackground(new Color(0, 0, 102));
+        setBorder(new CompoundBorder(new BevelBorder(BevelBorder.RAISED, Colors.GREY_BORDER.getColor(), null, null, null), new EmptyBorder(5, 5, 5, 5)));
+        setBackground(Colors.BACKGROUND.getColor());
         
         GridBagLayout gridBagLayout = new GridBagLayout();
         gridBagLayout.columnWidths = new int[]{0, 0, 0};
@@ -63,16 +62,16 @@ public class InputPanel extends JPanel {
         
         JButton btnOpen = new JButton();
         jBuDecorator.decorateIconButton(btnOpen, "icons/open-folder-outline.png", 0.2, null, "Open ...");
-        btnOpen.setBackground(new Color(255, 255, 255));
-        btnOpen.setForeground(new Color(0, 0, 0));
+        btnOpen.setBackground(Colors.WHITE_BACKGROUND.getColor());
+        btnOpen.setForeground(Colors.DARK_TEXT.getColor());
         GridBagConstraints gbc_btnOpen = GridBagConstraintFactory.getStandardGridBagConstraints(0, 4, 1, 1);
         gbc_btnOpen.insets.set(gbc_btnOpen.insets.top, gbc_btnOpen.insets.left, gbc_btnOpen.insets.bottom, 0);
         add(btnOpen, gbc_btnOpen);
         
         JButton btnSave = new JButton();
         jBuDecorator.decorateIconButton(btnSave, "icons/save-file-option.png", 0.2, null, "Save ...");
-        btnSave.setBackground(new Color(255, 255, 255));
-        btnSave.setForeground(new Color(0, 0, 0));
+        btnSave.setBackground(Colors.WHITE_BACKGROUND.getColor());
+        btnSave.setForeground(Colors.DARK_TEXT.getColor());
         GridBagConstraints gbc_btnSave = GridBagConstraintFactory.getStandardGridBagConstraints(1, 4, 1, 1);
         gbc_btnSave.insets.set(gbc_btnSave.insets.top, 0, gbc_btnSave.insets.bottom, gbc_btnSave.insets.right);
         add(btnSave, gbc_btnSave);
@@ -103,7 +102,7 @@ public class InputPanel extends JPanel {
         
         JButton btnStartAnalysis = new JButton();
         jBuDecorator.decorateButton(btnStartAnalysis, null, "Start Analysis");
-        btnStartAnalysis.setBackground(new Color(102, 204, 51));
+        btnStartAnalysis.setBackground(Colors.GREEN_BACKGROUND.getColor());
         btnStartAnalysis.setFont(new Font("Trebuchet MS", Font.BOLD, 24));
         GridBagConstraints gbc_btnStartAnalysis = GridBagConstraintFactory.getStandardGridBagConstraints(0, 12, 2, 2);
         add(btnStartAnalysis, gbc_btnStartAnalysis);

@@ -3,8 +3,15 @@ package gui.visualgraph;
 import com.mxgraph.layout.hierarchical.mxHierarchicalLayout;
 import com.mxgraph.swing.mxGraphComponent;
 import com.mxgraph.view.mxGraph;
+import gui.*;
 
 import javax.swing.*;
+import javax.swing.border.LineBorder;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,6 +28,11 @@ public class VisualGraphPanel extends JPanel {
     private JButton graphExport;
     private mxGraph graph;
     private JLayeredPane buttonPane;
+    private Frame parentFrame;
+
+    private final Color BLUE_HIGHLIGHT_COLOR = new Color(188, 230, 254);
+    private final Color ALMOST_WHITE_COLOR = new Color(251, 253, 255);
+    private final Color TEXT_COLOR = new Color(17, 37, 48);
 
     /**
      * Creates a new {@code VisualGraphPanel}.
@@ -29,12 +41,34 @@ public class VisualGraphPanel extends JPanel {
         this.basicBlocks = new ArrayList<>();
         this.edges = new ArrayList<>();
         this.graph = new RestrictedMxGraph();
+        setLayout(new BorderLayout());
 
-        // TODO: Make these buttons look nice
         // TODO: Add listeners to buttons
-        // TODO: Find a replacement for GlassPane to make buttons visible
-        jumpToAction = new JButton("Jump to Action");
-        graphExport = new JButton("Export Graph");
+        jumpToAction = new GraphJButton("Jump to Action");
+        graphExport = new GraphJButton("Export Graph");
+
+        jumpToAction.setIcon(IconLoader.loadIcon("icons/map-marker.png", 0.2));
+        jumpToAction.setPreferredSize(new Dimension(145, 40));
+
+        graphExport.setIcon(IconLoader.loadIcon("icons/share-symbol.png", 0.2));
+        graphExport.setPreferredSize(new Dimension(130, 40));
+
+        JPanel buttonGroup = new JPanel();
+        buttonGroup.setLayout(new FlowLayout(FlowLayout.RIGHT));
+        buttonGroup.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
+        buttonGroup.setSize(getWidth(), 60);
+        buttonGroup.add(graphExport);
+        buttonGroup.add(jumpToAction);
+        buttonGroup.setBackground(ALMOST_WHITE_COLOR);
+        add(buttonGroup, BorderLayout.NORTH);
+
+        graphExport.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // TODO: Decide which export to do and do actual export.
+                new GraphExportBox(parentFrame).setVisible(true);
+            }
+        });
 
         initialGraphState();
     }
@@ -146,11 +180,15 @@ public class VisualGraphPanel extends JPanel {
         return graphComponent;
     }
 
+    public void setParentFrame(Frame frame) {
+        this.parentFrame = frame;
+    }
+
     private void autoLayout() {
         new mxHierarchicalLayout(graph).execute(graph.getDefaultParent());
         graphComponent.setVisible(true);
         graphComponent.doLayout();
-        add(graphComponent);
+        add(graphComponent, BorderLayout.CENTER);
     }
 
     private void initialGraphState() {
@@ -161,5 +199,31 @@ public class VisualGraphPanel extends JPanel {
             remove(graphComponent);
         }
         graphComponent = new mxGraphComponent(graph);
+        graphComponent.setBorder(new LineBorder(new Color(188, 230, 254)));
+        graphComponent.getViewport().setBackground(new Color(251, 253, 255));
+    }
+
+    private class GraphJButton extends JButton {
+        GraphJButton(String text) {
+            super(text);
+            setOpaque(true);
+            setBackground(ALMOST_WHITE_COLOR);
+            setForeground(TEXT_COLOR);
+            setBorder(new LineBorder(BLUE_HIGHLIGHT_COLOR, 2, true));
+
+            final ButtonModel startModel = getModel();
+            startModel.addChangeListener(new ChangeListener() {
+
+                @Override
+                public void stateChanged(ChangeEvent e) {
+                    if (getModel().isPressed()) {
+                        setBackground(BLUE_HIGHLIGHT_COLOR);
+                    } else {
+                        setBackground(ALMOST_WHITE_COLOR);
+                    }
+                }
+
+            });
+        }
     }
 }

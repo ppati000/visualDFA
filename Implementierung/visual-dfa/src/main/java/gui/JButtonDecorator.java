@@ -1,10 +1,12 @@
 package gui;
 
+import java.awt.Color;
 import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.KeyStroke;
+import javax.swing.border.LineBorder;
 
 /**
  * A utility class to set standard properties for a jButton.
@@ -65,5 +67,10 @@ public class JButtonDecorator {
         comp.addActionListener(actListener);
         comp.getInputMap().put(KeyStroke.getKeyStroke("SPACE"), "none");
         comp.setFocusPainted(false);
+    }
+    
+    public void decorateBorderButton(JButton comp, ActionListener actListener, String text, Color BorderColor) {
+        decorateButton(comp, actListener, text);
+        comp.setBorder(new LineBorder(BorderColor));
     }
 }

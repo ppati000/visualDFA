@@ -27,7 +27,7 @@ public class IconLoader {
      * @return A scaled icon.
      * @see ImageIcon
      */
-    static ImageIcon loadIcon(String path, double scale) {
+    public static ImageIcon loadIcon(String path, double scale) {
         // TODO throw or try catch
         URL url = ClassLoader.getSystemResource(path);
         if (url == null) {

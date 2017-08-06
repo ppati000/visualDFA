@@ -30,6 +30,7 @@ public final class App {
                 }
             }
         });
+        
         ctrl.setProgramFrame(frame);
         ctrl.setInitialActivatedStatus();
     }

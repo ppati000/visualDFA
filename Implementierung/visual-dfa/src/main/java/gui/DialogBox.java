@@ -2,10 +2,18 @@ package gui;
 
 import java.awt.BorderLayout;
 import java.awt.Dialog;
+import java.awt.Dimension;
+import java.awt.EventQueue;
 import java.awt.Frame;
 
 import javax.swing.JDialog;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JRootPane;
+import javax.swing.border.BevelBorder;
+import javax.swing.border.CompoundBorder;
+import javax.swing.border.EmptyBorder;
+import javax.swing.border.LineBorder;
 
 /**
  * Superclass for different DialogBoxes. Includes a title, a contentPanel and a
@@ -19,8 +27,9 @@ import javax.swing.JPanel;
 
 public abstract class DialogBox extends JDialog {
 
-    private final JPanel contentPanel = new JPanel();
-    private final JPanel buttonPane = new JPanel();
+    private final JPanel borderPanel = new JPanel();
+    protected final JPanel contentPanel = new JPanel();
+    protected final JPanel buttonPane = new JPanel();
     private final JPanel titlePane = new JPanel();
 
     /**
@@ -65,15 +74,34 @@ public abstract class DialogBox extends JDialog {
      *            The title of the DialogBox.
      */
     private final void init(String title) {
-        getContentPane().setLayout(new BorderLayout());
+        setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+
+        setResizable(false);
+        borderPanel.setLayout(new BorderLayout());
+        borderPanel.setBackground(Colors.BACKGROUND.getColor());
+        borderPanel.setBorder(
+                new CompoundBorder(new LineBorder(Colors.GREY_BORDER.getColor(), 2), new EmptyBorder(5, 5, 5, 5)));
+
+        getContentPane().add(borderPanel);
+
+        initTitlePane(title);
+        borderPanel.add(titlePane, BorderLayout.NORTH);
 
         initContentPanel();
-        getContentPane().add(contentPanel, BorderLayout.CENTER);
-        initTitlePane(title);
-        getContentPane().add(titlePane, BorderLayout.NORTH);
-        initButtonPane();
-        getContentPane().add(buttonPane, BorderLayout.SOUTH);
+        borderPanel.add(contentPanel, BorderLayout.CENTER);
 
+        initButtonPane();
+        borderPanel.add(buttonPane, BorderLayout.SOUTH);
+        setLocationRelativeTo(getOwner());
+        setMinimumSize(new Dimension(300,150));
+        pack();
+        EventQueue.invokeLater(new Runnable() {
+            public void run() {
+
+                setVisible(true);
+
+            }
+        });
     }
 
     /**
@@ -83,7 +111,11 @@ public abstract class DialogBox extends JDialog {
      *            The title, which is displayed in the titlePane.
      */
     private void initTitlePane(String title) {
-
+        titlePane.setBackground(Colors.BACKGROUND.getColor());
+        JLabelDecorator lblDecorator = new JLabelDecorator(new JComponentDecorator());
+        JLabel lbl_title = new JLabel();
+        lblDecorator.decorateTitle(lbl_title, title);
+        titlePane.add(lbl_title);
     }
 
     /**
@@ -97,4 +129,5 @@ public abstract class DialogBox extends JDialog {
      * buttonPane.
      */
     protected abstract void initButtonPane();
+
 }

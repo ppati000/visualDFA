@@ -1,5 +1,7 @@
 package gui;
 
+import java.awt.Font;
+
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 
@@ -37,6 +39,12 @@ public class JLabelDecorator {
      */
     public void decorateLabel(JLabel comp, String text) {
         componentDecorator.decorate(comp);
+        comp.setText(text);
+    }
+    
+    public void decorateTitle(JLabel comp, String text) {
+        componentDecorator.decorate(comp);
+        comp.setFont(new Font(comp.getFont().getName(), Font.BOLD, 24));
         comp.setText(text);
     }
 }

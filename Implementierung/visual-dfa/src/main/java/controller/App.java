@@ -20,9 +20,7 @@ public final class App {
      */
     public static void main(String[] args) {
         final Controller ctrl = new Controller();
-
         final ProgramFrame frame = new ProgramFrame(ctrl);
-
         EventQueue.invokeLater(new Runnable() {
             public void run() {
                 try {
@@ -32,7 +30,7 @@ public final class App {
                 }
             }
         });
-
         ctrl.setProgramFrame(frame);
+        ctrl.setInitialActivatedStatus();
     }
 }

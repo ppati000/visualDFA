@@ -4,11 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import dfa.framework.SimpleBlockGraph;
+import soot.Body;
 import soot.Scene;
 import soot.SootClass;
 import soot.SootMethod;
-import soot.jimple.Jimple;
-import soot.jimple.JimpleBody;
+import soot.options.Options;
 
 /**
  * @author Anika Nietzer A {@code GraphBuilder} represents a unit, that
@@ -16,8 +16,9 @@ import soot.jimple.JimpleBody;
  */
 public class GraphBuilder {
 
-    private SootClass test;
+    private SootClass sootClass;
     private List<SootMethod> methods;
+    private static final String PATH_SEPARATOR = System.getProperty("os.name").contains("windows") ? "\\" : "/";
 
     /**
      * Creates a new {@code GraphBuilder} that works with the file present in
@@ -30,13 +31,19 @@ public class GraphBuilder {
      *            name of the class
      */
     public GraphBuilder(String pathName, String className) {
-        Scene.v().setSootClassPath(pathName);
-        // TODO make it work for all pcs
-        String jdkPath = "C:\\Program Files\\Java\\jdk1.7.0_76\\jre\\lib\\rt.jar";
+        Scene.v().setSootClassPath(pathName.toString());
+        Options.v().setPhaseOption("jb", "use-original-names:true");
+        Options.v().set_keep_line_number(true);
+        String jdkPath = System.getProperty("java.home") + PATH_SEPARATOR + "lib" + PATH_SEPARATOR + "rt.jar";
         Scene.v().extendSootClassPath(jdkPath);
-        this.test = Scene.v().loadClassAndSupport(className);
-        test.setApplicationClass();
-        this.methods = test.getMethods();
+        Scene.v().loadNecessaryClasses();
+
+        Scene.v().addBasicClass(className, SootClass.BODIES);
+        Scene.v().forceResolve(className, SootClass.BODIES);
+        this.sootClass = Scene.v().loadClassAndSupport(className);
+
+        sootClass.setApplicationClass();
+        this.methods = sootClass.getMethods();
     }
 
     /**
@@ -48,8 +55,8 @@ public class GraphBuilder {
      * @return SimpleBlockGraph of the method
      */
     public SimpleBlockGraph buildGraph(String methodSignature) {
-        SootMethod method = this.test.getMethod(methodSignature);
-        JimpleBody body = Jimple.v().newBody(method);
+        SootMethod method = this.sootClass.getMethod(methodSignature);
+        Body body = method.retrieveActiveBody();
         SimpleBlockGraph blockGraph = new SimpleBlockGraph(body);
         return blockGraph;
     }
@@ -61,7 +68,7 @@ public class GraphBuilder {
      *            filter, that decides which methods will be filtered out
      * @return list of all remaining methods
      */
-    // TODO Konstruktoren rausnehmen?
+    // TODO do we want to have constructors in our method selection?
     public List<String> getMethods(Filter filter) {
         List<String> filteredMethods = new ArrayList<String>();
         for (SootMethod methodTest : this.methods) {

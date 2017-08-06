@@ -2,6 +2,7 @@ package controller;
 
 import dfa.framework.DFAExecution;
 import dfa.framework.DFAFactory;
+import dfa.framework.LatticeElement;
 import dfa.framework.SimpleBlockGraph;
 import dfa.framework.Worklist;
 
@@ -13,8 +14,8 @@ import dfa.framework.Worklist;
  */
 public class DFAPrecalculator implements Runnable {
 
-    private DFAExecution dfaExecution;
-    private DFAFactory factory;
+    private DFAExecution<? extends LatticeElement> dfaExecution;
+    private DFAFactory<? extends LatticeElement> factory;
     private Worklist worklist;
     private SimpleBlockGraph simpleBlockGraph;
 
@@ -30,7 +31,7 @@ public class DFAPrecalculator implements Runnable {
      *            {@code SimpleBlockGraph} on that the analysis will be
      *            performed
      */
-    public DFAPrecalculator(DFAFactory factory, Worklist worklist, SimpleBlockGraph simpleBlockGraph) {
+    public DFAPrecalculator(DFAFactory<? extends LatticeElement> factory, Worklist worklist, SimpleBlockGraph simpleBlockGraph) {
         if (factory == null) {
             throw new IllegalArgumentException("factory must not be null");
         }
@@ -59,7 +60,7 @@ public class DFAPrecalculator implements Runnable {
      * 
      * @return created instance of {@code DFAExecution}
      */
-    public DFAExecution getDFAExecution() {
+    public DFAExecution<? extends LatticeElement> getDFAExecution() {
         if (this.dfaExecution == null) {
             throw new IllegalStateException("dfaExecution must no be null");
         }

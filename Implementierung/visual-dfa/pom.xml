@@ -25,6 +25,7 @@
                             <version>1.0</version>
                             <packaging>jar</packaging>
                             <file>${basedir}/src/main/resources/libs/jgraphx-custom.jar</file>
+                            <localRepositoryPath>${user.home}/.m2/repository</localRepositoryPath>
                         </configuration>
                     </execution>
                     <execution>
@@ -40,6 +41,7 @@
                             <version>3.0.0</version>
                             <packaging>jar</packaging>
                             <file>${basedir}/src/main/resources/libs/soot-trunk.jar</file>
+                            <localRepositoryPath>${user.home}/.m2/repository</localRepositoryPath>
                         </configuration>
                     </execution>
                 </executions>

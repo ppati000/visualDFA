@@ -43,7 +43,10 @@ public class ControlFlowGraph {
         if (blocks.isEmpty()) {
             throw new IllegalArgumentException("the given BlockGraph is empty");
         }
-
+        
+        predecessors = new HashMap<BasicBlock, List<BasicBlock>>();
+        successors = new HashMap<BasicBlock, List<BasicBlock>>();
+        
         for (Block block : blocks) {
             BasicBlock basicBlock = buildBasicBlock(block);
             addBasicBlock(basicBlock);
@@ -66,8 +69,6 @@ public class ControlFlowGraph {
             setEndBlock(blockMapping.get(tails.get(0)));
         }
 
-        predecessors = new HashMap<BasicBlock, List<BasicBlock>>();
-        successors = new HashMap<BasicBlock, List<BasicBlock>>();
         for (Block block : blocks) {
             BasicBlock basicBlock = blockMapping.get(block);
 
@@ -253,7 +254,7 @@ public class ControlFlowGraph {
         if (basicBlocks.contains(basicBlock)) {
             return false;
         }
-
+        
         predecessors.put(basicBlock, new LinkedList<BasicBlock>());
         successors.put(basicBlock, new LinkedList<BasicBlock>());
         return basicBlocks.add(basicBlock); // returns true

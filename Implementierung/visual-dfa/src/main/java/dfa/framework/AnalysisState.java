@@ -77,10 +77,6 @@ public class AnalysisState<E extends LatticeElement> {
      *         if {@code basicBlock} is not associated with any {@code LogicalColor}
      */
     LogicalColor getColor(BasicBlock basicBlock) {
-        if (!colorMap.containsKey(basicBlock)) {
-            throw new IllegalArgumentException("no LogicalColor associated with basicBlock");
-        }
-
         return colorMap.get(basicBlock);
     }
 
@@ -119,18 +115,10 @@ public class AnalysisState<E extends LatticeElement> {
      *         if {@code basicBlock} is not associated with any {@code BlockState}
      */
     public BlockState<E> getBlockState(AbstractBlock block) {
-        if (!stateMap.containsKey(block)) {
-            throw new IllegalArgumentException("there is no BlockState associated with block");
-        }
-
         return stateMap.get(block);
     }
 
     public void setBlockState(AbstractBlock block, BlockState<E> blockState) {
-        if (!stateMap.containsKey(block)) {
-            throw new IllegalArgumentException("there is no BlockState associated with block");
-        }
-        
         stateMap.put(block, blockState);
     }
 
@@ -227,6 +215,10 @@ public class AnalysisState<E extends LatticeElement> {
 
         this.stateMap = stateMap;
     }
+    
+    protected Map<AbstractBlock, BlockState<E>> getStateMap() {
+        return stateMap;
+    }
 
     /**
      * Sets the {@code Map} that assigns {@code LogicalColor}s to {@code BasicBlock}s.
@@ -240,6 +232,10 @@ public class AnalysisState<E extends LatticeElement> {
         }
 
         this.colorMap = colorMap;
+    }
+    
+    protected Map<BasicBlock, LogicalColor> getColorMap() {
+        return colorMap;
     }
 
 }

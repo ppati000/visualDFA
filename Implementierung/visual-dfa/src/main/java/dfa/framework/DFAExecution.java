@@ -366,16 +366,17 @@ public class DFAExecution<E extends LatticeElement> {
                 }
                 E outStatesJoin = dfa.join(predOutStates);
 
-                BlockState<E> prevBlockState = prevAnalysisState.getBlockState(prevBasicBlock);
+                BlockState<E> prevBlockState = prevAnalysisState.getBlockState(newBasicBlock);
                 BlockState<E> newBlockState = new BlockState<E>(outStatesJoin, prevBlockState.getOutState());
                 newAnalysisState.setBlockState(newBasicBlock, newBlockState);
 
                 updateColors(prevAnalysisState, newAnalysisState, visitedBasicBlocks);
 
                 analysisStates.add(newAnalysisState);
-                
+
                 // this begins a new block step
                 blockSteps.add(elementaryStep++);
+                prevAnalysisState = newAnalysisState;
                 continue;
             }
 
@@ -412,9 +413,9 @@ public class DFAExecution<E extends LatticeElement> {
                     E nextOutState = dfa.transition(prevOutState, nextElementaryBlock.getUnit());
                     BlockState<E> nextBlockState = new BlockState<E>(prevOutState, nextOutState);
                     newAnalysisState = newState(prevAnalysisState, prevWorklist.clone(), prevBasicBlock, ++eBlockIdx);
-                    newAnalysisState.setBlockState(prevBasicBlock, nextBlockState);
+                    newAnalysisState.setBlockState(nextElementaryBlock, nextBlockState);
                 }
-                
+
                 analysisStates.add(newAnalysisState);
                 prevAnalysisState = newAnalysisState;
                 ++elementaryStep;
@@ -457,7 +458,9 @@ public class DFAExecution<E extends LatticeElement> {
 
     private AnalysisState<E> newState(AnalysisState<E> state, Worklist newWorklist, BasicBlock currentBBlock,
             int eBlockIdx) {
-        AnalysisState<E> newState = new AnalysisState<E>(newWorklist, currentBBlock, eBlockIdx);
+        AnalysisState<E> newState =
+                new AnalysisState<E>(newWorklist, currentBBlock, eBlockIdx, state.getStateMap(), state.getColorMap());
+        newState.setCurrentElementaryBlockIndex(eBlockIdx);
         return newState;
     }
 
@@ -491,7 +494,8 @@ public class DFAExecution<E extends LatticeElement> {
         BlockState<E> prevBlockState = prevAnalysisState.getBlockState(currentBBlock);
 
         List<BasicBlock> successors = getSuccessors(currentBBlock);
-        if (!outState.equals(prevBlockState.getOutState())) {
+        E prevOutState = prevBlockState.getOutState();
+        if (!outState.equals(prevOutState)) {
             for (BasicBlock bSucc : successors) {
                 newWorklist.add(bSucc);
             }

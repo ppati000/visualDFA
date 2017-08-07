@@ -89,7 +89,7 @@ public class ControlPanel extends JPanel {
         GridBagConstraints gbc_lblDelayInSeconds = GridBagConstraintFactory.getStandardGridBagConstraints(7, 1, 2, 1);
         add(lblDelayInSeconds, gbc_lblDelayInSeconds);
         
-        JButton btnStopAnalysis = new JButton("Stop");
+        btnStopAnalysis = new JButton();
         jBuDecorator.decorateIconButton(btnStopAnalysis, "icons/rounded-black-square-shape.png", 0.5, null, "Stop");
         btnStopAnalysis.setBackground(Colors.WHITE_BACKGROUND.getColor());
         btnStopAnalysis.setForeground(Colors.DARK_TEXT.getColor());

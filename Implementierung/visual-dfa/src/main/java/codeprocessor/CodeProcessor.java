@@ -61,22 +61,22 @@ public class CodeProcessor {
 
         // tries to compile the user input
         DiagnosticCollector<JavaFileObject> diagnosticCollector = null;
-        if (codeToCompile.contains(" class ") || codeToCompile.startsWith("class ")) {
+        if (codeToCompile.contains(" class") || codeToCompile.startsWith("class ")) {
             this.className = getClassNameOfCode(codeToCompile);
             diagnosticCollector = compile(this.className, codeToCompile);
-        } else {
-            if (!this.success) {
-                String codeToCompileWrapClass = DEFAULT_CLASS_SIGNATURE + codeToCompile + "}";
-                this.className = DEFAULT_CLASS_NAME;
-                diagnosticCollector = compile(DEFAULT_CLASS_NAME, codeToCompileWrapClass);
-            }
-            if (!this.success) {
-                String codeToCompileWrapMethodClass = DEFAULT_CLASS_SIGNATURE + DEFAULT_METHOD_SIGNATURE + codeToCompile
-                        + "}}";
-                this.className = DEFAULT_CLASS_NAME;
-                compile(DEFAULT_CLASS_NAME, codeToCompileWrapMethodClass);
-            }
         }
+        if (!this.success) {
+            String codeToCompileWrapClass = DEFAULT_CLASS_SIGNATURE + codeToCompile + "}";
+            this.className = DEFAULT_CLASS_NAME;
+            diagnosticCollector = compile(DEFAULT_CLASS_NAME, codeToCompileWrapClass);
+        }
+        if (!this.success) {
+            String codeToCompileWrapMethodClass = DEFAULT_CLASS_SIGNATURE + DEFAULT_METHOD_SIGNATURE + codeToCompile
+                    + "}}";
+            this.className = DEFAULT_CLASS_NAME;
+            compile(DEFAULT_CLASS_NAME, codeToCompileWrapMethodClass);
+        }
+
         if (!success) {
             List<Diagnostic<? extends JavaFileObject>> diagnostics = diagnosticCollector.getDiagnostics();
             for (Diagnostic<? extends JavaFileObject> diagnostic : diagnostics) {
@@ -88,8 +88,11 @@ public class CodeProcessor {
     }
 
     private String getClassNameOfCode(String codeToCompile) {
-        int startOfClassName = codeToCompile.indexOf("class");
-        String tryToFindName = codeToCompile.substring(startOfClassName + 5).trim();
+        int startOfClass = codeToCompile.indexOf("class");
+        String tryToFindName = codeToCompile.substring(startOfClass + 5).trim();
+        while(!Character.isAlphabetic(tryToFindName.charAt(0))) {
+            tryToFindName = tryToFindName.substring(1).trim();
+        }
         int endOfClassName;
         for (endOfClassName = 0; endOfClassName < tryToFindName.length(); ++endOfClassName) {
             char c = tryToFindName.charAt(endOfClassName);
@@ -97,7 +100,6 @@ public class CodeProcessor {
                 break;
             }
         }
-
         String nameOfClass = tryToFindName.substring(0, endOfClassName).trim();
         return nameOfClass;
     }

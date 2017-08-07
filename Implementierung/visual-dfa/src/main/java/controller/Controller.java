@@ -7,18 +7,19 @@ import codeprocessor.*;
 import dfa.framework.AnalysisLoader;
 import dfa.framework.DFAExecution;
 import dfa.framework.DFAFactory;
+import dfa.framework.DFAPrecalcController;
 import dfa.framework.LatticeElement;
 import dfa.framework.SimpleBlockGraph;
 import dfa.framework.Worklist;
 import dfa.framework.WorklistManager;
-import gui.*;
 import gui.visualgraph.VisualGraphPanel;
+import gui.ControlPanelState;
+import gui.MessageBox;
+import gui.MethodSelectionBox;
+import gui.Option;
+import gui.OptionBox;
+import gui.ProgramFrame;
 import gui.visualgraph.GraphUIController;
-
-// TODO Exceptions wo genau
-// TODO Logger
-// TODO @code by true und false
-// TODO stop button activ halten bei precalc
 
 /**
  * 
@@ -28,12 +29,11 @@ import gui.visualgraph.GraphUIController;
  */
 public class Controller {
 
-    private static final String analysisPackageName = "dfa.Analyses"; // TODO
-                                                                      // define
-                                                                      // packageName
+    private static final String PACKAGE_NAME = "dfa.analyses";
     private static final String CLASS_PATH = System.getProperty("user.dir");
-    private static final String CALC_MESSAGE = "This calculation is taking longer than expected. Do you want to continue?";
+    private static final String CALC_MESSAGE = "This calculation is taking longer than expected. Do you want to continue and show intermediate results?";
     private static final String ABORT_MESSAGE = "This process leads to a complete deletion of the graph and the calculation. Do you want to continue?";
+    private static final String EXCEPTION_TITLE = "Exception caused by analysis calculation";
     private static final int TIME_TO_WAIT = 30000;
     private ProgramFrame programFrame;
     private DFAExecution<? extends LatticeElement> dfaExecution;
@@ -42,7 +42,9 @@ public class Controller {
     private AnalysisLoader analysisLoader;
     private WorklistManager worklistManager;
     private Thread autoplay;
-    private boolean continueAutoplay;
+    private Thread precalc;
+    private DFAPrecalcController precalcController;
+    private DFAPrecalculator precalculator;
 
     /**
      * Creates a new {@code Controller} and loads the available analyses with an
@@ -51,29 +53,19 @@ public class Controller {
      */
     public Controller() {
         try {
-            this.analysisLoader = new AnalysisLoader(analysisPackageName, CLASS_PATH);
+            this.analysisLoader = new AnalysisLoader(PACKAGE_NAME, CLASS_PATH);
         } catch (IllegalStateException e) {
             e.printStackTrace();
         }
-        Logger logger = Logger.getAnonymousLogger(); // TODO
+        Logger logger = Logger.getAnonymousLogger();
         try {
             this.analysisLoader.loadAnalyses(logger);
         } catch (UnsupportedOperationException e) {
             e.printStackTrace();
         }
-        // TODO has Logger error message
         this.visualGraphPanel = new VisualGraphPanel();
         this.graphUIController = new GraphUIController(visualGraphPanel);
-    }
-
-    /**
-     * Sets the status of the panels
-     */
-    public void setInitialActivatedStatus() {
-        this.programFrame.getInputPanel().setActivated(true);
-        this.programFrame.getStatePanelOpen().setActivated(false);
-        this.visualGraphPanel.setActivated(false);
-        this.programFrame.getControlPanel().setActivated(ControlPanelState.DEACTIVATED);
+        this.worklistManager = WorklistManager.getInstance();
     }
 
     /**
@@ -179,16 +171,13 @@ public class Controller {
             e.printStackTrace();
         }
 
-        this.programFrame.getControlPanel().setActivated(ControlPanelState.PLAYING);
-        this.getVisualGraphPanel().setActivated(false);
+        visibilityPlaying();
         this.autoplay = new Thread(autoplayDriver);
-        this.continueAutoplay = true;
         try {
             this.autoplay.start();
         } catch (IllegalThreadStateException e) {
             e.printStackTrace();
         }
-
     }
 
     /**
@@ -205,22 +194,24 @@ public class Controller {
      * was set.
      * 
      * @return {@code true} if no breakpoint was set or {@code false} in the
-     *         other case.
+     *         other case
      */
-    public boolean shouldAutoplayContinue() {
+    public boolean isAtBreakpoint() {
         if (this.dfaExecution.isAtBreakpoint()) {
+            return true;
+        } else {
             return false;
         }
-        return this.continueAutoplay;
     }
 
     /**
      * Stops the {@code AutoplayDriver}.
      */
     public void pause() {
-        this.continueAutoplay = false;
-        this.getVisualGraphPanel().setActivated(true);
-        this.programFrame.getControlPanel().setActivated(ControlPanelState.ACTIVATED);
+        if (!this.autoplay.isInterrupted()) {
+            this.autoplay.interrupt();
+        }
+        visibilityWorking();
     }
 
     /**
@@ -230,12 +221,8 @@ public class Controller {
      * {@code GraphUIController} is invoked to display the CFG. The
      * {@code ControlPanel}, the {@code StatePanel} and the
      * {@code VisualGraphPanel} are activated and the {@code InputPanel} is
-     * deactivated. Deprecated method thread.stop is needed to deal with
-     * infinite loops in the precalculation. The used Dataflow Analysis can be
-     * implemented by the user and we cannot assume the correctness of theses
-     * analyses.
+     * deactivated.
      */
-    @SuppressWarnings("deprecation")
     public void startAnalysis() {
         // Collect information
         programFrame.getInputPanel().setActivated(false);
@@ -262,48 +249,52 @@ public class Controller {
             filter = new NoFilter();
         }
         List<String> methodList = graphBuilder.getMethods(filter);
+        for (int i = 0; i < methodList.size(); i++) {
+            System.out.println(methodList.get(i));
+        }
         MethodSelectionBox selectionBox = new MethodSelectionBox(programFrame, methodList);
         String methodSignature = selectionBox.getSelectedMethod();
-        SimpleBlockGraph blockGraph = graphBuilder.buildGraph(methodSignature);
-
-        this.worklistManager = WorklistManager.getInstance();
-        DFAPrecalculator precalculator = null;
+        SimpleBlockGraph blockGraph = graphBuilder.buildGraph(methodList.get(1));
+        // TODO
+        this.precalcController = new DFAPrecalcController();
         try {
             Worklist worklist = this.worklistManager.getWorklist(worklistName, blockGraph);
             DFAFactory<LatticeElement> dfaFactory = analysisLoader.getDFAFactory(analysisName);
-            precalculator = new DFAPrecalculator(dfaFactory, worklist, blockGraph);
+            this.precalculator = new DFAPrecalculator(dfaFactory, worklist, blockGraph, this.precalcController, this);
         } catch (IllegalArgumentException e) {
             e.printStackTrace();
         }
 
-        Thread precalc = new Thread(precalculator);
+        this.precalc = new Thread(precalculator);
         try {
-            precalc.start();
+            this.precalc.start();
         } catch (IllegalThreadStateException e) {
             e.printStackTrace();
         }
-        // this.programFrame.getControlPanel().setActivated(ControlPanelStates.PRECALCULATING);
-        // TODO
-        this.graphUIController.start(dfaExecution);
-        while (precalc.isAlive()) {
-            try {
-                wait(TIME_TO_WAIT); // wait for half a minute
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            OptionBox optionBox = new OptionBox(this.programFrame, CALC_MESSAGE);
-            if (optionBox.getOption() == Option.NO_OPTION) {
-                precalc.stop();
-                this.programFrame.getInputPanel().setActivated(true);
-                return;
+        visibilityPrecalculating();
+        int i = 0;
+        synchronized (this) {
+            while (i < TIME_TO_WAIT
+                    && !(precalcController.getPrecalcState() == DFAPrecalcController.PrecalcState.COMPLETED)) {
+                try {
+                    wait(1);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                i++;
             }
         }
-
+        if (i >= TIME_TO_WAIT) {
+            stopAnalysis();
+        }
+        while (!(precalcController.getPrecalcState() == DFAPrecalcController.PrecalcState.COMPLETED)
+                && precalc.isAlive())
+            ;
+        // TODO Problem?
         this.dfaExecution = precalculator.getDFAExecution();
-        precalculator = null;
-        this.visualGraphPanel.setActivated(true);
-        this.programFrame.getControlPanel().setActivated(ControlPanelState.ACTIVATED);
-        this.programFrame.getStatePanelOpen().setActivated(true);
+        this.dfaExecution.setCurrentElementaryStep(0);
+        this.graphUIController.start(this.dfaExecution);
+        visibilityWorking();
     }
 
     /**
@@ -311,19 +302,97 @@ public class Controller {
      * {@code VisualGraphPanel} through the {@code GraphUIController}. The
      * {@code ControlPanel}, the {@code StatePanel} and the
      * {@code VisualGraphPanel} are deactivated and the {@code InputPanel} is
-     * activated.
+     * activated. Deprecated method thread.stop is needed to deal with infinite
+     * loops in the precalculation. The used Dataflow Analysis can be
+     * implemented by the user and we cannot assume the correctness of theses
+     * analyses.
      */
+    @SuppressWarnings("deprecation")
     public void stopAnalysis() {
-        OptionBox option = new OptionBox(this.programFrame, ABORT_MESSAGE);
-        if (!(option.getOption() == Option.YES_OPTION)) {
-            return;
+        if (precalcController.getPrecalcState() == DFAPrecalcController.PrecalcState.CALCULATING
+                || precalcController.getPrecalcState() == DFAPrecalcController.PrecalcState.PAUSED) {
+
+            OptionBox optionBox = new OptionBox(this.programFrame, CALC_MESSAGE);
+            if (optionBox.getOption() == Option.NO_OPTION) {
+                // deletes the complete calculation
+                this.precalcController.stopPrecalc();
+                synchronized (this) {
+                    try {
+                        wait(1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+                if (this.precalc.isAlive()) {
+                    this.precalc.stop();
+                }
+
+                visibilityInput();
+            } else if ((optionBox.getOption() == Option.YES_OPTION)) {
+                // shows an intermediate result
+                this.precalcController.stopPrecalc();
+                try {
+                    wait(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                if (this.precalc.isAlive()) {
+                    this.precalc.stop();
+                    visibilityInput();
+                } else {
+                    this.dfaExecution = this.precalculator.getDFAExecution();
+                    this.dfaExecution.setCurrentElementaryStep(0);
+                    this.graphUIController.start(this.dfaExecution);
+                    visibilityWorking();
+                }
+            }
+        } else {
+            OptionBox optionBox = new OptionBox(this.programFrame, ABORT_MESSAGE);
+            if (optionBox.getOption() == Option.YES_OPTION) {
+                visibilityInput();
+                this.graphUIController.stop();
+                this.dfaExecution = null;
+            }
         }
-        this.dfaExecution = null;
-        this.graphUIController.stop();
+    }
+
+    protected void visibilityPrecalculating() {
+        this.visualGraphPanel.setActivated(false);
+        this.programFrame.getInputPanel().setActivated(false);
+        this.programFrame.getControlPanel().setActivated(ControlPanelState.PRECALCULATING);
+        this.programFrame.getStatePanelOpen().setActivated(false);
+    }
+
+    protected void visibilityPlaying() {
+        this.visualGraphPanel.setActivated(false);
+        this.programFrame.getInputPanel().setActivated(false);
+        this.programFrame.getControlPanel().setActivated(ControlPanelState.PLAYING);
+        this.programFrame.getStatePanelOpen().setActivated(true);
+    }
+
+    protected void visibilityInput() {
         this.visualGraphPanel.setActivated(false);
         this.programFrame.getInputPanel().setActivated(true);
         this.programFrame.getControlPanel().setActivated(ControlPanelState.DEACTIVATED);
         this.programFrame.getStatePanelOpen().setActivated(false);
+    }
+
+    protected void visibilityWorking() {
+        this.visualGraphPanel.setActivated(true);
+        this.programFrame.getInputPanel().setActivated(false);
+        this.programFrame.getControlPanel().setActivated(ControlPanelState.ACTIVATED);
+        this.programFrame.getStatePanelOpen().setActivated(true);
+    }
+
+    /**
+     * Method that shows the message of the exception occured during a DFA
+     * precalculation in a message box.
+     * 
+     * @param message
+     *            message of the exception
+     */
+    public void createExceptionBox(String message) {
+        MessageBox messageBox = new MessageBox(this.programFrame, EXCEPTION_TITLE, message);
     }
 
     /**
@@ -346,7 +415,13 @@ public class Controller {
      * @return list of names of the found analyses
      */
     public List<String> getAnalyses() {
-        return this.analysisLoader.getAnalysesNames();
+        List<String> analyses = null;
+        try {
+            analyses = this.analysisLoader.getAnalysesNames();
+        } catch (IllegalStateException e) {
+            e.printStackTrace();
+        }
+        return analyses;
     }
 
     /**

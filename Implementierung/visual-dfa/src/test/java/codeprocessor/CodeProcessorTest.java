@@ -89,4 +89,34 @@ public class CodeProcessorTest {
         assertEquals("DefaultClass", codeProcessor.getClassName());
         assertEquals(true, codeProcessor.wasSuccessful());
     }
+    
+    /**
+     * Test to check some easy case analysis.
+     */
+    @Test
+    public void codeFragmentContainingNewLines() {
+        String code = "public class" + System.lineSeparator() + "TestCode1 {"
+                + "    public void helloWorld(boolean print) {" + "        if (print) {"
+                + "            System.out.println(\"Hello World!\");" + "        } else {"
+                + "            System.out.println(\"Not Hello World!\");" + "        }" + "   } }";
+        CodeProcessor codeProcessor = new CodeProcessor(code);
+        assertEquals("", codeProcessor.getErrorMessage());
+        assertEquals("TestCode1", codeProcessor.getClassName());
+        assertEquals(true, codeProcessor.wasSuccessful());
+    }
+    
+    /**
+     * Test to check some easy case analysis.
+     */
+    @Test
+    public void codeFragmentContainingTabs() {
+        String code = "public class" + "\t" + "TestCode2 {"
+                + "    public void helloWorld(boolean print) {" + "        if (print) {"
+                + "            System.out.println(\"Hello World!\");" + "        } else {"
+                + "            System.out.println(\"Not Hello World!\");" + "        }" + "   } }";
+        CodeProcessor codeProcessor = new CodeProcessor(code);
+        assertEquals("", codeProcessor.getErrorMessage());
+        assertEquals("TestCode2", codeProcessor.getClassName());
+        assertEquals(true, codeProcessor.wasSuccessful());
+    }
 }

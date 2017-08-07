@@ -32,7 +32,7 @@ public class AutoplayDriver implements Runnable {
      */
     public void run() {
         boolean hasNextLine = controller.nextLine();
-        while (hasNextLine && this.controller.shouldAutoplayContinue()) {
+        while (hasNextLine && !this.controller.isAtBreakpoint()) {
             try {
                 Thread.sleep((long) (controller.getDelay() * 1000));
             } catch (InterruptedException e) {
@@ -40,7 +40,7 @@ public class AutoplayDriver implements Runnable {
             }
             hasNextLine = controller.nextLine();
         }
-        this.controller.pause();
+        this.controller.visibilityWorking();
     }
 
 }

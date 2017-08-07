@@ -3,6 +3,7 @@ import codeprocessor.GraphBuilder;
 import dfa.analyses.DummyElement;
 import dfa.analyses.DummyFactory;
 import dfa.framework.DFAExecution;
+import dfa.framework.DFAPrecalcController;
 import dfa.framework.NaiveWorklist;
 import dfa.framework.SimpleBlockGraph;
 import gui.visualgraph.*;
@@ -49,6 +50,6 @@ public class GraphUIControllerTest {
         GraphBuilder builder = new GraphBuilder(codeProcessor.getPathName(), codeProcessor.getClassName());
         SimpleBlockGraph blockGraph = builder.buildGraph("void helloWorld(boolean)");
 
-        DFAExecution<DummyElement> dfa = new DFAExecution<DummyElement>(new DummyFactory(), new NaiveWorklist(), blockGraph);
+        DFAExecution<DummyElement> dfa = new DFAExecution<DummyElement>(new DummyFactory(), new NaiveWorklist(), blockGraph, new DFAPrecalcController());
     }
 }

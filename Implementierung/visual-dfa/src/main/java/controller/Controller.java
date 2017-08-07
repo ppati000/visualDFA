@@ -36,7 +36,7 @@ public class Controller {
     private static final String CALC_MESSAGE = "This calculation is taking longer than expected. Do you want to continue and show intermediate results?";
     private static final String ABORT_MESSAGE = "This process leads to a complete deletion of the graph and the calculation. Do you want to continue?";
     private static final String EXCEPTION_TITLE = "Exception caused by analysis calculation";
-    private static final int TIME_TO_WAIT = 30000;
+    private static final int TIME_TO_WAIT = 300;
     private ProgramFrame programFrame;
     private DFAExecution<? extends LatticeElement> dfaExecution;
     private GraphUIController graphUIController;
@@ -255,11 +255,10 @@ public class Controller {
         for (int i = 0; i < methodList.size(); i++) {
             System.out.println(methodList.get(i));
         }
-        MethodSelectionBox selectionBox = new MethodSelectionBox(programFrame, methodList);
-        String methodSignature = selectionBox.getSelectedMethod();
+        // MethodSelectionBox selectionBox = new
+        // MethodSelectionBox(programFrame, methodList);
+        // String methodSignature = selectionBox.getSelectedMethod();
         SimpleBlockGraph blockGraph = graphBuilder.buildGraph(methodList.get(1));
-        // TODO change when boxes are working
-
         this.precalcController = new DFAPrecalcController();
         try {
             Worklist worklist = this.worklistManager.getWorklist(worklistName, blockGraph);
@@ -281,7 +280,7 @@ public class Controller {
             while (i < TIME_TO_WAIT
                     && !(precalcController.getPrecalcState() == DFAPrecalcController.PrecalcState.COMPLETED)) {
                 try {
-                    wait(1);
+                    wait(100);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -291,21 +290,16 @@ public class Controller {
         if (i >= TIME_TO_WAIT) {
             stopAnalysis();
         }
+
         while (!(precalcController.getPrecalcState() == DFAPrecalcController.PrecalcState.COMPLETED)
                 && precalc.isAlive())
             ;
         // TODO Problem?
         this.dfaExecution = precalculator.getDFAExecution();
-
         this.dfaExecution.setCurrentElementaryStep(0);
-        this.graphUIController.start(this.dfaExecution);
-
-
-        this.dfaExecution.setCurrentElementaryStep(0);
+        this.programFrame.getControlPanel().setTotalSteps(this.dfaExecution.getTotalElementarySteps() - 1);
         this.graphUIController.start(this.dfaExecution);
         this.graphUIController.refresh();
-
-
         visibilityWorking();
     }
 
@@ -341,7 +335,7 @@ public class Controller {
 
                 visibilityInput();
             } else if ((optionBox.getOption() == Option.YES_OPTION)) {
-                // shows an intermediate result
+                // shows an intermediate result if possible
                 this.precalcController.stopPrecalc();
                 try {
                     wait(1000);
@@ -355,17 +349,23 @@ public class Controller {
                     this.dfaExecution = this.precalculator.getDFAExecution();
                     this.dfaExecution.setCurrentElementaryStep(0);
                     this.graphUIController.start(this.dfaExecution);
+                    this.programFrame.getControlPanel().setTotalSteps(this.dfaExecution.getTotalElementarySteps() - 1);
                     visibilityWorking();
                 }
             }
         } else {
-            OptionBox optionBox = new OptionBox(this.programFrame, ABORT_MESSAGE);
+            OptionBox optionBox = new OptionBox(this.programFrame, "Stop", ABORT_MESSAGE);
+            while (optionBox.getOption() == null);
+
+            System.out.println(optionBox.getOption());
             if (optionBox.getOption() == Option.YES_OPTION) {
+                System.out.println("ich bin true");
                 visibilityInput();
                 this.graphUIController.stop();
                 this.dfaExecution = null;
             }
         }
+
     }
 
     protected void visibilityPrecalculating() {
@@ -404,7 +404,7 @@ public class Controller {
      *            message of the exception
      */
     public void createExceptionBox(String message) {
-        MessageBox messageBox = new MessageBox(this.programFrame, EXCEPTION_TITLE, message);
+        new MessageBox(this.programFrame, EXCEPTION_TITLE, message);
     }
 
     /**
@@ -420,11 +420,6 @@ public class Controller {
         this.programFrame = programFrame;
         this.visualGraphPanel = new VisualGraphPanel();
         this.visualGraphPanel.setVisible(true);
-        this.programFrame.add(this.visualGraphPanel);
-        // JFrame frame = new JFrame();
-        // frame.add(this.visualGraphPanel);
-        // frame.setSize(600, 400);
-        // frame.setVisible(true);
         this.graphUIController = new GraphUIController(visualGraphPanel);
     }
 

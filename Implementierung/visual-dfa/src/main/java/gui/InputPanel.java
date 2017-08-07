@@ -28,7 +28,7 @@ public class InputPanel extends JPanel {
 
     private Controller ctrl;
     private CodeField codeField;
-
+    
     private JButton btnOpen;
     private JButton btnSave;
     private JLabel lblAnalyses;
@@ -36,6 +36,7 @@ public class InputPanel extends JPanel {
     private JLabel lblWorklists;
     private JComboBox<String> comboBox_Worklists;
     private JButton btnStartAnalysis;
+
 
     /**
      * Create the panel. Set the controller, so the ActionListeners can access
@@ -86,7 +87,7 @@ public class InputPanel extends JPanel {
         GridBagConstraints gbc_btnSave = GridBagConstraintFactory.getStandardGridBagConstraints(1, 4, 1, 1);
         gbc_btnSave.insets.set(gbc_btnSave.insets.top, 0, gbc_btnSave.insets.bottom, gbc_btnSave.insets.right);
         add(btnSave, gbc_btnSave);
-
+        
         lblAnalyses = new JLabel();
         jLaDecorator.decorateLabel(lblAnalyses, "Analysis");
         GridBagConstraints gbc_lblAnalyses = GridBagConstraintFactory.getStandardGridBagConstraints(0, 6, 2, 1);
@@ -102,19 +103,21 @@ public class InputPanel extends JPanel {
         GridBagConstraints gbc_lblWorklists = GridBagConstraintFactory.getStandardGridBagConstraints(0, 9, 2, 1);
         add(lblWorklists, gbc_lblWorklists);
 
+
         comboBox_Worklists = new JComboBox<String>(ctrl.getWorklists().toArray(new String[0]));
         GridBagConstraints gbc_comboBox_Worklist = GridBagConstraintFactory.getStandardGridBagConstraints(0, 10, 2, 1);
         gbc_comboBox_Worklist.fill = GridBagConstraints.HORIZONTAL;
         add(comboBox_Worklists, gbc_comboBox_Worklist);
-
+        
         btnStartAnalysis = new JButton();
+        jBuDecorator.decorateButton(btnStartAnalysis, new StartAnalysisListener(), "Start Analysis");
+
         jBuDecorator.decorateButton(btnStartAnalysis, null, "Start Analysis");
         btnStartAnalysis.setBackground(Colors.GREEN_BACKGROUND.getColor());
 
         btnStartAnalysis.setFont(new Font("Trebuchet MS", Font.BOLD, 24));
         GridBagConstraints gbc_btnStartAnalysis = GridBagConstraintFactory.getStandardGridBagConstraints(0, 12, 2, 2);
         add(btnStartAnalysis, gbc_btnStartAnalysis);
-
     }
 
     /**
@@ -134,7 +137,9 @@ public class InputPanel extends JPanel {
         lblWorklists.setEnabled(b);
         comboBox_Worklists.setEnabled(b);
         btnStartAnalysis.setEnabled(b);
+
         codeField.setEnabled(b);
+
     }
 
     /**
@@ -178,9 +183,14 @@ public class InputPanel extends JPanel {
     }
 
     /**
+<<<<<<< HEAD
      * Implementation of an ActionListener which informs the controller, when
      * the StartAnalysis button has been pressed.
      * 
+=======
+     * Implementation of an ActionListener which informs the controller,
+     * when the StartAnalysis button has been pressed.
+>>>>>>> fd34b85... add correct stop behaviour
      * @author Michael
      *
      * @see ActionListener
@@ -192,5 +202,7 @@ public class InputPanel extends JPanel {
             ctrl.startAnalysis();
         }
 
+
     }
 }
+

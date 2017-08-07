@@ -3,6 +3,8 @@ package controller;
 import java.util.List;
 import java.util.logging.Logger;
 
+import javax.swing.JFrame;
+
 import codeprocessor.*;
 import dfa.framework.AnalysisLoader;
 import dfa.framework.DFAExecution;
@@ -63,6 +65,7 @@ public class Controller {
         } catch (UnsupportedOperationException e) {
             e.printStackTrace();
         }
+
         this.visualGraphPanel = new VisualGraphPanel();
         this.graphUIController = new GraphUIController(visualGraphPanel);
         this.worklistManager = WorklistManager.getInstance();
@@ -255,7 +258,8 @@ public class Controller {
         MethodSelectionBox selectionBox = new MethodSelectionBox(programFrame, methodList);
         String methodSignature = selectionBox.getSelectedMethod();
         SimpleBlockGraph blockGraph = graphBuilder.buildGraph(methodList.get(1));
-        // TODO
+        // TODO change when boxes are working
+
         this.precalcController = new DFAPrecalcController();
         try {
             Worklist worklist = this.worklistManager.getWorklist(worklistName, blockGraph);
@@ -292,8 +296,16 @@ public class Controller {
             ;
         // TODO Problem?
         this.dfaExecution = precalculator.getDFAExecution();
+
         this.dfaExecution.setCurrentElementaryStep(0);
         this.graphUIController.start(this.dfaExecution);
+
+
+        this.dfaExecution.setCurrentElementaryStep(0);
+        this.graphUIController.start(this.dfaExecution);
+        this.graphUIController.refresh();
+
+
         visibilityWorking();
     }
 
@@ -406,6 +418,14 @@ public class Controller {
             throw new IllegalStateException("programFrame must not be null");
         }
         this.programFrame = programFrame;
+        this.visualGraphPanel = new VisualGraphPanel();
+        this.visualGraphPanel.setVisible(true);
+        this.programFrame.add(this.visualGraphPanel);
+        // JFrame frame = new JFrame();
+        // frame.add(this.visualGraphPanel);
+        // frame.setSize(600, 400);
+        // frame.setVisible(true);
+        this.graphUIController = new GraphUIController(visualGraphPanel);
     }
 
     /**

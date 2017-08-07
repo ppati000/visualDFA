@@ -1,5 +1,6 @@
 package controller;
 
+import dfa.framework.DFAException;
 import dfa.framework.DFAExecution;
 import dfa.framework.DFAFactory;
 import dfa.framework.DFAPrecalcController;
@@ -19,6 +20,9 @@ public class DFAPrecalculator implements Runnable {
     private DFAFactory<? extends LatticeElement> factory;
     private Worklist worklist;
     private SimpleBlockGraph simpleBlockGraph;
+    private DFAPrecalcController precalcController;
+
+    private Controller controller;
 
     /**
      * Creates a new {@code DFAPrecalculator} to calculate all steps at the
@@ -31,8 +35,13 @@ public class DFAPrecalculator implements Runnable {
      * @param simpleBlockGraph
      *            {@code SimpleBlockGraph} on that the analysis will be
      *            performed
+     * @param precalcController
+     *            {@code DFAPrecalcController}
+     * @param controller {@code Controller} to inform the user about an exception
+     * 
      */
-    public DFAPrecalculator(DFAFactory<? extends LatticeElement> factory, Worklist worklist, SimpleBlockGraph simpleBlockGraph) {
+    public DFAPrecalculator(DFAFactory<? extends LatticeElement> factory, Worklist worklist,
+            SimpleBlockGraph simpleBlockGraph, DFAPrecalcController precalcController, Controller controller) {
         if (factory == null) {
             throw new IllegalArgumentException("factory must not be null");
         }
@@ -45,6 +54,8 @@ public class DFAPrecalculator implements Runnable {
         this.factory = factory;
         this.worklist = worklist;
         this.simpleBlockGraph = simpleBlockGraph;
+        this.precalcController = precalcController;
+        this.controller = controller;
     }
 
     @Override
@@ -53,9 +64,13 @@ public class DFAPrecalculator implements Runnable {
      * analysis.
      */
     public void run() {
-        // TODO (@Anika) make use of precalcController
-        DFAPrecalcController precalcController = new DFAPrecalcController();
-        this.dfaExecution = new DFAExecution(factory, worklist, simpleBlockGraph, precalcController);
+        try {
+        this.dfaExecution = new DFAExecution(this.factory, this.worklist, this.simpleBlockGraph,
+                this.precalcController);
+        } catch(DFAException e) {
+            this.controller.createExceptionBox(e.getMessage());
+            this.precalcController.stopPrecalc();
+        }
     }
 
     /**

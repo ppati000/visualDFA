@@ -22,7 +22,7 @@ public class NaiveWorklist implements Worklist {
     }
 
     private NaiveWorklist(LinkedList<BasicBlock> basicBlocks) {
-        basicBlocks = new LinkedList<BasicBlock>(basicBlocks);
+        this.basicBlocks = new LinkedList<BasicBlock>(basicBlocks);
     }
 
     /**

@@ -90,14 +90,14 @@ public class DFAPrecalcController {
     
     
     
-    enum PrecalcState {
+    public enum PrecalcState {
         CALCULATING,
         COMPLETED,
         PAUSED,
         STOPPED
     }
     
-    enum ResultState {
+    public enum ResultState {
         NO_RESULT,
         INTERMEDIATE_RESULT,
         COMPLETE_RESULT

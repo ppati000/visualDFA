@@ -43,6 +43,8 @@ public class DFAExecution<E extends LatticeElement> {
      *        an (empty) worklist to use in this {@code DFAExecution}
      * @param blockGraph
      *        the {@code SimpleBlockGraph} the analysis is based on
+     * @param precalcController
+     *        a {@code DFAPrecalcController} to control the precalculation of this {@code DFAExecution}
      * 
      * @throws IllegalArgumentException
      *         if any of {@code initialWorklist} or {@code blockGraph} is {@code null}
@@ -50,7 +52,8 @@ public class DFAExecution<E extends LatticeElement> {
      * @throws NullPointerException
      *         if {@code dfaFactory} is {@code null}
      */
-    public DFAExecution(DFAFactory<E> dfaFactory, Worklist initialWorklist, SimpleBlockGraph blockGraph) {
+    public DFAExecution(DFAFactory<E> dfaFactory, Worklist initialWorklist, SimpleBlockGraph blockGraph,
+            DFAPrecalcController precalcController) {
         if (initialWorklist == null) {
             throw new IllegalArgumentException("initialWorklist must not be null");
         }
@@ -66,9 +69,7 @@ public class DFAExecution<E extends LatticeElement> {
 
         this.cfg = new ControlFlowGraph(blockGraph);
 
-        // TODO use DFAPrecalcController (changes signature of constructor)
-        DFAPrecalcController dummyCtrl = new DFAPrecalcController();
-        precalc(dummyCtrl);
+        precalc(precalcController);
     }
 
     private DFAExecution(DFAExecution<E> copyFrom) {
@@ -373,7 +374,7 @@ public class DFAExecution<E extends LatticeElement> {
                 updateColors(prevAnalysisState, newAnalysisState, visitedBasicBlocks);
 
                 analysisStates.add(newAnalysisState);
-                
+
                 // this begins a new block step
                 blockSteps.add(elementaryStep++);
                 continue;
@@ -414,7 +415,7 @@ public class DFAExecution<E extends LatticeElement> {
                     newAnalysisState = newState(prevAnalysisState, prevWorklist.clone(), prevBasicBlock, ++eBlockIdx);
                     newAnalysisState.setBlockState(prevBasicBlock, nextBlockState);
                 }
-                
+
                 analysisStates.add(newAnalysisState);
                 prevAnalysisState = newAnalysisState;
                 ++elementaryStep;

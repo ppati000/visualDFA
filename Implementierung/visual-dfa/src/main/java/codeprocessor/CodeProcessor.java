@@ -90,15 +90,16 @@ public class CodeProcessor {
     private String getClassNameOfCode(String codeToCompile) {
         int startOfClass = codeToCompile.indexOf("class");
         String tryToFindName = codeToCompile.substring(startOfClass + 5).trim();
-        while(!Character.isAlphabetic(tryToFindName.charAt(0))) {
-            tryToFindName = tryToFindName.substring(1).trim();
-        }
+        // TODO Zeilenumbruch behandeln
         int endOfClassName;
         for (endOfClassName = 0; endOfClassName < tryToFindName.length(); ++endOfClassName) {
             char c = tryToFindName.charAt(endOfClassName);
             if (c == '{' || c == '<' || Character.isWhitespace(c)) {
                 break;
             }
+        }
+        if(endOfClassName == (tryToFindName.length() -1)) {
+            throw new IllegalStateException("no valid class name found");
         }
         String nameOfClass = tryToFindName.substring(0, endOfClassName).trim();
         return nameOfClass;

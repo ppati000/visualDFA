@@ -2,6 +2,7 @@ package controller;
 
 import dfa.framework.DFAExecution;
 import dfa.framework.DFAFactory;
+import dfa.framework.DFAPrecalcController;
 import dfa.framework.LatticeElement;
 import dfa.framework.SimpleBlockGraph;
 import dfa.framework.Worklist;
@@ -52,7 +53,9 @@ public class DFAPrecalculator implements Runnable {
      * analysis.
      */
     public void run() {
-        this.dfaExecution = new DFAExecution(factory, worklist, simpleBlockGraph);
+        // TODO (@Anika) make use of precalcController
+        DFAPrecalcController precalcController = new DFAPrecalcController();
+        this.dfaExecution = new DFAExecution(factory, worklist, simpleBlockGraph, precalcController);
     }
 
     /**

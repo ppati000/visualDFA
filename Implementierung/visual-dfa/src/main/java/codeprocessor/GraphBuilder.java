@@ -32,17 +32,15 @@ public class GraphBuilder {
      */
     public GraphBuilder(String pathName, String className) {
         Scene.v().setSootClassPath(pathName.toString());
-        Options.v().setPhaseOption("jb", "use-original-names:true");
-        Options.v().set_keep_line_number(true);
         String jdkPath = System.getProperty("java.home") + PATH_SEPARATOR + "lib" + PATH_SEPARATOR + "rt.jar";
         Scene.v().extendSootClassPath(jdkPath);
         Scene.v().loadNecessaryClasses();
-
         Scene.v().addBasicClass(className, SootClass.BODIES);
         Scene.v().forceResolve(className, SootClass.BODIES);
         this.sootClass = Scene.v().loadClassAndSupport(className);
-
         sootClass.setApplicationClass();
+        Options.v().setPhaseOption("jb", "use-original-names:true");
+        Options.v().set_keep_line_number(true);
         this.methods = sootClass.getMethods();
     }
 

@@ -36,7 +36,7 @@ public class AutoplayDriver implements Runnable {
             try {
                 Thread.sleep((long) (controller.getDelay() * 1000));
             } catch (InterruptedException e) {
-                e.printStackTrace();
+               // e.printStackTrace();
             }
             hasNextLine = controller.nextLine();
         }

@@ -95,13 +95,7 @@ public abstract class DialogBox extends JDialog {
         setLocationRelativeTo(getOwner());
         setMinimumSize(new Dimension(300,150));
         pack();
-        EventQueue.invokeLater(new Runnable() {
-            public void run() {
-
-                setVisible(true);
-
-            }
-        });
+        
     }
 
     /**

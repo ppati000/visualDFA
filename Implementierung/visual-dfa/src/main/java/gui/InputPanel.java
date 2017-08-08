@@ -126,8 +126,7 @@ public class InputPanel extends JPanel {
      *            [false].
      */
     public void setActivated(boolean b) {
-        // TODO disable Codefield
-
+        
         btnSave.setEnabled(b);
         btnOpen.setEnabled(b);
         lblAnalyses.setEnabled(b);
@@ -135,6 +134,7 @@ public class InputPanel extends JPanel {
         lblWorklists.setEnabled(b);
         comboBox_Worklists.setEnabled(b);
         btnStartAnalysis.setEnabled(b);
+        codeField.setEnabled(b);
     }
 
     /**

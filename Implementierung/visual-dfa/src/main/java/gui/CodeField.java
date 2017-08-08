@@ -76,6 +76,12 @@ public class CodeField extends JScrollPane {
         codeArea.setText(code);
     }
     
+    public void setEnabled(boolean b) {
+        super.setEnabled(b);
+        lineArea.setEnabled(b);
+        codeArea.setEnabled(b);
+    }
+    
     /**
      * The TextChangeListener gets called every time the text in the codeArea has changed.
      * Call updateLineArea on every change.

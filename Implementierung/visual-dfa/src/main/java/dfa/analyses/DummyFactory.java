@@ -7,7 +7,7 @@ import dfa.framework.*;
  *
  *         Dummy analysis for tests.
  */
-public class DummyFactory extends DFAFactory {
+public class DummyFactory extends DFAFactory<DummyElement> {
 
     @Override
     public String getName() {
@@ -20,7 +20,7 @@ public class DummyFactory extends DFAFactory {
     }
 
     @Override
-    public DataFlowAnalysis<? extends LatticeElement> getAnalysis(SimpleBlockGraph blockGraph) {
+    public DataFlowAnalysis<DummyElement> getAnalysis(SimpleBlockGraph blockGraph) {
         return new DummyAnalysis(blockGraph);
     }
 

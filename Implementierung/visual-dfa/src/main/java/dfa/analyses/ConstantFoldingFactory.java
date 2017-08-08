@@ -3,7 +3,6 @@ package dfa.analyses;
 import dfa.framework.DFADirection;
 import dfa.framework.DFAFactory;
 import dfa.framework.DataFlowAnalysis;
-import dfa.framework.LatticeElement;
 import dfa.framework.SimpleBlockGraph;
 
 /**
@@ -13,7 +12,7 @@ import dfa.framework.SimpleBlockGraph;
  * A {@code ConstantFoldingAnalysis} creates {@code ConstantFoldingAnalysis}-Instances from {@code SimpleBlockGraph}.
  *
  */
-public class ConstantFoldingFactory extends DFAFactory {
+public class ConstantFoldingFactory extends DFAFactory<ConstantFoldingElement> {
 
     @Override
     public String getName() {
@@ -26,7 +25,7 @@ public class ConstantFoldingFactory extends DFAFactory {
     }
 
     @Override
-    public DataFlowAnalysis<? extends LatticeElement> getAnalysis(SimpleBlockGraph blockGraph) {
+    public DataFlowAnalysis<ConstantFoldingElement> getAnalysis(SimpleBlockGraph blockGraph) {
         return new ConstantFoldingAnalysis(blockGraph);
     }
 

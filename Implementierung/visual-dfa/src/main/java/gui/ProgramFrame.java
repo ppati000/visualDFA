@@ -2,10 +2,8 @@ package gui;
 
 import java.awt.BorderLayout;
 
-
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
 
 import controller.Controller;
 import gui.visualgraph.VisualGraphPanel;
@@ -19,7 +17,7 @@ import gui.visualgraph.VisualGraphPanel;
 public class ProgramFrame extends JFrame {
 
     private static final long serialVersionUID = 5047834266753718967L;
-    
+
     private JPanel contentPane;
     private InputPanel inputPanel;
     private ControlPanel controlPanel;
@@ -41,7 +39,7 @@ public class ProgramFrame extends JFrame {
      */
 
     public ProgramFrame(Controller ctrl) {
-        
+
         this.ctrl = ctrl;
 
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -49,7 +47,7 @@ public class ProgramFrame extends JFrame {
         setBounds(0, 0, 1920, 1080);
         // setMinimumSize(new Dimension(1920, 1080));
         contentPane = new JPanel();
-        
+
         contentPane.setLayout(new BorderLayout(0, 0));
         setContentPane(contentPane);
 
@@ -60,11 +58,8 @@ public class ProgramFrame extends JFrame {
         contentPane.add(centerPan, BorderLayout.CENTER);
         centerPan.setLayout(new BorderLayout(0, 0));
 
-        // TODO
-        /*
-         * JPanel vgPan = ctrl.getVisualGraphPanel(); panel.add(panel_2,
-         * BorderLayout.CENTER);
-         */
+        JPanel vgPan = ctrl.getVisualGraphPanel();
+        centerPan.add(vgPan, BorderLayout.CENTER);
 
         controlPanel = new ControlPanel(ctrl);
         centerPan.add(controlPanel, BorderLayout.SOUTH);

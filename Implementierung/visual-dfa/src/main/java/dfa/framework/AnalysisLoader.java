@@ -1,8 +1,5 @@
 package dfa.framework;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -10,7 +7,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
-import org.reflections.Reflections;
+import dfa.analyses.ConstantFoldingFactory;
+import dfa.analyses.DummyFactory;
 
 public class AnalysisLoader {
 
@@ -18,7 +16,7 @@ public class AnalysisLoader {
     private String searchPath;
 
     private List<String> analysisNames;
-    private Map<String, DFAFactory> analyses;
+    private Map<String, DFAFactory<? extends LatticeElement>> analyses;
 
     public AnalysisLoader(String packageName, String searchPath) {
         if (packageName == null) {
@@ -53,6 +51,26 @@ public class AnalysisLoader {
      *        a {@code Logger} used to report problems to (if {@code null} is given, problems are not reported)
      */
     public void loadAnalyses(Logger logger) {
+    	// this is just a temporary solution
+    	
+    	analysisNames = new LinkedList<String>();
+    	analyses = new HashMap<String, DFAFactory<? extends LatticeElement>>();
+    	
+    	DummyFactory dummyFactory = new DummyFactory();
+    	String dummyName = dummyFactory.getName();
+    	
+    	ConstantFoldingFactory cfFactory = new ConstantFoldingFactory();
+    	String cfName = cfFactory.getName();
+    	
+    	analysisNames.add(dummyName);
+    	analyses.put(dummyName, dummyFactory);
+    	
+    	analysisNames.add(cfName);
+    	analyses.put(cfName, cfFactory);
+    	
+    	
+    	// TODO resolve NoSuchMethodError on Reflections(packageName)
+    	/*
         Reflections reflections = new Reflections(packageName);
 
         List<Class<? extends DFAFactory>> analysisClasses =
@@ -106,6 +124,7 @@ public class AnalysisLoader {
             analysisNames.add(analysisName);
             analyses.put(analysisName, dfaFactory);
         }
+        */
     }
 
     public List<String> getAnalysesNames() {

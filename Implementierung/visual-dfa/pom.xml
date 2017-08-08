@@ -4,46 +4,17 @@
     <groupId>com.github.com.ppati000.PSE</groupId>
     <artifactId>visual-dfa</artifactId>
     <version>0.0.1-SNAPSHOT</version>
+    
+    <repositories>
+        <repository>
+            <id>local-maven-repo</id>
+            <url>file:///${basedir}/local-maven-repo</url>
+        </repository>
+    </repositories>
 
     <build>
         <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-install-plugin</artifactId>
-                <version>2.5.2</version>
-
-                <executions>
-                    <execution>
-                        <id>install</id>
-                        <goals>
-                            <goal>install-file</goal>
-                        </goals>
-                        <phase>clean</phase>
-                        <configuration>
-                            <groupId>jgraphx</groupId>
-                            <artifactId>jgraphx-custom</artifactId>
-                            <version>1.0</version>
-                            <packaging>jar</packaging>
-                            <file>${basedir}/src/main/resources/libs/jgraphx-custom.jar</file>
-                        </configuration>
-                    </execution>
-                    <execution>
-
-                        <id>install2</id>
-                        <goals>
-                            <goal>install-file</goal>
-                        </goals>
-                        <phase>clean</phase>
-                        <configuration>
-                            <groupId>soot</groupId>
-                            <artifactId>soot-trunk</artifactId>
-                            <version>3.0.0</version>
-                            <packaging>jar</packaging>
-                            <file>${basedir}/src/main/resources/libs/soot-trunk.jar</file>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
+            
 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

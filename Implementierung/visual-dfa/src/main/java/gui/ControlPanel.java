@@ -169,7 +169,7 @@ public class ControlPanel extends JPanel {
      *            The total number of steps.
      */
     public void setTotalSteps(int steps) {
-        stepSlider.setMaximum(steps);
+        stepSlider.setMaximum(steps - 1);
     }
 
     /**

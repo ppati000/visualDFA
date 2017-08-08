@@ -40,6 +40,7 @@ public class MessageBox extends DialogBox {
         super(owner, title);
         messageArea.setText(message);
         pack();
+        setVisible(true);
     }
 
     /**

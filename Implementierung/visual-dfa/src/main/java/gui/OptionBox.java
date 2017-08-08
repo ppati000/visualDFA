@@ -46,7 +46,7 @@ public class OptionBox extends DialogBox {
         super(owner, title);
         messageArea.setText(message);
         pack();
-        
+        setVisible(true);
     }
 
     /**

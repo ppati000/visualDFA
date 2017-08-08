@@ -14,7 +14,6 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 
 import java.awt.GridBagConstraints;
-import java.awt.Insets;
 import javax.swing.JComboBox;
 
 /**

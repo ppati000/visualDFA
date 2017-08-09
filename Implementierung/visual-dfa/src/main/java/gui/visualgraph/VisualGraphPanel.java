@@ -9,19 +9,23 @@ import dfa.framework.DFAExecution;
 import gui.*;
 import dfa.framework.AnalysisState;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.border.LineBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.xml.bind.SchemaOutputResolver;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author Patrick Petrovic
@@ -56,7 +60,6 @@ public class VisualGraphPanel extends JPanel {
         jumpToAction = new JToggleButton("Jump to Action");
         graphExport = new JButton("Export Graph");
         decorateGraphButton(jumpToAction);
-        decorateGraphButton(graphExport);
 
         jumpToAction.setIcon(IconLoader.loadIcon("icons/map-marker.png", 0.2));
         jumpToAction.setPreferredSize(new Dimension(145, 40));
@@ -72,14 +75,6 @@ public class VisualGraphPanel extends JPanel {
         buttonGroup.add(jumpToAction);
         buttonGroup.setBackground(ALMOST_WHITE_COLOR);
         add(buttonGroup, BorderLayout.NORTH);
-
-        graphExport.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                // TODO: Decide which export to do and do actual export.
-                new GraphExportBox(parentFrame).setVisible(true);
-            }
-        });
 
         initialGraphState();
     }
@@ -132,6 +127,37 @@ public class VisualGraphPanel extends JPanel {
         // Apply layout before rendering child blocks, so that the layouter doesn't mess with them.
         if (isFirstRender) {
             autoLayoutAndShowGraph();
+
+            graphExport.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    // TODO: Decide which export to do and do actual export.
+                    // new GraphExportBox(parentFrame).setVisible(true);
+
+                    String outputPath = System.getProperty("user.home") + File.separator + "visualDFA";
+
+                    try {
+                        List<BufferedImage> images = GraphExporter.batchExport(dfa, 2, true);
+                        File outputDir = new File(outputPath);
+                        long timestamp = new Date().getTime();
+
+                        if (!new File(outputPath).exists()) {
+                            boolean result = outputDir.mkdir();
+                            if (!result) {
+                                throw new IOException();
+                            }
+                        }
+
+                        for (int i = 0; i < images.size(); i++) {
+                            File outputFile = new File(outputPath + File.separator + "export_" + timestamp + "_" + i + ".png");
+                            ImageIO.write(images.get(i), "PNG", outputFile);
+                        }
+                    } catch (IOException ex) {
+                        new MessageBox(parentFrame, "Graph Export Failed", "An error occured while saving your image(s). \n" +
+                                "Please ensure " + outputPath + " is a writable directory.").setVisible(true);
+                    }
+                }
+            });
         }
 
         for (UIBasicBlock block : basicBlocks) {
@@ -227,6 +253,10 @@ public class VisualGraphPanel extends JPanel {
         this.parentFrame = frame;
     }
 
+    public void setJumpToAction(boolean enabled) {
+        jumpToAction.setSelected(enabled);
+    }
+
     private void autoLayoutAndShowGraph() {
         new mxHierarchicalLayout(graph).execute(graph.getDefaultParent());
         graphComponent.setVisible(true);
@@ -243,6 +273,7 @@ public class VisualGraphPanel extends JPanel {
 
         if (graphComponent != null) {
             remove(graphComponent);
+            revalidate();
         }
 
         graphComponent = new mxGraphComponent(graph);
@@ -252,7 +283,6 @@ public class VisualGraphPanel extends JPanel {
         graphComponent.addMouseWheelListener(new MouseWheelListener() {
             @Override
             public void mouseWheelMoved(MouseWheelEvent e) {
-                System.out.println(e);
                 if (e.getWheelRotation() > 0) {
                     zoomIn();
                 } else if (e.getWheelRotation() < 0) {

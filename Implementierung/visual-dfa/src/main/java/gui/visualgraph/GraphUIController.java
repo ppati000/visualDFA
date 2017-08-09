@@ -117,16 +117,18 @@ public class GraphUIController {
             public void invoke(Object o, mxEventObject mxEventObject) {
                 if (statePanel != null) {
                     // Weird API: "removed" cells are actually the newly selected cells.
-                    mxCell selectedCell = ((ArrayList<mxCell>) mxEventObject.getProperty("removed")).get(0);
+                    ArrayList<mxCell> selectedCells = (ArrayList<mxCell>) mxEventObject.getProperty("removed");
+                    if (selectedCells != null && selectedCells.size() > 0) {
+                        mxCell selectedCell = selectedCells.get(0);
+                        AbstractBlock selectedBlock = mxCellMap.get(selectedCell).getDFABlock();
 
-                    AbstractBlock selectedBlock = mxCellMap.get(selectedCell).getDFABlock();
+                        BlockState currentState = dfa.getCurrentAnalysisState().getBlockState(selectedBlock);
+                        String inState = currentState.getInState().getStringRepresentation();
+                        String outState = currentState.getOutState().getStringRepresentation();
 
-                    BlockState currentState = dfa.getCurrentAnalysisState().getBlockState(selectedBlock);
-                    String inState = currentState.getInState().getStringRepresentation();
-                    String outState = currentState.getOutState().getStringRepresentation();
-
-                    statePanel.setIn(inState);
-                    statePanel.setOut(outState);
+                        statePanel.setIn(inState);
+                        statePanel.setOut(outState);
+                    }
                 }
             }
         });

@@ -252,9 +252,6 @@ public class Controller {
             filter = new NoFilter();
         }
         List<String> methodList = graphBuilder.getMethods(filter);
-        for (int i = 0; i < methodList.size(); i++) {
-            System.out.println(methodList.get(i));
-        }
         // MethodSelectionBox selectionBox = new
         // MethodSelectionBox(programFrame, methodList);
         // String methodSignature = selectionBox.getSelectedMethod();
@@ -355,9 +352,6 @@ public class Controller {
             }
         } else {
             OptionBox optionBox = new OptionBox(this.programFrame, "Stop", ABORT_MESSAGE);
-            while (optionBox.getOption() == null);
-
-            System.out.println(optionBox.getOption());
             if (optionBox.getOption() == Option.YES_OPTION) {
                 System.out.println("ich bin true");
                 visibilityInput();
@@ -418,9 +412,13 @@ public class Controller {
             throw new IllegalStateException("programFrame must not be null");
         }
         this.programFrame = programFrame;
+
         this.visualGraphPanel = new VisualGraphPanel();
+        this.visualGraphPanel.setParentFrame(this.programFrame);
+        this.programFrame.add(this.visualGraphPanel);
         this.visualGraphPanel.setVisible(true);
         this.graphUIController = new GraphUIController(visualGraphPanel);
+
     }
 
     /**

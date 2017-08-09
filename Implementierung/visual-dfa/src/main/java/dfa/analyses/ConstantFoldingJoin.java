@@ -18,13 +18,6 @@ public class ConstantFoldingJoin implements Join<ConstantFoldingElement> {
 
     @Override
     public ConstantFoldingElement join(Set<ConstantFoldingElement> elements) {
-        if (elements == null) {
-            throw new IllegalArgumentException("elements must not be null");
-        }
-
-        if (elements.isEmpty()) {
-            throw new IllegalArgumentException("elements must not be empty");
-        }
 
         Iterator<ConstantFoldingElement> it = elements.iterator();
         ConstantFoldingElement refElement = it.next();
@@ -69,7 +62,7 @@ public class ConstantFoldingJoin implements Join<ConstantFoldingElement> {
                 }
             }
 
-            if (!result.getValue(local).equals(Value.getTop())) {
+            if (!Value.getTop().equals(result.getValue(local))) {
                 result.setValue(local, tmp);
             }
         }

@@ -78,7 +78,7 @@ public class ConstantFoldingElement extends LocalMapElement<Value> {
      *         A {@code Value} represents the value of a {@code JimpleLocal}.
      *
      */
-    static class Value {
+    public static class Value {
         private static final Value BOTTOM = new Value(ValueType.BOTTOM);
         private static final Value TOP = new Value(ValueType.TOP);
 

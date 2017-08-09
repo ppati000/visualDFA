@@ -70,6 +70,7 @@ public class AnalysisLoader {
     	
     	
     	// TODO resolve NoSuchMethodError on Reflections(packageName)
+    	// or more likely: find another way to load analyses
     	/*
         Reflections reflections = new Reflections(packageName);
 

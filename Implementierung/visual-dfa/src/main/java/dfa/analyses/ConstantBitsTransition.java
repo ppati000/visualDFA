@@ -162,7 +162,7 @@ public class ConstantBitsTransition implements Transition<ConstantBitsElement> {
                     throw new IllegalStateException("Cannot assign to local that is not int or long");
                 }
             }
-            outputElement.setBitValues(lValLocal, rhs);
+            outputElement.setValue(lValLocal, rhs);
         }
 
         @Override
@@ -592,7 +592,7 @@ public class ConstantBitsTransition implements Transition<ConstantBitsElement> {
                 throw new IllegalStateException("No Jimple local!");
             }
 
-            result = inputElement.getBitValues((JimpleLocal) local);
+            result = inputElement.getValue((JimpleLocal) local);
         }
 
         @Override

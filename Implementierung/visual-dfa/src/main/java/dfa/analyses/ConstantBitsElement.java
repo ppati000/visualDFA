@@ -7,7 +7,7 @@ import java.util.Objects;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-import dfa.framework.LatticeElement;
+import dfa.analyses.ConstantBitsElement.BitValueArray;
 import soot.jimple.ArithmeticConstant;
 import soot.jimple.IntConstant;
 import soot.jimple.LongConstant;
@@ -19,14 +19,14 @@ import soot.jimple.internal.JimpleLocal;
  *         A {@code ConstantBitsElement} is a {@code LatticeElement} used by {@code ConstantBitsAnalysis}.
  *
  */
-public class ConstantBitsElement implements LatticeElement {
+public class ConstantBitsElement extends LocalMapElement<BitValueArray> {
 
     /**
      * a {@code Comparator} to define an order on {@code JimpleLocal}s
      */
-    public static final LocalComparator COMPARATOR = new LocalComparator();
+//    public static final LocalComparator COMPARATOR = new LocalComparator();
 
-    private SortedMap<JimpleLocal, BitValueArray> localMap;
+//    private SortedMap<JimpleLocal, BitValueArray> localMap;
 
     /**
      * Creates a {@code ConstantBitsElement} with the given mapping.
@@ -38,21 +38,20 @@ public class ConstantBitsElement implements LatticeElement {
      *         if one of the {@code BitValueArray}s is not of the right size
      */
     public ConstantBitsElement(Map<JimpleLocal, BitValueArray> localMap) {
+    	super();
         for (Map.Entry<JimpleLocal, BitValueArray> entry : localMap.entrySet()) {
             int l = entry.getValue().getLength();
             if (!(l == 32 || l == 64)) {
                 throw new IllegalArgumentException("each BitValueArray must have 32 or 64 entries");
             }
         }
-        this.localMap = new TreeMap<>(COMPARATOR);
-        this.localMap.putAll(localMap);
     }
 
     /**
      * Creates a {@code ConstantBitsElement} with an empty mapping.
      */
     public ConstantBitsElement() {
-        this(new TreeMap<JimpleLocal, BitValueArray>());
+    	super();
     }
 
     /**
@@ -66,7 +65,7 @@ public class ConstantBitsElement implements LatticeElement {
      * @throws IllegalArgumentException
      *         if {@code local} is {@code null} or {@code val} is null or not of the right size
      */
-    public void setBitValues(JimpleLocal local, BitValueArray val) {
+    public void setValue(JimpleLocal local, BitValueArray val) {
         if (val == null) {
             throw new IllegalArgumentException("val must not be null");
         }
@@ -82,34 +81,6 @@ public class ConstantBitsElement implements LatticeElement {
         localMap.put(local, val);
     }
 
-    /**
-     * Returns the {@code BitValueArray} mapped to the given {@code JimpleLocal}.
-     * 
-     * @param local
-     *        the {@code JimpleLocal} for which the {@code BitValue} is retrieved
-     * 
-     * @return the {@code BitValueArray} mapped to the given {@code JimpleLocal}
-     * 
-     * @throws IllegalArgumentException
-     *         if there is no {@code BitValueArray} mapping for {@code local}
-     */
-    public BitValueArray getBitValues(JimpleLocal local) {
-        if (!localMap.containsKey(local)) {
-            throw new IllegalArgumentException("local not found");
-        }
-
-        return localMap.get(local);
-    }
-
-    /**
-     * Returns a {@code Map} that maps a {@code JimpleLocal} to its corresponding {@code BitValueArray}.
-     * 
-     * @return a {@code Map} that maps a {@code JimpleLocal} to its corresponding {@code BitValueArray}
-     */
-    public Map<JimpleLocal, BitValueArray> getLocalMap() {
-        return localMap;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (!(o instanceof ConstantBitsElement)) {
@@ -119,6 +90,11 @@ public class ConstantBitsElement implements LatticeElement {
         ConstantBitsElement e = (ConstantBitsElement) o;
         return localMap.equals(e.getLocalMap());
     }
+    
+	@Override
+	public int hashCode() {
+		return Objects.hash(localMap);
+	}
 
     // TODO at the moment: String representation has lowest bit in the left
     @Override
@@ -127,12 +103,6 @@ public class ConstantBitsElement implements LatticeElement {
 
         // add column numbers
         sb.append("00 01 02 03 04 05 06 07 08 09 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63");
-//        for (int i = 1; i < 10; i++) {
-//            sb.append(" 0").append(i);
-//        }
-//        for (int j = 11; j < 63; j++) {
-//            sb.append(" ").append(j);
-//        }
 
         Iterator<Map.Entry<JimpleLocal, BitValueArray>> entryIt = localMap.entrySet().iterator();
         Map.Entry<JimpleLocal, BitValueArray> entry;
@@ -147,20 +117,6 @@ public class ConstantBitsElement implements LatticeElement {
 
     /**
      * @author Nils Jessen
-     * 
-     *         A {@code Comparator} that compares {@code JimpleLocal}s by their name ({@code getName()}).
-     */
-    static class LocalComparator implements Comparator<JimpleLocal> {
-
-        @Override
-        public int compare(JimpleLocal l1, JimpleLocal l2) {
-            return l1.getName().compareTo(l2.getName());
-        }
-
-    }
-
-    /**
-     * @author Nils Jessen
      *
      *         A {@code BitValue} represents the BitValue of one bit of a {@code JimpleLocal}.
      *
@@ -168,11 +124,13 @@ public class ConstantBitsElement implements LatticeElement {
     static class BitValueArray {
         private BitValue[] bitValues;
 
-        public static final BitValueArray TOP = new BitValueArray(new BitValue[1]);
+        public static final BitValueArray TOP = new BitValueArray(new BitValue[0]);
         public static final int INT_SIZE = 32;
         public static final  int LONG_SIZE = 64;
-        private static final String BOTTOM_SYMBOL = "\u22A5";
-        private static final String TOP_SYMBOL = "\u22A4";
+        
+        // TODO use proper symbols (after testing)
+        private static final String BOTTOM_SYMBOL = /*"\u22A5"*/ "B";
+        private static final String TOP_SYMBOL = /*"\u22A4"*/ "T";
 
         /**
          * Creates a {@code BitValueArray} representing the given {@code ArithmeticConstant}.
@@ -184,23 +142,24 @@ public class ConstantBitsElement implements LatticeElement {
             if (c == null) {
                 throw new IllegalArgumentException("c must not be null");
             }
-            int l;
+            
+            int length;
             long val;
             if (c instanceof IntConstant) {
                 val = Long.valueOf(((IntConstant) c).value);
-                l = 32;
+                length = 32;
             } else {
                 val = ((LongConstant) c).value;
-                l = 64;
+                length = 64;
             }
-            BitValue[] values = new BitValue[l];
+            BitValue[] values = new BitValue[length];
             if (val == 0) {
-                for (int j = 0; j < l; j++) {
+                for (int j = 0; j < length; j++) {
                     values[j] = BitValue.ZERO;
                 }
             } else if (val > 0) {
-                values[l-1] = BitValue.ZERO;
-                for (int i = l - 2; i >= 0; i--) {
+                values[length-1] = BitValue.ZERO;
+                for (int i = length - 2; i >= 0; i--) {
                     if (val >= (int) Math.pow(2, i)) {
                         values[i] = BitValue.ONE;
                         val -= (int) Math.pow(2, i);
@@ -209,8 +168,8 @@ public class ConstantBitsElement implements LatticeElement {
                     }
                 }
             } else {
-                values[l-1] = BitValue.ONE;
-                for (int k = l - 2; k >= 0; k--) {
+                values[length-1] = BitValue.ONE;
+                for (int k = length - 2; k >= 0; k--) {
                     if (val <= (-1) * ((int) Math.pow(2, k))) {
                         values[k] = BitValue.ZERO;
                         val += (int) Math.pow(2, k);
@@ -220,8 +179,8 @@ public class ConstantBitsElement implements LatticeElement {
                 }
             }
             this.bitValues = values;
-
         }
+        
 
         /**
          * Creates a {@code BitValueArray} representing the given array of {@code BitValue}s
@@ -235,7 +194,13 @@ public class ConstantBitsElement implements LatticeElement {
             }
 
             this.bitValues = bitValues;
-
+        }
+        
+        public BitValueArray(int length, BitValue init) {
+            BitValue[] bottomArray = new BitValue[length];
+            for (int i = 0; i < length; i++) {
+                bottomArray[i] = init;
+            }
         }
 
         /**
@@ -253,11 +218,7 @@ public class ConstantBitsElement implements LatticeElement {
          * @return a {@code BitValueArray} of the length of {@code INT_SIZE} with only top
          */
         public static BitValueArray getIntTop() {
-            BitValue[] bottomArray = new BitValue[INT_SIZE];
-            for (int i = 0; i < INT_SIZE; i++) {
-                bottomArray[i] = BitValue.TOP;
-            }
-            return new BitValueArray(bottomArray);
+            return new BitValueArray(INT_SIZE, BitValue.TOP);
         }
 
         /**
@@ -266,11 +227,7 @@ public class ConstantBitsElement implements LatticeElement {
          * @return a {@code BitValueArray} of the length of {@code LONG_SIZE} with only top
          */
         public static BitValueArray getLongTop() {
-            BitValue[] bottomArray = new BitValue[LONG_SIZE];
-            for (int i = 0; i < LONG_SIZE; i++) {
-                bottomArray[i] = BitValue.TOP;
-            }
-            return new BitValueArray(bottomArray);
+            return new BitValueArray(LONG_SIZE, BitValue.TOP);
         }
 
         /**
@@ -279,11 +236,7 @@ public class ConstantBitsElement implements LatticeElement {
          * @return a {@code BitValueArray} of the length of {@code INT_SIZE} with only bottom
          */
         public static BitValueArray getIntBottom() {
-            BitValue[] bottomArray = new BitValue[INT_SIZE];
-            for (int i = 0; i < INT_SIZE; i++) {
-                bottomArray[i] = BitValue.BOTTOM;
-            }
-            return new BitValueArray(bottomArray);
+            return new BitValueArray(INT_SIZE, BitValue.BOTTOM);
         }
 
         /**
@@ -292,11 +245,7 @@ public class ConstantBitsElement implements LatticeElement {
          * @return a {@code BitValueArray} of the length of {@code LONG_SIZE} with only bottom
          */
         public static BitValueArray getLongBottom() {
-            BitValue[] bottomArray = new BitValue[LONG_SIZE];
-            for (int i = 0; i < LONG_SIZE; i++) {
-                bottomArray[i] = BitValue.BOTTOM;
-            }
-            return new BitValueArray(bottomArray);
+            return new BitValueArray(LONG_SIZE, BitValue.BOTTOM);
         }
 
         /**

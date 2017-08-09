@@ -255,6 +255,7 @@ public class Controller {
         String methodSignature = selectionBox.getSelectedMethod();
         SimpleBlockGraph blockGraph = graphBuilder.buildGraph(methodSignature);
         this.precalcController = new DFAPrecalcController();
+        
         try {
             Worklist worklist = this.worklistManager.getWorklist(worklistName, blockGraph);
             DFAFactory<LatticeElement> dfaFactory = analysisLoader.getDFAFactory(analysisName);

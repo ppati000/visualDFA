@@ -71,6 +71,7 @@ public class GraphBuilder {
         List<String> filteredMethods = new ArrayList<String>();
         for (SootMethod methodTest : this.methods) {
             if (filter.filter(methodTest)) {
+              
                 filteredMethods.add(methodTest.getSubSignature());
             }
         }

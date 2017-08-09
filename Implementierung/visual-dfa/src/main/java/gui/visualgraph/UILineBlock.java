@@ -100,6 +100,8 @@ public class UILineBlock extends UIAbstractBlock {
             });
         } else if (analysisState != null && elementaryBlock.equals(analysisState.getCurrentElementaryBlock())) {
             graph.setCellStyles(mxConstants.STYLE_FILLCOLOR, Styles.HIGHLIGHT_COLOR, new Object[]{cell});
+        } else {
+            graph.setCellStyles(mxConstants.STYLE_FILLCOLOR, Styles.TRANSPARENT_COLOR, new Object[]{cell});
         }
 
         if (hasBreakpoint) {

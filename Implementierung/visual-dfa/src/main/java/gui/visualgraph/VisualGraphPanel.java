@@ -1,8 +1,11 @@
 package gui.visualgraph;
 
 import com.mxgraph.layout.hierarchical.mxHierarchicalLayout;
+import com.mxgraph.model.mxCell;
 import com.mxgraph.swing.mxGraphComponent;
 import com.mxgraph.view.mxGraph;
+import dfa.framework.AbstractBlock;
+import dfa.framework.DFAExecution;
 import gui.*;
 import dfa.framework.AnalysisState;
 
@@ -13,8 +16,12 @@ import javax.swing.event.ChangeListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseWheelEvent;
+import java.awt.event.MouseWheelListener;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Patrick Petrovic
@@ -25,11 +32,12 @@ public class VisualGraphPanel extends JPanel {
     private List<UIBasicBlock> basicBlocks;
     private List<UIEdge> edges;
     private mxGraphComponent graphComponent;
-    private JButton jumpToAction;
+    private JToggleButton jumpToAction;
     private JButton graphExport;
     private mxGraph graph;
-    private JLayeredPane buttonPane;
-    private Frame parentFrame;
+    private Frame parentFrame = null;
+
+    private Map<AbstractBlock, UIAbstractBlock> blockMap;
 
     private final Color BLUE_HIGHLIGHT_COLOR = new Color(188, 230, 254);
     private final Color ALMOST_WHITE_COLOR = new Color(251, 253, 255);
@@ -42,11 +50,13 @@ public class VisualGraphPanel extends JPanel {
         this.basicBlocks = new ArrayList<>();
         this.edges = new ArrayList<>();
         this.graph = new RestrictedMxGraph();
+        this.blockMap = new HashMap<>();
         setLayout(new BorderLayout());
 
-        // TODO: Add listeners to buttons
-        jumpToAction = new GraphJButton("Jump to Action");
-        graphExport = new GraphJButton("Export Graph");
+        jumpToAction = new JToggleButton("Jump to Action");
+        graphExport = new JButton("Export Graph");
+        decorateGraphButton(jumpToAction);
+        decorateGraphButton(graphExport);
 
         jumpToAction.setIcon(IconLoader.loadIcon("icons/map-marker.png", 0.2));
         jumpToAction.setPreferredSize(new Dimension(145, 40));
@@ -84,6 +94,10 @@ public class VisualGraphPanel extends JPanel {
         basicBlocks.add(block);
     }
 
+    protected void setBlockMap(Map<AbstractBlock, UIAbstractBlock> map) {
+        this.blockMap = map;
+    }
+
     /**
      * Inserts a given {@code UIEdge} which will be rendered when {@code renderGraph()} is called.
      *
@@ -97,12 +111,14 @@ public class VisualGraphPanel extends JPanel {
     /**
      * Renders all previously inserted blocks and edges.
      *
-     * @param analysisState
-     *         the {@code analysisState} that should be used to render this graph
-     * @param applyLayout
+     * @param dfa
+     *         the {@code DFAExecution} that should be used to render this graph
+     * @param isFirstRender
      *         If {@code true}, the auto-layouter is called after inserting all parent blocks. Used on first render.
      */
-    public void renderGraph(AnalysisState analysisState, boolean applyLayout) {
+    public void renderGraph(final DFAExecution dfa, boolean isFirstRender) {
+        AnalysisState analysisState = dfa.getCurrentAnalysisState();
+
         graph.getModel().beginUpdate();
 
         for (UIBasicBlock block : basicBlocks) {
@@ -114,8 +130,8 @@ public class VisualGraphPanel extends JPanel {
         }
 
         // Apply layout before rendering child blocks, so that the layouter doesn't mess with them.
-        if (applyLayout) {
-            autoLayout();
+        if (isFirstRender) {
+            autoLayoutAndShowGraph();
         }
 
         for (UIBasicBlock block : basicBlocks) {
@@ -123,6 +139,23 @@ public class VisualGraphPanel extends JPanel {
         }
 
         graph.getModel().endUpdate();
+
+        if (jumpToAction.isSelected() && blockMap != null) {
+            graphComponent.getGraph().clearSelection();
+            AnalysisState currentState = dfa.getCurrentAnalysisState();
+            AbstractBlock currentBlock;
+
+            if (currentState.getCurrentElementaryBlockIndex() == -1) {
+                currentBlock = currentState.getCurrentBasicBlock();
+            } else {
+                currentBlock = currentState.getCurrentElementaryBlock();
+            }
+
+            if (currentBlock != null) {
+                mxCell currentMxCell = blockMap.get(currentBlock).getMxCell();
+                graph.getSelectionModel().addCell(currentMxCell);
+            }
+        }
     }
 
     /**
@@ -143,7 +176,7 @@ public class VisualGraphPanel extends JPanel {
      * Decreases the graph's zoom level.
      */
     public void zoomOut() {
-        graphComponent.zoomIn();
+        graphComponent.zoomOut();
     }
 
     /**
@@ -153,7 +186,8 @@ public class VisualGraphPanel extends JPanel {
      *         Iff {@code true}, user interaction is allowed.
      */
     public void setActivated(boolean activated) {
-        // TODO implement
+        jumpToAction.setEnabled(activated);
+        graphExport.setEnabled(activated);
     }
 
     /**
@@ -183,11 +217,17 @@ public class VisualGraphPanel extends JPanel {
         return graphComponent;
     }
 
+    /**
+     * Sets the parent frame (used for modals)
+     *
+     * @param frame
+     *         the parent frame
+     */
     public void setParentFrame(Frame frame) {
         this.parentFrame = frame;
     }
 
-    private void autoLayout() {
+    private void autoLayoutAndShowGraph() {
         new mxHierarchicalLayout(graph).execute(graph.getDefaultParent());
         graphComponent.setVisible(true);
         graphComponent.doLayout();
@@ -200,35 +240,46 @@ public class VisualGraphPanel extends JPanel {
         basicBlocks = new ArrayList<>();
         edges = new ArrayList<>();
         graph = new RestrictedMxGraph();
+
         if (graphComponent != null) {
             remove(graphComponent);
         }
+
         graphComponent = new mxGraphComponent(graph);
         graphComponent.setBorder(new LineBorder(new Color(188, 230, 254)));
         graphComponent.getViewport().setBackground(new Color(251, 253, 255));
+
+        graphComponent.addMouseWheelListener(new MouseWheelListener() {
+            @Override
+            public void mouseWheelMoved(MouseWheelEvent e) {
+                System.out.println(e);
+                if (e.getWheelRotation() > 0) {
+                    zoomIn();
+                } else if (e.getWheelRotation() < 0) {
+                    zoomOut();
+                }
+            }
+        });
     }
 
-    private class GraphJButton extends JButton {
-        GraphJButton(String text) {
-            super(text);
-            setOpaque(true);
-            setBackground(ALMOST_WHITE_COLOR);
-            setForeground(TEXT_COLOR);
-            setBorder(new LineBorder(BLUE_HIGHLIGHT_COLOR, 2, true));
+    private void decorateGraphButton(final AbstractButton button) {
+        button.setOpaque(true);
+        button.setBackground(ALMOST_WHITE_COLOR);
+        button.setForeground(TEXT_COLOR);
+        button.setBorder(new LineBorder(BLUE_HIGHLIGHT_COLOR, 2, true));
 
-            final ButtonModel startModel = getModel();
-            startModel.addChangeListener(new ChangeListener() {
+        final ButtonModel startModel = button.getModel();
+        startModel.addChangeListener(new ChangeListener() {
 
-                @Override
-                public void stateChanged(ChangeEvent e) {
-                    if (getModel().isPressed()) {
-                        setBackground(BLUE_HIGHLIGHT_COLOR);
-                    } else {
-                        setBackground(ALMOST_WHITE_COLOR);
-                    }
+            @Override
+            public void stateChanged(ChangeEvent e) {
+                if (button.getModel().isSelected()) {
+                    button.setBackground(BLUE_HIGHLIGHT_COLOR);
+                } else {
+                    button.setBackground(ALMOST_WHITE_COLOR);
                 }
+            }
 
-            });
-        }
+        });
     }
 }

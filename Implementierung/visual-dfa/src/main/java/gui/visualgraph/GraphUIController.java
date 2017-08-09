@@ -1,10 +1,7 @@
 package gui.visualgraph;
 
 import com.mxgraph.view.mxGraph;
-import dfa.framework.BasicBlock;
-import dfa.framework.ControlFlowGraph;
-import dfa.framework.DFAExecution;
-import dfa.framework.ElementaryBlock;
+import dfa.framework.*;
 
 import javax.swing.*;
 import java.util.ArrayList;
@@ -44,6 +41,7 @@ public class GraphUIController {
     public void start(DFAExecution dfa) {
         this.dfa = dfa;
 
+        Map <AbstractBlock, UIAbstractBlock> mappedAbstractBlocks = new HashMap<>();
         ControlFlowGraph dfaGraph = dfa.getCFG();
         List<BasicBlock> dfaBasicBlocks = dfaGraph.getBasicBlocks();
         Map<BasicBlock, UIBasicBlock> mappedBasicBlocks = new HashMap<>();
@@ -56,19 +54,28 @@ public class GraphUIController {
             if (elementaryBlocks.size() != 0) {
                 List<UILineBlock> lineBlocks = new ArrayList<>();
 
-                // The first lineBlock is a special case: it has no predecessor.
-                lineBlocks.add(new UILineBlock(elementaryBlocks.get(0), panel.getGraphComponent(), graph, basicBlock));
+                // The first UILineBlock is a special case: it has no predecessor.
+                ElementaryBlock firstElementaryBlock = elementaryBlocks.get(0);
+                UILineBlock firstLineBlock = new UILineBlock(firstElementaryBlock, panel.getGraphComponent(), graph, basicBlock);
+                lineBlocks.add(firstLineBlock);
                 basicBlock.insertLineBlock(lineBlocks.get(0));
+                mappedAbstractBlocks.put(firstElementaryBlock, firstLineBlock);
 
                 for (int i = 1; i < elementaryBlocks.size(); i++) {
-                    lineBlocks.add(new UILineBlock(elementaryBlocks.get(i), panel.getGraphComponent(), graph, basicBlock, lineBlocks.get(i - 1)));
+                    ElementaryBlock currentElementaryBlock = elementaryBlocks.get(i);
+                    UILineBlock newLineBlock = new UILineBlock(currentElementaryBlock, panel.getGraphComponent(), graph, basicBlock, lineBlocks.get(i - 1));
+                    lineBlocks.add(newLineBlock);
                     basicBlock.insertLineBlock(lineBlocks.get(i));
+                    mappedAbstractBlocks.put(currentElementaryBlock, newLineBlock);
                 }
             }
 
+            mappedAbstractBlocks.put(dfaBasicBlock, basicBlock);
             mappedBasicBlocks.put(dfaBasicBlock, basicBlock);
             panel.insertBasicBlock(basicBlock);
         }
+
+        panel.setBlockMap(mappedAbstractBlocks);
 
         // Now all visual blocks have been built, so we can create edges.
         for (BasicBlock dfaBasicBlock : dfaBasicBlocks) {
@@ -84,7 +91,7 @@ public class GraphUIController {
             }
         }
 
-        panel.renderGraph(dfa.getCurrentAnalysisState(), true);
+        panel.renderGraph(dfa, true);
     }
 
     /**
@@ -96,7 +103,7 @@ public class GraphUIController {
             throw new IllegalStateException("Graph has not been built using start() yet.");
         }
 
-        panel.renderGraph(dfa.getCurrentAnalysisState(), false);
+        panel.renderGraph(dfa, false);
     }
 
     /**

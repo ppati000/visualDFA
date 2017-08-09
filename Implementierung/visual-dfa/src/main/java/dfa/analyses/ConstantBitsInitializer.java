@@ -52,9 +52,9 @@ public class ConstantBitsInitializer implements Initializer<ConstantBitsElement>
         Chain<Local> locals = blockGraph.getBody().getLocals();
 
         Map<JimpleLocal, ConstantBitsElement.BitValueArray> initialBottomMap =
-                new TreeMap<>(ConstantBitsElement.COMPARATOR);
+                new TreeMap<>(LocalMapElement.DEFAULT_COMPARATOR);
         Map<JimpleLocal, ConstantBitsElement.BitValueArray> initialHeadMap =
-                new TreeMap<>(ConstantBitsElement.COMPARATOR);
+                new TreeMap<>(LocalMapElement.DEFAULT_COMPARATOR);
 
         ConstantBitsElement.BitValue[] nullIntArray = new ConstantBitsElement.BitValue[32];
         ConstantBitsElement.BitValue[] nullLongArray = new ConstantBitsElement.BitValue[64];

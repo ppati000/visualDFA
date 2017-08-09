@@ -107,4 +107,14 @@ public class UIBasicBlock extends UIAbstractBlock {
         this.dfaBasicBlock = dfaBasicBlock;
         lineBlocks = new ArrayList<>();
     }
+
+    /**
+     * Returns the corresponding DFAFramework block.
+     *
+     * @return the corresponding DFAFramework block
+     */
+    @Override
+    public BasicBlock getDFABlock() {
+        return dfaBasicBlock;
+    }
 }

@@ -37,11 +37,11 @@ public class StatePanelOpen extends JPanel {
     }
 
     public void setIn(String latticeElement) {
-        // TODO
+        System.out.println(latticeElement); // TODO
     }
 
     public void setOut(String latticeElement) {
-        // TODO
+        System.out.println(latticeElement); // TODO
     }
 
     public void setSelectedLine(String s, int blockNumber, int lineNumber) {

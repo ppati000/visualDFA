@@ -110,4 +110,14 @@ public class UILineBlock extends UIAbstractBlock {
             graph.setCellStyles(mxConstants.STYLE_FILLCOLOR, Styles.TRANSPARENT_COLOR, new Object[]{breakpointCell});
         }
     }
+
+    /**
+     * Returns the corresponding DFAFramework block.
+     *
+     * @return the corresponding DFAFramework block
+     */
+    @Override
+    public ElementaryBlock getDFABlock() {
+        return elementaryBlock;
+    }
 }

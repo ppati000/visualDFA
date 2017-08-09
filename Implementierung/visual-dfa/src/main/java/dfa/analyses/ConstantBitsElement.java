@@ -1,11 +1,8 @@
 package dfa.analyses;
 
-import java.util.Comparator;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Objects;
-import java.util.SortedMap;
-import java.util.TreeMap;
 
 import dfa.analyses.ConstantBitsElement.BitValueArray;
 import soot.jimple.ArithmeticConstant;
@@ -121,7 +118,7 @@ public class ConstantBitsElement extends LocalMapElement<BitValueArray> {
      *         A {@code BitValue} represents the BitValue of one bit of a {@code JimpleLocal}.
      *
      */
-    static class BitValueArray {
+    public static class BitValueArray {
         private BitValue[] bitValues;
 
         public static final BitValueArray TOP = new BitValueArray(new BitValue[0]);

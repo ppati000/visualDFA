@@ -166,12 +166,26 @@ public class ConstantFoldingTransition implements Transition<ConstantFoldingElem
 
         @Override
         public void caseIdentityStmt(IdentityStmt stmt) {
-            // TODO Auto-generated method stub
+            // this is only used for parameter initialization (so set to TOP)
+            
+            JimpleLocal lValLocal;
+            if (stmt.getLeftOp() instanceof JimpleLocal) {
+                lValLocal = (JimpleLocal) stmt.getLeftOp();
+            } else if (!(stmt.getLeftOp() instanceof Ref)) {
+                assert false : "Something went horribly wrong!";
+                return;
+            } else {
+                // ignore
+                return;
+            }
+            
+            outputElement.setValue(lValLocal, ConstantFoldingElement.Value.getTop());
         }
 
         @Override
         public void caseIfStmt(IfStmt stmt) {
             // TODO Auto-generated method stub
+            // probably just ignore
         }
 
         @Override

@@ -3,8 +3,6 @@ package controller;
 import java.util.List;
 import java.util.logging.Logger;
 
-import javax.swing.JFrame;
-
 import codeprocessor.*;
 import dfa.framework.AnalysisLoader;
 import dfa.framework.DFAExecution;
@@ -47,6 +45,7 @@ public class Controller {
     private Thread precalc;
     private DFAPrecalcController precalcController;
     private DFAPrecalculator precalculator;
+    private boolean shouldContinue = false;
 
     /**
      * Creates a new {@code Controller} and loads the available analyses with an
@@ -174,6 +173,7 @@ public class Controller {
         }
 
         visibilityPlaying();
+        this.shouldContinue = true;
         this.autoplay = new Thread(autoplayDriver);
         try {
             this.autoplay.start();
@@ -194,25 +194,31 @@ public class Controller {
     /**
      * Method, that checks if the analysis is in a state in that a breakpoint
      * was set.
-     * 
-     * @return {@code true} if no breakpoint was set or {@code false} in the
-     *         other case
      */
-    public boolean isAtBreakpoint() {
+    public void isAtBreakpoint() {
+        System.out.println("block" + this.dfaExecution.getCurrentBlockStep());
+        System.out.println("elementary; " +this.dfaExecution.getCurrentElementaryStep());
+       
         if (this.dfaExecution.isAtBreakpoint()) {
-            return true;
+            this.shouldContinue = false;
         } else {
-            return false;
+            this.shouldContinue = true;
         }
+    }
+    
+    /**
+     * @return if autoplay should continue
+     */
+    public boolean shouldContinue() {
+        //TODO rufe isBreakpoint auf
+        return this.shouldContinue;
     }
 
     /**
      * Stops the {@code AutoplayDriver}.
      */
     public void pause() {
-        if (!this.autoplay.isInterrupted()) {
-            this.autoplay.interrupt();
-        }
+        this.shouldContinue = false;
         visibilityWorking();
     }
 
@@ -352,7 +358,6 @@ public class Controller {
         } else {
             OptionBox optionBox = new OptionBox(this.programFrame, "Stop", ABORT_MESSAGE);
             if (optionBox.getOption() == Option.YES_OPTION) {
-                System.out.println("ich bin true");
                 visibilityInput();
                 this.graphUIController.stop();
                 this.dfaExecution = null;

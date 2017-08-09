@@ -183,16 +183,10 @@ public class InputPanel extends JPanel {
     }
 
     /**
-<<<<<<< HEAD
-     * Implementation of an ActionListener which informs the controller, when
-     * the StartAnalysis button has been pressed.
-     * 
-=======
      * Implementation of an ActionListener which informs the controller,
      * when the StartAnalysis button has been pressed.
->>>>>>> fd34b85... add correct stop behaviour
-     * @author Michael
      *
+     * @author Michael
      * @see ActionListener
      */
     private class StartAnalysisListener implements ActionListener {
@@ -201,7 +195,6 @@ public class InputPanel extends JPanel {
         public void actionPerformed(ActionEvent e) {
             ctrl.startAnalysis();
         }
-
 
     }
 }

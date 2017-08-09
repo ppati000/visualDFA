@@ -39,6 +39,10 @@ public class GraphUIController {
      *         the {@code DFAExecution} of the current data-flow analysis
      */
     public void start(DFAExecution dfa) {
+        if (this.dfa != null) {
+            throw new IllegalStateException("Visual graph was already built.");
+        }
+
         this.dfa = dfa;
 
         Map <AbstractBlock, UIAbstractBlock> mappedAbstractBlocks = new HashMap<>();

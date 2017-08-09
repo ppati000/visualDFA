@@ -72,7 +72,6 @@ public class GraphBuilder {
         for (SootMethod methodTest : this.methods) {
             if (filter.filter(methodTest)) {
                 filteredMethods.add(methodTest.getSubSignature());
-                System.out.println(methodTest.getSubSignature());
             }
         }
         return filteredMethods;

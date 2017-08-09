@@ -21,6 +21,7 @@ public class MessageBox extends DialogBox {
 
     
     private JTextArea messageArea;
+    private String message;
     
     /**
      * Display the MessageBox. Stop execution of this Thread until user closes
@@ -37,8 +38,9 @@ public class MessageBox extends DialogBox {
      * @see javax.swing.JDialog
      */
     public MessageBox(Frame owner, String title, String message) {
-        super(owner, title);
-        messageArea.setText(message);
+        super(owner);
+        this.message = message;
+        init(title);
         pack();
         setVisible(true);
     }
@@ -55,6 +57,7 @@ public class MessageBox extends DialogBox {
         messageArea.setEditable(false);
         messageArea.setLineWrap(true);
         messageArea.setWrapStyleWord(true);
+        messageArea.setText(message);
         contentPanel.add(messageArea);
     }
 

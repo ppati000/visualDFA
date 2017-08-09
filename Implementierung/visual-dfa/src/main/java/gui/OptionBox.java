@@ -1,7 +1,6 @@
 package gui;
 
 import java.awt.BorderLayout;
-import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -23,6 +22,7 @@ public class OptionBox extends DialogBox {
 
     private Option option;
     private JTextArea messageArea;
+    private String message;
 
     /**
      * Display the OptionBox. Stop execution of this Thread until user closes
@@ -37,14 +37,17 @@ public class OptionBox extends DialogBox {
      * @see javax.swing.JDialog
      */
     public OptionBox(Frame owner, String title) {
-        super(owner, title);
-        messageArea.setText(null);
+        super(owner);
+        this.message = null;
+        init(title);
         pack();
+        setVisible(true);
     }
     
     public OptionBox(Frame owner, String title, String message) {
-        super(owner, title);
-        messageArea.setText(message);
+        super(owner);
+        this.message = message;
+        init(title);
         pack();
         setVisible(true);
     }
@@ -62,6 +65,7 @@ public class OptionBox extends DialogBox {
         messageArea.setEditable(false);
         messageArea.setLineWrap(true);
         messageArea.setWrapStyleWord(true);
+        messageArea.setText(message);
         contentPanel.add(messageArea, BorderLayout.CENTER);
 
     }

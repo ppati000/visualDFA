@@ -36,9 +36,11 @@ public class AutoplayDriver implements Runnable {
             try {
                 Thread.sleep((long) (controller.getDelay() * 1000));
             } catch (InterruptedException e) {
-               // e.printStackTrace();
+
             }
-            hasNextLine = controller.nextLine();
+            if (this.controller.shouldContinue()) {
+                hasNextLine = controller.nextLine();
+            }
         }
         this.controller.visibilityWorking();
     }

@@ -111,8 +111,6 @@ public class InputPanel extends JPanel {
 
         btnStartAnalysis = new JButton();
         jBuDecorator.decorateButton(btnStartAnalysis, new StartAnalysisListener(), "Start Analysis");
-
-        jBuDecorator.decorateButton(btnStartAnalysis, new StartAnalysisListener(), "Start Analysis");
         btnStartAnalysis.setBackground(Colors.GREEN_BACKGROUND.getColor());
 
         btnStartAnalysis.setFont(new Font("Trebuchet MS", Font.BOLD, 24));

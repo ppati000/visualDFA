@@ -48,6 +48,8 @@ public class ControlPanel extends JPanel {
     private JLabel lblDelayInSeconds;
 
     private StepSliderChangeListener stepListener;
+    
+    private boolean isPlayButtonAdded;
 
     /**
      * Create the panel. Set the controller, so the ActionListeners can access
@@ -118,6 +120,7 @@ public class ControlPanel extends JPanel {
         jBuDecorator.decorateIconButton(btnPause, "icons/pause-symbol.png", 0.6, new PauseListener(), null);
         gbc_btnPlayPause = GridBagConstraintFactory.getStandardGridBagConstraints(4, 1, 1, 3);
         add(btnPlay, gbc_btnPlayPause);
+        isPlayButtonAdded = true;
 
         btnNextLine = new JButton();
         jBuDecorator.decorateIconButton(btnNextLine, "icons/step-forward.png", 0.5, new NextLineListener(), null);
@@ -195,6 +198,13 @@ public class ControlPanel extends JPanel {
             stepSlider.setEnabled(true);
             delaySlider.setEnabled(true);
             lblDelayInSeconds.setEnabled(true);
+            if (isPlayButtonAdded == false) {
+                remove(btnPause);
+                add(btnPlay, gbc_btnPlayPause);
+                revalidate();
+                repaint();
+                isPlayButtonAdded = true;
+            }
             break;
         case PRECALCULATING:
             btnNextBlock.setEnabled(false);
@@ -219,6 +229,13 @@ public class ControlPanel extends JPanel {
             stepSlider.setEnabled(false);
             delaySlider.setEnabled(true);
             lblDelayInSeconds.setEnabled(true);
+            if (isPlayButtonAdded == true) {
+                remove(btnPlay);
+                add(btnPause, gbc_btnPlayPause);
+                revalidate();
+                repaint();
+                isPlayButtonAdded = false;
+            }
             break;
         case DEACTIVATED:
             btnNextBlock.setEnabled(false);
@@ -377,10 +394,7 @@ public class ControlPanel extends JPanel {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            remove(btnPlay);
-            add(btnPause, gbc_btnPlayPause);
-            revalidate();
-            repaint();
+            
             ctrl.play();
         }
 
@@ -398,10 +412,7 @@ public class ControlPanel extends JPanel {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            remove(btnPause);
-            add(btnPlay, gbc_btnPlayPause);
-            revalidate();
-            repaint();
+            
             ctrl.pause();
 
         }

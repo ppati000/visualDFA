@@ -1,7 +1,9 @@
+import codeprocessor.CodeProcessor;
+import codeprocessor.GraphBuilder;
 import com.mxgraph.view.mxGraph;
-import dfa.framework.AnalysisState;
-import dfa.framework.BasicBlock;
-import dfa.framework.DFAExecution;
+import dfa.analyses.DummyElement;
+import dfa.analyses.DummyFactory;
+import dfa.framework.*;
 import gui.visualgraph.*;
 
 import static org.junit.Assert.*;
@@ -15,6 +17,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class GraphExporterTest {
     private VisualGraphPanel panel;
@@ -72,7 +75,7 @@ public class GraphExporterTest {
         BufferedImage exportedImage = GraphExporter.exportCurrentGraph(graph, 1.0, fakeStatePanel);
         BufferedImage referenceImage = ImageIO.read(getClass().getResourceAsStream("/export-small.png"));
 
-        assertEquals("", TestUtils.bufferedImagesEqual(exportedImage, referenceImage, 10, 100));
+        assertEquals("", TestUtils.bufferedImagesEqual(exportedImage, referenceImage, 10, 100, 10));
     }
 
     @Test
@@ -80,7 +83,7 @@ public class GraphExporterTest {
         BufferedImage exportedImage = GraphExporter.exportCurrentGraph(graph, 2.0, fakeStatePanel);
         BufferedImage referenceImage = ImageIO.read(getClass().getResourceAsStream("/export-medium.png"));
 
-        assertEquals("", TestUtils.bufferedImagesEqual(exportedImage, referenceImage, 10, 300));
+        assertEquals("", TestUtils.bufferedImagesEqual(exportedImage, referenceImage, 10, 300, 10));
     }
 
     @Test
@@ -88,6 +91,38 @@ public class GraphExporterTest {
         BufferedImage exportedImage = GraphExporter.exportCurrentGraph(graph, 3.0, fakeStatePanel);
         BufferedImage referenceImage = ImageIO.read(getClass().getResourceAsStream("/export-large.png"));
 
-        assertEquals("", TestUtils.bufferedImagesEqual(exportedImage, referenceImage, 10, 800));
+        assertEquals("", TestUtils.bufferedImagesEqual(exportedImage, referenceImage, 10, 800, 10));
+    }
+
+    @Test
+    public void shouldPerformBatchExport() {
+        String code = "public class shouldPerformBatchExportClass { int test(int a) { " +
+                "        if (a < 10) { " +
+                "          a = 20; " +
+                "        } " +
+                "        return a*2; " +
+                "      } }";
+
+
+        CodeProcessor codeProcessor = new CodeProcessor(code);
+        GraphBuilder builder = new GraphBuilder(codeProcessor.getPathName(), codeProcessor.getClassName());
+        SimpleBlockGraph blockGraph = builder.buildGraph("int test(int)");
+
+        WorklistManager manager = WorklistManager.getInstance();
+        DFAExecution<DummyElement> dfa = new DFAExecution<DummyElement>(new DummyFactory(), manager.getWorklist(manager.getWorklistNames().get(0), blockGraph), blockGraph, new DFAPrecalcController());
+        dfa.setCurrentBlockStep(0);
+
+        ArrayList<BufferedImage> imageList = GraphExporter.batchExport(dfa, 1.0, true);
+
+        assertEquals(dfa.getTotalElementarySteps(), imageList.size());
+
+        assertTrue(TestUtils.deltaEqual(466, imageList.get(0).getWidth(), 60));
+        assertTrue(TestUtils.deltaEqual(305, imageList.get(0).getHeight(), 60));
+
+        ArrayList<BufferedImage> blockImageList = GraphExporter.batchExport(dfa, 3.0, false);
+
+        assertEquals(dfa.getTotalBlockSteps(), blockImageList.size());
+        assertTrue(TestUtils.deltaEqual(1322, blockImageList.get(0).getWidth(), 180));
+        assertTrue(TestUtils.deltaEqual(913, blockImageList.get(0).getHeight(), 180));
     }
 }

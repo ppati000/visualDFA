@@ -32,13 +32,13 @@ public class GraphUIControllerTest {
         // TODO: Use example code to start a concrete DFAFramework analysis.
         // Stuff to be tested: right blocks, properly connected edges, right text, right association to DFA block.
 
-        String code = "public void helloWorld(boolean print) {" +
+        String code = "public class shouldCreateGraphOnStartClass { public void helloWorld(boolean print) {" +
                 "          if (print) {" +
                 "              System.out.println(\"Hello World!\");" +
                 "          } else {" +
                 "              System.out.println(\"Not Hello World!\");" +
                 "          }" +
-                "      }";
+                "      } }";
 
         CodeProcessor codeProcessor = new CodeProcessor(code);
 

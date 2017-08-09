@@ -1,7 +1,12 @@
 package gui.visualgraph;
 
+import com.mxgraph.model.mxCell;
+import com.mxgraph.util.mxEvent;
+import com.mxgraph.util.mxEventObject;
+import com.mxgraph.util.mxEventSource;
 import com.mxgraph.view.mxGraph;
 import dfa.framework.*;
+import gui.StatePanelOpen;
 
 import javax.swing.*;
 import java.util.ArrayList;
@@ -19,6 +24,7 @@ public class GraphUIController {
     private VisualGraphPanel panel;
     private mxGraph graph;
     private DFAExecution dfa;
+    private StatePanelOpen statePanel = null;
 
     /**
      * Creates a new {@code GraphUIController}.
@@ -38,17 +44,24 @@ public class GraphUIController {
      * @param dfa
      *         the {@code DFAExecution} of the current data-flow analysis
      */
-    public void start(DFAExecution dfa) {
+    public void start(final DFAExecution dfa) {
+        if (this.dfa != null) {
+            throw new IllegalStateException("Visual graph was already built.");
+        }
+
         this.dfa = dfa;
 
-        Map <AbstractBlock, UIAbstractBlock> mappedAbstractBlocks = new HashMap<>();
+        Map<AbstractBlock, UIAbstractBlock> mappedAbstractBlocks = new HashMap<>();
         ControlFlowGraph dfaGraph = dfa.getCFG();
         List<BasicBlock> dfaBasicBlocks = dfaGraph.getBasicBlocks();
         Map<BasicBlock, UIBasicBlock> mappedBasicBlocks = new HashMap<>();
+        List<UIAbstractBlock> uiBlocks = new ArrayList<>();
+        final Map<mxCell, UIAbstractBlock> mxCellMap = new HashMap<>();
 
         // First step: Build all visual blocks from DFAFramework data.
         for (BasicBlock dfaBasicBlock : dfaBasicBlocks) {
             UIBasicBlock basicBlock = new UIBasicBlock(graph, dfaBasicBlock, dfa);
+            uiBlocks.add(basicBlock);
             List<ElementaryBlock> elementaryBlocks = dfaBasicBlock.getElementaryBlocks();
 
             if (elementaryBlocks.size() != 0) {
@@ -58,6 +71,7 @@ public class GraphUIController {
                 ElementaryBlock firstElementaryBlock = elementaryBlocks.get(0);
                 UILineBlock firstLineBlock = new UILineBlock(firstElementaryBlock, panel.getGraphComponent(), graph, basicBlock);
                 lineBlocks.add(firstLineBlock);
+                uiBlocks.add(firstLineBlock);
                 basicBlock.insertLineBlock(lineBlocks.get(0));
                 mappedAbstractBlocks.put(firstElementaryBlock, firstLineBlock);
 
@@ -65,6 +79,7 @@ public class GraphUIController {
                     ElementaryBlock currentElementaryBlock = elementaryBlocks.get(i);
                     UILineBlock newLineBlock = new UILineBlock(currentElementaryBlock, panel.getGraphComponent(), graph, basicBlock, lineBlocks.get(i - 1));
                     lineBlocks.add(newLineBlock);
+                    uiBlocks.add(newLineBlock);
                     basicBlock.insertLineBlock(lineBlocks.get(i));
                     mappedAbstractBlocks.put(currentElementaryBlock, newLineBlock);
                 }
@@ -92,6 +107,39 @@ public class GraphUIController {
         }
 
         panel.renderGraph(dfa, true);
+
+        for (UIAbstractBlock block : uiBlocks) {
+            mxCellMap.put(block.getMxCell(), block);
+        }
+
+        graph.getSelectionModel().addListener(mxEvent.CHANGE, new mxEventSource.mxIEventListener() {
+            @Override
+            public void invoke(Object o, mxEventObject mxEventObject) {
+                if (statePanel != null) {
+                    // Weird API: "removed" cells are actually the newly selected cells.
+                    mxCell selectedCell = ((ArrayList<mxCell>) mxEventObject.getProperty("removed")).get(0);
+
+                    AbstractBlock selectedBlock = mxCellMap.get(selectedCell).getDFABlock();
+
+                    BlockState currentState = dfa.getCurrentAnalysisState().getBlockState(selectedBlock);
+                    String inState = currentState.getInState().getStringRepresentation();
+                    String outState = currentState.getOutState().getStringRepresentation();
+
+                    statePanel.setIn(inState);
+                    statePanel.setOut(outState);
+                }
+            }
+        });
+    }
+
+    /**
+     * Sets the {@code StatePanelOpen} to show the results in. If {@code null}, no results will be shown.
+     *
+     * @param statePanel
+     *         the state panel
+     */
+    public void setStatePanel(StatePanelOpen statePanel) {
+        this.statePanel = statePanel;
     }
 
     /**
@@ -113,18 +161,6 @@ public class GraphUIController {
         dfa = null;
         panel.deleteGraph();
         graph = panel.getMxGraph();
-    }
-
-    public void setSelectedBlock(UIAbstractBlock block) {
-
-    }
-
-    public void toggleBreakpoint(UILineBlock block) {
-
-    }
-
-    public void toggleJumpToAction() {
-
     }
 
     public JPanel getVisualGraphPanel() {

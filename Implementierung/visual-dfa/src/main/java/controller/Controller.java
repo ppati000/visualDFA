@@ -65,10 +65,9 @@ public class Controller {
         } catch (UnsupportedOperationException e) {
             e.printStackTrace();
         }
-
+        this.worklistManager = WorklistManager.getInstance();
         this.visualGraphPanel = new VisualGraphPanel();
         this.graphUIController = new GraphUIController(visualGraphPanel);
-        this.worklistManager = WorklistManager.getInstance();
     }
 
     /**
@@ -252,10 +251,9 @@ public class Controller {
             filter = new NoFilter();
         }
         List<String> methodList = graphBuilder.getMethods(filter);
-        // MethodSelectionBox selectionBox = new
-        // MethodSelectionBox(programFrame, methodList);
-        // String methodSignature = selectionBox.getSelectedMethod();
-        SimpleBlockGraph blockGraph = graphBuilder.buildGraph(methodList.get(1));
+        MethodSelectionBox selectionBox = new MethodSelectionBox(programFrame, methodList);
+        String methodSignature = selectionBox.getSelectedMethod();
+        SimpleBlockGraph blockGraph = graphBuilder.buildGraph(methodSignature);
         this.precalcController = new DFAPrecalcController();
         try {
             Worklist worklist = this.worklistManager.getWorklist(worklistName, blockGraph);
@@ -412,13 +410,7 @@ public class Controller {
             throw new IllegalStateException("programFrame must not be null");
         }
         this.programFrame = programFrame;
-
-        this.visualGraphPanel = new VisualGraphPanel();
         this.visualGraphPanel.setParentFrame(this.programFrame);
-        this.programFrame.add(this.visualGraphPanel);
-        this.visualGraphPanel.setVisible(true);
-        this.graphUIController = new GraphUIController(visualGraphPanel);
-
     }
 
     /**

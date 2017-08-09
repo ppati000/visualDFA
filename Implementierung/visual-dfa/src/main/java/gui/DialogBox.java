@@ -44,9 +44,9 @@ public abstract class DialogBox extends JDialog {
      * @see Frame
      *
      */
-    public DialogBox(Frame owner, String title) {
+    public DialogBox(Frame owner) {
         super(owner, true);
-        init(title);
+        
     }
 
     /**
@@ -61,9 +61,9 @@ public abstract class DialogBox extends JDialog {
      * @see Dialog
      *
      */
-    public DialogBox(Dialog owner, String title) {
+    public DialogBox(Dialog owner) {
         super(owner, true);
-        init(title);
+        
     }
 
     /**
@@ -73,7 +73,7 @@ public abstract class DialogBox extends JDialog {
      * @param title
      *            The title of the DialogBox.
      */
-    private final void init(String title) {
+    protected final void init(String title) {
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 
         setResizable(false);

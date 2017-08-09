@@ -6,6 +6,8 @@ import java.awt.event.ActionListener;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.KeyStroke;
+import javax.swing.border.CompoundBorder;
+import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 
 /**
@@ -71,6 +73,6 @@ public class JButtonDecorator {
     
     public void decorateBorderButton(JButton comp, ActionListener actListener, String text, Color BorderColor) {
         decorateButton(comp, actListener, text);
-        comp.setBorder(new LineBorder(BorderColor));
+        comp.setBorder(new CompoundBorder(new LineBorder(BorderColor), new EmptyBorder(3, 3, 3, 3)));
     }
 }

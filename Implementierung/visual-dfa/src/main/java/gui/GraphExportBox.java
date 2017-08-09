@@ -15,6 +15,7 @@ public class GraphExportBox extends DialogBox {
     private boolean hasLineStatesIncluded;
     private boolean isBatchExport;
     private Quality quality;
+    private final String GRAPHEXPORT_TITLE = "Export Graph as PNG";
 
     /**
      * Display the GraphExportBox. Stop execution of this Thread until user
@@ -27,7 +28,8 @@ public class GraphExportBox extends DialogBox {
      * @see javax.swing.JDialog
      */
     public GraphExportBox(Frame owner) {
-        super(owner, "Export Graph as PNG");
+        super(owner);
+        init(GRAPHEXPORT_TITLE);
         // TODO Auto-generated constructor stub
     }
 

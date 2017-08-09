@@ -90,7 +90,7 @@ public class ControlPanel extends JPanel {
         add(lblDelayInSeconds, gbc_lblDelayInSeconds);
         
         btnStopAnalysis = new JButton();
-        jBuDecorator.decorateIconButton(btnStopAnalysis, "icons/rounded-black-square-shape.png", 0.5, null, "Stop");
+        jBuDecorator.decorateIconButton(btnStopAnalysis, "icons/rounded-black-square-shape.png", 0.5, new StopListener(), "Stop");
         btnStopAnalysis.setBackground(Colors.WHITE_BACKGROUND.getColor());
         btnStopAnalysis.setForeground(Colors.DARK_TEXT.getColor());
 

@@ -285,15 +285,15 @@ public class DFAExecution<E extends LatticeElement> {
             throw new DFAException("there is no start block");
         }
 
-        AnalysisState<E> initialState = new AnalysisState<E>(initialWorklist, startBlock, -1);
+        AnalysisState<E> initialState = new AnalysisState<E>(initialWorklist.clone(), startBlock, -1);
 
         List<BasicBlock> basicBlocks = cfg.getBasicBlocks();
         for (BasicBlock bBlock : basicBlocks) {
             Block sootBlock = bBlock.getSootBlock();
             BlockState<E> state = initialStates.get(sootBlock);
+            initialState.setBlockState(bBlock, state);
 
             LogicalColor lColor = bBlock.equals(startBlock) ? LogicalColor.CURRENT : LogicalColor.NOT_VISITED;
-            initialState.setBlockState(bBlock, state);
             initialState.setColor(bBlock, lColor);
 
             // set all in- and out-states to null for the elementary-blocks
@@ -302,7 +302,6 @@ public class DFAExecution<E extends LatticeElement> {
             for (ElementaryBlock eBlock : elementaryBlocks) {
                 initialState.setBlockState(eBlock, nullState);
             }
-
         }
 
         analysisStates.add(initialState);
@@ -357,7 +356,7 @@ public class DFAExecution<E extends LatticeElement> {
                 BasicBlock newBasicBlock = newWorklist.poll();
                 visitedBasicBlocks.add(newBasicBlock);
 
-                newAnalysisState = newState(prevAnalysisState, newWorklist, newBasicBlock, -1);
+                newAnalysisState = new AnalysisState<E>(newWorklist, newBasicBlock, -1, prevAnalysisState.getStateMap(), prevAnalysisState.getColorMap());
 
                 // join predecessors out-states
                 List<BasicBlock> preds = getPredecessors(newBasicBlock);
@@ -365,13 +364,14 @@ public class DFAExecution<E extends LatticeElement> {
                 for (BasicBlock p : preds) {
                     predOutStates.add(prevAnalysisState.getBlockState(p).getOutState());
                 }
-                E outStatesJoin = dfa.join(predOutStates);
-
+                
+                E prevOutStatesJoin = dfa.join(predOutStates);
+                
                 BlockState<E> prevBlockState = prevAnalysisState.getBlockState(newBasicBlock);
-                BlockState<E> newBlockState = new BlockState<E>(outStatesJoin, prevBlockState.getOutState());
+                BlockState<E> newBlockState = new BlockState<E>(prevOutStatesJoin, prevBlockState.getOutState()); // TODO mind direction!
                 newAnalysisState.setBlockState(newBasicBlock, newBlockState);
 
-                updateColors(prevAnalysisState, newAnalysisState, visitedBasicBlocks);
+                updateColors(newAnalysisState, visitedBasicBlocks);
 
                 analysisStates.add(newAnalysisState);
 
@@ -391,7 +391,7 @@ public class DFAExecution<E extends LatticeElement> {
                 // handle non-empty basic block
                 E prevOutState;
                 ElementaryBlock nextElementaryBlock;
-                if (eBlockIdx < 0) {
+                if (eBlockIdx < 0) { 
                     // first elementary block
                     prevOutState = prevAnalysisState.getBlockState(prevBasicBlock).getInState();
                     nextElementaryBlock = getElementaryBlock(prevBasicBlock, 0);
@@ -406,17 +406,16 @@ public class DFAExecution<E extends LatticeElement> {
                     nextElementaryBlock = null;
                 }
 
+                ++eBlockIdx;
                 if (nextElementaryBlock == null) {
-                    E basicBlockInState = prevAnalysisState.getBlockState(prevBasicBlock).getInState();
-                    newAnalysisState =
-                            finishBasicBlock(prevBasicBlock, basicBlockInState, prevAnalysisState, visitedBasicBlocks);
+                    newAnalysisState = finishBasicBlock(prevBasicBlock, prevOutState, prevAnalysisState, visitedBasicBlocks);
                 } else {
                     E nextOutState = dfa.transition(prevOutState, nextElementaryBlock.getUnit());
                     BlockState<E> nextBlockState = new BlockState<E>(prevOutState, nextOutState);
-                    newAnalysisState = newState(prevAnalysisState, prevWorklist.clone(), prevBasicBlock, ++eBlockIdx);
+                    newAnalysisState = new AnalysisState<E>(prevWorklist.clone(), prevBasicBlock, eBlockIdx, prevAnalysisState.getStateMap(), prevAnalysisState.getColorMap());
                     newAnalysisState.setBlockState(nextElementaryBlock, nextBlockState);
                 }
-
+                
                 analysisStates.add(newAnalysisState);
                 prevAnalysisState = newAnalysisState;
                 ++elementaryStep;
@@ -457,18 +456,17 @@ public class DFAExecution<E extends LatticeElement> {
         }
     }
 
-    private AnalysisState<E> newState(AnalysisState<E> state, Worklist newWorklist, BasicBlock currentBBlock,
-            int eBlockIdx) {
-        AnalysisState<E> newState =
-                new AnalysisState<E>(newWorklist, currentBBlock, eBlockIdx, state.getStateMap(), state.getColorMap());
-        newState.setCurrentElementaryBlockIndex(eBlockIdx);
-        return newState;
-    }
+//    private AnalysisState<E> newState(AnalysisState<E> state, Worklist newWorklist, BasicBlock currentBBlock,
+//            int eBlockIdx) {
+//        AnalysisState<E> newState =
+//                new AnalysisState<E>(newWorklist, currentBBlock, eBlockIdx, state.getStateMap(), state.getColorMap());
+//        return newState;
+//    }
 
     /*
      * updates the color-mapping in newState according to prevState and the worklist and current BasicBlock of newState
      */
-    private void updateColors(AnalysisState<E> prevState, AnalysisState<E> newState, Set<BasicBlock> visited) {
+    private void updateColors(AnalysisState<E> newState, Set<BasicBlock> visited) {
         List<BasicBlock> basicBlocks = cfg.getBasicBlocks();
         Worklist newWorklist = newState.getWorklist();
 
@@ -502,11 +500,11 @@ public class DFAExecution<E extends LatticeElement> {
             }
         }
 
-        AnalysisState<E> newAnalysisState = newState(prevAnalysisState, newWorklist, null, -1);
+        AnalysisState<E> newAnalysisState = new AnalysisState<E>(newWorklist, null, -1, prevAnalysisState.getStateMap(), prevAnalysisState.getColorMap());
         BlockState<E> newBlockState = new BlockState<E>(prevBlockState.getInState(), outState);
         newAnalysisState.setBlockState(currentBBlock, newBlockState);
 
-        updateColors(prevAnalysisState, newAnalysisState, visited);
+        updateColors(newAnalysisState, visited);
         return newAnalysisState;
     }
 
@@ -521,5 +519,6 @@ public class DFAExecution<E extends LatticeElement> {
             throw new IllegalStateException("unknown direction: " + getDirection());
         }
     }
+    
 
 }

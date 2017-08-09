@@ -25,7 +25,7 @@ public class ConstantFoldingJoin implements Join<ConstantFoldingElement> {
         if (elements.isEmpty()) {
             throw new IllegalArgumentException("elements must not be empty");
         }
-
+        
         Iterator<ConstantFoldingElement> it = elements.iterator();
         ConstantFoldingElement refElement = it.next();
         Map<JimpleLocal, ConstantFoldingElement.Value> refMap = refElement.getLocalMap();

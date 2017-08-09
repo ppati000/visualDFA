@@ -1,13 +1,10 @@
 package dfa.analyses;
 
-import java.util.Comparator;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Objects;
-import java.util.SortedMap;
-import java.util.TreeMap;
 
-import dfa.framework.LatticeElement;
+import dfa.analyses.ConstantFoldingElement.Value;
 import soot.jimple.ArithmeticConstant;
 import soot.jimple.IntConstant;
 import soot.jimple.LongConstant;
@@ -20,82 +17,23 @@ import soot.jimple.internal.JimpleLocal;
  *         A {@code ConstantFoldingElement} is a {@code LatticeElement} used by {@code ConstantFoldingAnalysis}.
  *
  */
-public class ConstantFoldingElement implements LatticeElement {
-    
-    /**
-     * a {@code Comparator} to define an order on {@code JimpleLocal}s
-     */
-    public static final LocalComparator COMPARATOR = new LocalComparator();
-
-    private SortedMap<JimpleLocal, Value> localMap;
+public class ConstantFoldingElement extends LocalMapElement<Value> {
 
     /**
-     * Creates a {@code ConstantFoldingElement} with the given mapping.
+     * Creates a {@code LocalMapElement} with the given mapping and local-{@code Comparator}.
      * 
      * @param localMap
-     *        a {@code Map} that maps a {@code JimpleLocal} to its corresponding {@code Value}
+     *        a {@code Map} that maps a {@code JimpleLocal} to its corresponding value
      */
     public ConstantFoldingElement(Map<JimpleLocal, Value> localMap) {
-        this.localMap = new TreeMap<>(COMPARATOR);
-        this.localMap.putAll(localMap);
+        super(localMap, LocalMapElement.DEFAULT_COMPARATOR);
     }
 
     /**
-     * Creates a {@code ConstantFoldingElement} with an empty mapping.
+     * Creates a {@code LocalMapElement} with an empty mapping.
      */
     public ConstantFoldingElement() {
-        this(new TreeMap<JimpleLocal, Value>());
-    }
-
-    /**
-     * Sets the {@code Value} mapped to the given {@code JimpleLocal}.
-     * 
-     * @param local
-     *        the {@code JimpleLocal} for which the {@code Value} is set
-     * @param val
-     *        the {@code Value} to set
-     * 
-     * @throws IllegalArgumentException
-     *         if {@code local} or {@code val} is {@code null}
-     */
-    public void setValue(JimpleLocal local, Value val) {
-        if (val == null) {
-            throw new IllegalArgumentException("value must not be null");
-        }
-
-        if (local == null) {
-            throw new IllegalArgumentException("local must not be null");
-        }
-
-        localMap.put(local, val);
-    }
-
-    /**
-     * Returns the {@code Value} mapped to the given {@code JimpleLocal}.
-     * 
-     * @param local
-     *        the {@code JimpleLocal} for which the {@code Value} is retrieved
-     * 
-     * @return the {@code Value} mapped to the given {@code JimpleLocal}
-     * 
-     * @throws IllegalArgumentException
-     *         if there is no {@code Value} mapping for {@code local}
-     */
-    public Value getValue(JimpleLocal local) {
-        if (!localMap.containsKey(local)) {
-            throw new IllegalArgumentException("local not found");
-        }
-
-        return localMap.get(local);
-    }
-
-    /**
-     * Returns a {@code Map} that maps a {@code JimpleLocal} to its corresponding {@code Value}.
-     * 
-     * @return a {@code Map} that maps a {@code JimpleLocal} to its corresponding {@code Value}
-     */
-    public Map<JimpleLocal, Value> getLocalMap() {
-        return localMap;
+        super();
     }
 
     @Override
@@ -106,6 +44,11 @@ public class ConstantFoldingElement implements LatticeElement {
 
         ConstantFoldingElement e = (ConstantFoldingElement) o;
         return localMap.equals(e.getLocalMap());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(localMap);
     }
 
     @Override
@@ -131,23 +74,8 @@ public class ConstantFoldingElement implements LatticeElement {
     /**
      * @author Nils Jessen
      * @author Sebastian Rauch
-     * 
-     *         A {@code Comparator} that compares {@code JimpleLocal}s by their name ({@code getName()}).
-     */
-    static class LocalComparator implements Comparator<JimpleLocal> {
-
-        @Override
-        public int compare(JimpleLocal l1, JimpleLocal l2) {
-            return l1.getName().compareTo(l2.getName());
-        }
-
-    }
-
-    /**
-     * @author Nils Jessen
-     * @author Sebastian Rauch
      *
-     * A {@code Value} represents the value of a {@code JimpleLocal}.
+     *         A {@code Value} represents the value of a {@code JimpleLocal}.
      *
      */
     static class Value {
@@ -160,7 +88,8 @@ public class ConstantFoldingElement implements LatticeElement {
         /**
          * Creates a {@code Value} representing the given {@code ArithmeticConstant}.
          * 
-         * @param constant the {@code ArithmeticConstant} for the new {@code Value}
+         * @param constant
+         *        the {@code ArithmeticConstant} for the new {@code Value}
          */
         public Value(ArithmeticConstant constant) {
             if (constant == null) {
@@ -175,7 +104,7 @@ public class ConstantFoldingElement implements LatticeElement {
             this.type = type;
             this.constant = null;
         }
-        
+
         /**
          * Returns the bottom-{@code Value}.
          * 
@@ -262,6 +191,7 @@ public class ConstantFoldingElement implements LatticeElement {
                 throw new IllegalStateException();
             }
         }
+
     }
 
     /**

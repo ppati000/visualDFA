@@ -2,7 +2,7 @@ package dfa.framework;
 
 import soot.Unit;
 
-public class UnsupportedStatementException extends DFAException {
+public class UnsupportedStatementException extends DFAException { 
 
     private static final long serialVersionUID = 1L;
 

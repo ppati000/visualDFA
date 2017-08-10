@@ -1,7 +1,7 @@
 package dfa.framework;
 
 /**
- * @author Sebastian Rauch
+ * @author Sebastian Rauch 
  * 
  *         A {@code DFADirection} describes the direction of a data-flow-analysis.
  */

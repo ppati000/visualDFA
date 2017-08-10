@@ -12,7 +12,7 @@ import soot.Unit;
 import soot.toolkits.graph.Block;
 
 /**
- * @author Sebastian Rauch
+ * @author Sebastian Rauch 
  *
  *         A {@code ControlFlowGraph} is a graph that consists of basic-blocks and the edges between those indicate the
  *         possible control flow. A {@code ControlFlowGraph} has exactly one start-block and at most one end-block (no
@@ -43,10 +43,10 @@ public class ControlFlowGraph {
         if (blocks.isEmpty()) {
             throw new IllegalArgumentException("the given BlockGraph is empty");
         }
-        
+
         predecessors = new HashMap<BasicBlock, List<BasicBlock>>();
         successors = new HashMap<BasicBlock, List<BasicBlock>>();
-        
+
         for (Block block : blocks) {
             BasicBlock basicBlock = buildBasicBlock(block);
             addBasicBlock(basicBlock);
@@ -254,7 +254,7 @@ public class ControlFlowGraph {
         if (basicBlocks.contains(basicBlock)) {
             return false;
         }
-        
+
         predecessors.put(basicBlock, new LinkedList<BasicBlock>());
         successors.put(basicBlock, new LinkedList<BasicBlock>());
         return basicBlocks.add(basicBlock); // returns true

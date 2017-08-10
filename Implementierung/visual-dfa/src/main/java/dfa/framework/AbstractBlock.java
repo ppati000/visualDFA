@@ -7,6 +7,6 @@ package dfa.framework;
  *         represent the basic blocks and {@code ElementaryBlock} that represent a single statement (line) inside a
  *         {@code BasicBlock}.
  */
-public abstract class AbstractBlock {
+public abstract class AbstractBlock { 
 
 }

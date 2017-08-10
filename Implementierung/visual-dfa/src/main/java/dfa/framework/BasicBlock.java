@@ -6,7 +6,7 @@ import java.util.List;
 import soot.toolkits.graph.Block;
 
 /**
- * @author Sebastian Rauch
+ * @author Sebastian Rauch 
  *
  *         A {@code BasicBlock} represents a basic block in a {@code ControlFlowGraph}. It consists of multiple
  *         (possible zero) {@code ElementaryBlock}s.

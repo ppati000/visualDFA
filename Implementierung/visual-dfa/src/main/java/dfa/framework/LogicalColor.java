@@ -1,7 +1,7 @@
 package dfa.framework;
 
 /**
- * @author Sebastian Rauch
+ * @author Sebastian Rauch 
  * 
  *         A {@code LogicalColor} describes the relation of a {@code BasicBlock} to a {@code Worklist}.
  */

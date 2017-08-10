@@ -3,7 +3,7 @@ package dfa.framework;
 import soot.Unit;
 
 /**
- * @author Sebastian Rauch
+ * @author Sebastian Rauch 
  * 
  *         A {@code Transition} executes a transition of a given {@code LatticeElement} on a given {@code Unit}.
  *

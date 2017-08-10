@@ -51,81 +51,57 @@ public class AnalysisLoader {
      *        a {@code Logger} used to report problems to (if {@code null} is given, problems are not reported)
      */
     public void loadAnalyses(Logger logger) {
-    	// this is just a temporary solution
-    	
-    	analysisNames = new LinkedList<String>();
-    	analyses = new HashMap<String, DFAFactory<? extends LatticeElement>>();
-    	
-    	DummyFactory dummyFactory = new DummyFactory();
-    	String dummyName = dummyFactory.getName();
-    	
-    	ConstantFoldingFactory cfFactory = new ConstantFoldingFactory();
-    	String cfName = cfFactory.getName();
-    	
-    	analysisNames.add(dummyName);
-    	analyses.put(dummyName, dummyFactory);
-    	
-    	analysisNames.add(cfName);
-    	analyses.put(cfName, cfFactory);
-    	
-    	
-    	// TODO resolve NoSuchMethodError on Reflections(packageName)
-    	// or more likely: find another way to load analyses
-    	/*
-        Reflections reflections = new Reflections(packageName);
+        // this is just a temporary solution
 
-        List<Class<? extends DFAFactory>> analysisClasses =
-                new ArrayList<Class<? extends DFAFactory>>(reflections.getSubTypesOf(DFAFactory.class));
+        analysisNames = new LinkedList<String>();
+        analyses = new HashMap<String, DFAFactory<? extends LatticeElement>>();
 
-        if (analysisNames == null) {
-            analysisNames = new LinkedList<String>();
-            analyses = new HashMap<String, DFAFactory>();
-        }
+        DummyFactory dummyFactory = new DummyFactory();
+        String dummyName = dummyFactory.getName();
 
-        for (Class<? extends DFAFactory> analysisClass : analysisClasses) {
-            Constructor<?> constructor = null;
+        ConstantFoldingFactory cfFactory = new ConstantFoldingFactory();
+        String cfName = cfFactory.getName();
 
-            String className = analysisClass.getCanonicalName();
-            try {
-                constructor = analysisClass.getConstructor();
-            } catch (NoSuchMethodException | SecurityException e) {
-                logWarning(logger, "cannot retrieve parameterless constructor of " + className,
-                        "ignoring " + className);
-                e.printStackTrace();
-            }
+        analysisNames.add(dummyName);
+        analyses.put(dummyName, dummyFactory);
 
-            if (constructor == null) {
-                // skip this DFAFactory
-                continue;
-            }
+        analysisNames.add(cfName);
+        analyses.put(cfName, cfFactory);
 
-            DFAFactory dfaFactory = null;
-            try {
-                dfaFactory = (DFAFactory) constructor.newInstance();
-            } catch (InstantiationException | IllegalAccessException | IllegalArgumentException
-                    | InvocationTargetException e) {
-                logWarning(logger, "cannot invoke constructor of " + className, "ignoring " + className);
-                e.printStackTrace();
-            } catch (RuntimeException e) {
-                logWarning(logger, "constructor of " + className + " threw " + e.getMessage(), "ignoring " + className);
-            }
-
-            if (dfaFactory == null) {
-                // skip this DFAFactory
-                continue;
-            }
-
-            String analysisName = dfaFactory.getName();
-
-            if (analysisNames.contains(analysisName)) {
-                logWarning(logger, "name collision for " + analysisName, "ignoring last one");
-                continue;
-            }
-
-            analysisNames.add(analysisName);
-            analyses.put(analysisName, dfaFactory);
-        }
-        */
+        // TODO resolve NoSuchMethodError on Reflections(packageName)
+        // or more likely: find another way to load analyses
+        /*
+         * Reflections reflections = new Reflections(packageName);
+         * 
+         * List<Class<? extends DFAFactory>> analysisClasses = new ArrayList<Class<? extends
+         * DFAFactory>>(reflections.getSubTypesOf(DFAFactory.class));
+         * 
+         * if (analysisNames == null) { analysisNames = new LinkedList<String>(); analyses = new HashMap<String,
+         * DFAFactory>(); }
+         * 
+         * for (Class<? extends DFAFactory> analysisClass : analysisClasses) { Constructor<?> constructor = null;
+         * 
+         * String className = analysisClass.getCanonicalName(); try { constructor = analysisClass.getConstructor(); }
+         * catch (NoSuchMethodException | SecurityException e) { logWarning(logger,
+         * "cannot retrieve parameterless constructor of " + className, "ignoring " + className); e.printStackTrace(); }
+         * 
+         * if (constructor == null) { // skip this DFAFactory continue; }
+         * 
+         * DFAFactory dfaFactory = null; try { dfaFactory = (DFAFactory) constructor.newInstance(); } catch
+         * (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+         * logWarning(logger, "cannot invoke constructor of " + className, "ignoring " + className);
+         * e.printStackTrace(); } catch (RuntimeException e) { logWarning(logger, "constructor of " + className +
+         * " threw " + e.getMessage(), "ignoring " + className); }
+         * 
+         * if (dfaFactory == null) { // skip this DFAFactory continue; }
+         * 
+         * String analysisName = dfaFactory.getName();
+         * 
+         * if (analysisNames.contains(analysisName)) { logWarning(logger, "name collision for " + analysisName,
+         * "ignoring last one"); continue; }
+         * 
+         * analysisNames.add(analysisName); analyses.put(analysisName, dfaFactory); }
+         */
     }
 
     public List<String> getAnalysesNames() {
@@ -163,7 +139,7 @@ public class AnalysisLoader {
             sb.append('\n');
             sb.append(warningMsg[i]);
         }
-        
+
         logger.warning(sb.toString());
     }
 

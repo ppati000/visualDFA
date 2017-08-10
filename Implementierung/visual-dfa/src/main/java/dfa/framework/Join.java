@@ -3,7 +3,7 @@ package dfa.framework;
 import java.util.Set;
 
 /**
- * @author Sebastian Rauch
+ * @author Sebastian Rauch 
  * 
  *         A {@code Join} executes a join-operation on a {@code Set} of {@code LatticeElement}s.
  *

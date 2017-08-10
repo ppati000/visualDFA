@@ -5,7 +5,7 @@ import java.util.Map;
 import soot.toolkits.graph.Block;
 
 /**
- * @author Sebastian Rauch
+ * @author Sebastian Rauch 
  * 
  *         A {@code Initializer} assigns an initial {@code BlockState} to each basic-block of a {@code BlockGraph}.
  *

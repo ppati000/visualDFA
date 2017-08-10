@@ -1,7 +1,7 @@
 package dfa.framework;
 
 /**
- * @author Sebastian Rauch
+ * @author Sebastian Rauch 
  * 
  *         A {@code LatticeElement} represents the elements of a lattice used for dataflow-analysis.
  */

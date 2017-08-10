@@ -9,7 +9,8 @@ import dfa.framework.SimpleBlockGraph;
  * @author Nils Jessen
  * @author Sebastian Rauch
  * 
- * A {@code ConstantFoldingAnalysis} creates {@code ConstantFoldingAnalysis}-Instances from {@code SimpleBlockGraph}.
+ *         A {@code ConstantFoldingAnalysis} creates {@code ConstantFoldingAnalysis}-Instances from
+ *         {@code SimpleBlockGraph}.
  *
  */
 public class ConstantFoldingFactory extends DFAFactory<ConstantFoldingElement> {

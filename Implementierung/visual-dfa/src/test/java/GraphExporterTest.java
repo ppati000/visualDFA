@@ -72,7 +72,7 @@ public class GraphExporterTest {
 
     @Test
     public void shouldCreateSmallExportImage() throws IOException {
-        BufferedImage exportedImage = GraphExporter.exportCurrentGraph(graph, 1.0, fakeStatePanel);
+        BufferedImage exportedImage = GraphExporter.exportCurrentGraph(graph, 1.0, null, null);
         BufferedImage referenceImage = ImageIO.read(getClass().getResourceAsStream("/export-small.png"));
 
         assertEquals("", TestUtils.bufferedImagesEqual(exportedImage, referenceImage, 10, 100, 10));
@@ -80,7 +80,7 @@ public class GraphExporterTest {
 
     @Test
     public void shouldCreateMediumExportImage() throws IOException {
-        BufferedImage exportedImage = GraphExporter.exportCurrentGraph(graph, 2.0, fakeStatePanel);
+        BufferedImage exportedImage = GraphExporter.exportCurrentGraph(graph, 2.0, null, null);
         BufferedImage referenceImage = ImageIO.read(getClass().getResourceAsStream("/export-medium.png"));
 
         assertEquals("", TestUtils.bufferedImagesEqual(exportedImage, referenceImage, 10, 300, 10));
@@ -88,7 +88,7 @@ public class GraphExporterTest {
 
     @Test
     public void shouldCreateLargeExportImage() throws IOException {
-        BufferedImage exportedImage = GraphExporter.exportCurrentGraph(graph, 3.0, fakeStatePanel);
+        BufferedImage exportedImage = GraphExporter.exportCurrentGraph(graph, 3.0, null, null);
         BufferedImage referenceImage = ImageIO.read(getClass().getResourceAsStream("/export-large.png"));
 
         assertEquals("", TestUtils.bufferedImagesEqual(exportedImage, referenceImage, 10, 800, 10));
@@ -116,13 +116,13 @@ public class GraphExporterTest {
 
         assertEquals(dfa.getTotalElementarySteps(), imageList.size());
 
-        assertTrue(TestUtils.deltaEqual(466, imageList.get(0).getWidth(), 60));
-        assertTrue(TestUtils.deltaEqual(305, imageList.get(0).getHeight(), 60));
+        assertTrue(TestUtils.deltaEqual(603, imageList.get(0).getWidth(), 60));
+        assertTrue(TestUtils.deltaEqual(299, imageList.get(0).getHeight(), 60));
 
         ArrayList<BufferedImage> blockImageList = GraphExporter.batchExport(dfa, 3.0, false);
 
         assertEquals(dfa.getTotalBlockSteps(), blockImageList.size());
-        assertTrue(TestUtils.deltaEqual(1322, blockImageList.get(0).getWidth(), 180));
-        assertTrue(TestUtils.deltaEqual(913, blockImageList.get(0).getHeight(), 180));
+        assertTrue(TestUtils.deltaEqual(1729, blockImageList.get(0).getWidth(), 180));
+        assertTrue(TestUtils.deltaEqual(895, blockImageList.get(0).getHeight(), 180));
     }
 }

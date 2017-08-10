@@ -25,6 +25,7 @@ public class GraphUIController {
     private mxGraph graph;
     private DFAExecution dfa;
     private StatePanelOpen statePanel = null;
+    private UIAbstractBlock selectedBlock;
 
     /**
      * Creates a new {@code GraphUIController}.
@@ -122,15 +123,16 @@ public class GraphUIController {
         graph.getSelectionModel().addListener(mxEvent.CHANGE, new mxEventSource.mxIEventListener() {
             @Override
             public void invoke(Object o, mxEventObject mxEventObject) {
-                if (statePanel != null) {
-                    // Weird API: "removed" cells are actually the newly selected cells.
-                    ArrayList<mxCell> selectedCells = (ArrayList<mxCell>) mxEventObject.getProperty("removed");
-                    if (selectedCells != null && selectedCells.size() > 0) {
-                        mxCell selectedCell = selectedCells.get(0);
-                        AbstractBlock selectedBlock = mxCellMap.get(selectedCell).getDFABlock();
-                        UIAbstractBlock uiAbstractBlock = mappedAbstractBlocks.get(selectedBlock);
+                // Weird API: "removed" cells are actually the newly selected cells.
+                ArrayList<mxCell> selectedCells = (ArrayList<mxCell>) mxEventObject.getProperty("removed");
 
-                        BlockState currentState = dfa.getCurrentAnalysisState().getBlockState(selectedBlock);
+                if (statePanel != null && selectedCells != null && selectedCells.size() > 0) {
+                        mxCell selectedCell = selectedCells.get(0);
+                        selectedBlock = mxCellMap.get(selectedCell);
+                        AbstractBlock selectedAbstractBlock = selectedBlock.getDFABlock();
+                        UIAbstractBlock uiAbstractBlock = mappedAbstractBlocks.get(selectedAbstractBlock);
+
+                        BlockState currentState = dfa.getCurrentAnalysisState().getBlockState(selectedAbstractBlock);
                         String inState = currentState.getInState().getStringRepresentation();
                         String outState = currentState.getOutState().getStringRepresentation();
 
@@ -142,10 +144,18 @@ public class GraphUIController {
                         statePanel.setIn(inState);
                         statePanel.setOut(outState);
                         statePanel.setSelectedLine(text, blockNumber, lineNumber);
-                    }
+                } else {
+                    selectedBlock = null;
+                    statePanel.setIn("");
+                    statePanel.setOut("");
+                    statePanel.setSelectedLine("", -1, -1);
                 }
             }
         });
+    }
+
+    public UIAbstractBlock getSelectedBlock() {
+        return selectedBlock;
     }
 
     /**

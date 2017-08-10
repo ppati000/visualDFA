@@ -4,10 +4,12 @@ import com.mxgraph.model.mxCell;
 import com.mxgraph.model.mxGeometry;
 import com.mxgraph.swing.mxGraphComponent;
 import com.mxgraph.util.mxConstants;
+import com.mxgraph.util.mxUtils;
 import com.mxgraph.view.mxGraph;
 import dfa.framework.AnalysisState;
 import dfa.framework.ElementaryBlock;
 
+import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
@@ -75,9 +77,20 @@ public class UILineBlock extends UIAbstractBlock {
             mxGeometry geo = new mxGeometry(0, yValue, Styles.BLOCK_WIDTH, Styles.LINE_HEIGHT);
             geo.setRelative(false);
 
-            cell = new mxCell(elementaryBlock.getUnit().toString(), geo, Styles.NO_BORDER + Styles.TEXT_ALIGN_LEFT
-                    + Styles.TEXT_ALIGN_VERTICAL_CENTER + Styles.TEXT_COLOR);
+            FontMetrics metrics = graphComponent.getFontMetrics(new Font(Font.MONOSPACED, Font.PLAIN, Styles.TEXT_SIZE));
+
+            // Handle long labels: Use BLOCK_WIDTH - 20 for word wrap to leave some space for appending "…".
+            String[] splitLabel = mxUtils.wordWrap(elementaryBlock.getUnit().toString(), metrics, Styles.BLOCK_WIDTH - 20);
+            String label = splitLabel.length > 1 ? splitLabel[0] + "…" : splitLabel[0];
+
+            // < and & characters have to be escaped (they are reserved HTML symbols).
+            String escapedHtmlLabel = label.replace("&", "&amp;").replace("<", "&lt;");
+            String formattedHtmlLabel = "<span style=\"font-family:monospace;\">" + escapedHtmlLabel + "</span>";
+
+            cell = new mxCell(formattedHtmlLabel, geo, Styles.NO_BORDER + Styles.TEXT_ALIGN_LEFT + Styles.TEXT_COLOR);
             graph.setCellStyles(mxConstants.STYLE_FILLCOLOR, Styles.TRANSPARENT_COLOR, new Object[]{cell});
+            graph.setCellStyles(mxConstants.STYLE_VERTICAL_ALIGN, mxConstants.ALIGN_MIDDLE, new Object[]{cell});
+
             cell.setVertex(true);
             graph.addCell(cell, parent.getMxCell());
 

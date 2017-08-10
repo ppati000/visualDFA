@@ -40,12 +40,7 @@ public class VisualGraphPanel extends JPanel {
     private JButton graphExport;
     private mxGraph graph;
     private Frame parentFrame = null;
-
     private Map<AbstractBlock, UIAbstractBlock> blockMap;
-
-    private final Color BLUE_HIGHLIGHT_COLOR = new Color(188, 230, 254);
-    private final Color ALMOST_WHITE_COLOR = new Color(251, 253, 255);
-    private final Color TEXT_COLOR = new Color(17, 37, 48);
 
     /**
      * Creates a new {@code VisualGraphPanel}.
@@ -59,7 +54,8 @@ public class VisualGraphPanel extends JPanel {
 
         jumpToAction = new JToggleButton("Jump to Action");
         graphExport = new JButton("Export Graph");
-        decorateGraphButton(jumpToAction);
+        decorateGraphButton(jumpToAction, false);
+        decorateGraphButton(graphExport, true);
 
         jumpToAction.setIcon(IconLoader.loadIcon("icons/map-marker.png", 0.2));
         jumpToAction.setPreferredSize(new Dimension(145, 40));
@@ -73,7 +69,7 @@ public class VisualGraphPanel extends JPanel {
         buttonGroup.setSize(getWidth(), 60);
         buttonGroup.add(graphExport);
         buttonGroup.add(jumpToAction);
-        buttonGroup.setBackground(ALMOST_WHITE_COLOR);
+        buttonGroup.setBackground(Colors.WHITE_BACKGROUND.getColor());
         add(buttonGroup, BorderLayout.NORTH);
 
         initialGraphState();
@@ -181,6 +177,8 @@ public class VisualGraphPanel extends JPanel {
                 mxCell currentMxCell = blockMap.get(currentBlock).getMxCell();
                 graph.getSelectionModel().addCell(currentMxCell);
                 graphComponent.scrollCellToVisible(currentMxCell);
+            } else {
+                graph.getSelectionModel().clear();
             }
         }
     }
@@ -293,21 +291,21 @@ public class VisualGraphPanel extends JPanel {
         });
     }
 
-    private void decorateGraphButton(final AbstractButton button) {
+    private void decorateGraphButton(final AbstractButton button, final boolean highlightClickedOnly) {
         button.setOpaque(true);
-        button.setBackground(ALMOST_WHITE_COLOR);
-        button.setForeground(TEXT_COLOR);
-        button.setBorder(new LineBorder(BLUE_HIGHLIGHT_COLOR, 2, true));
+        button.setBackground(Colors.LIGHT_TEXT.getColor());
+        button.setForeground(Colors.DARK_TEXT.getColor());
+        button.setBorder(new LineBorder(Colors.LIGHT_BACKGROUND.getColor(), 2, true));
 
         final ButtonModel startModel = button.getModel();
         startModel.addChangeListener(new ChangeListener() {
 
             @Override
             public void stateChanged(ChangeEvent e) {
-                if (button.getModel().isSelected()) {
-                    button.setBackground(BLUE_HIGHLIGHT_COLOR);
+                if (highlightClickedOnly && button.getModel().isPressed() || button.getModel().isSelected()) {
+                    button.setBackground(Colors.LIGHT_BACKGROUND.getColor());
                 } else {
-                    button.setBackground(ALMOST_WHITE_COLOR);
+                    button.setBackground(Colors.WHITE_BACKGROUND.getColor());
                 }
             }
 

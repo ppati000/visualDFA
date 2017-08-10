@@ -117,4 +117,20 @@ public class UIBasicBlock extends UIAbstractBlock {
     public BasicBlock getDFABlock() {
         return dfaBasicBlock;
     }
+
+    @Override
+    public String getText() {
+        String text = "";
+
+        for (UILineBlock child : lineBlocks) {
+            text += (child.getText() + "\n");
+        }
+
+        return text.trim();
+    }
+
+    @Override
+    public int[] getBlockAndLineNumbers() {
+        return new int[]{blockNumber, -1};
+    }
 }

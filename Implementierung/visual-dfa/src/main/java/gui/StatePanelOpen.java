@@ -45,7 +45,8 @@ public class StatePanelOpen extends JPanel {
     }
 
     public void setSelectedLine(String s, int blockNumber, int lineNumber) {
-        // TODO
+        // TODO Hey Michi. Denk dran: lineNumber kann auch -1 sein! In diesem Fall die lineNumber bitte nicht anzeigen :)
+        System.out.println(s + "\n" + blockNumber + "\n" + lineNumber);
     }
 
 }

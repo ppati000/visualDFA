@@ -111,6 +111,16 @@ public class UILineBlock extends UIAbstractBlock {
         }
     }
 
+    @Override
+    public String getText() {
+        return elementaryBlock.getUnit().toString();
+    }
+
+    @Override
+    public int[] getBlockAndLineNumbers() {
+        return new int[] {parent.blockNumber, blockNumber};
+    }
+
     /**
      * Returns the corresponding DFAFramework block.
      *

@@ -51,17 +51,20 @@ public class GraphUIController {
 
         this.dfa = dfa;
 
-        Map<AbstractBlock, UIAbstractBlock> mappedAbstractBlocks = new HashMap<>();
+        final Map<AbstractBlock, UIAbstractBlock> mappedAbstractBlocks = new HashMap<>();
         ControlFlowGraph dfaGraph = dfa.getCFG();
         List<BasicBlock> dfaBasicBlocks = dfaGraph.getBasicBlocks();
         Map<BasicBlock, UIBasicBlock> mappedBasicBlocks = new HashMap<>();
-        List<UIAbstractBlock> uiBlocks = new ArrayList<>();
+        final List<UIAbstractBlock> uiBlocks = new ArrayList<>();
         final Map<mxCell, UIAbstractBlock> mxCellMap = new HashMap<>();
 
         // First step: Build all visual blocks from DFAFramework data.
-        for (BasicBlock dfaBasicBlock : dfaBasicBlocks) {
+        for (int i = 0; i < dfaBasicBlocks.size(); i++) {
+            BasicBlock dfaBasicBlock = dfaBasicBlocks.get(i);
             UIBasicBlock basicBlock = new UIBasicBlock(graph, dfaBasicBlock, dfa);
+
             uiBlocks.add(basicBlock);
+            basicBlock.setBlockNumber(i);
             List<ElementaryBlock> elementaryBlocks = dfaBasicBlock.getElementaryBlocks();
 
             if (elementaryBlocks.size() != 0) {
@@ -70,17 +73,21 @@ public class GraphUIController {
                 // The first UILineBlock is a special case: it has no predecessor.
                 ElementaryBlock firstElementaryBlock = elementaryBlocks.get(0);
                 UILineBlock firstLineBlock = new UILineBlock(firstElementaryBlock, panel.getGraphComponent(), graph, basicBlock);
+
                 lineBlocks.add(firstLineBlock);
                 uiBlocks.add(firstLineBlock);
+                firstLineBlock.setBlockNumber(0);
                 basicBlock.insertLineBlock(lineBlocks.get(0));
                 mappedAbstractBlocks.put(firstElementaryBlock, firstLineBlock);
 
-                for (int i = 1; i < elementaryBlocks.size(); i++) {
-                    ElementaryBlock currentElementaryBlock = elementaryBlocks.get(i);
-                    UILineBlock newLineBlock = new UILineBlock(currentElementaryBlock, panel.getGraphComponent(), graph, basicBlock, lineBlocks.get(i - 1));
+                for (int n = 1; n < elementaryBlocks.size(); n++) {
+                    ElementaryBlock currentElementaryBlock = elementaryBlocks.get(n);
+                    UILineBlock newLineBlock = new UILineBlock(currentElementaryBlock, panel.getGraphComponent(), graph, basicBlock, lineBlocks.get(n - 1));
+
                     lineBlocks.add(newLineBlock);
                     uiBlocks.add(newLineBlock);
-                    basicBlock.insertLineBlock(lineBlocks.get(i));
+                    newLineBlock.setBlockNumber(n);
+                    basicBlock.insertLineBlock(lineBlocks.get(n));
                     mappedAbstractBlocks.put(currentElementaryBlock, newLineBlock);
                 }
             }
@@ -121,13 +128,20 @@ public class GraphUIController {
                     if (selectedCells != null && selectedCells.size() > 0) {
                         mxCell selectedCell = selectedCells.get(0);
                         AbstractBlock selectedBlock = mxCellMap.get(selectedCell).getDFABlock();
+                        UIAbstractBlock uiAbstractBlock = mappedAbstractBlocks.get(selectedBlock);
 
                         BlockState currentState = dfa.getCurrentAnalysisState().getBlockState(selectedBlock);
                         String inState = currentState.getInState().getStringRepresentation();
                         String outState = currentState.getOutState().getStringRepresentation();
 
+                        int[] blockAndLineNumbers = uiAbstractBlock.getBlockAndLineNumbers();
+                        String text = uiAbstractBlock.getText();
+                        int blockNumber = blockAndLineNumbers[0];
+                        int lineNumber = blockAndLineNumbers[1];
+
                         statePanel.setIn(inState);
                         statePanel.setOut(outState);
+                        statePanel.setSelectedLine(text, blockNumber, lineNumber);
                     }
                 }
             }
@@ -167,9 +181,5 @@ public class GraphUIController {
 
     public JPanel getVisualGraphPanel() {
         return panel;
-    }
-
-    public void exportGraph(boolean batch) {
-
     }
 }

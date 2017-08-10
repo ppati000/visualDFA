@@ -1,7 +1,7 @@
 package dfa.framework;
 
 /**
- * @author Sebastian Rauch
+ * @author Sebastian Rauch 
  *
  *         A {@code DFAFactory} provides the name and direction of a dataflow analysis. It creates a
  *         {@code DataFlowAnalysis} from a given {@code SingleTailedBlockGraph}.

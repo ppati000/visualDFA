@@ -215,7 +215,7 @@ public class AnalysisState<E extends LatticeElement> {
 
         this.stateMap = stateMap;
     }
-    
+
     protected Map<AbstractBlock, BlockState<E>> getStateMap() {
         return stateMap;
     }
@@ -233,7 +233,7 @@ public class AnalysisState<E extends LatticeElement> {
 
         this.colorMap = colorMap;
     }
-    
+
     protected Map<BasicBlock, LogicalColor> getColorMap() {
         return colorMap;
     }

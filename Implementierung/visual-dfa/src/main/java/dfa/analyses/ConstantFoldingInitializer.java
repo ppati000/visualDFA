@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-import dfa.analyses.ConstantFoldingElement.Value;
 import dfa.framework.BlockState;
 import dfa.framework.Initializer;
 import dfa.framework.SimpleBlockGraph;
@@ -55,10 +54,10 @@ public class ConstantFoldingInitializer implements Initializer<ConstantFoldingEl
 
         Chain<Local> locals = blockGraph.getBody().getLocals();
 
-        Map<JimpleLocal, ConstantFoldingElement.Value> initialBottomMap = new TreeMap<>(
-                LocalMapElement.DEFAULT_COMPARATOR);
-        Map<JimpleLocal, ConstantFoldingElement.Value> initialHeadMap = new TreeMap<>(
-                LocalMapElement.DEFAULT_COMPARATOR);
+        Map<JimpleLocal, ConstantFoldingElement.Value> initialBottomMap =
+                new TreeMap<>(LocalMapElement.DEFAULT_COMPARATOR);
+        Map<JimpleLocal, ConstantFoldingElement.Value> initialHeadMap =
+                new TreeMap<>(LocalMapElement.DEFAULT_COMPARATOR);
 
         ConstantFoldingElement.Value nullInt = new ConstantFoldingElement.Value(IntConstant.v(0));
         ConstantFoldingElement.Value nullLong = new ConstantFoldingElement.Value(LongConstant.v(0));
@@ -90,7 +89,8 @@ public class ConstantFoldingInitializer implements Initializer<ConstantFoldingEl
         BlockState<ConstantFoldingElement> headState = new BlockState<ConstantFoldingElement>(headIn, defaultIn);
         BlockState<ConstantFoldingElement> defaultState = new BlockState<ConstantFoldingElement>(defaultIn, defaultIn);
 
-        Map<Block, BlockState<ConstantFoldingElement>> initialMap = new HashMap<Block, BlockState<ConstantFoldingElement>>();
+        Map<Block, BlockState<ConstantFoldingElement>> initialMap =
+                new HashMap<Block, BlockState<ConstantFoldingElement>>();
 
         for (Block b : blocks) {
             if (b == head) {

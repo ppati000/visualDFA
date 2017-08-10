@@ -3,7 +3,7 @@ package dfa.analyses;
 import dfa.framework.*;
 
 /**
- * @author Patrick Petrovic
+ * @author Patrick Petrovic 
  *
  *         Dummy analysis for tests.
  */

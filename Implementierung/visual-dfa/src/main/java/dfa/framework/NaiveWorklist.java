@@ -4,7 +4,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 
 /**
- * @author Sebastian Rauch
+ * @author Sebastian Rauch 
  * 
  *         A {@code NaiveWorklist} is a {@code Worklist} which chooses the next {@code BasicBlock} to be retrieved
  *         according to the first-in-first-out principle. This means that {@code BasicBlock}s are retrieved in the order

@@ -3,7 +3,7 @@ package dfa.framework;
 import java.util.Iterator;
 
 /**
- * @author Sebastian Rauch
+ * @author Sebastian Rauch 
  * 
  *         A {@code Worklist} contains {@code BasicBlock}s that need to be processed.
  */

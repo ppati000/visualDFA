@@ -14,7 +14,7 @@ import soot.toolkits.graph.BlockGraph;
 import soot.toolkits.graph.BriefBlockGraph;
 
 /**
- * @author Sebastian Rauch
+ * @author Sebastian Rauch 
  *
  *         A {@code SimpleBlockGraph} is a {@code BriefBlockGraph} that has at most one tail (the {@code List} returned
  *         by {@code getTails()} contains at most one {@code Block}). A {@code SimpleBlockGraph} also has at most one

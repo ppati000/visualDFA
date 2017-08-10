@@ -7,7 +7,7 @@ import soot.Unit;
 import soot.toolkits.graph.Block;
 
 /**
- * @author Sebastian Rauch
+ * @author Sebastian Rauch 
  * 
  *         A {@code CompositeDataFlowAnalysis} combines a {@code Join}, a {@code Transition} and an {@code Initializer}
  *         into a {@code DataFlowAnalysis}.

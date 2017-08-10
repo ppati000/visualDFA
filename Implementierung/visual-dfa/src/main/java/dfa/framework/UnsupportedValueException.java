@@ -3,7 +3,7 @@ package dfa.framework;
 import soot.Value;
 
 /**
- * @author Sebastian Rauch
+ * @author Sebastian Rauch 
  * 
  *         An {@code Exception} thrown to indicate that an unsupported {@code soot.Value} was encountered.
  */

@@ -10,7 +10,7 @@ import java.util.Set;
 import soot.toolkits.graph.Block;
 
 /**
- * @author Sebastian Rauch
+ * @author Sebastian Rauch 
  * 
  *         A {@code DFAExecution} precalculates a {@code DataFlowAnalysis} and provides the intermediate analysis-steps.
  *

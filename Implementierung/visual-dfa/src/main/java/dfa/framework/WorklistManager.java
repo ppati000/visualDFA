@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class WorklistManager {
+public class WorklistManager { 
 
     private static final String WL_NAME_NAIVE = "naive";
     private static final String WL_NAME_RANDOM = "random";

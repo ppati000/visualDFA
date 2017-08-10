@@ -1,7 +1,7 @@
 package dfa.framework;
 
 /**
- * @author Sebastian Rauch
+ * @author Sebastian Rauch 
  * 
  *         A {@code BlockState} represents an in-state an an out-state.
  *

@@ -24,7 +24,7 @@ public abstract class LocalMapElement<V> implements LatticeElement {
     protected static final LocalComparator DEFAULT_COMPARATOR = new LocalComparator();
 
     protected SortedMap<JimpleLocal, V> localMap;
-
+    
     /**
      * Creates a {@code LocalMapElement} with the given mapping and local-{@code Comparator}.
      * 
@@ -35,6 +35,7 @@ public abstract class LocalMapElement<V> implements LatticeElement {
         this.localMap = new TreeMap<JimpleLocal, V>(comparator);
         this.localMap.putAll(localMap);
     }
+    
 
     /**
      * Creates a {@code LocalMapElement} with an empty mapping.
@@ -42,7 +43,7 @@ public abstract class LocalMapElement<V> implements LatticeElement {
     public LocalMapElement() {
         this(new TreeMap<JimpleLocal, V>(), DEFAULT_COMPARATOR);
     }
-
+    
     /**
      * Sets the value mapped to the given {@code JimpleLocal}.
      * 
@@ -65,7 +66,7 @@ public abstract class LocalMapElement<V> implements LatticeElement {
 
         localMap.put(local, val);
     }
-
+    
     /**
      * Returns the value mapped to the given {@code JimpleLocal}.
      * 
@@ -78,12 +79,9 @@ public abstract class LocalMapElement<V> implements LatticeElement {
      *         if there is no value mapping for {@code local}
      */
     public V getValue(JimpleLocal local) {
-        if (!localMap.containsKey(local)) {
-            throw new IllegalArgumentException("local not found");
-        }
-
         return localMap.get(local);
     }
+    
 
     /**
      * Returns a {@code Map} that maps a {@code JimpleLocal} to its corresponding value.
@@ -93,11 +91,11 @@ public abstract class LocalMapElement<V> implements LatticeElement {
     public Map<JimpleLocal, V> getLocalMap() {
         return localMap;
     }
-
+    
     /* force subclasses to override this themselves */
     @Override
     public abstract boolean equals(Object o);
-
+    
     /* force subclasses to override this themselves (to make sure the equals-hashCode-contract is fulfilled) */
     @Override
     public abstract int hashCode();

@@ -180,6 +180,7 @@ public class VisualGraphPanel extends JPanel {
             if (currentBlock != null) {
                 mxCell currentMxCell = blockMap.get(currentBlock).getMxCell();
                 graph.getSelectionModel().addCell(currentMxCell);
+                graphComponent.scrollCellToVisible(currentMxCell);
             }
         }
     }

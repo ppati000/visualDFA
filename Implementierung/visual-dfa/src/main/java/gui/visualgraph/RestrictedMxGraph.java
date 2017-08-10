@@ -4,6 +4,7 @@ import com.mxgraph.model.mxCell;
 import com.mxgraph.swing.util.mxSwingConstants;
 import com.mxgraph.util.mxConstants;
 import com.mxgraph.view.mxGraph;
+import gui.Colors;
 
 import java.awt.*;
 
@@ -16,11 +17,13 @@ class RestrictedMxGraph extends mxGraph {
     public RestrictedMxGraph() {
         super();
 
-        mxSwingConstants.VERTEX_SELECTION_COLOR = Styles.SELECTION_STROKE_COLOR;
+        mxSwingConstants.VERTEX_SELECTION_COLOR = Colors.BACKGROUND.getColor().brighter();
         mxSwingConstants.VERTEX_SELECTION_STROKE = new BasicStroke(Styles.SELECTION_STROKE_WIDTH, 0, 0, 10.0F, null, 0);
         mxConstants.DEFAULT_FONTSIZE = Styles.TEXT_SIZE;
         mxConstants.LABEL_INSET = Styles.TEXT_PADDING_LEFT;
         mxConstants.LINE_HEIGHT = Styles.LINE_HEIGHT;
+
+        setHtmlLabels(true); // With htmlLabels == false, text is not centered properly.
     }
 
     public boolean isCellFoldable(Object cell, boolean collapse) {

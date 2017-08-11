@@ -25,6 +25,7 @@ public final class App {
             public void run() {
                 try {
                     frame.setVisible(true);
+
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

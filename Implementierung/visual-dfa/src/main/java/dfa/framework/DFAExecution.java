@@ -364,16 +364,12 @@ public class DFAExecution<E extends LatticeElement> {
                 List<BasicBlock> preds = getPredecessors(newBasicBlock);
                 Set<E> predOutStates = new HashSet<E>();
                 
-                // TODO cleanup comments
                 for (BasicBlock p : preds) {
                     E predOutState = prevAnalysisState.getBlockState(p).getOutState();
                     predOutStates.add(predOutState);
-//                    System.out.println("predecessor out state: \n" + predOutState.getStringRepresentation());
                 }
                 
-//                System.out.println("doing join on " + preds.size() + " blocks");
                 E outStatesJoin = dfa.join(predOutStates);
-//                System.out.println("result: \n" + outStatesJoin.getStringRepresentation());
 
                 BlockState<E> prevBlockState = prevAnalysisState.getBlockState(newBasicBlock);
                 BlockState<E> newBlockState = new BlockState<E>(outStatesJoin, prevBlockState.getOutState());
@@ -415,10 +411,6 @@ public class DFAExecution<E extends LatticeElement> {
                 }
 
                 if (nextElementaryBlock == null) {
-//                    E basicBlockInState = prevAnalysisState.getBlockState(prevBasicBlock).getInState();
-//                    newAnalysisState =
-//                            finishBasicBlock(prevBasicBlock, basicBlockInState, prevAnalysisState, visitedBasicBlocks);
-//                    E newBlockOutState = prevAnalysisState.getBlockState(prevBasicBlock).getInState();
                     newAnalysisState =
                             finishBasicBlock(prevBasicBlock, prevOutState, prevAnalysisState, visitedBasicBlocks);
                 } else {
@@ -427,11 +419,11 @@ public class DFAExecution<E extends LatticeElement> {
                     newAnalysisState = newState(prevAnalysisState, prevWorklist.clone(), prevBasicBlock, ++eBlockIdx);
                     newAnalysisState.setBlockState(nextElementaryBlock, nextBlockState);
                 }
-
-                analysisStates.add(newAnalysisState);
-                prevAnalysisState = newAnalysisState;
-                ++elementaryStep;
             }
+            
+            analysisStates.add(newAnalysisState);
+            prevAnalysisState = newAnalysisState;
+            ++elementaryStep;
         }
     }
 
@@ -510,6 +502,7 @@ public class DFAExecution<E extends LatticeElement> {
 
         List<BasicBlock> successors = getSuccessors(currentBBlock);
         E prevOutState = prevBlockState.getOutState();
+        
         if (!outState.equals(prevOutState)) {
             for (BasicBlock bSucc : successors) {
                 newWorklist.add(bSucc);
@@ -520,10 +513,6 @@ public class DFAExecution<E extends LatticeElement> {
         BlockState<E> newBlockState = new BlockState<E>(prevBlockState.getInState(), outState);
         newAnalysisState.setBlockState(currentBBlock, newBlockState);
 
-        // TODO remove comments
-//        System.out.println("finished with out-state:");
-//        System.out.println(outState.getStringRepresentation());
-        
         updateColors(prevAnalysisState, newAnalysisState, visited);
         return newAnalysisState;
     }

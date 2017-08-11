@@ -92,6 +92,12 @@ public class ConstantBitsElement extends LocalMapElement<BitValueArray> {
     public int hashCode() {
         return Objects.hash(localMap);
     }
+    
+    @Override
+    public LocalMapElement<BitValueArray> clone() {
+        // TODO implement
+        return null;
+    }
 
     // TODO at the moment: String representation has lowest bit in the left
     @Override
@@ -277,7 +283,7 @@ public class ConstantBitsElement extends LocalMapElement<BitValueArray> {
         public int hashCode() {
             return Objects.hash((Object[]) bitValues);
         }
-
+        
         @Override
         public String toString() {
             return bitsToString(getBitValues());

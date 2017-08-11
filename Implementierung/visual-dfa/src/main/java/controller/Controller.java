@@ -196,9 +196,6 @@ public class Controller {
      * was set.
      */
     public void isAtBreakpoint() {
-        System.out.println("block" + this.dfaExecution.getCurrentBlockStep());
-        System.out.println("elementary; " +this.dfaExecution.getCurrentElementaryStep());
-       
         if (this.dfaExecution.isAtBreakpoint()) {
             this.shouldContinue = false;
         } else {
@@ -233,7 +230,7 @@ public class Controller {
      */
     public void startAnalysis() {
         // Collect information
-        programFrame.getInputPanel().setActivated(false);
+        visibilityPrecalculating();
         String analysisName = programFrame.getInputPanel().getAnalysis();
         String worklistName = programFrame.getInputPanel().getWorklist();
         String code = programFrame.getInputPanel().getCode();
@@ -243,6 +240,7 @@ public class Controller {
         CodeProcessor processor = new CodeProcessor(code);
         if (!processor.wasSuccessful()) {
             new MessageBox(programFrame, "Compilation Error", processor.getErrorMessage());
+            visibilityInput();
             return;
         }
         String packageName = processor.getPathName();
@@ -281,6 +279,7 @@ public class Controller {
         synchronized (this) {
             while (i < TIME_TO_WAIT
                     && !(precalcController.getPrecalcState() == DFAPrecalcController.PrecalcState.COMPLETED)) {
+                //TODO
                 try {
                     wait(100);
                 } catch (InterruptedException e) {

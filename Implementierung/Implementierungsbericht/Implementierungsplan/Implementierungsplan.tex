@@ -1,0 +1,43 @@
+\part{Implementierungsplan}
+
+\section{Aufgabenteilung}
+
+Das Programm ist in sechs Hauptmodule aufgeteilt:
+
+\begin{itemize}
+  \item Modul \inlinecode{dfa.framework}: Stellt die nötige Infrastruktur zur Ausführung von Datenflussanalysen bereit und bietet eine Schnittstelle, um konkrete Analysen zu implementieren.
+  \item Modul \inlinecode{dfa.analyses}: Implementiert die Schnittstellen des DFA-Frameworks und enthält die Logik der konkreten Analysen.
+  \item Modul \inlinecode{controller}: Enthält die Startklasse und steuert das Zusammenspiel von DFA-Framework, GUI und visuellem Graphen.
+  \item Modul \inlinecode{codeprocessor}: Verarbeitet die Code-Eingabe des Benutzers zu einem logischen Kontrollflussgraphen, der für die Analyse verwendet wird.
+  \item Modul \inlinecode{gui}: Beinhaltet das User Interface (exkl. des visuellen Graphen)
+  \item Modul \inlinecode{gui.visualgraph}: Zeigt den visuellen Graphen an und ermöglicht Benutzerinteraktion mit diesem.
+\end{itemize}
+
+Um einen kontinuierlichen Arbeitsablauf zu gewährleisten und das Auftreten von Merge Conflicts zu minimieren, wurde eine feste Aufgabenteilung festgelegt. Die Implementierung wurde unter folgender Aufteilung durchgeführt:
+
+\begin{tabular}{l*{6}{c}r}
+Modul & Person(en) \\
+\hline
+\inlinecode{dfa.framework} & Nils, Sebastian \\
+\inlinecode{dfa.analyses} & Nils, Sebastian \\
+\inlinecode{controller} & Anika \\
+\inlinecode{codeprocessor} & Anika \\
+\inlinecode{gui} & Michael \\
+\inlinecode{gui.visualgraph} & Patrick \\
+\end{tabular}
+
+\newpage
+\section{Implementierungsreihenfolge}
+
+Es waren einige Abhängigkeiten zwischen den Modulen zu beachten. Daher wurde ein grober Ablaufplan erstellt:
+
+\begin{enumerate}
+  \item Implementierung des DFA-Frameworks sowie einer Dummy-Analyse, um schnelles Testen zu ermöglichen; parallel dazu Implementierung der Grundfunktionalität des visuellen Graphen
+  \item Implementierung von Code-Processor, Controller sowie dem für den Start und die Steuerung der Analyse notwendigen Teil der GUI
+  \item Restimplementierung von GUI und visuellem Graphen; parallel dazu Implementierung der konkreten Analysen.
+\end{enumerate}
+
+Die Implementierung der konkreten Analysen sollte weitgehend entkoppelt vom Rest des Programms ablaufen, da durch die Existenz der Dummy-Analyse kein anderer Teil des Programms davon abhängt.
+Auch der visuelle Graph musste nicht notwendigerweise zu Beginn der Implementierung vollständig sein, da nur die Schnittstelle des \inlinecode{GraphUIController} und die Einbindung des \inlinecode{VisualGraphPanel} für die Funktion des Programms essenziell sind.
+Ebenfalls nicht essenziell für die Programmfunktionalität zu Beginn der Implementierung war das \inlinecode{StatePanelOpen}, da dieses nur Zustände der Analyse anzeigt, selbst aber keine Programmlogik enthält.
+

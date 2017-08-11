@@ -14,7 +14,6 @@ import soot.CharType;
 import soot.IntType;
 import soot.Local;
 import soot.LongType;
-import soot.PrimType;
 import soot.ShortType;
 import soot.Type;
 import soot.jimple.IntConstant;
@@ -67,7 +66,7 @@ public class ConstantFoldingInitializer implements Initializer<ConstantFoldingEl
                 throw new IllegalStateException("no jimple local");
             }
             Type t = l.getType();
-            if (!(t instanceof PrimType)) {
+            if (!ConstantFoldingElement.isLocalTypeAccepted(t)) {
                 continue;
             }
             if (t instanceof BooleanType || t instanceof ByteType || t instanceof CharType || t instanceof ShortType
@@ -84,10 +83,10 @@ public class ConstantFoldingInitializer implements Initializer<ConstantFoldingEl
         List<Block> blocks = blockGraph.getBlocks();
 
         ConstantFoldingElement headIn = new ConstantFoldingElement(initialHeadMap);
-        ConstantFoldingElement defaultIn = new ConstantFoldingElement(initialBottomMap);
+        ConstantFoldingElement defaultInOut = new ConstantFoldingElement(initialBottomMap);
 
-        BlockState<ConstantFoldingElement> headState = new BlockState<ConstantFoldingElement>(headIn, defaultIn);
-        BlockState<ConstantFoldingElement> defaultState = new BlockState<ConstantFoldingElement>(defaultIn, defaultIn);
+        BlockState<ConstantFoldingElement> headState = new BlockState<ConstantFoldingElement>(headIn, defaultInOut);
+        BlockState<ConstantFoldingElement> defaultState = new BlockState<ConstantFoldingElement>(defaultInOut, defaultInOut);
 
         Map<Block, BlockState<ConstantFoldingElement>> initialMap =
                 new HashMap<Block, BlockState<ConstantFoldingElement>>();

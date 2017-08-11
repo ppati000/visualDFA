@@ -5,6 +5,13 @@ import java.util.Map;
 import java.util.Objects;
 
 import dfa.analyses.ConstantFoldingElement.Value;
+import soot.BooleanType;
+import soot.ByteType;
+import soot.CharType;
+import soot.IntType;
+import soot.LongType;
+import soot.ShortType;
+import soot.Type;
 import soot.jimple.ArithmeticConstant;
 import soot.jimple.IntConstant;
 import soot.jimple.LongConstant;
@@ -18,6 +25,18 @@ import soot.jimple.internal.JimpleLocal;
  *
  */
 public class ConstantFoldingElement extends LocalMapElement<Value> {
+
+    /**
+     * Determines whether a certain type of Local is accepted (can be contained in) a {@code ConstantFoldingElement}.
+     * 
+     * @param local
+     *        the {@code JimpleLocal} in question
+     * @return {@code true} if the given {@code JimpleLocal} is accepted, {@code false} otherwise
+     */
+    public static boolean isLocalTypeAccepted(Type type) {
+        return type instanceof BooleanType || type instanceof ByteType || type instanceof CharType
+                || type instanceof ShortType || type instanceof IntType || type instanceof LongType;
+    }
 
     /**
      * Creates a {@code LocalMapElement} with the given mapping and local-{@code Comparator}.
@@ -170,11 +189,14 @@ public class ConstantFoldingElement extends LocalMapElement<Value> {
 
         @Override
         public String toString() {
+            // TODO use proper symbols
             switch (getType()) {
             case BOTTOM:
-                return "\u22A5";
+                return "B";
+            // return "\u22A5";
             case TOP:
-                return "\u22A4";
+                return "T";
+            // return "\u22A4";
             case CONST:
                 return constToString(getConstant());
             default:

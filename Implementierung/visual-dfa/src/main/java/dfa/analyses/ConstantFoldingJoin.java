@@ -25,6 +25,7 @@ public class ConstantFoldingJoin implements Join<ConstantFoldingElement> {
         while (it.hasNext()) {
             ConstantFoldingElement compElement = it.next();
             Map<JimpleLocal, ConstantFoldingElement.Value> compMap = compElement.getLocalMap();
+            
             for (Map.Entry<JimpleLocal, ConstantFoldingElement.Value> entry : refMap.entrySet()) {
                 if (!compMap.containsKey(entry.getKey())) {
                     throw new IllegalArgumentException("locals not matching");
@@ -43,7 +44,7 @@ public class ConstantFoldingJoin implements Join<ConstantFoldingElement> {
             Iterator<ConstantFoldingElement> elementIt = elements.iterator();
             JimpleLocal local = entry.getKey();
             Value tmp = Value.getBottom();
-
+            
             while (elementIt.hasNext()) {
                 ConstantFoldingElement current = elementIt.next();
                 Value currentVal = current.getValue(local);

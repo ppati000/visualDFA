@@ -31,18 +31,21 @@ public class AutoplayDriver implements Runnable {
      * analysis.
      */
     public void run() {
-        boolean hasNextLine = controller.nextLine();
-        while (hasNextLine && this.controller.shouldContinue()) {
-            try {
-                Thread.sleep((long) (controller.getDelay() * 1000));
-            } catch (InterruptedException e) {
-
+        // number of times you should wait 50ms long
+        int delayTimes = this.controller.getDelay() * 20;
+        lineIterator: while (this.controller.nextLine()) {
+            for (int i = 0; i < delayTimes; i++) {
+                try {
+                    Thread.sleep((long) 50);
+                    delayTimes = this.controller.getDelay() * 20;
+                    if (!this.controller.shouldContinue()) {
+                        break lineIterator;
+                    }
+                } catch (InterruptedException e) {
+                }
             }
-            if (this.controller.shouldContinue()) {
-                hasNextLine = controller.nextLine();
-            }
+            this.controller.visibilityWorking();
         }
-        this.controller.visibilityWorking();
     }
 
 }

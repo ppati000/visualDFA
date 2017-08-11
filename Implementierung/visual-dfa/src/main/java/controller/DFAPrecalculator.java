@@ -37,7 +37,8 @@ public class DFAPrecalculator implements Runnable {
      *            performed
      * @param precalcController
      *            {@code DFAPrecalcController}
-     * @param controller {@code Controller} to inform the user about an exception
+     * @param controller
+     *            {@code Controller} to inform the user about an exception
      * 
      */
     public DFAPrecalculator(DFAFactory<? extends LatticeElement> factory, Worklist worklist,
@@ -65,11 +66,14 @@ public class DFAPrecalculator implements Runnable {
      */
     public void run() {
         try {
-        this.dfaExecution = new DFAExecution(this.factory, this.worklist, this.simpleBlockGraph,
-                this.precalcController);
-        } catch(DFAException e) {
+            this.dfaExecution = new DFAExecution(this.factory, this.worklist, this.simpleBlockGraph,
+                    this.precalcController);
+        } catch (DFAException e) {
             this.controller.createExceptionBox(e.getMessage());
             this.precalcController.stopPrecalc();
+            this.controller.visibilityInput();
+        } catch (RuntimeException e) {
+            System.out.println("an unexpected error occured");
         }
     }
 

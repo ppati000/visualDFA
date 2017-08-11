@@ -1,5 +1,6 @@
 package dfa.analyses;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,11 +27,11 @@ import soot.util.Chain;
  * @author Nils Jessen
  * @author Sebastian Rauch
  * 
- *         A {@code ConstantFoldingTransition} performs the initialization for a {@code ConstantFoldingAnalysis}.
+ *         A {@code ConstantFoldingInitializer} performs the initialization for a {@code ConstantFoldingAnalysis}.
  */
 public class ConstantFoldingInitializer implements Initializer<ConstantFoldingElement> {
 
-    private SimpleBlockGraph blockGraph;
+    private Map<Block, BlockState<ConstantFoldingElement>> initialMap;
 
     /**
      * Creates a {@code ConstantFoldingInitializer} for the given {@code SimpleBlockGraph}.
@@ -39,19 +40,12 @@ public class ConstantFoldingInitializer implements Initializer<ConstantFoldingEl
      *        the {@code SimpleBlockGraph} the analysis to initialize is executed on
      */
     public ConstantFoldingInitializer(SimpleBlockGraph blockGraph) {
-        this.blockGraph = blockGraph;
-    }
-
-    @Override
-    public Map<Block, BlockState<ConstantFoldingElement>> getInitialStates() {
         List<Block> heads = blockGraph.getHeads();
         if (heads.size() < 1) {
             throw new IllegalStateException("no entry point found");
         } else if (heads.size() > 1) {
             throw new IllegalStateException("multiply entry points found");
         }
-
-        Chain<Local> locals = blockGraph.getBody().getLocals();
 
         Map<JimpleLocal, ConstantFoldingElement.Value> initialBottomMap =
                 new TreeMap<>(LocalMapElement.DEFAULT_COMPARATOR);
@@ -61,6 +55,7 @@ public class ConstantFoldingInitializer implements Initializer<ConstantFoldingEl
         ConstantFoldingElement.Value nullInt = new ConstantFoldingElement.Value(IntConstant.v(0));
         ConstantFoldingElement.Value nullLong = new ConstantFoldingElement.Value(LongConstant.v(0));
 
+        Chain<Local> locals = blockGraph.getBody().getLocals();
         for (Local l : locals) {
             if (!(l instanceof JimpleLocal)) {
                 throw new IllegalStateException("no jimple local");
@@ -86,10 +81,10 @@ public class ConstantFoldingInitializer implements Initializer<ConstantFoldingEl
         ConstantFoldingElement defaultInOut = new ConstantFoldingElement(initialBottomMap);
 
         BlockState<ConstantFoldingElement> headState = new BlockState<ConstantFoldingElement>(headIn, defaultInOut);
-        BlockState<ConstantFoldingElement> defaultState = new BlockState<ConstantFoldingElement>(defaultInOut, defaultInOut);
+        BlockState<ConstantFoldingElement> defaultState =
+                new BlockState<ConstantFoldingElement>(defaultInOut, defaultInOut);
 
-        Map<Block, BlockState<ConstantFoldingElement>> initialMap =
-                new HashMap<Block, BlockState<ConstantFoldingElement>>();
+        initialMap = new HashMap<Block, BlockState<ConstantFoldingElement>>();
 
         for (Block b : blocks) {
             if (b == head) {
@@ -98,8 +93,11 @@ public class ConstantFoldingInitializer implements Initializer<ConstantFoldingEl
                 initialMap.put(b, defaultState);
             }
         }
+    }
 
-        return initialMap;
+    @Override
+    public Map<Block, BlockState<ConstantFoldingElement>> getInitialStates() {
+        return Collections.unmodifiableMap(initialMap);
     }
 
 }

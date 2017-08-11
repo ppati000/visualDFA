@@ -149,7 +149,7 @@ public class ConstantFoldingTransition implements Transition<ConstantFoldingElem
 
         @Override
         public void caseBreakpointStmt(BreakpointStmt stmt) {
-            throw new UnsupportedStatementException("BreakpointStmt", stmt);
+            // ignore
         }
 
         @Override
@@ -318,12 +318,12 @@ public class ConstantFoldingTransition implements Transition<ConstantFoldingElem
         // ExprSwitch
 
         /*
-         * constant # BOTTON = BOTTOM for # in {+,-,*,/,%,&,|,^,<<,<<<,>>}
+         * constant # BOTTON = BOTTOM for # in {+,-,*,/,%,&,|,^,<<,>>,>>>}
          */
 
         @Override
         public void caseAddExpr(AddExpr expr) {
-            ValuePair operandValues = calcOperands(expr);
+            Pair<ConstantFoldingElement.Value> operandValues = calcOperands(expr);
             ConstantFoldingElement.Value op1 = operandValues.getFirst();
             ConstantFoldingElement.Value op2 = operandValues.getSecond();
 
@@ -339,7 +339,7 @@ public class ConstantFoldingTransition implements Transition<ConstantFoldingElem
 
         @Override
         public void caseSubExpr(SubExpr expr) {
-            ValuePair operandValues = calcOperands(expr);
+            Pair<ConstantFoldingElement.Value> operandValues = calcOperands(expr);
             ConstantFoldingElement.Value op1 = operandValues.getFirst();
             ConstantFoldingElement.Value op2 = operandValues.getSecond();
 
@@ -355,7 +355,7 @@ public class ConstantFoldingTransition implements Transition<ConstantFoldingElem
 
         @Override
         public void caseMulExpr(MulExpr expr) {
-            ValuePair operandValues = calcOperands(expr);
+            Pair<ConstantFoldingElement.Value> operandValues = calcOperands(expr);
             ConstantFoldingElement.Value op1 = operandValues.getFirst();
             ConstantFoldingElement.Value op2 = operandValues.getSecond();
 
@@ -406,7 +406,7 @@ public class ConstantFoldingTransition implements Transition<ConstantFoldingElem
 
         @Override
         public void caseDivExpr(DivExpr expr) {
-            ValuePair operandValues = calcOperands(expr);
+            Pair<ConstantFoldingElement.Value> operandValues = calcOperands(expr);
             ConstantFoldingElement.Value op1 = operandValues.getFirst();
             ConstantFoldingElement.Value op2 = operandValues.getSecond();
 
@@ -442,7 +442,7 @@ public class ConstantFoldingTransition implements Transition<ConstantFoldingElem
 
         @Override
         public void caseRemExpr(RemExpr expr) {
-            ValuePair operandValues = calcOperands(expr);
+            Pair<ConstantFoldingElement.Value> operandValues = calcOperands(expr);
             ConstantFoldingElement.Value op1 = operandValues.getFirst();
             ConstantFoldingElement.Value op2 = operandValues.getSecond();
 
@@ -492,7 +492,7 @@ public class ConstantFoldingTransition implements Transition<ConstantFoldingElem
 
         @Override
         public void caseAndExpr(AndExpr expr) {
-            ValuePair operandValues = calcOperands(expr);
+            Pair<ConstantFoldingElement.Value> operandValues = calcOperands(expr);
             ConstantFoldingElement.Value op1 = operandValues.getFirst();
             ConstantFoldingElement.Value op2 = operandValues.getSecond();
 
@@ -541,7 +541,7 @@ public class ConstantFoldingTransition implements Transition<ConstantFoldingElem
 
         @Override
         public void caseOrExpr(OrExpr expr) {
-            ValuePair operandValues = calcOperands(expr);
+            Pair<ConstantFoldingElement.Value> operandValues = calcOperands(expr);
             ConstantFoldingElement.Value op1 = operandValues.getFirst();
             ConstantFoldingElement.Value op2 = operandValues.getSecond();
 
@@ -592,7 +592,7 @@ public class ConstantFoldingTransition implements Transition<ConstantFoldingElem
 
         @Override
         public void caseXorExpr(XorExpr expr) {
-            ValuePair operandValues = calcOperands(expr);
+            Pair<ConstantFoldingElement.Value> operandValues = calcOperands(expr);
             ConstantFoldingElement.Value op1 = operandValues.getFirst();
             ConstantFoldingElement.Value op2 = operandValues.getSecond();
 
@@ -608,7 +608,7 @@ public class ConstantFoldingTransition implements Transition<ConstantFoldingElem
 
         @Override
         public void caseShlExpr(ShlExpr expr) {
-            ValuePair operandValues = calcOperands(expr);
+            Pair<ConstantFoldingElement.Value> operandValues = calcOperands(expr);
             ConstantFoldingElement.Value op1 = operandValues.getFirst();
             ConstantFoldingElement.Value op2 = operandValues.getSecond();
 
@@ -636,7 +636,7 @@ public class ConstantFoldingTransition implements Transition<ConstantFoldingElem
 
         @Override
         public void caseShrExpr(ShrExpr expr) {
-            ValuePair operandValues = calcOperands(expr);
+            Pair<ConstantFoldingElement.Value> operandValues = calcOperands(expr);
             ConstantFoldingElement.Value op1 = operandValues.getFirst();
             ConstantFoldingElement.Value op2 = operandValues.getSecond();
 
@@ -664,7 +664,7 @@ public class ConstantFoldingTransition implements Transition<ConstantFoldingElem
 
         @Override
         public void caseUshrExpr(UshrExpr expr) {
-            ValuePair operandValues = calcOperands(expr);
+            Pair<ConstantFoldingElement.Value> operandValues = calcOperands(expr);
             ConstantFoldingElement.Value op1 = operandValues.getFirst();
             ConstantFoldingElement.Value op2 = operandValues.getSecond();
 
@@ -716,7 +716,7 @@ public class ConstantFoldingTransition implements Transition<ConstantFoldingElem
 
         @Override
         public void caseEqExpr(EqExpr expr) {
-            ValuePair operandValues = calcOperands(expr);
+            Pair<ConstantFoldingElement.Value> operandValues = calcOperands(expr);
             ConstantFoldingElement.Value op1 = operandValues.getFirst();
             ConstantFoldingElement.Value op2 = operandValues.getSecond();
 
@@ -732,7 +732,7 @@ public class ConstantFoldingTransition implements Transition<ConstantFoldingElem
 
         @Override
         public void caseGeExpr(GeExpr expr) {
-            ValuePair operandValues = calcOperands(expr);
+            Pair<ConstantFoldingElement.Value> operandValues = calcOperands(expr);
             ConstantFoldingElement.Value op1 = operandValues.getFirst();
             ConstantFoldingElement.Value op2 = operandValues.getSecond();
 
@@ -748,7 +748,7 @@ public class ConstantFoldingTransition implements Transition<ConstantFoldingElem
 
         @Override
         public void caseGtExpr(GtExpr expr) {
-            ValuePair operandValues = calcOperands(expr);
+            Pair<ConstantFoldingElement.Value> operandValues = calcOperands(expr);
             ConstantFoldingElement.Value op1 = operandValues.getFirst();
             ConstantFoldingElement.Value op2 = operandValues.getSecond();
 
@@ -764,7 +764,7 @@ public class ConstantFoldingTransition implements Transition<ConstantFoldingElem
 
         @Override
         public void caseLeExpr(LeExpr expr) {
-            ValuePair operandValues = calcOperands(expr);
+            Pair<ConstantFoldingElement.Value> operandValues = calcOperands(expr);
             ConstantFoldingElement.Value op1 = operandValues.getFirst();
             ConstantFoldingElement.Value op2 = operandValues.getSecond();
 
@@ -780,7 +780,7 @@ public class ConstantFoldingTransition implements Transition<ConstantFoldingElem
 
         @Override
         public void caseLtExpr(LtExpr expr) {
-            ValuePair operandValues = calcOperands(expr);
+            Pair<ConstantFoldingElement.Value> operandValues = calcOperands(expr);
             ConstantFoldingElement.Value op1 = operandValues.getFirst();
             ConstantFoldingElement.Value op2 = operandValues.getSecond();
 
@@ -796,7 +796,7 @@ public class ConstantFoldingTransition implements Transition<ConstantFoldingElem
 
         @Override
         public void caseNeExpr(NeExpr expr) {
-            ValuePair operandValues = calcOperands(expr);
+            Pair<ConstantFoldingElement.Value> operandValues = calcOperands(expr);
             ConstantFoldingElement.Value op1 = operandValues.getFirst();
             ConstantFoldingElement.Value op2 = operandValues.getSecond();
 
@@ -908,7 +908,7 @@ public class ConstantFoldingTransition implements Transition<ConstantFoldingElem
             assert false : "Something went horribly wrong!";
         }
 
-        private ValuePair calcOperands(BinopExpr binOpExpr) {
+        private Pair<ConstantFoldingElement.Value> calcOperands(BinopExpr binOpExpr) {
             Value op1 = binOpExpr.getOp1();
             Evaluator switch1 = new Evaluator(inputElement);
             op1.apply(switch1);
@@ -917,7 +917,7 @@ public class ConstantFoldingTransition implements Transition<ConstantFoldingElem
             Evaluator switch2 = new Evaluator(inputElement);
             op2.apply(switch2);
 
-            return new ValuePair(switch1.getResult(), switch2.getResult());
+            return new Pair<ConstantFoldingElement.Value>(switch1.getResult(), switch2.getResult());
         }
 
     }
@@ -983,30 +983,6 @@ public class ConstantFoldingTransition implements Transition<ConstantFoldingElem
         @Override
         public void defaultCase(Object arg0) {
             value = null;
-        }
-    }
-
-    /**
-     * @author Nils Jessen
-     * @author Sebastian Rauch
-     * 
-     *         A {@code ValuePair} represents a pair of {@code soot.Value}s.
-     */
-    private static class ValuePair {
-        private ConstantFoldingElement.Value val1;
-        private ConstantFoldingElement.Value val2;
-
-        public ValuePair(ConstantFoldingElement.Value val1, ConstantFoldingElement.Value val2) {
-            this.val1 = val1;
-            this.val2 = val2;
-        }
-
-        public ConstantFoldingElement.Value getFirst() {
-            return val1;
-        }
-
-        public ConstantFoldingElement.Value getSecond() {
-            return val2;
         }
     }
 

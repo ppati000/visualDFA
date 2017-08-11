@@ -21,6 +21,7 @@ public class CodeField extends JScrollPane {
     private JPanel contentPanel;
     private JTextArea lineArea;
     private JTextArea codeArea;
+    private int lineAreaStart;
 
     /**
      * Constructor for the CodeField. Can be set editable, so the user can write Code in the JTextArea-component or
@@ -35,18 +36,30 @@ public class CodeField extends JScrollPane {
         contentPanel.setLayout(new BorderLayout());
         
         lineArea = new JTextArea("1");
+        lineAreaStart = 1;
         lineArea.setEditable(false);
         //TODO Color
         contentPanel.add(lineArea, BorderLayout.WEST);
         
-        codeArea = new JTextArea("Code here.");
+        codeArea = new JTextArea();
+        codeArea.setEditable(editable);
         codeArea.setTabSize(4);
         codeArea.getDocument().addDocumentListener(new TextChangeListener());
+        
+        
         contentPanel.add(codeArea, BorderLayout.CENTER);
         
         setViewportView(contentPanel);
-        setPreferredSize(new Dimension(1, Integer.MAX_VALUE));
         
+         setPreferredSize(new Dimension(1, Integer.MAX_VALUE));
+        
+        
+        
+        
+    }
+    
+    public void setLineAreaStart(int start) {
+        lineAreaStart = start;
     }
     
     /**
@@ -56,7 +69,7 @@ public class CodeField extends JScrollPane {
         int lines = codeArea.getLineCount();
         lineArea.setText(null);
         for (int i = 0; i < lines; i++) {
-            lineArea.append(i + 1 + System.getProperty("line.separator"));
+            lineArea.append(lineAreaStart + i + System.getProperty("line.separator"));
         }
     }
     

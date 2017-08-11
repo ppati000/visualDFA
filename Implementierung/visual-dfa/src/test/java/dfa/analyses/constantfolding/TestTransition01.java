@@ -8,7 +8,6 @@ import java.util.Set;
 
 import org.junit.Assert;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import codeprocessor.CodeProcessor;
@@ -41,7 +40,7 @@ public class TestTransition01 {
 
     private static boolean print = true;
 
-    @BeforeClass @Ignore
+    @BeforeClass 
     public static void setUp() {
         TestMethod testMethodAllConstant = getCodeAllConstant();
         CodeProcessor cp = new CodeProcessor(testMethodAllConstant.method);
@@ -79,7 +78,7 @@ public class TestTransition01 {
         bgIntBitOps = gb.buildGraph(testMethodIntBitOps.signature);
     }
     
-    @Test @Ignore
+    @Test 
     public void testAllConstant() {
         print = false;
         
@@ -210,7 +209,7 @@ public class TestTransition01 {
         return aliasMap;
     }
 
-    @Test @Ignore
+    @Test 
     public void testAllConstantConflict() {
         print = false;
         
@@ -396,7 +395,7 @@ public class TestTransition01 {
         return aliasMap;
     }
     
-    @Test  @Ignore
+    @Test  
     public void testNonConstant() {
         print = false;
         
@@ -536,7 +535,7 @@ public class TestTransition01 {
     
     // systematic tests grouped by operations
     
-    @Test @Ignore
+    @Test 
     public void testIntArithmetic() {
         print = false;
         
@@ -859,7 +858,7 @@ public class TestTransition01 {
         return aliasMap;
     }
     
-    @Test @Ignore
+    @Test 
     public void testIntBitOps() {
         print = true;
         

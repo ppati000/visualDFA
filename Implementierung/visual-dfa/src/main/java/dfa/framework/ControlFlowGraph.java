@@ -226,7 +226,7 @@ public class ControlFlowGraph {
      * @throws IllegalArgumentException
      *         if {@code basicBlock} or any element of {@code succs} does not belong to this {@code ControlFlowGraph}
      */
-    public void setSuccessors(BasicBlock basicBlock, List<BasicBlock> succs) {
+    protected void setSuccessors(BasicBlock basicBlock, List<BasicBlock> succs) {
         if (!(basicBlocks.contains(basicBlock) && basicBlocks.containsAll(succs))) {
             throw new IllegalArgumentException("all involved BasicBlocks must be in this CFG");
         }

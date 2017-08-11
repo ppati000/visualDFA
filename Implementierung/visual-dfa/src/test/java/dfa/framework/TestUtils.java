@@ -1,4 +1,4 @@
-package dfa.analyses.constantfolding;
+package dfa.framework;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -15,7 +15,7 @@ import soot.toolkits.graph.Block;
 
 public class TestUtils {
     
-    public static Value getIntValue(int c) {
+    public static Value getCfIntValue(int c) {
         return new Value(IntConstant.v(c));
     }
     
@@ -50,5 +50,22 @@ public class TestUtils {
         
         return sb.toString();
     }
+    
+    public static String blockToString(Block block) {
+        Iterator<Unit> unitIt = block.iterator();
+        if (!unitIt.hasNext()) {
+            return new String();
+        }
+        
+        StringBuilder sb = new StringBuilder();
+        sb.append(unitIt.next());
+        
+        while (unitIt.hasNext()) {
+            sb.append('\n').append(unitIt.next());
+        }
+        
+        return sb.toString();
+    }
+    
 
 }

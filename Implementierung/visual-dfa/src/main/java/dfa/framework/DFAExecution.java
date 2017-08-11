@@ -2,6 +2,7 @@ package dfa.framework;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -30,8 +31,8 @@ public class DFAExecution<E extends LatticeElement> {
     private List<AnalysisState<E>> analysisStates = new ArrayList<>();
     private List<Integer> blockSteps = new ArrayList<>();
 
-    private int currentElementaryStep = -1;
-    private int currentBlockStep = -1;
+    private int currentElementaryStep = 0;
+    private int currentBlockStep = 0;
 
     /**
      * Creates a {@code DFAExecution} from a given {@code DFAFactory}, an initial {@code Worklist} and a
@@ -149,7 +150,7 @@ public class DFAExecution<E extends LatticeElement> {
         int idx = Collections.binarySearch(blockSteps, currentElementaryStep);
 
         if (idx < 0) { // currentElementaryStep has not been found
-            idx = -(idx + 1); // this gives the correct index of the corresponding block-step
+            idx = -(idx + 1) - 1; // this gives the correct index of the corresponding block-step
         }
         currentBlockStep = idx;
     }
@@ -264,7 +265,7 @@ public class DFAExecution<E extends LatticeElement> {
      * 
      * @return the current {@code AnalysisState}
      */
-    public AnalysisState<? extends LatticeElement> getCurrentAnalysisState() {
+    public AnalysisState<E> getCurrentAnalysisState() {
         return analysisStates.get(currentElementaryStep);
     }
 
@@ -362,10 +363,17 @@ public class DFAExecution<E extends LatticeElement> {
                 // join predecessors out-states
                 List<BasicBlock> preds = getPredecessors(newBasicBlock);
                 Set<E> predOutStates = new HashSet<E>();
+                
+                // TODO cleanup comments
                 for (BasicBlock p : preds) {
-                    predOutStates.add(prevAnalysisState.getBlockState(p).getOutState());
+                    E predOutState = prevAnalysisState.getBlockState(p).getOutState();
+                    predOutStates.add(predOutState);
+//                    System.out.println("predecessor out state: \n" + predOutState.getStringRepresentation());
                 }
+                
+//                System.out.println("doing join on " + preds.size() + " blocks");
                 E outStatesJoin = dfa.join(predOutStates);
+//                System.out.println("result: \n" + outStatesJoin.getStringRepresentation());
 
                 BlockState<E> prevBlockState = prevAnalysisState.getBlockState(newBasicBlock);
                 BlockState<E> newBlockState = new BlockState<E>(outStatesJoin, prevBlockState.getOutState());
@@ -407,9 +415,12 @@ public class DFAExecution<E extends LatticeElement> {
                 }
 
                 if (nextElementaryBlock == null) {
-                    E basicBlockInState = prevAnalysisState.getBlockState(prevBasicBlock).getInState();
+//                    E basicBlockInState = prevAnalysisState.getBlockState(prevBasicBlock).getInState();
+//                    newAnalysisState =
+//                            finishBasicBlock(prevBasicBlock, basicBlockInState, prevAnalysisState, visitedBasicBlocks);
+//                    E newBlockOutState = prevAnalysisState.getBlockState(prevBasicBlock).getInState();
                     newAnalysisState =
-                            finishBasicBlock(prevBasicBlock, basicBlockInState, prevAnalysisState, visitedBasicBlocks);
+                            finishBasicBlock(prevBasicBlock, prevOutState, prevAnalysisState, visitedBasicBlocks);
                 } else {
                     E nextOutState = dfa.transition(prevOutState, nextElementaryBlock.getUnit());
                     BlockState<E> nextBlockState = new BlockState<E>(prevOutState, nextOutState);
@@ -459,8 +470,11 @@ public class DFAExecution<E extends LatticeElement> {
 
     private AnalysisState<E> newState(AnalysisState<E> state, Worklist newWorklist, BasicBlock currentBBlock,
             int eBlockIdx) {
+        Map<AbstractBlock, BlockState<E>> stateMap = new HashMap<AbstractBlock, BlockState<E>>(state.getStateMap());
+        Map<BasicBlock, LogicalColor> colorMap = new HashMap<BasicBlock, LogicalColor>(state.getColorMap());
+
         AnalysisState<E> newState =
-                new AnalysisState<E>(newWorklist, currentBBlock, eBlockIdx, state.getStateMap(), state.getColorMap());
+                new AnalysisState<E>(newWorklist, currentBBlock, eBlockIdx, stateMap, colorMap);
         newState.setCurrentElementaryBlockIndex(eBlockIdx);
         return newState;
     }
@@ -506,6 +520,10 @@ public class DFAExecution<E extends LatticeElement> {
         BlockState<E> newBlockState = new BlockState<E>(prevBlockState.getInState(), outState);
         newAnalysisState.setBlockState(currentBBlock, newBlockState);
 
+        // TODO remove comments
+//        System.out.println("finished with out-state:");
+//        System.out.println(outState.getStringRepresentation());
+        
         updateColors(prevAnalysisState, newAnalysisState, visited);
         return newAnalysisState;
     }

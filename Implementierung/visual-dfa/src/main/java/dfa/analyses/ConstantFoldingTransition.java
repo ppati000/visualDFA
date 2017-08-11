@@ -87,7 +87,7 @@ public class ConstantFoldingTransition implements Transition<ConstantFoldingElem
     public ConstantFoldingElement transition(ConstantFoldingElement element, Unit unit) {
         Transitioner stmtSwitch = new Transitioner(element);
         unit.apply(stmtSwitch);
-
+        
         return stmtSwitch.getOutputElement();
     }
 
@@ -128,6 +128,9 @@ public class ConstantFoldingTransition implements Transition<ConstantFoldingElem
             JimpleLocal lValLocal;
             if (stmt.getLeftOp() instanceof JimpleLocal) {
                 lValLocal = (JimpleLocal) stmt.getLeftOp();
+                if (!ConstantFoldingElement.isLocalTypeAccepted(lValLocal.getType())) {
+                    return;
+                }
             } else if (!(stmt.getLeftOp() instanceof Ref)) {
                 assert false : "Something went horribly wrong!";
                 return;
@@ -140,7 +143,7 @@ public class ConstantFoldingTransition implements Transition<ConstantFoldingElem
             Evaluator valueSwitch = new Evaluator(inputElement);
             rVal.apply(valueSwitch);
             ConstantFoldingElement.Value rhs = valueSwitch.getResult();
-
+            
             outputElement.setValue(lValLocal, rhs);
         }
 
@@ -171,6 +174,9 @@ public class ConstantFoldingTransition implements Transition<ConstantFoldingElem
             JimpleLocal lValLocal;
             if (stmt.getLeftOp() instanceof JimpleLocal) {
                 lValLocal = (JimpleLocal) stmt.getLeftOp();
+                if (!ConstantFoldingElement.isLocalTypeAccepted(lValLocal.getType())) {
+                    return;
+                }
             } else if (!(stmt.getLeftOp() instanceof Ref)) {
                 assert false : "Something went horribly wrong!";
                 return;
@@ -184,8 +190,7 @@ public class ConstantFoldingTransition implements Transition<ConstantFoldingElem
 
         @Override
         public void caseIfStmt(IfStmt stmt) {
-            // TODO Auto-generated method stub
-            // probably just ignore
+            // ignore
         }
 
         @Override
@@ -232,7 +237,7 @@ public class ConstantFoldingTransition implements Transition<ConstantFoldingElem
         public void defaultCase(Object arg0) {
             assert false : "Something went horribly wrong!";
         }
-
+        
     }
 
     /**

@@ -163,6 +163,7 @@ public class Controller {
                 || this.dfaExecution.getTotalElementarySteps() - 1 == this.dfaExecution.getCurrentElementaryStep()) {
             this.dfaExecution.setCurrentElementaryStep(this.dfaExecution.getTotalElementarySteps() - 1);
             this.programFrame.getControlPanel().setSliderStep(this.dfaExecution.getTotalElementarySteps() - 1);
+            this.graphUIController.refresh();
             return;
         }
         AutoplayDriver autoplayDriver = null;
@@ -171,7 +172,6 @@ public class Controller {
         } catch (IllegalArgumentException e) {
             e.printStackTrace();
         }
-
         visibilityPlaying();
         this.shouldContinue = true;
         this.autoplay = new Thread(autoplayDriver);
@@ -191,24 +191,16 @@ public class Controller {
         return this.programFrame.getControlPanel().getDelaySliderPosition();
     }
 
+   
     /**
-     * Method, that checks if the analysis is in a state in that a breakpoint
-     * was set.
-     */
-    public void isAtBreakpoint() {
-        if (this.dfaExecution.isAtBreakpoint()) {
-            this.shouldContinue = false;
-        } else {
-            this.shouldContinue = true;
-        }
-    }
-    
-    /**
-     * @return if autoplay should continue
+     * @return if autoplay should continue and tests if a breakpoint was reached
      */
     public boolean shouldContinue() {
-        //TODO rufe isBreakpoint auf
-        return this.shouldContinue;
+        if (this.dfaExecution.isAtBreakpoint()) {
+            return false;
+        } else {
+            return this.shouldContinue;
+        }
     }
 
     /**
@@ -256,6 +248,10 @@ public class Controller {
         }
         List<String> methodList = graphBuilder.getMethods(filter);
         MethodSelectionBox selectionBox = new MethodSelectionBox(programFrame, methodList);
+        if (selectionBox.getOption() == Option.CANCEL_OPTION) {
+            visibilityInput();
+            return;
+        }
         String methodSignature = selectionBox.getSelectedMethod();
         SimpleBlockGraph blockGraph = graphBuilder.buildGraph(methodSignature);
         this.precalcController = new DFAPrecalcController();
@@ -299,6 +295,7 @@ public class Controller {
         this.dfaExecution = precalculator.getDFAExecution();
         this.dfaExecution.setCurrentElementaryStep(0);
         this.programFrame.getControlPanel().setTotalSteps(this.dfaExecution.getTotalElementarySteps() - 1);
+        this.programFrame.getControlPanel().setSliderStep(0);
         this.graphUIController.start(this.dfaExecution);
         this.graphUIController.refresh();
         visibilityWorking();

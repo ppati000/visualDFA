@@ -50,25 +50,37 @@ public class CodeProcessor {
 
         // remove one line comments
         // in Windows
-        codeToCompile = codeToCompile.replaceAll("//.*?\r\n", "");
+        codeToCompile = codeToCompile.replaceAll("//.*?\r\n", "").trim();
         // in Unix, Linux, MAC (OS 10+)
-        codeToCompile = codeToCompile.replaceAll("//.*?\n", "");
+        codeToCompile = codeToCompile.replaceAll("//.*?\n", "").trim();
         // in MAC (OS 9-)
-        codeToCompile = codeToCompile.replaceAll("//.*?\r", "");
+        codeToCompile = codeToCompile.replaceAll("//.*?\r", "").trim();
 
         // remove several line comments
-        codeToCompile = codeToCompile.replaceAll("//.*|(\"(?:\\\\[^\"]|\\\\\"|.)*?\")|(?s)/\\*.*?\\*/", "");
+        codeToCompile = codeToCompile.replaceAll("//.*|(\"(?:\\\\[^\"]|\\\\\"|.)*?\")|(?s)/\\*.*?\\*/", "").trim();
 
+        //delete package information
+        if(codeToCompile.startsWith("package")) {
+            while (!codeToCompile.startsWith(";") && codeToCompile.length() > 0) {
+                codeToCompile = codeToCompile.substring(1);
+            }
+        }
+        
         // tries to compile the user input
         DiagnosticCollector<JavaFileObject> diagnosticCollector = null;
-        if (codeToCompile.contains(" class") || codeToCompile.startsWith("class ")) {
+        boolean containsClass = codeToCompile.contains(" class") || codeToCompile.startsWith("class ");
+        if (containsClass) {
             this.className = getClassNameOfCode(codeToCompile);
             diagnosticCollector = compile(this.className, codeToCompile);
         }
         if (!this.success) {
             String codeToCompileWrapClass = DEFAULT_CLASS_SIGNATURE + codeToCompile + "}";
             this.className = DEFAULT_CLASS_NAME;
-            diagnosticCollector = compile(DEFAULT_CLASS_NAME, codeToCompileWrapClass);
+            if (!containsClass) {
+                diagnosticCollector = compile(DEFAULT_CLASS_NAME, codeToCompileWrapClass);
+            } else {
+                compile(DEFAULT_CLASS_NAME, codeToCompileWrapClass);
+            }
         }
         if (!this.success) {
             String codeToCompileWrapMethodClass = DEFAULT_CLASS_SIGNATURE + DEFAULT_METHOD_SIGNATURE + codeToCompile
@@ -78,10 +90,7 @@ public class CodeProcessor {
         }
 
         if (!success) {
-            List<Diagnostic<? extends JavaFileObject>> diagnostics = diagnosticCollector.getDiagnostics();
-            for (Diagnostic<? extends JavaFileObject> diagnostic : diagnostics) {
-                this.errorMessage = this.errorMessage + diagnostic.getMessage(null) + System.lineSeparator();
-            }
+            this.errorMessage = diagnosticCollector.getDiagnostics().get(0).toString();
             return;
         }
 
@@ -98,7 +107,7 @@ public class CodeProcessor {
                 break;
             }
         }
-        if(endOfClassName == (tryToFindName.length() -1)) {
+        if (endOfClassName == (tryToFindName.length() - 1)) {
             throw new IllegalStateException("no valid class name found");
         }
         String nameOfClass = tryToFindName.substring(0, endOfClassName).trim();
@@ -120,8 +129,12 @@ public class CodeProcessor {
     }
 
     private DiagnosticCollector<JavaFileObject> compile(String name, String codeFragment) {
+        //System.setProperty("java.home", "C:\\Programme\\Java\\jdk1.7.0_76\\jre");
         StringJavaFileObject javaFile = new StringJavaFileObject(name, codeFragment);
         JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
+        if (compiler == null) {
+            throw new IllegalStateException("you have to set your build path to jdk not to jre!!!");
+        }
         DiagnosticCollector<JavaFileObject> diagnosticsCollectorLocal = new DiagnosticCollector<JavaFileObject>();
         StandardJavaFileManager fileManager = compiler.getStandardFileManager(diagnosticsCollectorLocal, null, null);
         Iterable<? extends JavaFileObject> units = Arrays.asList(javaFile);

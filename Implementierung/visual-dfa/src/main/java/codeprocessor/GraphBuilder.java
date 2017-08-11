@@ -5,6 +5,7 @@ import java.util.List;
 
 import dfa.framework.SimpleBlockGraph;
 import soot.Body;
+import soot.G;
 import soot.Scene;
 import soot.SootClass;
 import soot.SootMethod;
@@ -31,6 +32,8 @@ public class GraphBuilder {
      *            name of the class
      */
     public GraphBuilder(String pathName, String className) {
+        G.v();
+        G.reset();
         Scene.v().setSootClassPath(pathName.toString());
         String jdkPath = System.getProperty("java.home") + PATH_SEPARATOR + "lib" + PATH_SEPARATOR + "rt.jar";
         Scene.v().extendSootClassPath(jdkPath);

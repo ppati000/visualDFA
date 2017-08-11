@@ -32,9 +32,9 @@ hs_err_pid*
 *.gls
 Pflichtenheft.pdf
 Pflichtenheft.dvi
-Pflichtenheft.synctex.gz
 Entwurf.pdf
-Entwurf.synctex.gz
+Implementierung.pdf
+*.synctex.gz
 
 # IDE stuff
 .metadata/

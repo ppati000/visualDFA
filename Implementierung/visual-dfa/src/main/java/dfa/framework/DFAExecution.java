@@ -252,11 +252,11 @@ public class DFAExecution<E extends LatticeElement> {
         AnalysisState<? extends LatticeElement> currentState = getCurrentAnalysisState();
         BasicBlock bBlock = currentState.getCurrentBasicBlock();
 
-        if (bBlock == null) {
+        int eBlockIdx = currentState.getCurrentElementaryBlockIndex();
+        if (bBlock == null || eBlockIdx < 0 || eBlockIdx >= bBlock.getElementaryBlockCount()) {
             return false;
         }
 
-        int eBlockIdx = currentState.getCurrentElementaryBlockIndex();
         return bBlock.getElementaryBlock(eBlockIdx).hasBreakpoint();
     }
 

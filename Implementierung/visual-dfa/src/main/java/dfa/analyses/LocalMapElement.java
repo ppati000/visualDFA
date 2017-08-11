@@ -3,6 +3,7 @@ package dfa.analyses;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -19,7 +20,7 @@ import soot.jimple.internal.JimpleLocal;
  * @param <V>
  *        the type of value
  */
-public abstract class LocalMapElement<V> implements LatticeElement {
+public abstract class LocalMapElement<V> implements LatticeElement, Cloneable {
 
     protected static final LocalComparator DEFAULT_COMPARATOR = new LocalComparator();
 
@@ -92,14 +93,6 @@ public abstract class LocalMapElement<V> implements LatticeElement {
         return localMap;
     }
     
-    /* force subclasses to override this themselves */
-    @Override
-    public abstract boolean equals(Object o);
-    
-    /* force subclasses to override this themselves (to make sure the equals-hashCode-contract is fulfilled) */
-    @Override
-    public abstract int hashCode();
-
     @Override
     public String getStringRepresentation() {
         StringBuilder sb = new StringBuilder();
@@ -119,5 +112,15 @@ public abstract class LocalMapElement<V> implements LatticeElement {
 
         return sb.toString();
     }
-
+    
+    /* force subclasses to override this themselves */
+    @Override
+    public abstract boolean equals(Object o);
+    
+    /* force subclasses to override this themselves (to make sure the equals-hashCode-contract is fulfilled) */
+    @Override
+    public abstract int hashCode();
+    
+    public abstract LocalMapElement<V> clone();
+    
 }

@@ -215,6 +215,11 @@ public class ConstantFoldingElement extends LocalMapElement<Value> {
         }
 
     }
+    
+    @Override
+    public ConstantFoldingElement clone() {
+        return new ConstantFoldingElement(getLocalMap());
+    }
 
     /**
      * @author Nils Jessen

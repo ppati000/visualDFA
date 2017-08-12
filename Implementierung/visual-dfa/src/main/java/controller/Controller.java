@@ -40,9 +40,10 @@ public class Controller {
     private static final String CALC_MESSAGE = "This calculation is taking longer than expected. Do you want to continue and show intermediate results?";
     private static final String ABORT_MESSAGE = "This process leads to a complete deletion of the graph and the calculation. Do you want to continue?";
     private static final String EXCEPTION_TITLE = "Exception caused by analysis calculation";
-    private static final String PATH_SELECTION = "Select the path to you \"jre\" folder that is lokalized in the JDK(!) folder. Example: C:\\Programme\\Java\\jdk1.7.0_76\\jre";
+    private static final String PATH_SELECTION = "Select the path to your \"jre\" folder that is located in the JDK(!) folder. If you set the path wrong, the program will not work."
+            + "Example: C:\\Programme\\Java\\jdk1.7.0_76\\jre";
     private static final int TIME_TO_WAIT = 150;
-    private static final String PATH_SEPARATOR = System.getProperty("os.name").contains("windows") ? "\\" : "/";
+    private static final String PATH_SEPARATOR = System.getProperty("os.name").contains("win") ? "\\" : "/";
     private static final String NO_COMPILER_FOUND = "Please check the file YourHomeDirectory\\visualDfa\\jdkPath.txt and change it to the path of "
             + "your jre folder in your JDK(!)1.7 folder. " + "For Example C:\\Program Files\\Java\\jdk1.7.0_76\\jre."
             + "Afterwards restart the program.";
@@ -84,52 +85,49 @@ public class Controller {
      * 
      */
     public void pathSelection() {
-        String pathName = System.getProperty("user.home") + PATH_SEPARATOR + "visualDfa" + PATH_SEPARATOR;
-        File dir = new File(pathName);
+        String pathName = System.getProperty("user.home") + PATH_SEPARATOR + "visualDfa";
+        File dir = new File(pathName.trim());
         if (!dir.exists()) {
             dir.mkdir();
         }
-        String fileName = PATH_SEPARATOR + "jdkPath.txt";
-        if (new File(dir, fileName).exists()) {
-            File quellDatei = new File(pathName + fileName);
+        String fileName = "jdkPath.txt";
+        String completePath = pathName + PATH_SEPARATOR + fileName;
+        File jdkPath = new File(completePath.toString());
+        if (jdkPath.exists()) {
+            File sourceFile = new File(pathName + PATH_SEPARATOR + fileName);
             BufferedReader reader = null;
             try {
-                reader = new BufferedReader(new FileReader(quellDatei));
+                reader = new BufferedReader(new FileReader(sourceFile));
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
             }
             String input;
-            String quellText = new String();
+            String text = new String();
             try {
                 while ((input = reader.readLine()) != null) {
-                    quellText += input;
+                    text += input;
                 }
                 reader.close();
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            System.setProperty("java.home", quellText.trim());
-            return;
+            File dirJDK = new File(text.trim());
+            if (dirJDK.exists()) {
+                System.setProperty("java.home", text.trim());
+                return;
+            }
         }
 
         MessageBox box = new MessageBox(this.programFrame, "JDK Path", PATH_SELECTION);
         // TODO method getDirectoryOfJDK of Michi has to return a string
-        /**String path = "";
-        File jdkPath = new File(path);
-        if (!jdkPath.exists()) {
-            new MessageBox(this.programFrame, "No Compiler found", NO_COMPILER_FOUND);
-            return;
-        }
-        System.setProperty("java.home", path);
-        File iniFile = new File(dir + fileName);
-        FileWriter writer;
-        try {
-            writer = new FileWriter(iniFile);
-            writer.write(path);
-            writer.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }*/ //TODO
+        /*
+         * File jdkPath = getCompilerPath(); if (!jdkPath.exists()) { new
+         * MessageBox(this.programFrame, "No Compiler found",
+         * NO_COMPILER_FOUND); return; } System.setProperty("java.home", path);
+         * File iniFile = new File(dir + fileName); FileWriter writer; try {
+         * writer = new FileWriter(iniFile); writer.write(path); writer.close();
+         * } catch (IOException e) { e.printStackTrace(); }
+         */ // TODO
     }
 
     /**
@@ -211,6 +209,7 @@ public class Controller {
     public void jumpToStep(int step) {
         try {
             this.dfaExecution.setCurrentElementaryStep(step);
+            this.graphUIController.refresh();
         } catch (IndexOutOfBoundsException e) {
             e.printStackTrace();
         }
@@ -361,7 +360,7 @@ public class Controller {
         // TODO Problem?
         this.dfaExecution = precalculator.getDFAExecution();
         this.dfaExecution.setCurrentElementaryStep(0);
-        this.programFrame.getControlPanel().setTotalSteps(this.dfaExecution.getTotalElementarySteps() - 1);
+        this.programFrame.getControlPanel().setTotalSteps(this.dfaExecution.getTotalElementarySteps());
         this.programFrame.getControlPanel().setSliderStep(0);
         this.graphUIController.start(this.dfaExecution);
         this.graphUIController.refresh();
@@ -423,6 +422,7 @@ public class Controller {
             if (optionBox.getOption() == Option.YES_OPTION) {
                 visibilityInput();
                 this.graphUIController.stop();
+                this.programFrame.getStatePanelOpen().reset();
                 this.dfaExecution = null;
             }
         }

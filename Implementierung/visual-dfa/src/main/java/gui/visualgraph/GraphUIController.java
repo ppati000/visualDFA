@@ -26,6 +26,7 @@ public class GraphUIController {
     private DFAExecution dfa;
     private StatePanelOpen statePanel = null;
     private UIAbstractBlock selectedBlock;
+    private final Map<AbstractBlock, UIAbstractBlock> mappedAbstractBlocks = new HashMap<>();
 
     /**
      * Creates a new {@code GraphUIController}.
@@ -52,7 +53,6 @@ public class GraphUIController {
 
         this.dfa = dfa;
 
-        final Map<AbstractBlock, UIAbstractBlock> mappedAbstractBlocks = new HashMap<>();
         ControlFlowGraph dfaGraph = dfa.getCFG();
         List<BasicBlock> dfaBasicBlocks = dfaGraph.getBasicBlocks();
         Map<BasicBlock, UIBasicBlock> mappedBasicBlocks = new HashMap<>();
@@ -126,32 +126,14 @@ public class GraphUIController {
                 // Weird API: "removed" cells are actually the newly selected cells.
                 ArrayList<mxCell> selectedCells = (ArrayList<mxCell>) mxEventObject.getProperty("removed");
 
-                if (statePanel != null) {
-                    if (selectedCells != null && selectedCells.size() > 0) {
-                        mxCell selectedCell = selectedCells.get(0);
-                        selectedBlock = mxCellMap.get(selectedCell);
-                        AbstractBlock selectedAbstractBlock = selectedBlock.getDFABlock();
-                        UIAbstractBlock uiAbstractBlock = mappedAbstractBlocks.get(selectedAbstractBlock);
-
-                        BlockState currentState = dfa.getCurrentAnalysisState().getBlockState(selectedAbstractBlock);
-                        String inState = currentState.getInState().getStringRepresentation();
-                        String outState = currentState.getOutState().getStringRepresentation();
-
-                        int[] blockAndLineNumbers = uiAbstractBlock.getBlockAndLineNumbers();
-                        String text = uiAbstractBlock.getText();
-                        int blockNumber = blockAndLineNumbers[0];
-                        int lineNumber = blockAndLineNumbers[1];
-
-                        statePanel.setIn(inState);
-                        statePanel.setOut(outState);
-                        statePanel.setSelectedLine(text, blockNumber, lineNumber);
-                    } else {
-                        selectedBlock = null;
-                        statePanel.setIn("");
-                        statePanel.setOut("");
-                        statePanel.setSelectedLine("", -1, -1);
-                    }
+                if (selectedCells != null && selectedCells.size() > 0) {
+                    mxCell selectedCell = selectedCells.get(0);
+                    selectedBlock = mxCellMap.get(selectedCell);
+                } else {
+                    selectedBlock = null;
                 }
+
+                updateStatePanel();
             }
         });
     }
@@ -180,6 +162,7 @@ public class GraphUIController {
         }
 
         panel.renderGraph(dfa, false);
+        updateStatePanel();
     }
 
     /**
@@ -191,7 +174,28 @@ public class GraphUIController {
         graph = panel.getMxGraph();
     }
 
-    public JPanel getVisualGraphPanel() {
-        return panel;
+    private void updateStatePanel() {
+        if (statePanel != null && selectedBlock != null) {
+            AbstractBlock selectedAbstractBlock = selectedBlock.getDFABlock();
+            UIAbstractBlock uiAbstractBlock = mappedAbstractBlocks.get(selectedAbstractBlock);
+
+            BlockState currentState = dfa.getCurrentAnalysisState().getBlockState(selectedAbstractBlock);
+            LatticeElement inState = currentState.getInState();
+            LatticeElement outState = currentState.getOutState();
+            String inStateString = inState == null ? "<not set>" : inState.getStringRepresentation();
+            String outStateString = outState == null ? "<not set>" : outState.getStringRepresentation();
+
+            int[] blockAndLineNumbers = uiAbstractBlock.getBlockAndLineNumbers();
+            String text = uiAbstractBlock.getText();
+            int blockNumber = blockAndLineNumbers[0];
+            int lineNumber = blockAndLineNumbers[1];
+
+            statePanel.setIn(inStateString);
+            statePanel.setOut(outStateString);
+            statePanel.setSelectedLine(text, blockNumber, lineNumber);
+        } else {
+            selectedBlock = null;
+            statePanel.reset();
+        }
     }
 }

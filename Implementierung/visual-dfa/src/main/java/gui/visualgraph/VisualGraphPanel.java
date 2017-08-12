@@ -129,38 +129,40 @@ public class VisualGraphPanel extends JPanel {
                 public void actionPerformed(ActionEvent e) {
                     GraphExportBox exportBox = new GraphExportBox(parentFrame);
 
-                    float scale = exportBox.getQuality().ordinal() + 1;
-                    String outputPath = System.getProperty("user.home") + File.separator + "visualDFA";
+                    if (exportBox.getOption() == Option.YES_OPTION) {
+                        float scale = exportBox.getQuality().ordinal() + 1;
+                        String outputPath = System.getProperty("user.home") + File.separator + "visualDFA";
 
-                    try {
-                        List<BufferedImage> images;
+                        try {
+                            List<BufferedImage> images;
 
-                        if (exportBox.isBatchExport()) {
-                            images = GraphExporter.batchExport(dfa, scale, exportBox.includeLineStates());
-                        } else {
-                            images = new ArrayList<>();
-                            BlockState state = selectedBlock == null ? null : dfa.getCurrentAnalysisState().getBlockState(selectedBlock.getDFABlock());
+                            if (exportBox.isBatchExport()) {
+                                images = GraphExporter.batchExport(dfa, scale, exportBox.includeLineStates());
+                            } else {
+                                images = new ArrayList<>();
+                                BlockState state = selectedBlock == null ? null : dfa.getCurrentAnalysisState().getBlockState(selectedBlock.getDFABlock());
 
-                            images.add(GraphExporter.exportCurrentGraph(graph, scale, selectedBlock, state));
-                        }
-
-                        File outputDir = new File(outputPath);
-                        long timestamp = new Date().getTime();
-
-                        if (!new File(outputPath).exists()) {
-                            boolean result = outputDir.mkdir();
-                            if (!result) {
-                                throw new IOException();
+                                images.add(GraphExporter.exportCurrentGraph(graph, scale, selectedBlock, state));
                             }
-                        }
 
-                        for (int i = 0; i < images.size(); i++) {
-                            File outputFile = new File(outputPath + File.separator + "export_" + timestamp + "_" + i + ".png");
-                            ImageIO.write(images.get(i), "PNG", outputFile);
+                            File outputDir = new File(outputPath);
+                            long timestamp = new Date().getTime();
+
+                            if (!new File(outputPath).exists()) {
+                                boolean result = outputDir.mkdir();
+                                if (!result) {
+                                    throw new IOException();
+                                }
+                            }
+
+                            for (int i = 0; i < images.size(); i++) {
+                                File outputFile = new File(outputPath + File.separator + "export_" + timestamp + "_" + i + ".png");
+                                ImageIO.write(images.get(i), "PNG", outputFile);
+                            }
+                        } catch (IOException ex) {
+                            new MessageBox(parentFrame, "Graph Export Failed", "An error occured while saving your image(s). \n" +
+                                    "Please ensure " + outputPath + " is a writable directory.").setVisible(true);
                         }
-                    } catch (IOException ex) {
-                        new MessageBox(parentFrame, "Graph Export Failed", "An error occured while saving your image(s). \n" +
-                                "Please ensure " + outputPath + " is a writable directory.").setVisible(true);
                     }
                 }
             });

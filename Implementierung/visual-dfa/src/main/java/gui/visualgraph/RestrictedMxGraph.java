@@ -17,10 +17,10 @@ class RestrictedMxGraph extends mxGraph {
     public RestrictedMxGraph() {
         super();
 
+        // NOTE: Do NOT attempt to change mxConstants.LABEL_INSET. This will break cell selection!
         mxSwingConstants.VERTEX_SELECTION_COLOR = Colors.BACKGROUND.getColor().brighter();
         mxSwingConstants.VERTEX_SELECTION_STROKE = new BasicStroke(Styles.SELECTION_STROKE_WIDTH, 0, 0, 10.0F, null, 0);
         mxConstants.DEFAULT_FONTSIZE = Styles.TEXT_SIZE;
-        mxConstants.LABEL_INSET = Styles.TEXT_PADDING_LEFT;
         mxConstants.LINE_HEIGHT = Styles.LINE_HEIGHT;
 
         setHtmlLabels(true); // With htmlLabels == false, text is not centered properly.

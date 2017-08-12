@@ -31,7 +31,6 @@ public class VisualGraphPanelTest {
         graph = panel.getMxGraph();
     }
 
-    // TODO: Mockito mocks for ElementaryBlock and AnalysisState
     @Test
     public void graphShouldContainBasicBlock() {
         panel.insertBasicBlock(new UIBasicBlock(graph, mockBasicBlock, dfa));
@@ -66,13 +65,14 @@ public class VisualGraphPanelTest {
         Object[] childCellObjects = graph.getChildVertices(parentCell);
         mxCell[] childCells = Arrays.copyOf(childCellObjects, childCellObjects.length, mxCell[].class);
 
-        assertEquals(3, childCells.length); // 1 separator + 2 cells.
+        assertEquals(5, childCells.length); // 1 separator + 2 cells + 2 breakpoint cells.
         assertEquals(0, childCells[0].getGeometry().getHeight(), DELTA);
         assertEquals(Styles.LINE_HEIGHT, childCells[0].getGeometry().getY(), DELTA);
         assertEquals(Styles.LINE_HEIGHT, childCells[1].getGeometry().getHeight(), DELTA);
         assertEquals(Styles.LINE_HEIGHT, childCells[1].getGeometry().getY(), DELTA);
-        assertEquals(Styles.LINE_HEIGHT, childCells[2].getGeometry().getHeight(), DELTA);
-        assertEquals(2 * Styles.LINE_HEIGHT, childCells[2].getGeometry().getY(), DELTA);
+        assertEquals(Styles.LINE_HEIGHT / 2, childCells[2].getGeometry().getHeight(), DELTA); // breakpoint cell
+        assertEquals(Styles.LINE_HEIGHT, childCells[3].getGeometry().getHeight(), DELTA);
+        assertEquals(2 * Styles.LINE_HEIGHT, childCells[3].getGeometry().getY(), DELTA);
     }
 
     @Test

@@ -16,10 +16,11 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
-@Ignore
+@Ignore // TODO QA: These tests are not passing on Windows because of minor rendering differences.
 public class GraphExporterTest {
     private VisualGraphPanel panel;
     private JPanel fakeStatePanel;

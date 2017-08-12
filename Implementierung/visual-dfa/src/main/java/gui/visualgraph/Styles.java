@@ -8,7 +8,7 @@ import com.mxgraph.util.mxConstants;
  *         Helper class containing style constants for {@code mxGraph}.
  */
 public class Styles {
-    public final static int BLOCK_WIDTH = 250;
+    public final static int BLOCK_WIDTH = 275;
     public final static int LINE_HEIGHT = 20;
     public final static int BREAKPOINT_PADDING = 5;
     public final static int BREAKPOINT_SIZE = 10;

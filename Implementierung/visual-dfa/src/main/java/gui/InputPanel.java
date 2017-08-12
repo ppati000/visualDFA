@@ -142,7 +142,7 @@ public class InputPanel extends JPanel {
         lblWorklists.setEnabled(b);
         comboBox_Worklists.setEnabled(b);
         btnStartAnalysis.setEnabled(b);
-        cb_Filter.setEnabled(false);
+        cb_Filter.setEnabled(b);
         codeField.setEnabled(b);
 
     }

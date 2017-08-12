@@ -9,9 +9,8 @@ import soot.SootMethod;
  *          all inherited methods should be filtered out.
  *
  */
-public class StandardFilter implements Filter {
+public class StandardFilter extends Filter {
 
-	@Override
 	/**
 	 * Filter for a given method, that decides if the method should be filtered
 	 * out or not.
@@ -21,7 +20,7 @@ public class StandardFilter implements Filter {
 	 * @return if the method passes the filter or not
 	 */
 	public boolean filter(SootMethod method) {
-	    return !method.isJavaLibraryMethod();
+	    return !method.isJavaLibraryMethod() && super.filterTaint(method);
 	}
 
 }

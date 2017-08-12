@@ -1,11 +1,9 @@
 package codeprocessor;
 
-import java.util.List;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.util.Arrays;
-import javax.tools.Diagnostic;
 import javax.tools.DiagnosticCollector;
 import javax.tools.JavaCompiler;
 import javax.tools.JavaFileObject;
@@ -28,6 +26,9 @@ public class CodeProcessor {
     private static final String DEFAULT_CLASS_SIGNATURE = "public class DefaultClass {";
     private static final String DEFAULT_METHOD_SIGNATURE = "public void defaultMethod() {";
     private static final String PATH_SEPARATOR = System.getProperty("os.name").contains("windows") ? "\\" : "/";
+    private static final String DEFAULT_TAINT_METHOD = "public void taint(Object o) {}";
+    private static final String DEFAULT_CLEAN_METHOD = "public void clean(Object o) {}";
+    private static final String DEFAULT_SENSITIVE_METHOD = "public void sensitive() {}";
 
     /**
      * Creates a {@code CodeProcessor} with the given code fragment and compiles
@@ -41,52 +42,33 @@ public class CodeProcessor {
             throw new IllegalStateException("String must not be null");
         }
 
-        String codeToCompile = originalCode;
         this.pathName = System.getProperty("user.home") + PATH_SEPARATOR + "visualDfa" + PATH_SEPARATOR;
         File dir = new File(this.pathName);
         if (!dir.exists()) {
             dir.mkdir();
         }
+        String codeToCompile = preProcess(originalCode);
 
-        // remove one line comments
-        // in Windows
-        codeToCompile = codeToCompile.replaceAll("//.*?\r\n", "").trim();
-        // in Unix, Linux, MAC (OS 10+)
-        codeToCompile = codeToCompile.replaceAll("//.*?\n", "").trim();
-        // in MAC (OS 9-)
-        codeToCompile = codeToCompile.replaceAll("//.*?\r", "").trim();
-
-        // remove several line comments
-        codeToCompile = codeToCompile.replaceAll("//.*|(\"(?:\\\\[^\"]|\\\\\"|.)*?\")|(?s)/\\*.*?\\*/", "").trim();
-
-        //delete package information
-        if(codeToCompile.startsWith("package")) {
-            while (!codeToCompile.startsWith(";") && codeToCompile.length() > 0) {
-                codeToCompile = codeToCompile.substring(1);
-            }
-        }
-        
         // tries to compile the user input
         DiagnosticCollector<JavaFileObject> diagnosticCollector = null;
         boolean containsClass = codeToCompile.contains(" class") || codeToCompile.startsWith("class ");
         if (containsClass) {
-            this.className = getClassNameOfCode(codeToCompile);
-            diagnosticCollector = compile(this.className, codeToCompile);
+            String codeWrap = getTaintWrap(codeToCompile);
+            this.className = getClassNameOfCode(codeWrap);
+            diagnosticCollector = compile(this.className, codeWrap);
         }
         if (!this.success) {
-            String codeToCompileWrapClass = DEFAULT_CLASS_SIGNATURE + codeToCompile + "}";
+            String codeWrap = getClassTaintWrap(codeToCompile);
             this.className = DEFAULT_CLASS_NAME;
             if (!containsClass) {
-                diagnosticCollector = compile(DEFAULT_CLASS_NAME, codeToCompileWrapClass);
+                diagnosticCollector = compile(this.className, codeWrap);
             } else {
-                compile(DEFAULT_CLASS_NAME, codeToCompileWrapClass);
+                compile(this.className, codeWrap);
             }
         }
         if (!this.success) {
-            String codeToCompileWrapMethodClass = DEFAULT_CLASS_SIGNATURE + DEFAULT_METHOD_SIGNATURE + codeToCompile
-                    + "}}";
-            this.className = DEFAULT_CLASS_NAME;
-            compile(DEFAULT_CLASS_NAME, codeToCompileWrapMethodClass);
+            String codeWrap = getMethodClassTaintWrap(codeToCompile);
+            compile(this.className, codeWrap);
         }
 
         if (!success) {
@@ -94,6 +76,46 @@ public class CodeProcessor {
             return;
         }
 
+    }
+
+    private String preProcess(String code) {
+        // remove one line comments
+        // in Windows
+        code = code.replaceAll("//.*?\r\n", "").trim();
+        // in Unix, Linux, MAC (OS 10+)
+        code = code.replaceAll("//.*?\n", "").trim();
+        // in MAC (OS 9-)
+        code = code.replaceAll("//.*?\r", "").trim();
+
+        // remove several line comments
+        code = code.replaceAll("//.*|(\"(?:\\\\[^\"]|\\\\\"|.)*?\")|(?s)/\\*.*?\\*/", "").trim();
+
+        // delete package information
+        if (code.startsWith("package")) {
+            while (!code.startsWith(";") && code.length() > 0) {
+                code = code.substring(1);
+            }
+        }
+        return code;
+    }
+
+    private String getTaintWrap(String code) {
+        int endIndex = code.lastIndexOf("}");
+        code = code.substring(0, endIndex) + DEFAULT_TAINT_METHOD + DEFAULT_CLEAN_METHOD + DEFAULT_SENSITIVE_METHOD
+                + "}";
+        return code;
+    }
+
+    private String getClassTaintWrap(String code) {
+        code = DEFAULT_CLASS_SIGNATURE + code + "}";
+        code = getTaintWrap(code);
+        return code;
+    }
+
+    private String getMethodClassTaintWrap(String code) {
+        code = DEFAULT_METHOD_SIGNATURE + code + "}";
+        code = getClassTaintWrap(code);
+        return code;
     }
 
     private String getClassNameOfCode(String codeToCompile) {
@@ -129,11 +151,11 @@ public class CodeProcessor {
     }
 
     private DiagnosticCollector<JavaFileObject> compile(String name, String codeFragment) {
-        //System.setProperty("java.home", "C:\\Programme\\Java\\jdk1.7.0_76\\jre");
         StringJavaFileObject javaFile = new StringJavaFileObject(name, codeFragment);
+
         JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
         if (compiler == null) {
-            throw new IllegalStateException("you have to set your build path to jdk not to jre!!!");
+            throw new NullPointerException();
         }
         DiagnosticCollector<JavaFileObject> diagnosticsCollectorLocal = new DiagnosticCollector<JavaFileObject>();
         StandardJavaFileManager fileManager = compiler.getStandardFileManager(diagnosticsCollectorLocal, null, null);
@@ -143,8 +165,9 @@ public class CodeProcessor {
         } catch (IOException e1) {
             e1.printStackTrace();
         }
-        JavaCompiler.CompilationTask task = compiler.getTask(null, fileManager, diagnosticsCollectorLocal, null, null,
-                units);
+        Iterable<String> options = Arrays.asList("-g");
+        JavaCompiler.CompilationTask task = compiler.getTask(null, fileManager, diagnosticsCollectorLocal, options,
+                null, units);
         this.success = task.call();
         try {
             fileManager.close();

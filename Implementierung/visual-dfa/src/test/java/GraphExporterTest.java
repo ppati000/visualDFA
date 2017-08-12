@@ -19,6 +19,7 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
 
+@Ignore
 public class GraphExporterTest {
     private VisualGraphPanel panel;
     private JPanel fakeStatePanel;

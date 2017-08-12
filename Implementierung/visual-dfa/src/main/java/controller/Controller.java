@@ -118,16 +118,23 @@ public class Controller {
             }
         }
 
-        MessageBox box = new MessageBox(this.programFrame, "JDK Path", PATH_SELECTION);
-        // TODO method getDirectoryOfJDK of Michi has to return a string
-        /*
-         * File jdkPath = getCompilerPath(); if (!jdkPath.exists()) { new
-         * MessageBox(this.programFrame, "No Compiler found",
-         * NO_COMPILER_FOUND); return; } System.setProperty("java.home", path);
-         * File iniFile = new File(dir + fileName); FileWriter writer; try {
-         * writer = new FileWriter(iniFile); writer.write(path); writer.close();
-         * } catch (IOException e) { e.printStackTrace(); }
-         */ // TODO
+        new MessageBox(this.programFrame, "JDK Path", PATH_SELECTION);
+        jdkPath = this.programFrame.getCompilerPath();
+        if (!jdkPath.exists()) {
+            new MessageBox(this.programFrame, "No Compiler found", NO_COMPILER_FOUND);
+            return;
+        }
+        System.setProperty("java.home", jdkPath.getAbsolutePath());
+        File iniFile = new File(dir, fileName);
+        FileWriter writer;
+        try {
+            writer = new FileWriter(iniFile);
+            writer.write(jdkPath.getAbsolutePath());
+            writer.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 
     /**
@@ -140,6 +147,9 @@ public class Controller {
     public boolean nextBlock() {
         boolean hasNextBlock = this.dfaExecution.nextBlockStep();
         if (hasNextBlock) {
+            this.refreshProgramFrame();
+        } else {
+            this.dfaExecution.setCurrentElementaryStep(this.dfaExecution.getTotalElementarySteps() - 1);
             this.refreshProgramFrame();
         }
         return hasNextBlock;
@@ -182,11 +192,13 @@ public class Controller {
      * @return whether there was a previous block to show or not
      */
     public boolean previousBlock() {
-        boolean hasPreviousBlock = this.dfaExecution.previousBlockStep();
-        if (hasPreviousBlock) {
-            this.refreshProgramFrame();
+        int currentStep = this.dfaExecution.getCurrentElementaryStep();
+        this.dfaExecution.setCurrentBlockStep(this.dfaExecution.getCurrentBlockStep());
+        if (currentStep == this.dfaExecution.getCurrentElementaryStep()) {
+            this.dfaExecution.previousBlockStep();
         }
-        return hasPreviousBlock;
+        this.refreshProgramFrame();
+        return true;
     }
 
     private void refreshProgramFrame() {

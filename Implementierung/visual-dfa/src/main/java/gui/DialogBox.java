@@ -74,7 +74,8 @@ public abstract class DialogBox extends JDialog {
      *            The title of the DialogBox.
      */
     protected final void init(String title) {
-        setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+        
 
         setResizable(false);
         borderPanel.setLayout(new BorderLayout());

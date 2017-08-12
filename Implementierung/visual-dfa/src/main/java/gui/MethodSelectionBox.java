@@ -50,6 +50,7 @@ public class MethodSelectionBox extends DialogBox {
     public MethodSelectionBox(Frame owner, List<String> methods) {
         super(owner);
         this.methods = methods;
+        option = Option.CANCEL_OPTION;
         init(METHODBOX_TITLE);
         pack();
         setVisible(true);

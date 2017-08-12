@@ -31,8 +31,8 @@ public final class App {
                 }
             }
         });
-        
         ctrl.setProgramFrame(frame);
         ctrl.visibilityInput();
+        ctrl.pathSelection();
     }
 }

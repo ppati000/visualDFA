@@ -1,5 +1,11 @@
 package controller;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -34,7 +40,12 @@ public class Controller {
     private static final String CALC_MESSAGE = "This calculation is taking longer than expected. Do you want to continue and show intermediate results?";
     private static final String ABORT_MESSAGE = "This process leads to a complete deletion of the graph and the calculation. Do you want to continue?";
     private static final String EXCEPTION_TITLE = "Exception caused by analysis calculation";
+    private static final String PATH_SELECTION = "Select the path to you \"jre\" folder that is lokalized in the JDK(!) folder. Example: C:\\Programme\\Java\\jdk1.7.0_76\\jre";
     private static final int TIME_TO_WAIT = 300;
+    private static final String PATH_SEPARATOR = System.getProperty("os.name").contains("windows") ? "\\" : "/";
+    private static final String NO_COMPILER_FOUND = "Please check the file YourHomeDirectory\\visualDfa\\jdkPath.txt and change it to the path of "
+            + "your jre folder in your JDK(!)1.7 folder. " + "For Example C:\\Program Files\\Java\\jdk1.7.0_76\\jre."
+            + "Afterwards restart the program.";
     private ProgramFrame programFrame;
     private DFAExecution<? extends LatticeElement> dfaExecution;
     private GraphUIController graphUIController;
@@ -67,6 +78,51 @@ public class Controller {
         this.worklistManager = WorklistManager.getInstance();
         this.visualGraphPanel = new VisualGraphPanel();
         this.graphUIController = new GraphUIController(visualGraphPanel);
+    }
+
+    /**
+     * 
+     */
+    public void pathSelection() {
+        String pathName = System.getProperty("user.home") + PATH_SEPARATOR + "visualDfa" + PATH_SEPARATOR;
+        File dir = new File(pathName);
+        if (!dir.exists()) {
+            dir.mkdir();
+        }
+        String fileName = "jdkPath.txt";
+        if (new File(dir, fileName).exists()) {
+            File quellDatei = new File(pathName + fileName);
+            BufferedReader reader = null;
+            try {
+                reader = new BufferedReader(new FileReader(quellDatei));
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+            String input;
+            String quellText = new String();
+            try {
+                while ((input = reader.readLine()) != null) {
+                    System.out.println(input);
+                    quellText += input;
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            System.setProperty("java.home", quellText.trim());
+            return;
+        }
+
+        MessageBox box = new MessageBox(this.programFrame, "JDK Path", PATH_SELECTION);
+        // TODO method getDirectoryOfJDK of Michi has to return a string
+        String path = "";
+        File iniFile = new File(dir + fileName);
+        FileWriter writer;
+        try {
+            writer = new FileWriter(iniFile);
+            writer.write(path);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -191,7 +247,6 @@ public class Controller {
         return this.programFrame.getControlPanel().getDelaySliderPosition();
     }
 
-   
     /**
      * @return if autoplay should continue and tests if a breakpoint was reached
      */
@@ -229,7 +284,12 @@ public class Controller {
         boolean hasFilter = programFrame.getInputPanel().isFilterSelected();
 
         // Process code with instance of {@code CodeProcessor}
-        CodeProcessor processor = new CodeProcessor(code);
+        CodeProcessor processor = null;
+        try {
+            processor = new CodeProcessor(code);
+        } catch (NullPointerException e) {
+            new MessageBox(this.programFrame, "No Compiler Found", NO_COMPILER_FOUND);
+        }
         if (!processor.wasSuccessful()) {
             new MessageBox(programFrame, "Compilation Error", processor.getErrorMessage());
             visibilityInput();
@@ -255,7 +315,7 @@ public class Controller {
         String methodSignature = selectionBox.getSelectedMethod();
         SimpleBlockGraph blockGraph = graphBuilder.buildGraph(methodSignature);
         this.precalcController = new DFAPrecalcController();
-        
+
         try {
             Worklist worklist = this.worklistManager.getWorklist(worklistName, blockGraph);
             DFAFactory<LatticeElement> dfaFactory = analysisLoader.getDFAFactory(analysisName);
@@ -275,7 +335,7 @@ public class Controller {
         synchronized (this) {
             while (i < TIME_TO_WAIT
                     && !(precalcController.getPrecalcState() == DFAPrecalcController.PrecalcState.COMPLETED)) {
-                //TODO
+                // TODO
                 try {
                     wait(100);
                 } catch (InterruptedException e) {
@@ -413,6 +473,7 @@ public class Controller {
         }
         this.programFrame = programFrame;
         this.visualGraphPanel.setParentFrame(this.programFrame);
+        this.graphUIController.setStatePanel(this.programFrame.getStatePanelOpen());
     }
 
     /**

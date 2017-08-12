@@ -9,9 +9,9 @@ import soot.SootMethod;
  *          no methods should be filtered out.
  *
  */
-public class NoFilter implements Filter {
+public class NoFilter extends Filter {
 
-	@Override
+	
 	/**
 	 * Filter for a given method, that decides if the method should be filtered
 	 * out or not.
@@ -21,7 +21,7 @@ public class NoFilter implements Filter {
 	 * @return if the method passes the filter or not
 	 */
 	public boolean filter(SootMethod method) {
-		return true;
+	    return super.filterTaint(method);
 	}
 
 }

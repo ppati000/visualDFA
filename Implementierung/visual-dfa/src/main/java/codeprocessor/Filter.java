@@ -20,17 +20,17 @@ public abstract class Filter {
      */
     public boolean filterTaint(SootMethod method) {
         String signature = method.getSubSignature();
-        if (signature.equals("void taint(java.lang.Object)")) {
+        if (signature.startsWith("void __taint")) {
             Tag tag = null;
             // TODO tag = TaintAnalysisTag.TAINT_TAG
             method.addTag(tag);
             return false;
-        } else if (signature.equals("void clean(java.lang.Object)")) {
+        } else if (signature.startsWith("void __clean")) {
             Tag tag = null;
             // TODO tag = TaintAnalysisTag.CLEAN_TAG
             method.addTag(tag);
             return false;
-        } else if (signature.equals("void sensitive()")) {
+        } else if (signature.startsWith("void __sensitive")) {
             Tag tag = null;
             // TODO tag = TaintAnalysisTag.SENSITIVE_TAG
             method.addTag(tag);

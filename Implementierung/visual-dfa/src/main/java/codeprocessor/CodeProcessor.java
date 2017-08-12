@@ -26,9 +26,17 @@ public class CodeProcessor {
     private static final String DEFAULT_CLASS_SIGNATURE = "public class DefaultClass {";
     private static final String DEFAULT_METHOD_SIGNATURE = "public void defaultMethod() {";
     private static final String PATH_SEPARATOR = System.getProperty("os.name").contains("windows") ? "\\" : "/";
-    private static final String DEFAULT_TAINT_METHOD = "public void taint(Object o) {}";
-    private static final String DEFAULT_CLEAN_METHOD = "public void clean(Object o) {}";
-    private static final String DEFAULT_SENSITIVE_METHOD = "public void sensitive() {}";
+    private static final String DEFAULT_TAINT_METHODS = "public static void __taint(Object o) {} "
+            + "public static void __taint(boolean b){}" + "public static void __taint(int i){}"
+            + "public static void __taint(double d){}" + "public static void __taint(char c){}"
+            + "public static void __taint(long l){}" + "public static void __taint(short s){}"
+            + "public static void __taint(byte b){}" + "public static void __taint(float f){}";
+    private static final String DEFAULT_CLEAN_METHODS = "public void __clean(Object o) {} "
+            + "public static void __clean(boolean b){}" + "public static void __clean(int i){}"
+            + "public static void __clean(double d){}" + "public static void __clean(char c){}"
+            + "public static void __clean(long l){}" + "public static void __clean(short s){}"
+            + "public static void __clean(byte b){}" + "public static void __clean(float f){}";
+    private static final String DEFAULT_SENSITIVE_METHOD = "public static void __sensitive() {}";
 
     /**
      * Creates a {@code CodeProcessor} with the given code fragment and compiles
@@ -92,16 +100,18 @@ public class CodeProcessor {
 
         // delete package information
         if (code.startsWith("package")) {
-            while (!code.startsWith(";") && code.length() > 0) {
-                code = code.substring(1);
+            int i = 0;
+            while (!code.startsWith(";") && i < code.length()) {
+                i++;
             }
+            code = code.substring(i);
         }
         return code;
     }
 
     private String getTaintWrap(String code) {
         int endIndex = code.lastIndexOf("}");
-        code = code.substring(0, endIndex) + DEFAULT_TAINT_METHOD + DEFAULT_CLEAN_METHOD + DEFAULT_SENSITIVE_METHOD
+        code = code.substring(0, endIndex) + DEFAULT_TAINT_METHODS + DEFAULT_CLEAN_METHODS + DEFAULT_SENSITIVE_METHOD
                 + "}";
         return code;
     }

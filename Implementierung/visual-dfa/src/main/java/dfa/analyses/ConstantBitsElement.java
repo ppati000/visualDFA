@@ -92,7 +92,7 @@ public class ConstantBitsElement extends LocalMapElement<BitValueArray> {
     public int hashCode() {
         return Objects.hash(localMap);
     }
-    
+
     @Override
     public LocalMapElement<BitValueArray> clone() {
         // TODO implement
@@ -146,7 +146,6 @@ public class ConstantBitsElement extends LocalMapElement<BitValueArray> {
             if (c == null) {
                 throw new IllegalArgumentException("c must not be null");
             }
-
             int length;
             long val;
             if (c instanceof IntConstant) {
@@ -157,32 +156,10 @@ public class ConstantBitsElement extends LocalMapElement<BitValueArray> {
                 length = 64;
             }
             BitValue[] values = new BitValue[length];
-            if (val == 0) {
-                for (int j = 0; j < length; j++) {
-                    values[j] = BitValue.ZERO;
-                }
-            } else if (val > 0) {
-                values[length - 1] = BitValue.ZERO;
-                for (int i = length - 2; i >= 0; i--) {
-                    if (val >= (int) Math.pow(2, i)) {
-                        values[i] = BitValue.ONE;
-                        val -= (int) Math.pow(2, i);
-                    } else {
-                        values[i] = BitValue.ZERO;
-                    }
-                }
-            } else {
-                values[length - 1] = BitValue.ONE;
-                for (int k = length - 2; k >= 0; k--) {
-                    if (val <= (-1) * ((int) Math.pow(2, k))) {
-                        values[k] = BitValue.ZERO;
-                        val += (int) Math.pow(2, k);
-                    } else {
-                        values[k] = BitValue.ONE;
-                    }
-                }
+            for (int j = 0; j < length; j++) {
+                values[j] = booleanToBitValue((val & (1 << j)) != 0);
             }
-            this.bitValues = values;
+            bitValues = values;
         }
 
         /**
@@ -199,10 +176,51 @@ public class ConstantBitsElement extends LocalMapElement<BitValueArray> {
             this.bitValues = bitValues;
         }
 
+        /**
+         * Creates a {@code BitValueArray} representing an array of the given length with every entry beeing the given
+         * {@code BitValue}.
+         * 
+         * @param length
+         *        length of the array
+         * @param init
+         *        value for the array
+         */
         public BitValueArray(int length, BitValue init) {
             BitValue[] bottomArray = new BitValue[length];
             for (int i = 0; i < length; i++) {
                 bottomArray[i] = init;
+            }
+        }
+
+        /**
+         * Converts a {@code boolean} into a {@code BitValue}.
+         * 
+         * @param b
+         *        the {@code boolean} to be converted
+         * @return a {@code BitValue} created from a {@code boolean}
+         */
+        public static BitValue booleanToBitValue(boolean b) {
+            if (b) {
+                return BitValue.ONE;
+            } else {
+                return BitValue.ZERO;
+            }
+        }
+
+        /**
+         * Converts a {@code BitValue} into a {@code boolean}.
+         * 
+         * @param val
+         *        the {@code BitValue} to be converted
+         * @return a {@code boolean} created from a {@code BitValue}
+         */
+        public static boolean bitValueToBoolean(BitValue val) {
+            if (val == BitValue.TOP || val == BitValue.BOTTOM) {
+                throw new IllegalArgumentException("val must be ZERO or ONE");
+            } else if (val == BitValue.ONE) {
+                return true;
+            } else {
+                return false;
             }
         }
 
@@ -269,6 +287,39 @@ public class ConstantBitsElement extends LocalMapElement<BitValueArray> {
             return bitValues;
         }
 
+        public boolean isConst() {
+            for (BitValue val : bitValues) {
+                if (val == BitValue.BOTTOM || val == BitValue.TOP) {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        /**
+         * Returns the {@code ArithmeticConstant} this {@code BitValueArray} represents, if it represents a constant.
+         * 
+         * @return the {@code ArithmeticConstant} this {@code BitValueArray}, if it represents a constant
+         */
+        public ArithmeticConstant getConstant() {
+            if (!isConst()) {
+                return null;
+            } else {
+                int result = 0;
+                int length = bitValues.length;
+                for (int i = 0; i < length; i++) {
+                    result = (result << 1) + (bitValueToBoolean(bitValues[i]) ? 1 : 0);
+                }
+                if (length == 32) {
+                    return IntConstant.v(result);
+                } else if (length == 64) {
+                    return LongConstant.v(result);
+                } else {
+                    return null;
+                }
+            }
+        }
+
         @Override
         public boolean equals(Object o) {
             if (!(o instanceof BitValueArray)) {
@@ -283,7 +334,7 @@ public class ConstantBitsElement extends LocalMapElement<BitValueArray> {
         public int hashCode() {
             return Objects.hash((Object[]) bitValues);
         }
-        
+
         @Override
         public String toString() {
             return bitsToString(getBitValues());

@@ -1,5 +1,8 @@
 package dfa.analyses;
 
+import dfa.analyses.ConstantBitsElement.BitValue;
+import dfa.analyses.ConstantBitsElement.BitValueArray;
+import dfa.analyses.ConstantFoldingTransition.Evaluator;
 import dfa.framework.Transition;
 import dfa.framework.UnsupportedStatementException;
 import dfa.framework.UnsupportedValueException;
@@ -321,13 +324,172 @@ public class ConstantBitsTransition implements Transition<ConstantBitsElement> {
          * constant # BOTTON = BOTTOM for # in {+,-,*,/,%,&,|,^,<<,<<<,>>}
          */
 
+        /**
+         * Checks for addition if one of the given {@code BitValue}s equals TOP or BOTTOM and if so, calculates the
+         * transfer
+         * 
+         * @param opAndTransfer
+         *        the {@code BitValue}s to check
+         * @param check
+         *        either TOP or BOTTOM, depending for which you want to check
+         * @return if one of the bits was {@code check}, and the calculated transfer
+         */
+        private BitValue[] checkAddTopBottom(BitValue[] opAndTransfer, BitValue check) {
+            // opAndTransfer = { op1Values[i], op2Values[i], transfer }
+            // we will return resValTransfer, with the first entry beeing the resulting bit
+            // and the second entry beeing the calculated transfer
+            BitValue[] resValTransfer = new BitValue[2];
+            resValTransfer[0] = BitValue.ZERO;
+
+            for (int i = 0; i < 3; i++) {
+                if (opAndTransfer[i] == check) {
+                    // if one of the three BitValues is TOP/BOTTOM, the resulting bit is the same
+                    resValTransfer[0] = check;
+
+                    // calculating the transfer:
+                    boolean isOne = true;
+                    boolean isZero = true;
+                    for (int j = 0; j < 3; j++) {
+                        if (j != i && opAndTransfer[j] != BitValue.ONE) {
+                            isOne = false;
+                        }
+                        if (j != i && opAndTransfer[j] != BitValue.ZERO) {
+                            isZero = false;
+                        }
+                    }
+                    if (isOne) {
+                        resValTransfer[1] = BitValue.ONE;
+                    } else if (isZero) {
+                        resValTransfer[1] = BitValue.ZERO;
+                    } else {
+                        resValTransfer[1] = check;
+                    }
+                    break;
+                }
+            }
+            return resValTransfer;
+        }
+
         @Override
         public void caseAddExpr(AddExpr expr) {
             ValuePair operandValues = calcOperands(expr);
-            ConstantBitsElement.BitValueArray op1 = operandValues.getFirst();
-            ConstantBitsElement.BitValueArray op2 = operandValues.getSecond();
+            BitValueArray op1 = operandValues.getFirst();
+            BitValueArray op2 = operandValues.getSecond();
 
-            // TODO implement Expression
+            if (op1.equals(top) || op2.equals(top)) {
+                // if one is top, the result is top
+                result = top;
+
+            } else if (op1.isConst() && op2.isConst()) {
+                // if both are constants, we can just add the corresponding ArithmeticConstants
+                result = new BitValueArray((ArithmeticConstant) op1.getConstant().add(op2.getConstant()));
+
+            } else {
+                // both are not top and at least one is not a constant
+                // therefore we have to add all the bits one by one
+
+                // Making sure we have the right length in both:
+                int l1 = op1.getLength();
+                int l2 = op2.getLength();
+                int length = Math.max(l1, l2);
+                BitValue[] op1Values = new BitValue[length];
+                BitValue[] op2Values = new BitValue[length];
+                BitValue[] bitValues = new BitValue[length];
+                BitValue transfer = BitValue.ZERO;
+
+                for (int i = 0; i < length; i++) {
+                    if (i >= l1) {
+                        op1Values[i] = BitValue.ZERO;
+                    } else {
+                        op1Values[i] = op1.getBitValues()[i];
+                    }
+                    if (i >= l2) {
+                        op2Values[i] = BitValue.ZERO;
+                    } else {
+                        op2Values[i] = op2.getBitValues()[i];
+                    }
+
+                    // the actual addition bit by bit:
+                    // first checking if one of the bits is TOP or BOTTOM
+                    BitValue[] opAndTransfer = { op1Values[i], op2Values[i], transfer };
+                    BitValue[] checkTop = checkAddTopBottom(opAndTransfer, BitValue.TOP);
+                    BitValue[] checkBottom = checkAddTopBottom(opAndTransfer, BitValue.BOTTOM);
+
+                    if (checkTop[0] == BitValue.TOP) {
+                        bitValues[i] = BitValue.TOP;
+                        transfer = checkTop[1];
+                    } else if (checkBottom[0] == BitValue.BOTTOM) {
+                        bitValues[i] = BitValue.BOTTOM;
+                        transfer = checkBottom[1];
+
+                    } else {
+                        // both bits and the transfer are ONE or ZERO so we convert them to int and add them
+                        int op1Bit = BitValueArray.bitValueToBoolean(op1Values[i]) ? 1 : 0;
+                        int op2Bit = BitValueArray.bitValueToBoolean(op2Values[i]) ? 1 : 0;
+                        int transferBit = BitValueArray.bitValueToBoolean(transfer) ? 1 : 0;
+                        int res = op1Bit + op2Bit + transferBit;
+                        transfer = BitValueArray.booleanToBitValue(res > 1);
+                        bitValues[i] = BitValueArray.booleanToBitValue((res & 1) != 0);
+                    }
+                }
+                result = new BitValueArray(bitValues);
+            }
+        }
+
+        /**
+         * Checks for subtraction if one of the given {@code BitValue}s equals TOP or BOTTOM and if so, calculates the
+         * transfer
+         * 
+         * @param opAndTransfer
+         *        the {@code BitValue}s to check
+         * @param check
+         *        either TOP or BOTTOM, depending for which you want to check
+         * @return if one of the bits was {@code check}, and the calculated transfer
+         */
+        private BitValue[] checkSubTopBottom(BitValue[] opAndTransfer, BitValue check) {
+            // opAndTransfer = { op1Values[i], op2Values[i], transfer }
+            // we will return resValTransfer, with the first entry beeing the resulting bit
+            // and the second entry beeing the calculated transfer
+            BitValue[] resValTransfer = new BitValue[2];
+            resValTransfer[0] = BitValue.ZERO;
+
+            for (int i = 0; i < 3; i++) {
+                if (opAndTransfer[i] == check) {
+                    // if one of the three BitValues is TOP/BOTTOM, the resulting bit is the same
+                    resValTransfer[0] = check;
+
+                    // calculating the transfer:
+                    boolean isOne = true;
+                    boolean isZero = true;
+                    if (opAndTransfer[0] == BitValue.ONE) {
+                        isOne = false;
+                        if (opAndTransfer[1] != BitValue.ZERO && opAndTransfer[2] != BitValue.ZERO) {
+                            isZero = false;
+                        }
+                    } else if (opAndTransfer[0] == BitValue.ZERO) {
+                        isZero = false;
+                        if (opAndTransfer[1] != BitValue.ONE && opAndTransfer[2] != BitValue.ONE) {
+                            isOne = false;
+                        }
+                    } else {
+                        if (opAndTransfer[1] != BitValue.ONE || opAndTransfer[2] != BitValue.ONE) {
+                            isOne = false;
+                        }
+                        if (opAndTransfer[1] != BitValue.ZERO || opAndTransfer[2] != BitValue.ZERO) {
+                            isZero = false;
+                        }
+                    }
+                    if (isOne) {
+                        resValTransfer[1] = BitValue.ONE;
+                    } else if (isZero) {
+                        resValTransfer[1] = BitValue.ZERO;
+                    } else {
+                        resValTransfer[1] = check;
+                    }
+                    break;
+                }
+            }
+            return resValTransfer;
         }
 
         @Override
@@ -336,7 +498,64 @@ public class ConstantBitsTransition implements Transition<ConstantBitsElement> {
             ConstantBitsElement.BitValueArray op1 = operandValues.getFirst();
             ConstantBitsElement.BitValueArray op2 = operandValues.getSecond();
 
-            // TODO implement Expression
+            if (op1.equals(top) || op2.equals(top)) {
+                result = top;
+                // if one is top, the result is top
+
+            } else if (op1.isConst() && op2.isConst()) {
+                result = new BitValueArray((ArithmeticConstant) op1.getConstant().subtract(op2.getConstant()));
+                // if both are constants, we can just subtract the corresponding ArithmeticConstants
+
+            } else {
+                // both are not top and at least one is not a constant
+                // therefore we have to subtract all the bits one by one
+
+                // Making sure we have the right length in both:
+                int l1 = op1.getLength();
+                int l2 = op2.getLength();
+                int length = Math.max(l1, l2);
+                BitValue[] op1Values = new BitValue[length];
+                BitValue[] op2Values = new BitValue[length];
+                BitValue[] bitValues = new BitValue[length];
+                BitValue transfer = BitValue.ZERO;
+
+                for (int i = 0; i < length; i++) {
+                    if (i >= l1) {
+                        op1Values[i] = BitValue.ZERO;
+                    } else {
+                        op1Values[i] = op1.getBitValues()[i];
+                    }
+                    if (i >= l2) {
+                        op2Values[i] = BitValue.ZERO;
+                    } else {
+                        op2Values[i] = op2.getBitValues()[i];
+                    }
+
+                    // the actual subtraction bit by bit:
+                    // first checking if one of the bits is TOP or BOTTOM
+                    BitValue[] opAndTransfer = { op1Values[i], op2Values[i], transfer };
+                    BitValue[] checkTop = checkSubTopBottom(opAndTransfer, BitValue.TOP);
+                    BitValue[] checkBottom = checkSubTopBottom(opAndTransfer, BitValue.BOTTOM);
+
+                    if (checkTop[0] == BitValue.TOP) {
+                        bitValues[i] = BitValue.TOP;
+                        transfer = checkTop[1];
+                    } else if (checkBottom[0] == BitValue.BOTTOM) {
+                        bitValues[i] = BitValue.BOTTOM;
+                        transfer = checkBottom[1];
+
+                    } else {
+                        // both bits and the transfer are ONE or ZERO so we convert them to int and subtract them
+                        int op1Bit = BitValueArray.bitValueToBoolean(op1Values[i]) ? 1 : 0;
+                        int op2Bit = BitValueArray.bitValueToBoolean(op2Values[i]) ? 1 : 0;
+                        int transferBit = BitValueArray.bitValueToBoolean(transfer) ? 1 : 0;
+                        int res = op1Bit + op2Bit + transferBit;
+                        transfer = BitValueArray.booleanToBitValue(op1Bit < op2Bit + transferBit);
+                        bitValues[i] = BitValueArray.booleanToBitValue((res & 1) != 0);
+                    }
+                }
+                result = new BitValueArray(bitValues);
+            }
         }
 
         @Override
@@ -368,7 +587,73 @@ public class ConstantBitsTransition implements Transition<ConstantBitsElement> {
 
         @Override
         public void caseNegExpr(NegExpr expr) {
-            // TODO implement Expression
+            Value negOp = expr.getOp();
+            Evaluator negSwitch = new Evaluator(inputElement);
+            negOp.apply(negSwitch);
+            BitValueArray val = negSwitch.getResult();
+
+            if (val.equals(top)) {
+                result = top;
+                // neg(top) = top
+
+            } else {
+                // not top, so we negate the bits one by one
+                int length = val.getLength();
+                BitValue[] resBitValues = new BitValue[length];
+                BitValue[] opBitValues = val.getBitValues();
+                for (int i = 0; i < length; i++) {
+                    if (opBitValues[i].equals(BitValue.TOP) || opBitValues[i].equals(BitValue.BOTTOM)) {
+                        resBitValues[i] = opBitValues[i];
+                    } else {
+                        resBitValues[i] = (opBitValues[i] == BitValue.ZERO) ? BitValue.ONE : BitValue.ZERO;
+                    }
+                }
+
+                // resValue is negOp inverted bitwise, now we add 1 because 2-complement
+                BitValueArray resValue = new BitValueArray(resBitValues);
+                if (resValue.isConst()) {
+                    // if constant, we can just add the Arithmetic Constant 1
+                    ArithmeticConstant c;
+                    if (length == 32) {
+                        c = IntConstant.v(1);
+                    } else {
+                        c = LongConstant.v(1);
+                    }
+                    result = new BitValueArray((ArithmeticConstant) resValue.getConstant().add(c));
+
+                } else {
+                    // if not Constant we have to add bitwise like in AddExpression
+                    BitValue transfer = BitValue.ZERO;
+                    BitValue[] bitValues = new BitValue[length];
+                    for (int j = 0; j < length; j++) {
+                        int oneBit = (j == 0) ? 1 : 0;
+                        BitValue oneBitValue = BitValueArray.booleanToBitValue(oneBit == 1);
+                        // oneBit and oneBitValue are the "1" that will be added, they are 1/ONE if and if only j is 0
+
+                        // Checking if one of the bits is TOP/BOTTOM:
+                        BitValue[] opAndTransfer = { resBitValues[j], oneBitValue, transfer };
+                        BitValue[] checkTop = checkSubTopBottom(opAndTransfer, BitValue.TOP);
+                        BitValue[] checkBottom = checkSubTopBottom(opAndTransfer, BitValue.BOTTOM);
+
+                        if (checkTop[0] == BitValue.TOP) {
+                            bitValues[j] = BitValue.TOP;
+                            transfer = checkTop[1];
+                        } else if (checkBottom[0] == BitValue.BOTTOM) {
+                            bitValues[j] = BitValue.BOTTOM;
+                            transfer = checkBottom[1];
+
+                        } else {
+                            // both bits and the transfer are ONE or ZERO so we convert them to int and add them
+                            int resBit = BitValueArray.bitValueToBoolean(resBitValues[j]) ? 1 : 0;
+                            int transferBit = BitValueArray.bitValueToBoolean(transfer) ? 1 : 0;
+                            int res = resBit + oneBit + transferBit;
+                            transfer = BitValueArray.booleanToBitValue(resBit < oneBit + transferBit);
+                            bitValues[j] = BitValueArray.booleanToBitValue((res & 1) != 0);
+                        }
+                    }
+                    result = new BitValueArray(bitValues);
+                }
+            }
         }
 
         @Override

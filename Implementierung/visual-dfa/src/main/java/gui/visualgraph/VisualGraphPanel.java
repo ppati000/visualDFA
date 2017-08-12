@@ -5,6 +5,7 @@ import com.mxgraph.model.mxCell;
 import com.mxgraph.swing.mxGraphComponent;
 import com.mxgraph.view.mxGraph;
 import dfa.framework.AbstractBlock;
+import dfa.framework.BlockState;
 import dfa.framework.DFAExecution;
 import gui.*;
 import dfa.framework.AnalysisState;
@@ -14,7 +15,6 @@ import javax.swing.*;
 import javax.swing.border.LineBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import javax.xml.bind.SchemaOutputResolver;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -22,7 +22,6 @@ import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.*;
 import java.util.List;
@@ -41,6 +40,7 @@ public class VisualGraphPanel extends JPanel {
     private mxGraph graph;
     private Frame parentFrame = null;
     private Map<AbstractBlock, UIAbstractBlock> blockMap;
+    private UIAbstractBlock selectedBlock;
 
     /**
      * Creates a new {@code VisualGraphPanel}.
@@ -127,13 +127,23 @@ public class VisualGraphPanel extends JPanel {
             graphExport.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    // TODO: Decide which export to do and do actual export.
-                    // new GraphExportBox(parentFrame).setVisible(true);
+                    GraphExportBox exportBox = new GraphExportBox(parentFrame);
 
+                    float scale = exportBox.getQuality().ordinal() + 1;
                     String outputPath = System.getProperty("user.home") + File.separator + "visualDFA";
 
                     try {
-                        List<BufferedImage> images = GraphExporter.batchExport(dfa, 2, true);
+                        List<BufferedImage> images;
+
+                        if (exportBox.isBatchExport()) {
+                            images = GraphExporter.batchExport(dfa, scale, exportBox.includeLineStates());
+                        } else {
+                            images = new ArrayList<>();
+                            BlockState state = selectedBlock == null ? null : dfa.getCurrentAnalysisState().getBlockState(selectedBlock.getDFABlock());
+
+                            images.add(GraphExporter.exportCurrentGraph(graph, scale, selectedBlock, state));
+                        }
+
                         File outputDir = new File(outputPath);
                         long timestamp = new Date().getTime();
 
@@ -252,8 +262,33 @@ public class VisualGraphPanel extends JPanel {
         this.parentFrame = frame;
     }
 
+    /**
+     * Enables or disables Jump to Action
+     *
+     * @param enabled
+     *         if it should be enabled or disabled
+     */
     public void setJumpToAction(boolean enabled) {
         jumpToAction.setSelected(enabled);
+    }
+
+    /**
+     * Used by {@code GraphUIController} to set the panel's selected {@code UIAbstractBlock} for later use.
+     *
+     * @param block
+     *         the block that was determined as the current one by the {@code GraphUIController}.
+     */
+    public void setSelectedBlock(UIAbstractBlock block) {
+        this.selectedBlock = block;
+    }
+
+    /**
+     * Used by {@code GraphUIController} to get the selected block when updating the {@code StatePanelOpen}.
+     *
+     * @return the currently selected block
+     */
+    public UIAbstractBlock getSelectedBlock() {
+        return this.selectedBlock;
     }
 
     private void autoLayoutAndShowGraph() {

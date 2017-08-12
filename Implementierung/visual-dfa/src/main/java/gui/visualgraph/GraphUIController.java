@@ -8,7 +8,6 @@ import com.mxgraph.view.mxGraph;
 import dfa.framework.*;
 import gui.StatePanelOpen;
 
-import javax.swing.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -25,7 +24,6 @@ public class GraphUIController {
     private mxGraph graph;
     private DFAExecution dfa;
     private StatePanelOpen statePanel = null;
-    private UIAbstractBlock selectedBlock;
     private final Map<AbstractBlock, UIAbstractBlock> mappedAbstractBlocks = new HashMap<>();
 
     /**
@@ -126,20 +124,19 @@ public class GraphUIController {
                 // Weird API: "removed" cells are actually the newly selected cells.
                 ArrayList<mxCell> selectedCells = (ArrayList<mxCell>) mxEventObject.getProperty("removed");
 
-                if (selectedCells != null && selectedCells.size() > 0) {
-                    mxCell selectedCell = selectedCells.get(0);
-                    selectedBlock = mxCellMap.get(selectedCell);
-                } else {
-                    selectedBlock = null;
+
+                    if (selectedCells != null && selectedCells.size() > 0) {
+                        mxCell selectedCell = selectedCells.get(0);
+                        panel.setSelectedBlock( mxCellMap.get(selectedCell));
+
+                    } else {
+                        panel.setSelectedBlock( null);
+
                 }
 
                 updateStatePanel();
             }
         });
-    }
-
-    public UIAbstractBlock getSelectedBlock() {
-        return selectedBlock;
     }
 
     /**
@@ -175,6 +172,8 @@ public class GraphUIController {
     }
 
     private void updateStatePanel() {
+        UIAbstractBlock selectedBlock = panel.getSelectedBlock();
+
         if (statePanel != null && selectedBlock != null) {
             AbstractBlock selectedAbstractBlock = selectedBlock.getDFABlock();
             UIAbstractBlock uiAbstractBlock = mappedAbstractBlocks.get(selectedAbstractBlock);
@@ -193,8 +192,7 @@ public class GraphUIController {
             statePanel.setIn(inStateString);
             statePanel.setOut(outStateString);
             statePanel.setSelectedLine(text, blockNumber, lineNumber);
-        } else {
-            selectedBlock = null;
+        } else if (statePanel != null){
             statePanel.reset();
         }
     }

@@ -2,4 +2,86 @@
 
 \part{Umsetzung}
 
-Hello
+In diesem Kapitel wird erklärt, welche Funktionalität aus dem Pflichtenheft implementiert wurde und in welchem Ausmaß der Implementierungsplan erfüllt wurde.
+Insbesondere wird dabei auf die Behandlung von unerwarteten Problemen während der Implementierung eingegangen.
+
+\section{Umsetzung der Kriterien}
+% TODO: Update if needed, e.g. Reaching Definitions. (Slides as well)
+
+\subsection{Muss-Kriterien}
+
+Die Muss-Kriterien wurden planmäßig und vollständig implementiert. Diese sind:
+
+\begin{itemize}
+  \item Eingabe von Code und Verarbeitung zu einem CFG
+  \item Unterstützung des definierten Java-Subsets
+  \item Anzeige des CFG
+  \item Ausführung und Anzeige der implementierten Analysen
+  \item Automatische Fixpunktiteration
+  \item Abbruch der Analyse 
+\end{itemize}
+
+Insbesondere wurden alle in den Muss-Kriterien geforderten Analysen implementiert.
+Diese sind Constant Folding, Reaching Definitions, Constant Bits und Taint Analysis.
+
+\subsection{Kann-Kriterien}
+% TODO: Update if needed, e.g. Reaching Definitions. (Slides as well)
+
+Die Kann-Kriterien wurden zum Großteil implementiert.
+Von insgesamt 19 Kann-Kriterien wurden 14 vollständig implementiert, ein weiteres (Auswahlmöglichkeit der Worklistalgorithmen) teilweise.
+Lediglich vier Kann-Kriterien wurden \textit{nicht} implementiert. Dazu gehören:
+
+\begin{itemize}
+  \item Zeilenangabe bei Fehlermeldungen
+  \item Weitere Datenflussanalysen
+  \item Manual Page
+  \item Implementierung einer eigenen Datenflussanalyse
+\end{itemize}
+
+\newpage
+\section{Problembehandlung}
+
+Es traten einige unvorhersehbare Probleme auf, die eine Änderung des Plans erforderten.
+
+\subsection{Dynamisches Laden von Klassen für eigene Datenflussanalysen}
+
+Es war vorgesehen, zum dynamischen Laden von Klassen für eigene Datenflussanalysen des Benutzers die Reflections-Bibliothek zu verwenden.
+Diese hatte in einem Prototyp einwandfrei funktioniert.
+Im Laufe der Implementierung stellte sich jedoch heraus, dass die Reflections-Bibliothek im Zusammenspiel mit der für Datenflussanalysen verwendeten Soot-Bibliothek einen Abhängigkeitskonflikt verursacht.
+Dies kommt dadurch zustande, dass die beiden Bibliotheken unterschiedliche Versionen der selben Abhängigkeit benötigen. 
+Daraus resultiert ein Laufzeitfehler, der nicht trivial behebbar ist.
+
+Wegen des großen erwarteten Aufwands wurde ausgeschlossen, eine der Bibliotheken anzupassen. 
+Es wurde entschieden, andere (insbesondere Muss-) Kriterien zuerst zu implementieren und dynamisches Laden von Klassen nur bei ausreichender zeitlicher Kapazität selbst zu implementieren.
+Letztendlich ist daher diese Funktionalität nicht im Programm enthalten.
+
+Allerdings muss hervorgehoben werden, dass die Entwurfsarchitektur des Programmes darauf ausgelegt ist, dass jederzeit neue Datenflussanalysen implementiert werden können und das Fehlen der dynamischen Funktionalität daher kein großes Hindernis darstellt.
+Lediglich der letzte Schritt zur Implementierung eigener Analysen fehlt also – dies lässt sich durch Rekompilieren des Programms umgehen.
+Je nach Wichtigkeit dieses Anwendungsfalls kann dynamisches Laden von Klassen auch nachgereicht werden, ohne nennenswerte Teile des Programms umschreiben zu müssen.
+
+\subsection{Graph-Export}
+
+Bereits vor Beginn der Implementierungsphase wurde sichergestellt, dass eine benutzbare API für den Graph-Export in der JGraphX-Bibliothek zur Verfügung steht.
+Um auch den Zustand der Analyse im Bild anzeigen zu können, sollte das gesamte \inlinecode{StatePanelOpen} dort hineingerendert werden.
+Dies erwies sich allerdings als fehlerbehaftet und unzuverlässig. 
+Insbesondere trat das Problem auf, dass einzelne Komponenten des Panels im Bild nicht angezeigt wurden.
+Darüber hinaus ließ die Qualität des Font-Renderings derart zu wünschen übrig, dass entschieden wurde, das \inlinecode{StatePanelOpen} nicht für den Graph-Export zu verwenden.
+
+Stattdessen wurde eine Ersatzimplementierung in das Programm eingebaut, welches den Text des Analyse-Zustands mit Hilfe der Swing-Klasse \inlinecode{Graphics2D} manuell in das Bild einfügt.
+Dies verursachte zwar etwas Verzögerung, erwies sich jedoch als akzeptable Ersatzlösung, sodass die Graph-Export-Funktionalität vollständig implementiert werden konnte.
+
+\newpage
+\subsection{Code Processor}
+
+Probleme bereitete hier das zuverlässige Finden des Java Development Kit (JDK) auf dem Rechner des Benutzers.
+Per Environment-Variable kann der JDK-Pfad zwar ermittelt werden, allerdings nur, falls das Programm auch mit dem JDK und nicht dem Java Runtime Environment (JRE) ausgeführt wurde.
+Des Weiteren ist es unzuverlässig, den Pfad automatisiert zu finden, da dieser sowohl von der verwendeten Java-Version als auch vom Betriebssystem abhängt.
+
+Daher wurde entschieden, den Benutzer nach dem ersten Programmstart nach seinem JDK-Pfad zu fragen und diesen in einer editierbaren Konfigurationsdatei abzuspeichern.
+Dies stellt zwar eine kleine Unannehmlichkeit für den Benutzer dar, sichert dafür aber die Zuverlässigkeit des Programms.
+
+\subsection{Effiziente Worklist und weitere Analysen}
+
+Diese Funktionalitäten wurden nicht implementiert, da der Implementierungsaufwand der Analysen aus den Muss-Kriterien enorm war und keine zeitliche Kapazität übrig ließ.
+
+Allerdings gilt auch hier, dass aufgrund der erweiterbaren Entwurfsarchitektur die erforderlichen Änderungen an existierenden Klassen minimal sind, falls nachträglich Analysen oder \inlinecode{Worklist}-Subklassen hinzugefügt werden sollen.

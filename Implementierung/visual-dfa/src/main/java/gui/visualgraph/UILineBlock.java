@@ -13,6 +13,9 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
+import static gui.visualgraph.Styles.BREAKPOINT_PADDING;
+import static gui.visualgraph.Styles.BREAKPOINT_SIZE;
+
 /**
  * @author Patrick Petrovic
  *
@@ -25,6 +28,8 @@ public class UILineBlock extends UIAbstractBlock {
     private boolean hasBreakpoint = false;
     private mxGraphComponent graphComponent;
     private ElementaryBlock elementaryBlock;
+
+    private final int BREAKPOINT_SIZE_WITH_PADDINGS = 2 * BREAKPOINT_PADDING + BREAKPOINT_SIZE;
 
     /**
      * Creates a new {@code LineBlock}.
@@ -74,13 +79,14 @@ public class UILineBlock extends UIAbstractBlock {
         if (cell == null) {
             // Place the LineBlock below the previous one, if applicable.
             double yValue = previous == null ? Styles.LINE_HEIGHT : previous.getMxCell().getGeometry().getY() + Styles.LINE_HEIGHT;
-            mxGeometry geo = new mxGeometry(0, yValue, Styles.BLOCK_WIDTH, Styles.LINE_HEIGHT);
+            mxGeometry geo = new mxGeometry(BREAKPOINT_SIZE_WITH_PADDINGS, yValue, Styles.BLOCK_WIDTH - BREAKPOINT_SIZE_WITH_PADDINGS, Styles.LINE_HEIGHT);
             geo.setRelative(false);
 
             FontMetrics metrics = graphComponent.getFontMetrics(new Font(Font.MONOSPACED, Font.PLAIN, Styles.TEXT_SIZE));
+            String baseText = elementaryBlock.getUnit().toString().replace("virtualinvoke", "invoke").replace("staticinvoke", "invoke");
 
             // Handle long labels: Use BLOCK_WIDTH - 20 for word wrap to leave some space for appending "…".
-            String[] splitLabel = mxUtils.wordWrap(elementaryBlock.getUnit().toString(), metrics, Styles.BLOCK_WIDTH - 20);
+            String[] splitLabel = mxUtils.wordWrap(baseText, metrics, Styles.BLOCK_WIDTH - 20);
             String label = splitLabel.length > 1 ? splitLabel[0] + "…" : splitLabel[0];
 
             // < and & characters have to be escaped (they are reserved HTML symbols).
@@ -94,10 +100,10 @@ public class UILineBlock extends UIAbstractBlock {
             cell.setVertex(true);
             graph.addCell(cell, parent.getMxCell());
 
-            mxGeometry breakpointGeo = new mxGeometry(Styles.BREAKPOINT_PADDING, Styles.BREAKPOINT_PADDING, Styles.BREAKPOINT_SIZE, Styles.BREAKPOINT_SIZE);
+            mxGeometry breakpointGeo = new mxGeometry(BREAKPOINT_PADDING, yValue + BREAKPOINT_PADDING, Styles.BREAKPOINT_SIZE, Styles.BREAKPOINT_SIZE);
             breakpointCell = new mxCell("", breakpointGeo, Styles.NO_BORDER);
             breakpointCell.setVertex(true);
-            graph.addCell(breakpointCell, cell);
+            graph.addCell(breakpointCell, parent.getMxCell());
 
             // Add a listener for activation and deactivation of breakpoint cell.
             graphComponent.getGraphControl().addMouseListener(new MouseAdapter() {

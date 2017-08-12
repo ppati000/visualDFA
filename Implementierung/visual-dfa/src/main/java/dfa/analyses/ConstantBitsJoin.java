@@ -1,7 +1,6 @@
 package dfa.analyses;
 
 import java.util.Iterator;
-import java.util.Map;
 import java.util.Set;
 
 import dfa.analyses.ConstantBitsElement.BitValue;
@@ -16,42 +15,25 @@ import soot.jimple.internal.JimpleLocal;
  */
 public class ConstantBitsJoin implements Join<ConstantBitsElement> {
 
+    private JoinHelper joinHelper = new JoinHelper();
+
     @Override
     public ConstantBitsElement join(Set<ConstantBitsElement> elements) {
-        if (elements.isEmpty()) {
-            throw new IllegalArgumentException("elements must not be empty");
-        }
+        return joinHelper.performJoin(elements);
+    }
 
-        Iterator<ConstantBitsElement> it = elements.iterator();
-        ConstantBitsElement refElement = it.next();
-        Map<JimpleLocal, BitValueArray> refMap = refElement.getLocalMap();
-        while (it.hasNext()) {
-            ConstantBitsElement compElement = it.next();
-            Map<JimpleLocal, BitValueArray> compMap = compElement.getLocalMap();
-            for (Map.Entry<JimpleLocal, BitValueArray> entry : refMap.entrySet()) {
-                if (!compMap.containsKey(entry.getKey())) {
-                    throw new IllegalArgumentException("locals not matching");
-                }
+    private static class JoinHelper extends LocalMapElementJoinHelper<BitValueArray, ConstantBitsElement> {
+
+        @Override
+        public BitValueArray doValueJoin(Set<ConstantBitsElement> elements, JimpleLocal local) {
+            if (elements.isEmpty()) {
+                throw new IllegalArgumentException("there must be at least one value to join");
             }
 
-            for (Map.Entry<JimpleLocal, BitValueArray> entry : compMap.entrySet()) {
-                if (!refMap.containsKey(entry.getKey())) {
-                    throw new IllegalArgumentException("locals not matching");
-                }
-            }
-        }
+            Iterator<? extends LocalMapElement<BitValueArray>> elementIt = elements.iterator();
 
-        ConstantBitsElement result = new ConstantBitsElement();
-        for (Map.Entry<JimpleLocal, BitValueArray> entry : refMap.entrySet()) {
-            Iterator<ConstantBitsElement> elementIt = elements.iterator();
-            JimpleLocal local = entry.getKey();
-            
-            if (!elementIt.hasNext()) {
-                assert false : "elements must not be empty is checked above!";
-            }
-            
-            BitValueArray tmp = elementIt.next().getValue(local);
-            int length = tmp.getLength();
+            BitValueArray refVal = elementIt.next().getValue(local);
+            int length = refVal.getLength();
             BitValueArray top;
             BitValueArray bottom;
             if (length == BitValueArray.INT_SIZE) {
@@ -64,65 +46,56 @@ public class ConstantBitsJoin implements Join<ConstantBitsElement> {
                 throw new IllegalStateException("BitValueArrays must be of size INT_SIZE or LONG_SIZE");
             }
 
-            boolean broke = false;
             while (elementIt.hasNext()) {
-                ConstantBitsElement current = elementIt.next();
-                BitValueArray currentVal = current.getValue(local);
+                BitValueArray currentVal = elementIt.next().getValue(local);
 
                 if (currentVal.getLength() != length) {
                     // First check if BitValueArrays to be joined are of same size
                     throw new IllegalStateException("Unable to join BitValueArrays of different size!");
                 }
 
-                if (tmp.equals(top) || currentVal.equals(top)) {
+                if (refVal.equals(top) || currentVal.equals(top)) {
                     // Second if one is TOP, if so, no need to check further
-                    result.setValue(local, top);
-                    broke = true;
-                    break;
+                    return top;
 
-                } else if (tmp.equals(bottom)) {
-                    // Third if tmp is bottom, new tmp is currentVal since join(bottom, x) = x for all x
-                    tmp = currentVal;
+                } else if (refVal.equals(bottom)) {
+                    // Third if refVal is bottom, new refVal is currentVal since join(bottom, x) = x for all x
+                    refVal = currentVal;
 
-                    // Fourth if currentVal is bottom, tmp remains untouched since join(bottom, x) = x for all x
-                    // Also if tmp equals currentVal, tmp remains untouched, since nothing would change
-                    // But if tmp does not equal currentVal and currentVal is not bottom, we have to compare them bit by bit
-                } else if (!tmp.equals(currentVal) && !currentVal.equals(bottom)) {
+                    // Fourth if currentVal is bottom, refVal remains untouched since join(bottom, x) = x for all x
+                    // Also if refVal equals currentVal, refVal remains untouched, since nothing would change
+                    // But if refVal does not equal currentVal and currentVal is not bottom, we have to compare them bit
+                    // by bit
+                } else if (!refVal.equals(currentVal) && !currentVal.equals(bottom)) {
                     BitValue[] bitValues = new BitValue[length];
                     for (int i = 0; i < length; i++) {
                         BitValue currentValBit = currentVal.getBitValues()[i];
-                        BitValue tmpBit = tmp.getBitValues()[i];
-                        
+                        BitValue tmpBit = refVal.getBitValues()[i];
+
                         if (currentValBit.equals(BitValue.TOP) || tmpBit.equals(BitValue.TOP)) {
                             // If one of the two bits is TOP, the resulting bit is TOP
                             bitValues[i] = BitValue.TOP;
-                            
+
                         } else if (currentValBit.equals(BitValue.BOTTOM)) {
                             // If one of the bits is BOTTOM, the resulting bit is whatever the other bit was
                             bitValues[i] = tmpBit;
-                        } else if (tmp.getBitValues()[i].equals(BitValue.BOTTOM)) {
+                        } else if (refVal.getBitValues()[i].equals(BitValue.BOTTOM)) {
                             // If one of the bits is BOTTOM, the resulting bit is whatever the other bit was
                             bitValues[i] = currentValBit;
-                            
+
                         } else if (currentValBit.equals(tmpBit)) {
                             // If they are the same, we just take one of them
                             bitValues[i] = currentValBit;
-                            
+
                         } else {
                             // If they are both neither bottom nor the same, the resulting bit is TOP
                             bitValues[i] = BitValue.TOP;
                         }
                     }
-                    tmp = new BitValueArray(bitValues);
+                    refVal = new BitValueArray(bitValues);
                 }
-
             }
-            if (!broke) {
-                result.setValue(local, tmp);
-            }
+            return refVal;
         }
-
-        return result;
     }
-    
 }

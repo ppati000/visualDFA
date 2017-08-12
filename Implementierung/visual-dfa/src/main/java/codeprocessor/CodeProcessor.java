@@ -64,19 +64,16 @@ public class CodeProcessor {
             String codeWrap = getTaintWrap(codeToCompile);
             this.className = getClassNameOfCode(codeWrap);
             diagnosticCollector = compile(this.className, codeWrap);
-        }
-        if (!this.success) {
-            String codeWrap = getClassTaintWrap(codeToCompile);
-            this.className = DEFAULT_CLASS_NAME;
-            if (!containsClass) {
+        } else {
+            if (!this.success) {
+                String codeWrap = getClassTaintWrap(codeToCompile);
+                this.className = DEFAULT_CLASS_NAME;
                 diagnosticCollector = compile(this.className, codeWrap);
-            } else {
+            }
+            if (!this.success) {
+                String codeWrap = getMethodClassTaintWrap(codeToCompile);
                 compile(this.className, codeWrap);
             }
-        }
-        if (!this.success) {
-            String codeWrap = getMethodClassTaintWrap(codeToCompile);
-            compile(this.className, codeWrap);
         }
 
         if (!success) {
@@ -101,7 +98,7 @@ public class CodeProcessor {
         // delete package information
         if (code.startsWith("package")) {
             int i = 0;
-            while (!code.startsWith(";") && i < code.length()) {
+            while (!(code.charAt(i) == ';') && i < code.length()) {
                 i++;
             }
             code = code.substring(i);

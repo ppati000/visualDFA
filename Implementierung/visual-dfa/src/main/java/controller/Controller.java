@@ -89,7 +89,7 @@ public class Controller {
         if (!dir.exists()) {
             dir.mkdir();
         }
-        String fileName = "jdkPath.txt";
+        String fileName = PATH_SEPARATOR + "jdkPath.txt";
         if (new File(dir, fileName).exists()) {
             File quellDatei = new File(pathName + fileName);
             BufferedReader reader = null;
@@ -103,8 +103,8 @@ public class Controller {
             try {
                 while ((input = reader.readLine()) != null) {
                     quellText += input;
-                    reader.close();
                 }
+                reader.close();
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -114,7 +114,12 @@ public class Controller {
 
         MessageBox box = new MessageBox(this.programFrame, "JDK Path", PATH_SELECTION);
         // TODO method getDirectoryOfJDK of Michi has to return a string
-        String path = "";
+        /**String path = "";
+        File jdkPath = new File(path);
+        if (!jdkPath.exists()) {
+            new MessageBox(this.programFrame, "No Compiler found", NO_COMPILER_FOUND);
+            return;
+        }
         System.setProperty("java.home", path);
         File iniFile = new File(dir + fileName);
         FileWriter writer;
@@ -124,7 +129,7 @@ public class Controller {
             writer.close();
         } catch (IOException e) {
             e.printStackTrace();
-        }
+        }*/ //TODO
     }
 
     /**

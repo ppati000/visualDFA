@@ -28,6 +28,7 @@ public class GraphExportBox extends DialogBox {
     private JButton btn_Standard;
     private JButton btn_High;
     private JCheckBox cb_BatchExport;
+    private JCheckBox cb_LineStates;
 
     /**
      * Display the GraphExportBox. Stop execution of this Thread until user
@@ -42,7 +43,7 @@ public class GraphExportBox extends DialogBox {
     public GraphExportBox(Frame owner) {
         super(owner);
         init(GRAPHEXPORT_TITLE);
-        quality = Quality.LOW;
+        quality = Quality.STANDARD;
         pack();
         setVisible(true);
     }
@@ -56,7 +57,7 @@ public class GraphExportBox extends DialogBox {
         contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
         GridBagLayout gbl_Content = new GridBagLayout();
         gbl_Content.columnWeights = new double[] { 0.5, 0.5, 0.5 };
-        gbl_Content.rowWeights = new double[] { 0.5, 0.5, 0.5 };
+        gbl_Content.rowWeights = new double[] { 0.5, 0.5, 0.5, 0.5};
         contentPanel.setLayout(gbl_Content);
 
         JComponentDecorator compDecorator = new JComponentDecorator();
@@ -72,7 +73,7 @@ public class GraphExportBox extends DialogBox {
         btnDecorator.decorateBorderButton(btn_Low, new ResolutionChangeListener(), "Low",
                 Colors.GREY_BORDER.getColor());
         btn_Low.setActionCommand("low");
-        btn_Low.setBackground(Colors.LIGHT_BACKGROUND.getColor());
+        btn_Low.setBackground(Colors.WHITE_BACKGROUND.getColor());
         btn_Low.setForeground(Colors.DARK_TEXT.getColor());
         GridBagConstraints gbc_btnLow = GridBagConstraintFactory.getStandardGridBagConstraints(0, 1, 1, 1);
         gbc_btnLow.insets.set(gbc_btnLow.insets.top, gbc_btnLow.insets.left, gbc_btnLow.insets.bottom, 0);
@@ -82,7 +83,7 @@ public class GraphExportBox extends DialogBox {
         btnDecorator.decorateBorderButton(btn_Standard, new ResolutionChangeListener(), "Standard",
                 Colors.GREY_BORDER.getColor());
         btn_Standard.setActionCommand("standard");
-        btn_Standard.setBackground(Colors.WHITE_BACKGROUND.getColor());
+        btn_Standard.setBackground(Colors.LIGHT_BACKGROUND.getColor());
         btn_Standard.setForeground(Colors.DARK_TEXT.getColor());
         GridBagConstraints gbc_btnStandard = GridBagConstraintFactory.getStandardGridBagConstraints(1, 1, 1, 1);
         gbc_btnStandard.insets.set(gbc_btnStandard.insets.top, 0, gbc_btnStandard.insets.bottom, 0);
@@ -103,6 +104,12 @@ public class GraphExportBox extends DialogBox {
         cb_BatchExport.setText("Batch export all graph states");
         GridBagConstraints gbc_cbBatch = GridBagConstraintFactory.getStandardGridBagConstraints(0, 2, 3, 1);
         contentPanel.add(cb_BatchExport, gbc_cbBatch);
+        
+        cb_LineStates = new JCheckBox();
+        compDecorator.decorate(cb_LineStates);;
+        cb_LineStates.setText("Include line states");
+        GridBagConstraints gbc_cbLineStates = GridBagConstraintFactory.getStandardGridBagConstraints(0, 3, 3, 1);
+        contentPanel.add(cb_BatchExport, gbc_cbLineStates);
 
     }
 
@@ -131,6 +138,10 @@ public class GraphExportBox extends DialogBox {
         GridBagConstraints gbc_btnCancel = GridBagConstraintFactory.getStandardGridBagConstraints(0, 0, 1, 1);
         buttonPane.add(btnCancel, gbc_btnCancel);
 
+    }
+    
+    public boolean includeLineStates() {
+        return cb_LineStates.isSelected();
     }
 
     /**
@@ -198,10 +209,10 @@ public class GraphExportBox extends DialogBox {
 
             default:
 
-                btn_Low.setBackground(Colors.LIGHT_BACKGROUND.getColor());
-                btn_Standard.setBackground(Colors.WHITE_BACKGROUND.getColor());
+                btn_Low.setBackground(Colors.WHITE_BACKGROUND.getColor());
+                btn_Standard.setBackground(Colors.LIGHT_BACKGROUND.getColor());
                 btn_High.setBackground(Colors.WHITE_BACKGROUND.getColor());
-                quality = Quality.LOW;
+                quality = Quality.STANDARD;
                 break;
             }
 

@@ -38,12 +38,13 @@ public class CodeField extends JScrollPane {
         lineArea = new JTextArea("1");
         lineAreaStart = 1;
         lineArea.setEditable(false);
-        //TODO Color
+        lineArea.setBackground(Colors.LIGHT_BACKGROUND.getColor());
+        
         contentPanel.add(lineArea, BorderLayout.WEST);
         
         codeArea = new JTextArea();
         codeArea.setEditable(editable);
-        codeArea.setTabSize(4);
+        codeArea.setTabSize(2);
         codeArea.getDocument().addDocumentListener(new TextChangeListener());
         
         
@@ -51,7 +52,7 @@ public class CodeField extends JScrollPane {
         
         setViewportView(contentPanel);
         
-         setPreferredSize(new Dimension(1, Integer.MAX_VALUE));
+        setPreferredSize(new Dimension(1, Integer.MAX_VALUE));
         
         
         

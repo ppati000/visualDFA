@@ -39,6 +39,7 @@ public class OptionBox extends DialogBox {
     public OptionBox(Frame owner, String title) {
         super(owner);
         this.message = null;
+        option = Option.CANCEL_OPTION;
         init(title);
         pack();
         setVisible(true);

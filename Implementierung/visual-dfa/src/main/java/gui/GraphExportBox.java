@@ -43,6 +43,7 @@ public class GraphExportBox extends DialogBox {
     public GraphExportBox(Frame owner) {
         super(owner);
         init(GRAPHEXPORT_TITLE);
+        option = Option.CANCEL_OPTION;
         quality = Quality.STANDARD;
         pack();
         setVisible(true);
@@ -109,7 +110,7 @@ public class GraphExportBox extends DialogBox {
         compDecorator.decorate(cb_LineStates);;
         cb_LineStates.setText("Include line states");
         GridBagConstraints gbc_cbLineStates = GridBagConstraintFactory.getStandardGridBagConstraints(0, 3, 3, 1);
-        contentPanel.add(cb_BatchExport, gbc_cbLineStates);
+        contentPanel.add(cb_LineStates, gbc_cbLineStates);
 
     }
 

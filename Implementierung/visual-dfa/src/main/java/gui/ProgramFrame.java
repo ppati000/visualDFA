@@ -26,6 +26,7 @@ public class ProgramFrame extends JFrame {
     private StatePanelOpen statePanelOpen;
     private StatePanelClosed statePanelClosed;
     private VisualGraphPanel visualGraphPanel;
+    private boolean isStatePanelOpen;
 
     private Controller ctrl;
 
@@ -68,6 +69,8 @@ public class ProgramFrame extends JFrame {
 
         statePanelOpen = new StatePanelOpen(this);
         contentPane.add(statePanelOpen, BorderLayout.EAST);
+        
+        isStatePanelOpen = true;
 
         statePanelClosed = new StatePanelClosed(this);
         
@@ -82,7 +85,18 @@ public class ProgramFrame extends JFrame {
      * @see StatePanelClosed
      */
     public void switchStatePanel() {
-        // TODO
+        if (isStatePanelOpen == true) {
+            remove(statePanelOpen);
+            add(statePanelClosed, BorderLayout.EAST);
+            isStatePanelOpen = false;
+        } else {
+            remove(statePanelClosed);
+            add(statePanelOpen, BorderLayout.EAST);
+            isStatePanelOpen = true;
+        }
+        
+        revalidate();
+        repaint();
     }
 
     /**

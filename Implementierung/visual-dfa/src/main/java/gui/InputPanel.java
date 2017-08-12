@@ -12,6 +12,7 @@ import javax.swing.border.EmptyBorder;
 import controller.Controller;
 import java.awt.GridBagLayout;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 
 import java.awt.GridBagConstraints;
@@ -36,6 +37,7 @@ public class InputPanel extends JPanel {
     private JLabel lblWorklists;
     private JComboBox<String> comboBox_Worklists;
     private JButton btnStartAnalysis;
+    private JCheckBox cb_Filter;
 
 
     /**
@@ -108,6 +110,12 @@ public class InputPanel extends JPanel {
         GridBagConstraints gbc_comboBox_Worklist = GridBagConstraintFactory.getStandardGridBagConstraints(0, 10, 2, 1);
         gbc_comboBox_Worklist.fill = GridBagConstraints.HORIZONTAL;
         add(comboBox_Worklists, gbc_comboBox_Worklist);
+        
+        cb_Filter = new JCheckBox("Filter standard java methods");
+        jCompDecorator.decorate(cb_Filter);
+        GridBagConstraints gbc_cbFilter = GridBagConstraintFactory.getStandardGridBagConstraints(0, 11, 2, 1);
+        add(cb_Filter, gbc_cbFilter);
+        
 
         btnStartAnalysis = new JButton();
         jBuDecorator.decorateButton(btnStartAnalysis, new StartAnalysisListener(), "Start Analysis");
@@ -134,7 +142,7 @@ public class InputPanel extends JPanel {
         lblWorklists.setEnabled(b);
         comboBox_Worklists.setEnabled(b);
         btnStartAnalysis.setEnabled(b);
-
+        cb_Filter.setEnabled(false);
         codeField.setEnabled(b);
 
     }
@@ -175,8 +183,8 @@ public class InputPanel extends JPanel {
      * @return [true] if a filter is selected, [false] if not.
      */
     public boolean isFilterSelected() {
-        // TODO
-        return false;
+        
+        return cb_Filter.isSelected();
     }
 
     /**

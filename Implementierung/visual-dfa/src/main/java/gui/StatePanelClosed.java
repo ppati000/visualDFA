@@ -1,5 +1,10 @@
 package gui;
 
+import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.JButton;
 import javax.swing.JPanel;
 
 /**
@@ -14,6 +19,7 @@ import javax.swing.JPanel;
 public class StatePanelClosed extends JPanel {
 
     private ProgramFrame frame;
+    private JButton openButton;
 
     /**
      * Create the panel. Set the PragramFrame, so the StatePanel can be
@@ -25,6 +31,14 @@ public class StatePanelClosed extends JPanel {
      */
     public StatePanelClosed(ProgramFrame frame) {
         this.frame = frame;
+        
+        setBackground(Colors.BACKGROUND.getColor());
+        setLayout(new BorderLayout());
+        
+        openButton = new JButton();
+        new JButtonDecorator(new JComponentDecorator()).decorateIconButton(openButton, "icons/open-button.png", 0.1, new OpenListener(), null);
+        add(openButton, BorderLayout.NORTH);
+        
     }
 
     /**
@@ -35,5 +49,15 @@ public class StatePanelClosed extends JPanel {
      */
     public void setActivated(boolean b) {
 
+    }
+    
+    private class OpenListener implements ActionListener {
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            frame.switchStatePanel();
+            
+        }
+        
     }
 }

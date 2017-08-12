@@ -2,7 +2,6 @@ package dfa.analyses;
 
 import dfa.analyses.ConstantBitsElement.BitValue;
 import dfa.analyses.ConstantBitsElement.BitValueArray;
-import dfa.analyses.ConstantFoldingTransition.Evaluator;
 import dfa.framework.Transition;
 import dfa.framework.UnsupportedStatementException;
 import dfa.framework.UnsupportedValueException;
@@ -656,13 +655,96 @@ public class ConstantBitsTransition implements Transition<ConstantBitsElement> {
             }
         }
 
+        private void commutativeBitwiseOperation(BitValueArray op1, BitValueArray op2, BitOperation operation) {
+            if (op1.equals(top) || op2.equals(top)) {
+                result = top;
+                // if one is top, the result is top
+
+            } else if (op1.isConst() && op2.isConst()) {
+                // if both are constants, we can just use the operation of the corresponding ArithmeticConstants
+                switch (operation) {
+                case AND:
+                    result = new BitValueArray((ArithmeticConstant) op1.getConstant().and(op2.getConstant()));
+                case OR:
+                    result = new BitValueArray((ArithmeticConstant) op1.getConstant().or(op2.getConstant()));
+                case XOR:
+                    result = new BitValueArray((ArithmeticConstant) op1.getConstant().xor(op2.getConstant()));
+                }
+
+            } else {
+                // both are not top and at least one is not a constant
+                // therefore we have to calculate the operation all the bits one by one
+
+                // Making sure we have the right length in both:
+                int l1 = op1.getLength();
+                int l2 = op2.getLength();
+                int length = Math.max(l1, l2);
+                BitValue[] op1Values = new BitValue[length];
+                BitValue[] op2Values = new BitValue[length];
+                BitValue[] bitValues = new BitValue[length];
+
+                for (int i = 0; i < length; i++) {
+                    if (i >= l1) {
+                        op1Values[i] = BitValue.ZERO;
+                    } else {
+                        op1Values[i] = op1.getBitValues()[i];
+                    }
+                    if (i >= l2) {
+                        op2Values[i] = BitValue.ZERO;
+                    } else {
+                        op2Values[i] = op2.getBitValues()[i];
+                    }
+
+                    // the actual operation bit by bit:
+                    // first check for eliminating options (0 for AND, 1 for OR)
+                    switch (operation) {
+                    case AND:
+                        if (op1Values[i] == BitValue.ZERO || op2Values[i] == BitValue.ZERO) {
+                            bitValues[i] = BitValue.ZERO;
+                            continue;
+                        }
+                    case OR:
+                        if (op1Values[i] == BitValue.ONE || op2Values[i] == BitValue.ONE) {
+                            bitValues[i] = BitValue.ONE;
+                            continue;
+                        }
+                    case XOR:
+                        // ignore, since there is no eliminating option for XOR
+                    }
+
+                    // then check if one of the bits is TOP or BOTTOM
+                    if (op1Values[i] == BitValue.TOP || op2Values[i] == BitValue.TOP) {
+                        bitValues[i] = BitValue.TOP;
+
+                    } else if (op1Values[i] == BitValue.BOTTOM || op2Values[i] == BitValue.BOTTOM) {
+                        bitValues[i] = BitValue.BOTTOM;
+
+                    } else {
+                        // the bits are both neither TOP nor BOTTOM nor eliminating, so we can convert them to boolean
+                        // and use the & / | / ^
+                        boolean b1 = BitValueArray.bitValueToBoolean(op1Values[i]);
+                        boolean b2 = BitValueArray.bitValueToBoolean(op2Values[i]);
+                        switch (operation) {
+                        case AND:
+                            bitValues[i] = BitValueArray.booleanToBitValue(b1 & b2);
+                        case OR:
+                            bitValues[i] = BitValueArray.booleanToBitValue(b1 | b2);
+                        case XOR:
+                            bitValues[i] = BitValueArray.booleanToBitValue(b1 ^ b2);
+                        }
+                    }
+                }
+                result = new BitValueArray(bitValues);
+            }
+        }
+
         @Override
         public void caseAndExpr(AndExpr expr) {
             ValuePair operandValues = calcOperands(expr);
             ConstantBitsElement.BitValueArray op1 = operandValues.getFirst();
             ConstantBitsElement.BitValueArray op2 = operandValues.getSecond();
 
-            // TODO implement Expression
+            commutativeBitwiseOperation(op1, op2, BitOperation.AND);
         }
 
         @Override
@@ -671,7 +753,7 @@ public class ConstantBitsTransition implements Transition<ConstantBitsElement> {
             ConstantBitsElement.BitValueArray op1 = operandValues.getFirst();
             ConstantBitsElement.BitValueArray op2 = operandValues.getSecond();
 
-            // TODO implement Expression
+            commutativeBitwiseOperation(op1, op2, BitOperation.OR);
         }
 
         @Override
@@ -680,7 +762,7 @@ public class ConstantBitsTransition implements Transition<ConstantBitsElement> {
             ConstantBitsElement.BitValueArray op1 = operandValues.getFirst();
             ConstantBitsElement.BitValueArray op2 = operandValues.getSecond();
 
-            // TODO implement Expression
+            commutativeBitwiseOperation(op1, op2, BitOperation.XOR);
         }
 
         @Override
@@ -985,4 +1067,25 @@ public class ConstantBitsTransition implements Transition<ConstantBitsElement> {
         }
     }
 
+    /**
+     * @author Nils Jessen
+     * 
+     *         Commutative bitwise operations.
+     */
+    enum BitOperation {
+        /**
+         * for AND
+         */
+        AND,
+
+        /**
+         * for OR
+         */
+        OR,
+
+        /**
+         * for XOR
+         */
+        XOR
+    }
 }

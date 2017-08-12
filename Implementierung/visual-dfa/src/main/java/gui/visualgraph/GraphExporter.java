@@ -4,6 +4,7 @@ import com.mxgraph.util.mxCellRenderer;
 import com.mxgraph.view.mxGraph;
 import dfa.framework.BlockState;
 import dfa.framework.DFAExecution;
+import dfa.framework.LatticeElement;
 import gui.*;
 
 import java.awt.*;
@@ -41,8 +42,11 @@ public class GraphExporter {
         int stateImageWidth = (int) (STATE_AREA_WIDTH * scale);
         BufferedImage stateImage = null;
         if (selectedBlock != null && state != null) {
-            String in = state.getInState().getStringRepresentation();
-            String out = state.getOutState().getStringRepresentation();
+            LatticeElement inState = state.getInState();
+            LatticeElement outState = state.getOutState();
+            String in = inState == null ? "<not set>" : inState.getStringRepresentation();
+            String out = outState == null ? "<not set>" : outState.getStringRepresentation();
+
             int[] blockAndLineNumbers = selectedBlock.getBlockAndLineNumbers();
 
             stateImage  = new BufferedImage(stateImageWidth, graphImage.getHeight(), BufferedImage.TYPE_INT_ARGB);
@@ -115,7 +119,7 @@ public class GraphExporter {
             dfa.setCurrentBlockStep(blockStep);
             controller.refresh();
 
-            UIAbstractBlock selectedBlock = controller.getSelectedBlock();
+            UIAbstractBlock selectedBlock = panel.getSelectedBlock();
             BlockState state = selectedBlock == null ? null : dfa.getCurrentAnalysisState().getBlockState(selectedBlock.getDFABlock());
 
             result.add(exportCurrentGraph(panel.getMxGraph(), scale, selectedBlock, state));
@@ -132,7 +136,7 @@ public class GraphExporter {
             dfa.setCurrentElementaryStep(lineStep);
             controller.refresh();
 
-            UIAbstractBlock selectedBlock = controller.getSelectedBlock();
+            UIAbstractBlock selectedBlock = panel.getSelectedBlock();
             BlockState state = selectedBlock == null ? null : dfa.getCurrentAnalysisState().getBlockState(selectedBlock.getDFABlock());
 
             result.add(exportCurrentGraph(panel.getMxGraph(), scale, selectedBlock, state));

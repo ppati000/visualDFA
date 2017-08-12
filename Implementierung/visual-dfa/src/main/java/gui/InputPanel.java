@@ -3,11 +3,19 @@ package gui;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 
 import javax.swing.JPanel;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
+import javax.swing.filechooser.FileFilter;
 
 import controller.Controller;
 import java.awt.GridBagLayout;
@@ -17,6 +25,7 @@ import javax.swing.JLabel;
 
 import java.awt.GridBagConstraints;
 import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
 
 /**
  * The InputPanel Class contains UI-elements to let the user start a new data
@@ -38,7 +47,8 @@ public class InputPanel extends JPanel {
     private JComboBox<String> comboBox_Worklists;
     private JButton btnStartAnalysis;
     private JCheckBox cb_Filter;
-
+    private static final String TEMPORARY_FOLDER = System.getProperty("user.home")
+            + System.getProperty("file.separator") + "visualDfa";
 
     /**
      * Create the panel. Set the controller, so the ActionListeners can access
@@ -59,9 +69,9 @@ public class InputPanel extends JPanel {
         setBackground(Colors.BACKGROUND.getColor());
 
         GridBagLayout gridBagLayout = new GridBagLayout();
-        gridBagLayout.columnWidths = new int[] { 0, 0, 0 };
+        gridBagLayout.columnWidths = new int[] { 0, 0};
         gridBagLayout.rowHeights = new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-        gridBagLayout.columnWeights = new double[] { 1.0, 0.0, Double.MIN_VALUE };
+        gridBagLayout.columnWeights = new double[] { 0.5, 0.5};
         gridBagLayout.rowWeights = new double[] { 0.5, 0.5, 0.5, 0.5, 0.0, 0.5, 0.0, 0.0, 0.5, 0.0, 0.0, 0.5, 0.1,
                 0.1 };
         setLayout(gridBagLayout);
@@ -75,7 +85,7 @@ public class InputPanel extends JPanel {
         add(codeField, gbc_codeField);
 
         btnOpen = new JButton();
-        jBuDecorator.decorateIconButton(btnOpen, "icons/open-folder-outline.png", 0.2, null, "Open ...");
+        jBuDecorator.decorateIconButton(btnOpen, "icons/open-folder-outline.png", 0.2, new OpenListener(), "Open ...");
         btnOpen.setBackground(Colors.WHITE_BACKGROUND.getColor());
         btnOpen.setForeground(Colors.DARK_TEXT.getColor());
         GridBagConstraints gbc_btnOpen = GridBagConstraintFactory.getStandardGridBagConstraints(0, 4, 1, 1);
@@ -83,7 +93,7 @@ public class InputPanel extends JPanel {
         add(btnOpen, gbc_btnOpen);
 
         btnSave = new JButton();
-        jBuDecorator.decorateIconButton(btnSave, "icons/save-file-option.png", 0.2, null, "Save ...");
+        jBuDecorator.decorateIconButton(btnSave, "icons/save-file-option.png", 0.2, new SaveListener(), "Save ...");
         btnSave.setBackground(Colors.WHITE_BACKGROUND.getColor());
         btnSave.setForeground(Colors.DARK_TEXT.getColor());
         GridBagConstraints gbc_btnSave = GridBagConstraintFactory.getStandardGridBagConstraints(1, 4, 1, 1);
@@ -105,17 +115,15 @@ public class InputPanel extends JPanel {
         GridBagConstraints gbc_lblWorklists = GridBagConstraintFactory.getStandardGridBagConstraints(0, 9, 2, 1);
         add(lblWorklists, gbc_lblWorklists);
 
-
         comboBox_Worklists = new JComboBox<String>(ctrl.getWorklists().toArray(new String[0]));
         GridBagConstraints gbc_comboBox_Worklist = GridBagConstraintFactory.getStandardGridBagConstraints(0, 10, 2, 1);
         gbc_comboBox_Worklist.fill = GridBagConstraints.HORIZONTAL;
         add(comboBox_Worklists, gbc_comboBox_Worklist);
-        
+
         cb_Filter = new JCheckBox("Filter standard java methods");
         jCompDecorator.decorate(cb_Filter);
         GridBagConstraints gbc_cbFilter = GridBagConstraintFactory.getStandardGridBagConstraints(0, 11, 2, 1);
         add(cb_Filter, gbc_cbFilter);
-        
 
         btnStartAnalysis = new JButton();
         jBuDecorator.decorateButton(btnStartAnalysis, new StartAnalysisListener(), "Start Analysis");
@@ -134,7 +142,7 @@ public class InputPanel extends JPanel {
      *            [false].
      */
     public void setActivated(boolean b) {
-        
+
         btnSave.setEnabled(b);
         btnOpen.setEnabled(b);
         lblAnalyses.setEnabled(b);
@@ -167,6 +175,10 @@ public class InputPanel extends JPanel {
         return codeField.getCode();
     }
 
+    public void setCode(String code) {
+        codeField.setCode(code);
+    }
+
     /**
      * Look up the currently selected worklist-algorithm and return its name.
      * 
@@ -183,13 +195,13 @@ public class InputPanel extends JPanel {
      * @return [true] if a filter is selected, [false] if not.
      */
     public boolean isFilterSelected() {
-        
+
         return cb_Filter.isSelected();
     }
 
     /**
-     * Implementation of an ActionListener which informs the controller,
-     * when the StartAnalysis button has been pressed.
+     * Implementation of an ActionListener which informs the controller, when
+     * the StartAnalysis button has been pressed.
      *
      * @author Michael
      * @see ActionListener
@@ -202,5 +214,129 @@ public class InputPanel extends JPanel {
         }
 
     }
-}
 
+    private class OpenListener implements ActionListener {
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            JFileChooser openChooser = new JFileChooser(TEMPORARY_FOLDER);
+
+            openChooser.setAcceptAllFileFilterUsed(false);
+            openChooser.addChoosableFileFilter(new FileFilter() {
+
+                @Override
+                public String getDescription() {
+
+                    return ".java";
+                }
+
+                @Override
+                public boolean accept(File f) {
+                    if (f.isDirectory()) {
+                        return false;
+                    }
+
+                    String ext = null;
+                    String s = f.getName();
+                    int i = s.lastIndexOf('.');
+
+                    if (i > 0 && i < s.length() - 1) {
+                        ext = s.substring(i + 1).toLowerCase();
+                        if (ext.equals("java")) {
+                            return true;
+                        } else {
+                            return false;
+                        }
+                    } else {
+                        return false;
+                    }
+
+                    
+                }
+            });
+            int returnVal = openChooser.showOpenDialog(btnOpen);
+            if (returnVal == JFileChooser.APPROVE_OPTION) {
+                File file = openChooser.getSelectedFile();
+                System.out.println(file.getAbsolutePath());
+                try {
+                    BufferedReader in = new BufferedReader(new FileReader(file));
+                    String text = new String();
+                    String input;
+                    while ((input = in.readLine()) != null) {
+                        text += input + System.getProperty("line.separator");
+                    }
+                    codeField.setCode(text);
+                    in.close();
+                } catch (FileNotFoundException e1) {
+
+                    e1.printStackTrace();
+                } catch (IOException e1) {
+
+                    e1.printStackTrace();
+                }
+            }
+
+        }
+
+    }
+
+    private class SaveListener implements ActionListener {
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+
+            JFileChooser saveChooser = new JFileChooser(TEMPORARY_FOLDER);
+
+            saveChooser.setAcceptAllFileFilterUsed(false);
+            saveChooser.addChoosableFileFilter(new FileFilter() {
+
+                @Override
+                public String getDescription() {
+
+                    return ".java";
+                }
+
+                @Override
+                public boolean accept(File f) {
+                    if (f.isDirectory()) {
+                        return false;
+                    }
+
+                    String ext = null;
+                    String s = f.getName();
+                    int i = s.lastIndexOf('.');
+
+                    if (i > 0 && i < s.length() - 1) {
+                        ext = s.substring(i + 1).toLowerCase();
+                        if (ext.equals("java")) {
+                            return true;
+                        } else {
+                            return false;
+                        }
+                    } else {
+                        return false;
+                    }
+
+                    
+                }
+            });
+            
+            int returnVal = saveChooser.showSaveDialog(btnSave);
+            if (returnVal == JFileChooser.APPROVE_OPTION) {
+                File file = saveChooser.getSelectedFile();
+                if (!file.getName().endsWith(".java")) {
+                    file = new File(file.getAbsolutePath() + ".java");
+                }              
+                try {
+                    BufferedWriter out = new BufferedWriter(new FileWriter(file));
+                    out.write(codeField.getCode());
+                    out.close();
+                } catch (IOException e1) {
+                    e1.printStackTrace();
+                }
+            }
+        }
+
+    }
+
+}

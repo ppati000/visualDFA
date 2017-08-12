@@ -2,10 +2,12 @@ package gui;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.Font;
 
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
@@ -37,7 +39,9 @@ public class CodeField extends JScrollPane {
         
         lineArea = new JTextArea("1");
         lineAreaStart = 1;
+        lineArea.setBorder(new EmptyBorder(0, 2, 0, 5));
         lineArea.setEditable(false);
+        lineArea.setFont(new Font(Font.MONOSPACED, Font.PLAIN, lineArea.getFont().getSize()));
         lineArea.setBackground(Colors.LIGHT_BACKGROUND.getColor());
         
         contentPanel.add(lineArea, BorderLayout.WEST);
@@ -45,7 +49,9 @@ public class CodeField extends JScrollPane {
         codeArea = new JTextArea();
         codeArea.setEditable(editable);
         codeArea.setTabSize(2);
+        codeArea.setBorder(new EmptyBorder(0, 5, 0, 0));
         codeArea.getDocument().addDocumentListener(new TextChangeListener());
+        codeArea.setFont(new Font(Font.MONOSPACED, Font.PLAIN, codeArea.getFont().getSize()));
         
         
         contentPanel.add(codeArea, BorderLayout.CENTER);

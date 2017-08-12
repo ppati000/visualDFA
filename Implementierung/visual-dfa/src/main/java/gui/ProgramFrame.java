@@ -1,7 +1,9 @@
 package gui;
 
 import java.awt.BorderLayout;
+import java.io.File;
 
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
@@ -68,6 +70,8 @@ public class ProgramFrame extends JFrame {
         contentPane.add(statePanelOpen, BorderLayout.EAST);
 
         statePanelClosed = new StatePanelClosed(this);
+        
+        
     }
 
     /**
@@ -109,5 +113,15 @@ public class ProgramFrame extends JFrame {
      */
     public StatePanelOpen getStatePanelOpen() {
         return statePanelOpen;
+    }
+    
+    public File getCompilerPath() {
+        JFileChooser pathChooser = new JFileChooser(System.getProperty("java.home"));
+        pathChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        int returnVal = JFileChooser.CANCEL_OPTION;
+        while (returnVal == JFileChooser.CANCEL_OPTION || returnVal == JFileChooser.ERROR_OPTION) {
+            returnVal = pathChooser.showOpenDialog(this);
+        }
+        return pathChooser.getSelectedFile();
     }
 }

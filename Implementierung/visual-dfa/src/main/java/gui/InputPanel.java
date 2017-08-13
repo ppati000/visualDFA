@@ -39,7 +39,6 @@ public class InputPanel extends JPanel {
     private JButton btnStartAnalysis;
     private JCheckBox cb_Filter;
 
-
     /**
      * Create the panel. Set the controller, so the ActionListeners can access
      * it.
@@ -105,17 +104,15 @@ public class InputPanel extends JPanel {
         GridBagConstraints gbc_lblWorklists = GridBagConstraintFactory.getStandardGridBagConstraints(0, 9, 2, 1);
         add(lblWorklists, gbc_lblWorklists);
 
-
         comboBox_Worklists = new JComboBox<String>(ctrl.getWorklists().toArray(new String[0]));
         GridBagConstraints gbc_comboBox_Worklist = GridBagConstraintFactory.getStandardGridBagConstraints(0, 10, 2, 1);
         gbc_comboBox_Worklist.fill = GridBagConstraints.HORIZONTAL;
         add(comboBox_Worklists, gbc_comboBox_Worklist);
-        
+
         cb_Filter = new JCheckBox("Filter standard java methods");
         jCompDecorator.decorate(cb_Filter);
         GridBagConstraints gbc_cbFilter = GridBagConstraintFactory.getStandardGridBagConstraints(0, 11, 2, 1);
         add(cb_Filter, gbc_cbFilter);
-        
 
         btnStartAnalysis = new JButton();
         jBuDecorator.decorateButton(btnStartAnalysis, new StartAnalysisListener(), "Start Analysis");
@@ -134,7 +131,7 @@ public class InputPanel extends JPanel {
      *            [false].
      */
     public void setActivated(boolean b) {
-        
+
         btnSave.setEnabled(b);
         btnOpen.setEnabled(b);
         lblAnalyses.setEnabled(b);
@@ -183,13 +180,13 @@ public class InputPanel extends JPanel {
      * @return [true] if a filter is selected, [false] if not.
      */
     public boolean isFilterSelected() {
-        
+
         return cb_Filter.isSelected();
     }
 
     /**
-     * Implementation of an ActionListener which informs the controller,
-     * when the StartAnalysis button has been pressed.
+     * Implementation of an ActionListener which informs the controller, when
+     * the StartAnalysis button has been pressed.
      *
      * @author Michael
      * @see ActionListener
@@ -202,5 +199,9 @@ public class InputPanel extends JPanel {
         }
 
     }
-}
 
+    public void setCode(String code) {
+        codeField.setCode(code);
+    }
+
+}

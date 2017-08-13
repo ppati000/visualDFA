@@ -80,6 +80,7 @@ public class DFAPrecalcController {
     }
 
     public synchronized DFAExecution<? extends LatticeElement> getResult() {
+        System.out.println(result.getTotalBlockSteps());
         if (result == null) {
             throw new IllegalStateException("there is no result yet");
         }

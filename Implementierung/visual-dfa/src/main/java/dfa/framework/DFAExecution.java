@@ -290,6 +290,7 @@ public class DFAExecution<E extends LatticeElement> {
 
         List<BasicBlock> basicBlocks = cfg.getBasicBlocks();
         for (BasicBlock bBlock : basicBlocks) {
+                     
             Block sootBlock = bBlock.getSootBlock();
             BlockState<E> state = initialStates.get(sootBlock);
 
@@ -322,6 +323,7 @@ public class DFAExecution<E extends LatticeElement> {
         AnalysisState<E> prevAnalysisState = initialState;
 
         while (true) {
+           
             switch (precalcCtrl.getPrecalcState()) {
             case CALCULATING:
                 break; // break switch
@@ -423,7 +425,7 @@ public class DFAExecution<E extends LatticeElement> {
             
             analysisStates.add(newAnalysisState);
             prevAnalysisState = newAnalysisState;
-            ++elementaryStep;
+            ++elementaryStep;  
         }
     }
 

@@ -1,7 +1,7 @@
 package codeprocessor;
 
+import dfa.framework.TaintAnalysisTag;
 import soot.SootMethod;
-import soot.tagkit.Tag;
 
 /**
  * 
@@ -21,19 +21,13 @@ public abstract class Filter {
     public boolean filterTaint(SootMethod method) {
         String signature = method.getSubSignature();
         if (signature.startsWith("void __taint")) {
-            Tag tag = null;
-            // TODO tag = TaintAnalysisTag.TAINT_TAG
-            method.addTag(tag);
+            method.addTag(TaintAnalysisTag.TAINT_TAG);
             return false;
         } else if (signature.startsWith("void __clean")) {
-            Tag tag = null;
-            // TODO tag = TaintAnalysisTag.CLEAN_TAG
-            method.addTag(tag);
+            method.addTag(TaintAnalysisTag.CLEAN_TAG);
             return false;
         } else if (signature.startsWith("void __sensitive")) {
-            Tag tag = null;
-            // TODO tag = TaintAnalysisTag.SENSITIVE_TAG
-            method.addTag(tag);
+            method.addTag(TaintAnalysisTag.SENSITIVE_TAG);
             return false;
         }
         return true;

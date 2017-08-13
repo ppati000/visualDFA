@@ -6,7 +6,6 @@ In diesem Kapitel wird erklärt, welche Funktionalität aus dem Pflichtenheft im
 Insbesondere wird dabei auf die Behandlung von unerwarteten Problemen während der Implementierung eingegangen.
 
 \section{Umsetzung der Kriterien}
-% TODO: Update if needed, e.g. Reaching Definitions. (Slides as well)
 
 \subsection{Muss-Kriterien}
 
@@ -25,7 +24,6 @@ Insbesondere wurden alle in den Muss-Kriterien geforderten Analysen implementier
 Diese sind Constant Folding, Reaching Definitions, Constant Bits und Taint Analysis.
 
 \subsection{Kann-Kriterien}
-% TODO: Update if needed, e.g. Reaching Definitions. (Slides as well)
 
 Die Kann-Kriterien wurden zum Großteil implementiert.
 Von insgesamt 19 Kann-Kriterien wurden 15 vollständig implementiert, ein weiteres (Auswahlmöglichkeit der Worklistalgorithmen) teilweise.
@@ -36,6 +34,9 @@ Lediglich drei Kann-Kriterien wurden \textit{nicht} implementiert. Dazu gehören
   \item Weitere Datenflussanalysen (Live Variables, Available Expressions, Definite Assignment)
   \item Manual Page
 \end{itemize}
+
+Neu hinzugefügt wurde zudem eine Funktionalität, welche die Anzeige einer unvollständig vorberechneten Analyse ermöglicht.
+Dies erwies sich als sehr nützlich, um Fehler in langen Analyseberechnungen erkennen zu können und verbesserte damit die Benutzerfreundlichkeit des Programms.
 
 \newpage
 \section{Problembehandlung}

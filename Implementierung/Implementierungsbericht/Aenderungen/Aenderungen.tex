@@ -11,27 +11,29 @@ Dabei hat jedes der drei neuen Interfaces genau eine Methode, die die von dem In
 	\item \inlinecode{Transition<E extends LatticeElement>}: führt Transitionen mittels \inlinecode{transition(E,Unit):E} aus
 \end{itemize}
 
-Diese Aufteilung ermöglicht eine vollständig modulare Implementierung der Analysen, \inlinecode{Initializer}, \inlinecode{Join} und \inlinecode{Transition} sind vollständig austauschbar (vorausgesetzt die typparameter sind kompatibel).
+Diese Aufteilung ermöglicht eine vollständig modulare Implementierung der Analysen.
+\inlinecode{Initializer}, \inlinecode{Join} und \inlinecode{Transition} sind vollständig austauschbar (vorausgesetzt die typparameter sind kompatibel).
 
 Die ehemals abstrakte Klasse \inlinecode{DataFlowAnalysis<E extends LatticeElement>} ist nun ein Interface, welches von den Interfaces \inlinecode{Initializer}, \inlinecode{Join} und \inlinecode{Transition} erbt.
 Damit stellt \inlinecode{DataFlowAnalysis} alle für die Ausführung einer Datenflussanalyse benötigten Operationen bereit.
 
 Zusätzlich zum Interface \inlinecode{DataFlowAnalysis} wurde noch die abstrakte Klasse \inlinecode{CompositeDataFlowAnalysis<E extends LatticeElement>} hinzugefügt, die \inlinecode{DataFlowAnalysis} implementiert und einen Konstruktor bereitstellt, der einen \inlinecode{Initializer}, einen \inlinecode{Join} und eine \inlinecode{Transition} entgegennimmt.
 \inlinecode{getInitialStates}, \inlinecode{join} und \inlinecode{transition} werden dann an die entsprechenden Methoden der übergebenen Objekte delegiert.
-Dies erlaubt das zusammensetzten neuer Datenflussanalysen aus einzelnen Komponenten (vorausgesetzt die Typparameter sind kompatibel).
+Dies erlaubt das Zusammensetzten neuer Datenflussanalysen aus einzelnen Komponenten (vorausgesetzt die Typparameter sind kompatibel).
 
 Die Rolle der ehemaligen \inlinecode{DataFlowAnalysis} übernimmt die abstrakte Klasse \inlinecode{DFAFactory<E extends LatticeElement>}.
 Damit wurde der Rückgabetyp der Methode \inlinecode{getAnalysis(String)} von \inlinecode{AnalysisLoader} auch zu \inlinecode{DFAFactory} angepasst.
 
 Weiter ist die Klasse \inlinecode{SimpleBlockGraph} hinzugekommen.
-Diese erbt von \inlinecode{soot.toolkits.graph.BriefBlockGraph} erbt und lediglich dafür sorgt, dass die \inlinecode{getTails}-Methode höchstens einen \inlinecode{Block} zurückgibt (dass es also höchstens einen Endblock gibt). Dies wird durch Einfügen eines künstlichen Endblocks erreicht, falls der ursprüngliche \inlinecode{BriefBlockGraph} mehrere Endblöcke hat.
+Diese erbt von \inlinecode{soot.toolkits.graph.BriefBlockGraph} und sorgt lediglich dafür, dass die \inlinecode{getTails}-Methode höchstens einen \inlinecode{Block} zurückgibt (dass es also höchstens einen Endblock gibt). Dies wird durch Einfügen eines künstlichen Endblocks erreicht, falls der ursprüngliche \inlinecode{BriefBlockGraph} mehrere Endblöcke hat.
 
-Eine weitere neue Klasse ist \inlinecode{DFAPrecalcController}, welche die Vorberechnung einer \inlinecode{DFAExecution} kontrolliert (zu diesem Zweck wurde dem Konstruktor ein Parameter vom Typ \inlinecode{DFAPrecalcController} hinzugefügt).
-Beispielsweise kann die Vorberechnung mittels \inlinecode{pause(waitTime : int)} pausiert werden (z. B. um zu Verhindern, dass zu viel Speicher belegt wird, während der Nutzer längere Zeit sich in einem Menü befindet) und dann mit \inlinecode{continue()} fortgesetzt werden.
+Eine weitere neue Klasse ist \inlinecode{DFAPrecalcController}, welche die Vorberechnung einer \inlinecode{DFAExecution} kontrolliert. Zu diesem Zweck wurde dem Konstruktor ein Parameter vom Typ \inlinecode{DFAPrecalcController} hinzugefügt.
+Beispielsweise kann die Vorberechnung mittels \inlinecode{pause(waitTime : int)} pausiert werden und dann mit \inlinecode{continue()} fortgesetzt werden. 
+Dies ist z. B. nützlich, um zu verhindern, dass zu viel Speicher belegt wird, während sich der Nutzer längere Zeit in einem Menü befindet. 
 Eine Vorberechnung kann auch mit \inlinecode{stop()} gestoppt werden.
 Dann wird ein Zwischenergebnis gespeichert und die Vorberechnung abgebrochen.
 
-Als Exception-Klassen wurde \inlinecode{DFAException} sowie die Unterklassen \inlinecode{UnsupportedValueException} und \inlinecode{UnsupportedStatementException}.
+Als Exception-Klassen wurden \inlinecode{DFAException} sowie die Unterklassen \inlinecode{UnsupportedValueException} und \inlinecode{UnsupportedStatementException} hinzugefügt.
 Diese werden benutzt um Probleme bei der Ausführung einer Datenflussanalyse zu signalisieren (z. B. wenn nicht unterstützte Instruktionen angetroffen werden, die nicht einfach ignoriert werden können).
 
 \subsection{Kleine Änderungen}
@@ -41,7 +43,7 @@ Im Folgenden werden weitere kleine Änderungen zusammengefasst:
 \inlinecode{Color} wurde umbenannt in \inlinecode{LogicalColor}.
 
 Der Parameter \inlinecode{cpy : AnalysisState} im Konstruktor \inlinecode{AnalysisState(..., cpy : AnalysisState)} wurde ersetzt durch die beiden Parameter \inlinecode{stateMap : Map<AbstractBlock, BlockState<E>>} und \inlinecode{colorMap : Map<BasicBlock, LogicalColor>}.
-Weiter wurden die \inlinecode{(protected)} Methoden \inlinecode{setStateMap(Map<AbstractBlock, BlockState<E>>)}, \inlinecode{getStateMap():Map<AbstractBlock, BlockState<E>>}, \inlinecode{setColorMap(Map<BasicBlock, LogicalColor>)}, \inlinecode{getColorMap():Map<BasicBlock, LogicalColor>} zum setzen bzw. erhalten der \inlinecode{Map}s für die \inlinecode{BlockState}s und \inlinecode{LogicalColor}s.
+Weiter wurden die \inlinecode{(protected)} Methoden \inlinecode{setStateMap(Map<AbstractBlock, BlockState<E>>)}, \inlinecode{getStateMap():Map<AbstractBlock, BlockState<E>>}, \inlinecode{setColorMap(Map<BasicBlock, LogicalColor>)}, \inlinecode{getColorMap():Map<BasicBlock, LogicalColor>} zum setzen bzw. erhalten der \inlinecode{Map}s für die \inlinecode{BlockState}s und \inlinecode{LogicalColor}s hinzugefügt.
 Die Methoden \inlinecode{getState(...):BlockState<E>} und \inlinecode{setState(...)} wurden zu \inlinecode{getBlockState(...):BlockState<E>} und \inlinecode{setBlockState(...)} umbenannt.
 
 In der Klasse \inlinecode{BlockState<E extends LatticeElement>} wurden die beiden \inlinecode{(protected)} Methoden \inlinecode{setInState(E)} und \inlinecode{setOutState(E)} hinzugefügt.

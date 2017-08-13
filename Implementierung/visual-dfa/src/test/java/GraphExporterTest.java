@@ -1,8 +1,9 @@
 import codeprocessor.CodeProcessor;
 import codeprocessor.GraphBuilder;
 import com.mxgraph.view.mxGraph;
-import dfa.analyses.DummyElement;
-import dfa.analyses.DummyFactory;
+
+import dfa.analyses.testanalyses.DummyElement;
+import dfa.analyses.testanalyses.DummyFactory;
 import dfa.framework.*;
 import gui.visualgraph.*;
 

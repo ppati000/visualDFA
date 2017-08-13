@@ -1,4 +1,4 @@
-package dfa.analyses;
+package dfa.analyses.testanalyses;
 
 import dfa.framework.LatticeElement;
 

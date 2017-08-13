@@ -37,16 +37,15 @@ public class Controller {
 
     private static final String PACKAGE_NAME = "dfa.analyses";
     private static final String CLASS_PATH = System.getProperty("user.dir");
-    private static final String CALC_MESSAGE = "This calculation is taking longer than expected. Do you want to continue and show intermediate results?";
-    private static final String ABORT_MESSAGE = "This process leads to a complete deletion of the graph and the calculation. Do you want to continue?";
+    private static final String PRECALC_ABORT = "This process will stop the calculation. Do you want to see intermediate results? "
+            + "Click \"cancel\" to continue with the calculation, click \"No\" to stop the analysis and click \"Yes\" to show the intermediate results.";
+    private static final String ABORT_MESSAGE = "This process leads to a complete deletion of the graph and the calculation. Would you like to continue?";
     private static final String EXCEPTION_TITLE = "Exception caused by analysis calculation";
-    private static final String PATH_SELECTION = "Select the path to your \"jre\" folder that is located in the JDK(!) folder. If you set the path wrong, the program will not work."
+    private static final String PATH_SELECTION = "Select the path to your \"jre\" folder which is located in the JDK(!) folder. If you set the path wrong, the program will not work."
             + "Example: C:\\Programme\\Java\\jdk1.7.0_76\\jre";
-    private static final int TIME_TO_WAIT = 150;
-    private static final String PATH_SEPARATOR = System.getProperty("os.name").contains("win") ? "\\" : "/";
-    private static final String NO_COMPILER_FOUND = "Please check the file YourHomeDirectory\\visualDfa\\jdkPath.txt and change it to the path of "
-            + "your jre folder in your JDK(!)1.7 folder. " + "For Example C:\\Program Files\\Java\\jdk1.7.0_76\\jre."
-            + "Afterwards restart the program.";
+    private static final String NO_COMPILER_FOUND = "Please check the file YourHomeDirectory\\visualDfa\\jdkPath.txt and change its content to the path of "
+            + "your JRE folder inside your JDK(!)1.7 folder. "
+            + "For Example C:\\Program Files\\Java\\jdk1.7.0_76\\jre." + "Afterwards, please restart the program.";
     private ProgramFrame programFrame;
     private DFAExecution<? extends LatticeElement> dfaExecution;
     private GraphUIController graphUIController;
@@ -85,16 +84,16 @@ public class Controller {
      * 
      */
     public void pathSelection() {
-        String pathName = System.getProperty("user.home") + PATH_SEPARATOR + "visualDfa";
+        String pathName = System.getProperty("user.home") + System.getProperty("file.separator") + "visualDfa";
         File dir = new File(pathName.trim());
         if (!dir.exists()) {
             dir.mkdir();
         }
         String fileName = "jdkPath.txt";
-        String completePath = pathName + PATH_SEPARATOR + fileName;
+        String completePath = pathName + System.getProperty("file.separator") + fileName;
         File jdkPath = new File(completePath.toString());
         if (jdkPath.exists()) {
-            File sourceFile = new File(pathName + PATH_SEPARATOR + fileName);
+            File sourceFile = new File(pathName + System.getProperty("file.separator") + fileName);
             BufferedReader reader = null;
             try {
                 reader = new BufferedReader(new FileReader(sourceFile));
@@ -134,6 +133,24 @@ public class Controller {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+    }
+
+    /**
+     * 
+     */
+    public void setDefaultCode() {
+        String codeExample = " public class Example {" + System.lineSeparator()
+                + "    public void helloWorld(boolean print, int x) {" + System.lineSeparator() + "        if (print) {"
+                + System.lineSeparator() + "            System.out.println(\"Hello World!\");" + System.lineSeparator()
+                + "             while (x < 10) {" + System.lineSeparator() + "                 x = x + 1;"
+                + System.lineSeparator() + "                   if (x == 5) { " + System.lineSeparator()
+                + "                       int y = 5;" + System.lineSeparator() + "                       x = y * 3; "
+                + System.lineSeparator() + "                   }" + System.lineSeparator() + "             }"
+                + System.lineSeparator() + "         } else {" + System.lineSeparator() + "            x = 0;"
+                + System.lineSeparator() + "         }" + System.lineSeparator() + "    }" + System.lineSeparator()
+                + "}";
+        this.programFrame.getInputPanel().setCode(codeExample);
 
     }
 
@@ -349,32 +366,18 @@ public class Controller {
             e.printStackTrace();
         }
         visibilityPrecalculating();
-        int i = 0;
-        synchronized (this) {
-            while (i < TIME_TO_WAIT
-                    && !(precalcController.getPrecalcState() == DFAPrecalcController.PrecalcState.COMPLETED)) {
-                // TODO
-                try {
-                    wait(100);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                i++;
-            }
-        }
-        if (i >= TIME_TO_WAIT) {
-            stopAnalysis();
-        }
+    }
 
-        while (!(precalcController.getPrecalcState() == DFAPrecalcController.PrecalcState.COMPLETED)
-                && precalc.isAlive())
-            ;
-        // TODO Problem?
-        this.dfaExecution = precalculator.getDFAExecution();
+    /**
+     * 
+     */
+    public void completedAnalysis() {
+        this.dfaExecution = this.precalcController.getResult();
         this.dfaExecution.setCurrentElementaryStep(0);
         this.programFrame.getControlPanel().setTotalSteps(this.dfaExecution.getTotalElementarySteps());
         this.programFrame.getControlPanel().setSliderStep(0);
         this.graphUIController.start(this.dfaExecution);
+        this.visualGraphPanel.setJumpToAction(true);
         this.graphUIController.refresh();
         visibilityWorking();
     }
@@ -393,40 +396,40 @@ public class Controller {
     public void stopAnalysis() {
         if (precalcController.getPrecalcState() == DFAPrecalcController.PrecalcState.CALCULATING
                 || precalcController.getPrecalcState() == DFAPrecalcController.PrecalcState.PAUSED) {
-
-            OptionBox optionBox = new OptionBox(this.programFrame, CALC_MESSAGE);
+            OptionBox optionBox = new OptionBox(this.programFrame, "Stop Calculation", PRECALC_ABORT);
             if (optionBox.getOption() == Option.NO_OPTION) {
-                // deletes the complete calculation
+                if (!(precalcController.getPrecalcState() == DFAPrecalcController.PrecalcState.CALCULATING)) {
+                    visibilityInput();
+                    return;
+                }
                 this.precalcController.stopPrecalc();
                 synchronized (this) {
                     try {
-                        wait(1000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
+                        wait(500);
+                    } catch (InterruptedException e1) {
+                        e1.printStackTrace();
                     }
                 }
                 if (this.precalc.isAlive()) {
                     this.precalc.stop();
                 }
-
                 visibilityInput();
             } else if ((optionBox.getOption() == Option.YES_OPTION)) {
                 // shows an intermediate result if possible
+                if (!(precalcController.getPrecalcState() == DFAPrecalcController.PrecalcState.CALCULATING)) {
+                    return;
+                }
                 this.precalcController.stopPrecalc();
-                try {
-                    wait(1000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+                synchronized (this) {
+                    try {
+                        wait(500);
+                    } catch (InterruptedException e1) {
+                        e1.printStackTrace();
+                    }
                 }
                 if (this.precalc.isAlive()) {
                     this.precalc.stop();
                     visibilityInput();
-                } else {
-                    this.dfaExecution = this.precalculator.getDFAExecution();
-                    this.dfaExecution.setCurrentElementaryStep(0);
-                    this.graphUIController.start(this.dfaExecution);
-                    this.programFrame.getControlPanel().setTotalSteps(this.dfaExecution.getTotalElementarySteps() - 1);
-                    visibilityWorking();
                 }
             }
         } else {

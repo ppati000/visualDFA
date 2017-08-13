@@ -25,7 +25,7 @@ public final class App {
             public void run() {
                 try {
                     frame.setVisible(true);
-                    
+
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -34,5 +34,6 @@ public final class App {
         ctrl.setProgramFrame(frame);
         ctrl.visibilityInput();
         ctrl.pathSelection();
+        ctrl.setDefaultCode();
     }
 }

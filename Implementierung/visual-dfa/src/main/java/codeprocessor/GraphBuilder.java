@@ -19,7 +19,6 @@ public class GraphBuilder {
 
     private SootClass sootClass;
     private List<SootMethod> methods;
-    private static final String PATH_SEPARATOR = System.getProperty("os.name").contains("windows") ? "\\" : "/";
 
     /**
      * Creates a new {@code GraphBuilder} that works with the file present in
@@ -35,7 +34,8 @@ public class GraphBuilder {
         G.v();
         G.reset();
         Scene.v().setSootClassPath(pathName.toString());
-        String jdkPath = System.getProperty("java.home") + PATH_SEPARATOR + "lib" + PATH_SEPARATOR + "rt.jar";
+        String jdkPath = System.getProperty("java.home") + System.getProperty("file.separator") + "lib"
+                + System.getProperty("file.separator") + "rt.jar";
         Scene.v().extendSootClassPath(jdkPath);
         Scene.v().loadNecessaryClasses();
         Scene.v().addBasicClass(className, SootClass.BODIES);

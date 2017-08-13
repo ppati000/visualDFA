@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.logging.Logger;
 
 import dfa.analyses.ConstantFoldingFactory;
-import dfa.analyses.DummyFactory;
+import dfa.analyses.testanalyses.DummyFactory;
 
 public class AnalysisLoader {
 

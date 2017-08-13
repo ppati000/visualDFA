@@ -1,8 +1,14 @@
 package gui;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.Frame;
+import java.awt.Rectangle;
 import java.io.File;
 
+import javax.swing.ActionMap;
+import javax.swing.InputMap;
+import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -27,6 +33,8 @@ public class ProgramFrame extends JFrame {
     private StatePanelClosed statePanelClosed;
     private VisualGraphPanel visualGraphPanel;
     private boolean isStatePanelOpen;
+    private static final Dimension MIN_SIZE = new Dimension(1200, 800);
+    private static final Rectangle STANDARD_BOUNDS = new Rectangle(0, 0, 1600, 800);
 
     private Controller ctrl;
 
@@ -47,9 +55,10 @@ public class ProgramFrame extends JFrame {
         this.ctrl = ctrl;
 
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        // TODO constants for resolution
-        setBounds(0, 0, 1920, 1080);
-        // setMinimumSize(new Dimension(1920, 1080));
+        
+        setBounds(STANDARD_BOUNDS);
+        setExtendedState(getExtendedState() | Frame.MAXIMIZED_BOTH);
+        setMinimumSize(MIN_SIZE);
         contentPane = new JPanel();
 
         contentPane.setLayout(new BorderLayout(0, 0));
@@ -62,8 +71,8 @@ public class ProgramFrame extends JFrame {
         contentPane.add(centerPan, BorderLayout.CENTER);
         centerPan.setLayout(new BorderLayout(0, 0));
 
-        JPanel vgPan = ctrl.getVisualGraphPanel();
-        centerPan.add(vgPan, BorderLayout.CENTER);
+        visualGraphPanel = ctrl.getVisualGraphPanel();
+        centerPan.add(visualGraphPanel, BorderLayout.CENTER);
 
         controlPanel = new ControlPanel(ctrl);
         centerPan.add(controlPanel, BorderLayout.SOUTH);
@@ -128,7 +137,7 @@ public class ProgramFrame extends JFrame {
     public StatePanelOpen getStatePanelOpen() {
         return statePanelOpen;
     }
-
+    
     /**
      * Opens a {@code JFileChooser}, so the user can set the path to his JDK.
      * 

@@ -2,6 +2,7 @@ package gui;
 
 import javax.swing.JComponent;
 import javax.swing.JSlider;
+import javax.swing.KeyStroke;
 import javax.swing.event.ChangeListener;
 
 /**
@@ -53,5 +54,9 @@ public class JSliderDecorator {
         comp.setMajorTickSpacing(majorTickspacing);
         comp.setMinorTickSpacing(minorTickspacing);
         comp.addChangeListener(l);
+        
+        //Remove from inputmap, so it does not interfere with the shortcuts for certain JButtons
+        comp.getInputMap().put(KeyStroke.getKeyStroke("RIGHT"), "none");
+        comp.getInputMap().put(KeyStroke.getKeyStroke("LEFT"), "none");
     }
 }

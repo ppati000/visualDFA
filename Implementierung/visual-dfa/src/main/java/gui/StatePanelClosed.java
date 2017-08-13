@@ -38,7 +38,7 @@ public class StatePanelClosed extends JPanel {
         openButton = new JButton();
         new JButtonDecorator(new JComponentDecorator()).decorateIconButton(openButton, "icons/open-button.png", 0.1,
                 new OpenListener(), null);
-        add(openButton, BorderLayout.NORTH);
+        add(openButton, BorderLayout.CENTER);
 
     }
 

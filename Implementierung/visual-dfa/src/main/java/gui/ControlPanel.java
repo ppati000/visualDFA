@@ -2,6 +2,8 @@ package gui;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
 import java.util.Hashtable;
 
 import javax.swing.JPanel;
@@ -10,11 +12,17 @@ import javax.swing.event.ChangeListener;
 
 import controller.Controller;
 import java.awt.GridBagLayout;
+
 import javax.swing.JSlider;
+import javax.swing.KeyStroke;
 import javax.swing.SwingConstants;
 
 import java.awt.GridBagConstraints;
+
+import javax.swing.AbstractAction;
+import javax.swing.Action;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 
 import javax.swing.border.EmptyBorder;
@@ -107,26 +115,29 @@ public class ControlPanel extends JPanel {
         btnPreviousBlock = new JButton();
         jBuDecorator.decorateIconButton(btnPreviousBlock, "icons/rewind-button.png", 0.5, new PreviousBlockListener(),
                 null);
-
         GridBagConstraints gbc_btnPreviousBlock = GridBagConstraintFactory.getStandardGridBagConstraints(2, 1, 1, 3);
         add(btnPreviousBlock, gbc_btnPreviousBlock);
 
         btnPreviousLine = new JButton();
         jBuDecorator.decorateIconButton(btnPreviousLine, "icons/step-backward.png", 0.5, new PreviousLineListener(),
                 null);
+
         GridBagConstraints gbc_btnPreviousLine = GridBagConstraintFactory.getStandardGridBagConstraints(3, 1, 1, 3);
         add(btnPreviousLine, gbc_btnPreviousLine);
 
         btnPlay = new JButton();
         jBuDecorator.decorateIconButton(btnPlay, "icons/play-button.png", 0.6, new PlayListener(), null);
+
         btnPause = new JButton();
         jBuDecorator.decorateIconButton(btnPause, "icons/pause-symbol.png", 0.6, new PauseListener(), null);
+
         gbc_btnPlayPause = GridBagConstraintFactory.getStandardGridBagConstraints(4, 1, 1, 3);
         add(btnPlay, gbc_btnPlayPause);
         isPlayButtonAdded = true;
 
         btnNextLine = new JButton();
         jBuDecorator.decorateIconButton(btnNextLine, "icons/step-forward.png", 0.5, new NextLineListener(), null);
+
         GridBagConstraints gbc_btnNextLine = GridBagConstraintFactory.getStandardGridBagConstraints(5, 1, 1, 3);
         add(btnNextLine, gbc_btnNextLine);
 
@@ -152,6 +163,45 @@ public class ControlPanel extends JPanel {
         delaySlider.setPaintLabels(true);
         GridBagConstraints gbc_delaySlider = GridBagConstraintFactory.getStandardGridBagConstraints(7, 2, 2, 2);
         add(delaySlider, gbc_delaySlider);
+
+        setShortcuts();
+        
+    }
+
+    private void setShortcuts() {
+        Action keyAction = new AbstractAction() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                JButton source = (JButton) e.getSource();
+                source.doClick();
+
+            }
+        };
+
+        btnPreviousBlock.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
+                .put(KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, InputEvent.SHIFT_DOWN_MASK, true), "PrevBlock");
+        btnPreviousBlock.getActionMap().put("PrevBlock", keyAction);
+
+        btnPreviousLine.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
+                .put(KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, 0, true), "PreviousLine");
+        btnPreviousLine.getActionMap().put("PreviousLine", keyAction);
+
+        btnPlay.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_SPACE, 0, false),
+                "PLAY");
+        btnPlay.getActionMap().put("PLAY", keyAction);
+
+        btnPause.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_SPACE, 0, false),
+                "PAUSE");
+        btnPause.getActionMap().put("PAUSE", keyAction);
+
+        btnNextLine.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, 0, true), "NextLine");
+        btnNextLine.getActionMap().put("NextLine", keyAction);
+        
+        btnNextBlock.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, InputEvent.SHIFT_DOWN_MASK, true), "NextBlock");
+        btnNextBlock.getActionMap().put("NextBlock", keyAction);
+        
     }
 
     /**
@@ -198,7 +248,7 @@ public class ControlPanel extends JPanel {
         case ACTIVATED:
             btnNextBlock.setEnabled(true);
             btnNextLine.setEnabled(true);
-            btnPause.setEnabled(true);
+            btnPause.setEnabled(false);
             btnPlay.setEnabled(true);
             btnPreviousBlock.setEnabled(true);
             btnPreviousLine.setEnabled(true);
@@ -230,7 +280,7 @@ public class ControlPanel extends JPanel {
             btnNextBlock.setEnabled(false);
             btnNextLine.setEnabled(false);
             btnPause.setEnabled(true);
-            btnPlay.setEnabled(true);
+            btnPlay.setEnabled(false);
             btnPreviousBlock.setEnabled(false);
             btnPreviousLine.setEnabled(false);
             btnStopAnalysis.setEnabled(true);

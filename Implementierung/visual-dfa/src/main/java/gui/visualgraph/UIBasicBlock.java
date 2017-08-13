@@ -131,6 +131,6 @@ public class UIBasicBlock extends UIAbstractBlock {
 
     @Override
     public int[] getBlockAndLineNumbers() {
-        return new int[]{blockNumber, -1};
+        return new int[]{blockNumber, 0};
     }
 }

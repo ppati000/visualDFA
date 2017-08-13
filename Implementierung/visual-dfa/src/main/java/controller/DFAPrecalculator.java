@@ -27,14 +27,16 @@ public class DFAPrecalculator implements Runnable {
      * beginning of the analysis.
      * 
      * @param factory
-     *            {@code DFAFactory} that will be used
+     *            {@code DFAFactory} that decides which analysis will be
+     *            executed
      * @param worklist
      *            {@code Worklist} that will be used for the analysis
      * @param simpleBlockGraph
      *            {@code SimpleBlockGraph} on that the analysis will be
      *            performed
      * @param precalcController
-     *            {@code DFAPrecalcController}
+     *            {@code DFAPrecalcController} that is responsible for this
+     *            calculation
      * @param controller
      *            {@code Controller} to inform the user about an exception
      * 
@@ -50,6 +52,12 @@ public class DFAPrecalculator implements Runnable {
         if (simpleBlockGraph == null) {
             throw new IllegalArgumentException("simpleBlockGraph must not be null");
         }
+        if (precalcController == null) {
+            throw new IllegalArgumentException("precalcController must not be null");
+        }
+        if (controller == null) {
+            throw new IllegalArgumentException("controller must not be null");
+        }
         this.factory = factory;
         this.worklist = worklist;
         this.simpleBlockGraph = simpleBlockGraph;
@@ -57,10 +65,12 @@ public class DFAPrecalculator implements Runnable {
         this.controller = controller;
     }
 
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     @Override
     /**
      * Used during creation of a new thread, that performs the steps of the
-     * analysis.
+     * analysis. Creates a new {@code MessageBox} to inform the user in case of
+     * a failure.
      */
     public void run() {
         try {

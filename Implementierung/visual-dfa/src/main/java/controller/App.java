@@ -5,7 +5,7 @@ import java.awt.EventQueue;
 import gui.ProgramFrame;
 
 /**
- * @author Anika Nietzer Class that contains the main method for the program.
+ * @author Anika Nietzer This class contains the main method for the program.
  * 
  *
  */
@@ -13,7 +13,8 @@ public final class App {
 
     /**
      * The main method is responsible to create a new {@code Controller} and the
-     * {@code programFrame}.
+     * {@code programFrame}. Furthermore it asks the user for the path to the
+     * JDK and sets the visibility of the different panels.
      * 
      * @param args
      *            command line input

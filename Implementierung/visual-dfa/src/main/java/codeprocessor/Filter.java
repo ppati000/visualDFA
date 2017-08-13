@@ -5,18 +5,20 @@ import soot.SootMethod;
 
 /**
  * 
- * @author Anika Nietzer Interface, that represents a filter for methods.
+ * @author Anika Nietzer Abstract class, that represents a filter for methods.
  *
  */
 public abstract class Filter {
 
     /**
-     * Filter for a given method, that decides whether the method should be
-     * filtered out or not.
+     * {@code Filter} for a given SootMethod, that decides whether the method
+     * should be filtered out or not. This method is responsible for filtering
+     * out all the methods that are added to the user input to enable
+     * Taint-Analysis.
      * 
      * @param method
-     *            test this method
-     * @return whether the method should be filtered out or not
+     *            method, that is tested
+     * @return whether the method passes the filter or not
      */
     public boolean filterTaint(SootMethod method) {
         String signature = method.getSubSignature();
@@ -34,8 +36,13 @@ public abstract class Filter {
     }
 
     /**
+     * Method for filtering a SootMethod. The full implementation is done by the
+     * classes {@code NoFilter} and {@code StandardFiltler} that extend this
+     * abstract class.
+     * 
      * @param method
-     *            to be checked
+     *            SootMethod that should be tested
+     * 
      * @return if the method passes the filter or not
      */
     public boolean filter(SootMethod method) {

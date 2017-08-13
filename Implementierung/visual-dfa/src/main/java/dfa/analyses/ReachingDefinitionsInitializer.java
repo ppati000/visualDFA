@@ -20,28 +20,30 @@ import soot.Type;
 import soot.jimple.internal.JimpleLocal;
 import soot.toolkits.graph.Block;
 import soot.util.Chain;
+import dfa.analyses.ReachingDefinitionsElement.Definition;
 
 /**
  * @author Nils Jessen
  * 
- *         A {@code ConstantBitsInitializer} performs the initialization for a {@code ConstantBitsAnalysis}.
+ *         A {@code ReachingDefinitionsInitializer} performs the initialization for a
+ *         {@code ReachingDefinitionsAnalysis}.
  */
-public class ConstantBitsInitializer implements Initializer<ConstantBitsElement> {
+public class ReachingDefinitionsInitializer implements Initializer<ReachingDefinitionsElement> {
 
     private SimpleBlockGraph blockGraph;
 
     /**
-     * Creates a {@code ConstantBitsInitializer} for the given {@code SimpleBlockGraph}.
+     * Creates a {@code ReachingDefinitionsInitializer} for the given {@code SimpleBlockGraph}.
      * 
      * @param blockGraph
      *        the {@code SimpleBlockGraph} the analysis to initialize is executed on
      */
-    public ConstantBitsInitializer(SimpleBlockGraph blockGraph) {
+    public ReachingDefinitionsInitializer(SimpleBlockGraph blockGraph) {
         this.blockGraph = blockGraph;
     }
 
     @Override
-    public Map<Block, BlockState<ConstantBitsElement>> getInitialStates() {
+    public Map<Block, BlockState<ReachingDefinitionsElement>> getInitialStates() {
         List<Block> heads = blockGraph.getHeads();
         if (heads.size() < 1) {
             throw new IllegalStateException("no entry point found");
@@ -51,45 +53,42 @@ public class ConstantBitsInitializer implements Initializer<ConstantBitsElement>
 
         Chain<Local> locals = blockGraph.getBody().getLocals();
 
-        Map<JimpleLocal, ConstantBitsElement.BitValueArray> initialBottomMap =
+        Map<JimpleLocal, ReachingDefinitionsElement.Definition> initialBottomMap =
                 new TreeMap<>(LocalMapElement.DEFAULT_COMPARATOR);
-        Map<JimpleLocal, ConstantBitsElement.BitValueArray> initialHeadMap =
+        Map<JimpleLocal, ReachingDefinitionsElement.Definition> initialHeadMap =
                 new TreeMap<>(LocalMapElement.DEFAULT_COMPARATOR);
-
-        ConstantBitsElement.BitValue[] nullIntArray = new ConstantBitsElement.BitValue[32];
-        ConstantBitsElement.BitValue[] nullLongArray = new ConstantBitsElement.BitValue[64];
-
-        ConstantBitsElement.BitValueArray nullInt = new ConstantBitsElement.BitValueArray(nullIntArray);
-        ConstantBitsElement.BitValueArray nullLong = new ConstantBitsElement.BitValueArray(nullLongArray);
 
         for (Local l : locals) {
-            if (!(l instanceof JimpleLocal)) {
-                throw new IllegalStateException("no jimple local");
-            }
             Type t = l.getType();
             if (!(t instanceof PrimType)) {
                 continue;
             }
+            if (!(l instanceof JimpleLocal)) {
+                throw new IllegalStateException("no jimple local");
+            }
             if (t instanceof BooleanType || t instanceof ByteType || t instanceof CharType || t instanceof ShortType
                     || t instanceof IntType) {
-                initialBottomMap.put((JimpleLocal) l, ConstantBitsElement.BitValueArray.getIntBottom());
-                initialHeadMap.put((JimpleLocal) l, nullInt);
+                initialBottomMap.put((JimpleLocal) l, ReachingDefinitionsElement.Definition.getBottom());
+                initialHeadMap.put((JimpleLocal) l, new Definition(soot.jimple.IntConstant.v(0)));
             } else if (t instanceof LongType) {
-                initialBottomMap.put((JimpleLocal) l, ConstantBitsElement.BitValueArray.getLongBottom());
-                initialHeadMap.put((JimpleLocal) l, nullLong);
+                initialBottomMap.put((JimpleLocal) l, ReachingDefinitionsElement.Definition.getBottom());
+                initialHeadMap.put((JimpleLocal) l, new Definition(soot.jimple.LongConstant.v(0)));
             }
         }
 
         Block head = heads.get(0);
         List<Block> blocks = blockGraph.getBlocks();
 
-        ConstantBitsElement headIn = new ConstantBitsElement(initialHeadMap);
-        ConstantBitsElement defaultIn = new ConstantBitsElement(initialBottomMap);
+        ReachingDefinitionsElement headIn = new ReachingDefinitionsElement(initialHeadMap);
+        ReachingDefinitionsElement defaultIn = new ReachingDefinitionsElement(initialBottomMap);
 
-        BlockState<ConstantBitsElement> headState = new BlockState<ConstantBitsElement>(headIn, defaultIn);
-        BlockState<ConstantBitsElement> defaultState = new BlockState<ConstantBitsElement>(defaultIn, defaultIn);
+        BlockState<ReachingDefinitionsElement> headState =
+                new BlockState<ReachingDefinitionsElement>(headIn, defaultIn);
+        BlockState<ReachingDefinitionsElement> defaultState =
+                new BlockState<ReachingDefinitionsElement>(defaultIn, defaultIn);
 
-        Map<Block, BlockState<ConstantBitsElement>> initialMap = new HashMap<Block, BlockState<ConstantBitsElement>>();
+        Map<Block, BlockState<ReachingDefinitionsElement>> initialMap =
+                new HashMap<Block, BlockState<ReachingDefinitionsElement>>();
 
         for (Block b : blocks) {
             if (b == head) {
@@ -101,5 +100,4 @@ public class ConstantBitsInitializer implements Initializer<ConstantBitsElement>
 
         return initialMap;
     }
-
 }

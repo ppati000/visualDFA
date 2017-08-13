@@ -15,7 +15,7 @@ public class TaintFactory extends DFAFactory<TaintElement> {
 
     @Override
     public String getName() {
-        return "taint";
+        return "Taint-Analysis";
     }
 
     @Override

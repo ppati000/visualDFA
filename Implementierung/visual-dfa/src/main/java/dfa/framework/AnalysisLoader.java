@@ -7,7 +7,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
+import dfa.analyses.ConstantBitsFactory;
 import dfa.analyses.ConstantFoldingFactory;
+import dfa.analyses.ReachingDefinitionsFactory;
+import dfa.analyses.TaintFactory;
 import dfa.analyses.testanalyses.DummyFactory;
 
 public class AnalysisLoader {
@@ -56,17 +59,29 @@ public class AnalysisLoader {
         analysisNames = new LinkedList<String>();
         analyses = new HashMap<String, DFAFactory<? extends LatticeElement>>();
 
-        DummyFactory dummyFactory = new DummyFactory();
-        String dummyName = dummyFactory.getName();
+        //DummyFactory dummyFactory = new DummyFactory();
+        //String dummyName = dummyFactory.getName();
 
         ConstantFoldingFactory cfFactory = new ConstantFoldingFactory();
-        String cfName = cfFactory.getName();
+        ConstantBitsFactory cbFactory = new ConstantBitsFactory();
+        ReachingDefinitionsFactory rdFactory = new ReachingDefinitionsFactory();
+        TaintFactory tFactory = new TaintFactory();
 
-        analysisNames.add(dummyName);
-        analyses.put(dummyName, dummyFactory);
+        //analysisNames.add(dummyName);
+        //analyses.put(dummyName, dummyFactory);
+        
 
-        analysisNames.add(cfName);
-        analyses.put(cfName, cfFactory);
+        analysisNames.add(cfFactory.getName());
+        analyses.put(cfFactory.getName(), cfFactory);
+        
+        analysisNames.add(cbFactory.getName());
+        analyses.put(cbFactory.getName(), cbFactory);
+        
+        analysisNames.add(rdFactory.getName());
+        analyses.put(rdFactory.getName(), rdFactory);
+        
+        analysisNames.add(tFactory.getName());
+        analyses.put(tFactory.getName(), tFactory);
 
         // TODO resolve NoSuchMethodError on Reflections(packageName)
         // or more likely: find another way to load analyses

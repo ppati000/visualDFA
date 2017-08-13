@@ -6,7 +6,7 @@ Die größte Änderung besteht in der Aufteilung des Interfaces \inlinecode{Latt
 Dabei hat jedes der drei neuen Interfaces genau eine Methode, die die von dem Interface dargestellte Operation beschreibt:
 
 \begin{itemize}
-	\item \inlinecode{Initializer<E extends LatticeElement>}: initialisiert eine Analyse mittels \inlinecode{getInitialStates():Map<Block,BlockState<E>>}
+	\item \inlinecode{Initializer<E extends LatticeElement>}: initialisiert eine Analyse mittels \inlinecode{getInitialStates():Map<Block,BlockState<E> >}
 	\item \inlinecode{Join<E extends LatticeElement>}: führt Join-Operationen mittels \inlinecode{join(Set<E>):E} aus
 	\item \inlinecode{Transition<E extends LatticeElement>}: führt Transitionen mittels \inlinecode{transition(E,Unit):E} aus
 \end{itemize}
@@ -14,10 +14,10 @@ Dabei hat jedes der drei neuen Interfaces genau eine Methode, die die von dem In
 Diese Aufteilung ermöglicht eine vollständig modulare Implementierung der Analysen.
 \inlinecode{Initializer}, \inlinecode{Join} und \inlinecode{Transition} sind vollständig austauschbar (vorausgesetzt die typparameter sind kompatibel).
 
-Die ehemals abstrakte Klasse \inlinecode{DataFlowAnalysis<E extends LatticeElement>} ist nun ein Interface, welches von den Interfaces \inlinecode{Initializer}, \inlinecode{Join} und \inlinecode{Transition} erbt.
+Die ehemals abstrakte Klasse \inlinecode{DataFlowAnalysis}\inlinecode{<E extends LatticeElement>} ist nun ein Interface, welches von den Interfaces \inlinecode{Initializer}, \inlinecode{Join} und \inlinecode{Transition} erbt.
 Damit stellt \inlinecode{DataFlowAnalysis} alle für die Ausführung einer Datenflussanalyse benötigten Operationen bereit.
 
-Zusätzlich zum Interface \inlinecode{DataFlowAnalysis} wurde noch die abstrakte Klasse \inlinecode{CompositeDataFlowAnalysis<E extends LatticeElement>} hinzugefügt, die \inlinecode{DataFlowAnalysis} implementiert und einen Konstruktor bereitstellt, der einen \inlinecode{Initializer}, einen \inlinecode{Join} und eine \inlinecode{Transition} entgegennimmt.
+Zusätzlich zum Interface \inlinecode{DataFlowAnalysis} wurde noch die abstrakte Klasse \inlinecode{CompositeDataFlowAnalysis}\inlinecode{<E extends LatticeElement>} hinzugefügt, die \inlinecode{DataFlowAnalysis} implementiert und einen Konstruktor bereitstellt, der einen \inlinecode{Initializer}, einen \inlinecode{Join} und eine \inlinecode{Transition} entgegennimmt.
 \inlinecode{getInitialStates}, \inlinecode{join} und \inlinecode{transition} werden dann an die entsprechenden Methoden der übergebenen Objekte delegiert.
 Dies erlaubt das Zusammensetzten neuer Datenflussanalysen aus einzelnen Komponenten (vorausgesetzt die Typparameter sind kompatibel).
 
@@ -25,7 +25,7 @@ Die Rolle der ehemaligen \inlinecode{DataFlowAnalysis} übernimmt die abstrakte 
 Damit wurde der Rückgabetyp der Methode \inlinecode{getAnalysis(String)} von \inlinecode{AnalysisLoader} auch zu \inlinecode{DFAFactory} angepasst.
 
 Weiter ist die Klasse \inlinecode{SimpleBlockGraph} hinzugekommen.
-Diese erbt von \inlinecode{soot.toolkits.graph.BriefBlockGraph} und sorgt lediglich dafür, dass die \inlinecode{getTails}-Methode höchstens einen \inlinecode{Block} zurückgibt (dass es also höchstens einen Endblock gibt). Dies wird durch Einfügen eines künstlichen Endblocks erreicht, falls der ursprüngliche \inlinecode{BriefBlockGraph} mehrere Endblöcke hat.
+Diese erbt von \inlinecode{soot.toolkits.graph.}\inlinecode{BriefBlockGraph} und sorgt lediglich dafür, dass die \inlinecode{getTails}-Methode höchstens einen \inlinecode{Block} zurückgibt (dass es also höchstens einen Endblock gibt). Dies wird durch Einfügen eines künstlichen Endblocks erreicht, falls der ursprüngliche \inlinecode{BriefBlockGraph} mehrere Endblöcke hat.
 
 Eine weitere neue Klasse ist \inlinecode{DFAPrecalcController}, welche die Vorberechnung einer \inlinecode{DFAExecution} kontrolliert. Zu diesem Zweck wurde dem Konstruktor ein Parameter vom Typ \inlinecode{DFAPrecalcController} hinzugefügt.
 Beispielsweise kann die Vorberechnung mittels \inlinecode{pause(waitTime : int)} pausiert werden und dann mit \inlinecode{continue()} fortgesetzt werden. 
@@ -36,14 +36,16 @@ Dann wird ein Zwischenergebnis gespeichert und die Vorberechnung abgebrochen.
 Als Exception-Klassen wurden \inlinecode{DFAException} sowie die Unterklassen \inlinecode{UnsupportedValueException} und \inlinecode{UnsupportedStatementException} hinzugefügt.
 Diese werden benutzt um Probleme bei der Ausführung einer Datenflussanalyse zu signalisieren (z. B. wenn nicht unterstützte Instruktionen angetroffen werden, die nicht einfach ignoriert werden können).
 
+Schließlich wurde noch das Enum \inlinecode{TaintAnalysisTag} hinzugefügt, welches von \inlinecode{soot.tagkit.AttributeValueException} erbt und benutzt wird, um die \inlinecode{taint}- , \inlinecode{clean}- und \inlinecode{sensitive}-Methoden für die Taint-Analyse zu markieren.
+
 \subsection{Kleine Änderungen}
 
 Im Folgenden werden weitere kleine Änderungen zusammengefasst:
 
 \inlinecode{Color} wurde umbenannt in \inlinecode{LogicalColor}.
 
-Der Parameter \inlinecode{cpy : AnalysisState} im Konstruktor \inlinecode{AnalysisState(..., cpy : AnalysisState)} wurde ersetzt durch die beiden Parameter \inlinecode{stateMap : Map<AbstractBlock, BlockState<E>>} und \inlinecode{colorMap : Map<BasicBlock, LogicalColor>}.
-Weiter wurden die \inlinecode{(protected)} Methoden \inlinecode{setStateMap(Map<AbstractBlock, BlockState<E>>)}, \inlinecode{getStateMap():Map<AbstractBlock, BlockState<E>>}, \inlinecode{setColorMap(Map<BasicBlock, LogicalColor>)}, \inlinecode{getColorMap():Map<BasicBlock, LogicalColor>} zum setzen bzw. erhalten der \inlinecode{Map}s für die \inlinecode{BlockState}s und \inlinecode{LogicalColor}s hinzugefügt.
+Der Parameter \inlinecode{cpy : AnalysisState} im Konstruktor \inlinecode{AnalysisState(..., cpy : AnalysisState)} wurde ersetzt durch die beiden Parameter \inlinecode{stateMap : Map<AbstractBlock, BlockState<E> >} und \inlinecode{colorMap : Map<BasicBlock, LogicalColor>}.
+Weiter wurden die \inlinecode{(protected)} Methoden \inlinecode{setStateMap(Map<AbstractBlock,}\inlinecode{BlockState<E>>)}, \inlinecode{getStateMap()}\inlinecode{:Map<AbstractBlock, BlockState<E>>}, \inlinecode{setColorMap(Map<BasicBlock,}\inlinecode{LogicalColor>)}, \inlinecode{getColorMap():Map<BasicBlock,}\inlinecode{LogicalColor>} zum setzen bzw. erhalten der \inlinecode{Map}s für die \inlinecode{BlockState}s und \inlinecode{LogicalColor}s hinzugefügt.
 Die Methoden \inlinecode{getState(...):BlockState<E>} und \inlinecode{setState(...)} wurden zu \inlinecode{getBlockState(...):BlockState<E>} und \inlinecode{setBlockState(...)} umbenannt.
 
 In der Klasse \inlinecode{BlockState<E extends LatticeElement>} wurden die beiden \inlinecode{(protected)} Methoden \inlinecode{setInState(E)} und \inlinecode{setOutState(E)} hinzugefügt.
@@ -52,6 +54,32 @@ In der Klasse \inlinecode{BasicBlock} wurde die \inlinecode{(protected)} Methode
 Weiter wurden \inlinecode{setCorrespondingSootBlock(...)} und \inlinecode{getCorrespondingSootBlock()} zu \inlinecode{setSootBlock(...)} und \inlinecode{getSootBlock()} umbenannt.
 
 In der Klasse \inlinecode{ElementaryBlock} wurde die \inlinecode{(protected)} Methode \inlinecode{setUnit(Unit)} hinzugefügt.
+
+\begin{figure}[H]
+	\caption{Aktuelles Klassendiagramm für das DFAFramework}
+	\centering
+	\includegraphics[width=1.0\textwidth]{Aenderungen/Klassendiagramme/DFAFramework_Impl.png}
+\end{figure}
+
+\section{Analyses}
+Es wurde die Klasse \inlinecode{LocalMapElement<V>} hinzugefügt.
+Diese erbt von \inlinecode{LatticeElement} und modelliert ein \inlinecode{LatticeElement}, bei dem jeder \inlinecode{JimpleLocal} ein Wert (vom Typ \inlinecode{V}) zugeordnet wird.
+Dazu gibt es die Methoden \inlinecode{setValue(l:JimpleLocal,val:V)} sowie \inlinecode{getValue(l:JimpleLocal):V}.
+Weiter gibt es die Methode \inlinecode{getLocalMap():Map<JimpleLocal,V>}, um Zugang zur internen \inlinecode{Map} zu ermöglichen.
+Schließlich gibt es eine Standard-Implementierung von \inlinecode{getStringRepresentation():String}.
+Die Klassen \inlinecode{ConstantBitsElement}, \inlinecode{ConstantFoldingElement}, \inlinecode{ReachingDefinitionsElement} und \inlinecode{TaintElement} erben nun von \inlinecode{LocalMapElement}, statt direkt von \inlinecode{LatticeElement}.
+
+Weiter gibt es die abstrakte Klasse \inlinecode{LocalMapElementJoinHelper}\inlinecode{<V, E extends LocalMapElement<V>>}.
+Diese stellt die Methode \inlinecode{performJoin(Set<E>)} bereit, die einen Join ausführt.
+Dazu muss allerdings die abstrakte Methode \inlinecode{doValueJoin(elements:Set<E>,}\inlinecode{l:JimpleLocal):V} implementiert werden, die lediglich einen Join auf einzelnen Werten ausführt (denen für die angegebene \inlinecode{JimpleLocal}).
+
+Eine weitere neue Klasse ist \inlinecode{LocalComparator}, der eine Ordnung auf \inlinecode{JimpleLocal}s festlegt. Dieser wird von \inlinecode{LocalMapElement} (und Unterklassen) benötigt, um eine konsistente Reihenfolge der \inlinecode{JimpleLocals} bei der Ausgabe zu gewährleisten.
+
+\begin{figure}[H]
+	\caption{Aktuelles Klassendiagramm für das Analyses Modul}
+	\centering
+	\includegraphics[width=1.0\textwidth]{Aenderungen/Klassendiagramme/Analyses_Impl.png}
+\end{figure}
 
 \section{GUI}
 

@@ -93,9 +93,10 @@ public abstract class DialogBox extends JDialog {
 
         initButtonPane();
         borderPanel.add(buttonPane, BorderLayout.SOUTH);
-        setLocationRelativeTo(getOwner());
-        setMinimumSize(new Dimension(300,150));
         pack();
+        setLocationRelativeTo(null);
+        
+        
         
     }
 

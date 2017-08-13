@@ -8,6 +8,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
+import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
 /**
@@ -63,11 +64,22 @@ public class OptionBox extends DialogBox {
         
         messageArea = new JTextArea();
         new JComponentDecorator().decorate(messageArea);
+        int i = message.length();
+        //This makes boxes with more text larger than boxes with fewer text
+        if ((i / 25) > 4) {
+            messageArea.setColumns(30);
+            messageArea.setRows(15);
+        } else {
+            messageArea.setColumns(25);
+            messageArea.setRows(4);
+        }
         messageArea.setEditable(false);
         messageArea.setLineWrap(true);
         messageArea.setWrapStyleWord(true);
         messageArea.setText(message);
-        contentPanel.add(messageArea, BorderLayout.CENTER);
+        JScrollPane messagePane = new JScrollPane(messageArea);
+        messagePane.setBorder(null);
+        contentPanel.add(messagePane, BorderLayout.CENTER);
 
     }
 

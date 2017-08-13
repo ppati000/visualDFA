@@ -1,7 +1,7 @@
 package gui;
 
 /**
- * Contains options, which the user can select in the OptionBox.
+ * Contains options, which the user can select in the {@code OptionBox}.
  * 
  * @author Michael
  * 

@@ -28,8 +28,8 @@ import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 
 /**
- * The InputPanel Class contains UI-elements to let the user start a new data
- * flow analysis.
+ * The {@code InputPanel} Class contains UI-elements to let the user start a new
+ * data flow analysis.
  * 
  * @author Michael
  *
@@ -51,11 +51,11 @@ public class InputPanel extends JPanel {
             + System.getProperty("file.separator") + "visualDfa";
 
     /**
-     * Create the panel. Set the controller, so the ActionListeners can access
-     * it.
+     * Create the {@code JPanel}. Set the {@code Controller}, so the
+     * {@code ActionListener}s can access it.
      * 
      * @param ctrl
-     *            The Controller to be accessed in case of events.
+     *            the {@code Controller} to be accessed in case of events
      * 
      * @see controller.Controller
      * @see ActionListener
@@ -69,9 +69,9 @@ public class InputPanel extends JPanel {
         setBackground(Colors.BACKGROUND.getColor());
 
         GridBagLayout gridBagLayout = new GridBagLayout();
-        gridBagLayout.columnWidths = new int[] { 0, 0};
+        gridBagLayout.columnWidths = new int[] { 0, 0 };
         gridBagLayout.rowHeights = new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-        gridBagLayout.columnWeights = new double[] { 0.5, 0.5};
+        gridBagLayout.columnWeights = new double[] { 0.5, 0.5 };
         gridBagLayout.rowWeights = new double[] { 0.5, 0.5, 0.5, 0.5, 0.0, 0.5, 0.0, 0.0, 0.5, 0.0, 0.0, 0.5, 0.1,
                 0.1 };
         setLayout(gridBagLayout);
@@ -134,12 +134,12 @@ public class InputPanel extends JPanel {
     }
 
     /**
-     * Activate or deactivate the InputPanel. If deactivated, all JComponents
-     * which are children of this Panel are deactivated.
+     * Activate or deactivate the {@code InputPanel}. If deactivated, all
+     * {@code JComponents} which are children of this Panel are deactivated.
      * 
      * @param b
-     *            Whether the panel should be activated [true] or deactivated
-     *            [false].
+     *            whether the panel should be activated {@code true} or
+     *            deactivated {@code false}
      */
     public void setActivated(boolean b) {
 
@@ -166,15 +166,22 @@ public class InputPanel extends JPanel {
     }
 
     /**
-     * Get the text from the CodeField and return it to the caller.
+     * Get the text from the {@code CodeField} and return it to the caller.
      * 
-     * @return the text from the CodeField.
+     * @return the text from the {@code CodeField}.
      *
      */
     public String getCode() {
         return codeField.getCode();
     }
 
+    /**
+     * Set the code in the {@code CodeField}.
+     * 
+     * @param code
+     *            the code to be set
+     * @see CodeField
+     */
     public void setCode(String code) {
         codeField.setCode(code);
     }
@@ -192,7 +199,7 @@ public class InputPanel extends JPanel {
     /**
      * Look up if a filter is selected and return this value.
      * 
-     * @return [true] if a filter is selected, [false] if not.
+     * @return {@code true} if a filter is selected, {@code false} if not.
      */
     public boolean isFilterSelected() {
 
@@ -200,8 +207,8 @@ public class InputPanel extends JPanel {
     }
 
     /**
-     * Implementation of an ActionListener which informs the controller, when
-     * the StartAnalysis button has been pressed.
+     * Implementation of an {@code ActionListener} which informs the
+     * {@code Controller}, when the StartAnalysis button has been pressed.
      *
      * @author Michael
      * @see ActionListener
@@ -215,6 +222,14 @@ public class InputPanel extends JPanel {
 
     }
 
+    /**
+     * Listener class for the Open button. Opens a {@code JFileChooser} to open
+     * .java files.
+     * 
+     * @author Michael
+     * 
+     * @see JFileChooser
+     */
     private class OpenListener implements ActionListener {
 
         @Override
@@ -251,7 +266,6 @@ public class InputPanel extends JPanel {
                         return false;
                     }
 
-                    
                 }
             });
             int returnVal = openChooser.showOpenDialog(btnOpen);
@@ -280,6 +294,14 @@ public class InputPanel extends JPanel {
 
     }
 
+    /**
+     * Listener class for the Save Button. Opens a {@code JFileChooser} to save
+     * .java files.
+     * 
+     * @author Michael
+     *
+     * @see JFileChooser
+     */
     private class SaveListener implements ActionListener {
 
         @Override
@@ -317,16 +339,15 @@ public class InputPanel extends JPanel {
                         return false;
                     }
 
-                    
                 }
             });
-            
+
             int returnVal = saveChooser.showSaveDialog(btnSave);
             if (returnVal == JFileChooser.APPROVE_OPTION) {
                 File file = saveChooser.getSelectedFile();
                 if (!file.getName().endsWith(".java")) {
                     file = new File(file.getAbsolutePath() + ".java");
-                }              
+                }
                 try {
                     BufferedWriter out = new BufferedWriter(new FileWriter(file));
                     out.write(codeField.getCode());

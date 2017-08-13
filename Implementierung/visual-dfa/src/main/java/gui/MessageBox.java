@@ -12,7 +12,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
 /**
- * DialogBox for displaying messages. Can display a custom message.
+ * {@code DialogBox} for displaying messages. Can display a custom message.
  * 
  * @author Michael
  *
@@ -21,20 +21,20 @@ import javax.swing.JTextArea;
 
 public class MessageBox extends DialogBox {
 
-    
     private JTextArea messageArea;
     private String message;
-    
+
     /**
-     * Display the MessageBox. Stop execution of this Thread until user closes
-     * the Dialog.
+     * Display the {@code MessageBox}. Stop execution of this {@code Thread}
+     * until user closes the Dialog.
      * 
      * @param owner
-     *            The Frame, which is the owner of the MessageBox.
+     *            the {@code Frame}, which is the owner of the
+     *            {@code MessageBox}
      * @param title
-     *            The title of the MessageBox.
+     *            the title of the {@code MessageBox}
      * @param message
-     *            The message to be displayed by the MessageBox.
+     *            the message to be displayed by the {@code MessageBox}
      * 
      * @see Frame
      * @see javax.swing.JDialog
@@ -48,12 +48,12 @@ public class MessageBox extends DialogBox {
     }
 
     /**
-     * Set layout and content of the contentPanel for the MessageBox.
+     * Set layout and content of the contentPanel for the {@code MessageBox}.
      */
     @Override
     protected void initContentPanel() {
         contentPanel.setBackground(Colors.BACKGROUND.getColor());
-        
+
         messageArea = new JTextArea();
         int i = message.length();
         //This makes boxes with more text larger than boxes with fewer text
@@ -77,15 +77,15 @@ public class MessageBox extends DialogBox {
     }
 
     /**
-     * Set layout and content of the ButtonPane for the MessageBox.
+     * Set layout and content of the ButtonPane for the {@code MessageBox}.
      */
     @Override
     protected void initButtonPane() {
-        
+
         buttonPane.setBackground(Colors.BACKGROUND.getColor());
         GridBagLayout gbl_Button = new GridBagLayout();
-        gbl_Button.columnWidths = new int[] {0, 0, 0};
-        gbl_Button.columnWeights = new double[] {0.5, 0.5, 0.5};
+        gbl_Button.columnWidths = new int[] { 0, 0, 0 };
+        gbl_Button.columnWeights = new double[] { 0.5, 0.5, 0.5 };
         buttonPane.setLayout(gbl_Button);
         JButtonDecorator buttonDecorator = new JButtonDecorator(new JComponentDecorator());
         JButton btnOK = new JButton();
@@ -94,18 +94,23 @@ public class MessageBox extends DialogBox {
         btnOK.setForeground(Colors.DARK_TEXT.getColor());
         GridBagConstraints gbc_btnOK = GridBagConstraintFactory.getStandardGridBagConstraints(1, 0, 1, 1);
         buttonPane.add(btnOK, gbc_btnOK);
-        
 
     }
-    
+
+    /**
+     * Listener class for the OK button.
+     * 
+     * @author Michael
+     *
+     */
     private class OKListener implements ActionListener {
 
         @Override
         public void actionPerformed(ActionEvent e) {
             setVisible(false);
-            
+
         }
-        
+
     }
 
 }

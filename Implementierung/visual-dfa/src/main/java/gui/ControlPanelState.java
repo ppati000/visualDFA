@@ -1,7 +1,7 @@
 package gui;
 
 /**
- * contains the activity states of the ControlPanel.
+ * Contains the activity states of the {@code ControlPanel}.
  * 
  * @author Michael
  *

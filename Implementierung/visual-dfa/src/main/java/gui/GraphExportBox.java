@@ -12,7 +12,7 @@ import javax.swing.JLabel;
 import javax.swing.border.EmptyBorder;
 
 /**
- * DialogBox for graph-exporting. User can set export settings and start or
+ * {@code DialogBox} for graph-exporting. User can set export settings and start or
  * cancel exporting.
  * 
  * @author Michael
@@ -35,7 +35,7 @@ public class GraphExportBox extends DialogBox {
      * closes the Dialog.
      * 
      * @param owner
-     *            The Frame, which is the owner of this Dialog
+     *            the Frame, which is the owner of this Dialog
      * 
      * @see Frame
      * @see javax.swing.JDialog
@@ -58,7 +58,7 @@ public class GraphExportBox extends DialogBox {
         contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
         GridBagLayout gbl_Content = new GridBagLayout();
         gbl_Content.columnWeights = new double[] { 0.5, 0.5, 0.5 };
-        gbl_Content.rowWeights = new double[] { 0.5, 0.5, 0.5, 0.5};
+        gbl_Content.rowWeights = new double[] { 0.5, 0.5, 0.5, 0.5 };
         contentPanel.setLayout(gbl_Content);
 
         JComponentDecorator compDecorator = new JComponentDecorator();
@@ -105,10 +105,11 @@ public class GraphExportBox extends DialogBox {
         cb_BatchExport.setText("Batch export all graph states");
         GridBagConstraints gbc_cbBatch = GridBagConstraintFactory.getStandardGridBagConstraints(0, 2, 3, 1);
         contentPanel.add(cb_BatchExport, gbc_cbBatch);
-        
+
         cb_LineStates = new JCheckBox();
-        compDecorator.decorate(cb_LineStates);;
-        cb_LineStates.setText("Include line states");
+        compDecorator.decorate(cb_LineStates);
+        ;
+        cb_LineStates.setText("Include line steps");
         GridBagConstraints gbc_cbLineStates = GridBagConstraintFactory.getStandardGridBagConstraints(0, 3, 3, 1);
         contentPanel.add(cb_LineStates, gbc_cbLineStates);
 
@@ -140,7 +141,13 @@ public class GraphExportBox extends DialogBox {
         buttonPane.add(btnCancel, gbc_btnCancel);
 
     }
-    
+
+    /**
+     * Look up whether the user wants to include the LineSteps in the export.
+     * 
+     * @return True if the user has selected the according JCheckBox, false
+     *         otherwise.
+     */
     public boolean includeLineStates() {
         return cb_LineStates.isSelected();
     }
@@ -154,14 +161,31 @@ public class GraphExportBox extends DialogBox {
         return cb_BatchExport.isSelected();
     }
 
+    /**
+     * Look up with which option the user has closed the dialog.
+     * 
+     * @return The Option according to the users choice.
+     */
     public Option getOption() {
         return option;
     }
 
+    /**
+     * Look up which Quality the user has selected for the export.
+     * 
+     * @return The selected Quality.
+     */
     public Quality getQuality() {
         return quality;
     }
 
+    /**
+     * Listener class for the OK-Button.
+     * 
+     * @author Michael
+     *
+     * @see JButton
+     */
     private class OKListener implements ActionListener {
 
         @Override
@@ -172,6 +196,13 @@ public class GraphExportBox extends DialogBox {
 
     }
 
+    /**
+     * Listener class for the Cancel Button
+     * 
+     * @author Michael
+     *
+     * @see JButton
+     */
     private class CancelListener implements ActionListener {
 
         @Override
@@ -182,6 +213,15 @@ public class GraphExportBox extends DialogBox {
 
     }
 
+    /**
+     * Listener Class for the resolution buttons. Changes the color of the
+     * buttons and sets the Quality accordingly.
+     * 
+     * @author Michael
+     * 
+     * @see JButton
+     *
+     */
     private class ResolutionChangeListener implements ActionListener {
 
         @Override

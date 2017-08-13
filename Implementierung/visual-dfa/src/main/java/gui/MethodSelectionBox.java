@@ -17,11 +17,9 @@ import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.border.EmptyBorder;
 
-
-
 /**
- * DialogBox for method selection. User can select one of several methods and
- * confirm or cancel the selection.
+ * {@code DialogBox} for method selection. User can select one of several
+ * methods and confirm or cancel the selection.
  * 
  * @author Michael
  * 
@@ -35,13 +33,13 @@ public class MethodSelectionBox extends DialogBox {
     private Option option;
 
     /**
-     * Display the MethodSelectionBox. Stop execution of this Thread until user
-     * closes the Dialog.
+     * Display the {@code MethodSelectionBox}. Stop execution of this
+     * {@code Thread} until user closes the {@code Dialog}.
      * 
      * @param owner
-     *            The Frame, which owns this Dialog.
+     *            the {@code Frame}, which owns this {@code Dialog}
      * @param methods
-     *            The names of the methods to choose from.
+     *            the names of the methods to choose from
      * 
      * @see Frame
      * @see javax.swing.JDialog
@@ -57,7 +55,8 @@ public class MethodSelectionBox extends DialogBox {
     }
 
     /**
-     * Set layout and content of the ContentPanel for the MethodSelectionBox.
+     * Set layout and content of the {@code ContentPanel} for the
+     * {@code MethodSelectionBox}.
      */
     @Override
     protected void initContentPanel() {
@@ -66,7 +65,7 @@ public class MethodSelectionBox extends DialogBox {
         JScrollPane radioScrollPane = new JScrollPane();
         radioScrollPane.setPreferredSize(new Dimension(0, 200));
         JPanel radioPane = new JPanel();
-        radioPane.setLayout(new BoxLayout(radioPane,  BoxLayout.PAGE_AXIS));
+        radioPane.setLayout(new BoxLayout(radioPane, BoxLayout.PAGE_AXIS));
         radioPane.setBackground(Colors.BACKGROUND.getColor());
         ButtonGroup methodGroup = new ButtonGroup();
         JComponentDecorator compDecorator = new JComponentDecorator();
@@ -84,7 +83,7 @@ public class MethodSelectionBox extends DialogBox {
             compDecorator.decorate(rb);
             methodGroup.add(rb);
             radioPane.add(rb);
-            
+
         }
         radioScrollPane.setViewportView(radioPane);
         contentPanel.add(radioScrollPane, BorderLayout.CENTER);
@@ -92,25 +91,26 @@ public class MethodSelectionBox extends DialogBox {
     }
 
     /**
-     * Set layout and content of the ButtonPane for the MethodSelectionBox.
+     * Set layout and content of the ButtonPane for the
+     * {@code MethodSelectionBox}.
      */
     @Override
     protected void initButtonPane() {
         buttonPane.setBackground(Colors.BACKGROUND.getColor());
         buttonPane.setBorder(new EmptyBorder(5, 5, 5, 5));
         GridBagLayout gbl_Button = new GridBagLayout();
-        gbl_Button.columnWidths = new int[] {0, 0, 0};
-        gbl_Button.columnWeights = new double[] {0.5, 0.5, 0.5};
+        gbl_Button.columnWidths = new int[] { 0, 0, 0 };
+        gbl_Button.columnWeights = new double[] { 0.5, 0.5, 0.5 };
         buttonPane.setLayout(gbl_Button);
         JButtonDecorator buttonDecorator = new JButtonDecorator(new JComponentDecorator());
-        
+
         JButton btnOK = new JButton();
         buttonDecorator.decorateBorderButton(btnOK, new OKListener(), "Run Analysis", Colors.GREY_BORDER.getColor());
         btnOK.setBackground(Colors.WHITE_BACKGROUND.getColor());
         btnOK.setForeground(Colors.DARK_TEXT.getColor());
         GridBagConstraints gbc_btnOK = GridBagConstraintFactory.getStandardGridBagConstraints(4, 0, 1, 1);
         buttonPane.add(btnOK, gbc_btnOK);
-        
+
         JButton btnCancel = new JButton();
         buttonDecorator.decorateBorderButton(btnCancel, new CancelListener(), "Cancel", Colors.GREY_BORDER.getColor());
         GridBagConstraints gbc_btnCancel = GridBagConstraintFactory.getStandardGridBagConstraints(0, 0, 1, 1);
@@ -126,21 +126,39 @@ public class MethodSelectionBox extends DialogBox {
     public String getSelectedMethod() {
         return selectedMethod;
     }
-    
+
+    /**
+     * Look up, which {@code Option} the user has closed the {@code Dialog}
+     * with.
+     * 
+     * @return The {@code Option} the user chose.
+     */
     public Option getOption() {
         return option;
     }
-    
+
+    /**
+     * Listener for the OK-Button.
+     * 
+     * @author Michael
+     *
+     */
     private class OKListener implements ActionListener {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            option = Option.YES_OPTION; 
+            option = Option.YES_OPTION;
             setVisible(false);
         }
-        
+
     }
-    
+
+    /**
+     * Listener for the Cancel-Button
+     * 
+     * @author Michael
+     *
+     */
     private class CancelListener implements ActionListener {
 
         @Override
@@ -148,16 +166,23 @@ public class MethodSelectionBox extends DialogBox {
             option = Option.CANCEL_OPTION;
             setVisible(false);
         }
-        
+
     }
-    
+
+    /**
+     * Listener for the Radio-Buttons. Changes the selected Method according to
+     * the clicked Radio-Button
+     * 
+     * @author Michael
+     *
+     */
     private class ButtonListener implements ActionListener {
 
         @Override
         public void actionPerformed(ActionEvent e) {
             selectedMethod = e.getActionCommand();
-            
+
         }
-        
+
     }
 }

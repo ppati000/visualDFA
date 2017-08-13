@@ -16,8 +16,8 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 
 /**
- * The StatePanelOpen Class contains UI-elements to let the user see the state
- * of the data flow analysis.
+ * The {@code StatePanelOpen} Class contains UI-elements to let the user see the
+ * state of the data flow analysis.
  * 
  * @author Michael
  *
@@ -37,11 +37,11 @@ public class StatePanelOpen extends JPanel {
     private static final String POSITION = "Selected position: ";
 
     /**
-     * Create the panel. Set the PragramFrame, so the StatePanel can be
+     * Create the panel. Set the {@code ProgramFrame}, so the StatePanel can be
      * switched.
      * 
      * @param frame
-     *            The ProgramFrame which contains the StatePanel.
+     *            the {@code ProgramFrame} which contains the StatePanel
      * @see ProgramFrame
      */
     public StatePanelOpen(ProgramFrame frame) {
@@ -120,7 +120,7 @@ public class StatePanelOpen extends JPanel {
      * Activate or deactivate the Panel and its contents.
      * 
      * @param b
-     *            Activate [true] or deactivate [false] the panel.
+     *            activate {@code true} or deactivate {@code false} the panel
      */
     public void setActivated(boolean b) {
         btnClose.setEnabled(b);
@@ -133,31 +133,64 @@ public class StatePanelOpen extends JPanel {
         outputArea.setEnabled(b);
     }
 
+    /**
+     * Set the content of the input {@code TextArea}.
+     * 
+     * @param latticeElement
+     *            the {@code String} to be displayed
+     */
     public void setIn(String latticeElement) {
 
         inputArea.setText(latticeElement);
     }
 
+    /**
+     * Set the content of the output {@code TextArea}.
+     * 
+     * @param latticeElement
+     *            the {@code String} to be displayed
+     */
     public void setOut(String latticeElement) {
         outputArea.setText(latticeElement);
     }
 
+    /**
+     * Set the content of the {@code lineField}.
+     * 
+     * @param s
+     *            the code to be displayed
+     * @param blockNumber
+     *            the number of the block the code is in
+     * @param lineNumber
+     *            the number of the first line of the given code
+     */
     public void setSelectedLine(String s, int blockNumber, int lineNumber) {
         lblPosition.setText(POSITION + "Block " + blockNumber);
         lineField.setLineAreaStart(lineNumber);
         lineField.setCode(s);
 
     }
-    
+
+    /**
+     * Resets all the content of the {@code StatePanelOpen} so it is empty
+     * again.
+     */
     public void reset() {
         lblPosition.setText(POSITION + "none");
         lineField.setLineAreaStart(1);
         lineField.setCode(null);
         inputArea.setText(null);
         outputArea.setText(null);
-        
+
     }
 
+    /**
+     * The Listener for the Close-Button. Changes {@code StatePanelOpen} to
+     * {@code StatePanelClosed}.
+     * 
+     * @author Michael
+     *
+     */
     private class CloseListener implements ActionListener {
 
         @Override

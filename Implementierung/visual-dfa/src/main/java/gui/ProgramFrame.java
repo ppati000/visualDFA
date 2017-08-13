@@ -11,7 +11,7 @@ import controller.Controller;
 import gui.visualgraph.VisualGraphPanel;
 
 /**
- * The frame which contains all panels.
+ * The {@code JFrame} which contains all panels.
  * 
  * @author Michael
  *
@@ -31,11 +31,12 @@ public class ProgramFrame extends JFrame {
     private Controller ctrl;
 
     /**
-     * Creates a JFrame and its content. Sets the minimum Size to 1920x1080
-     * Pixels and the Layout of the ContentPane.
+     * Creates a {@code JFrame} and its content. Sets theLayout of the
+     * ContentPane.
      * 
      * @param ctrl
-     *            The controller to which the actionListeners will correspond.
+     *            the {@code Controller} with which the {@code actionListeners}
+     *            will correspond
      * 
      * @see Controller
      * @see java.awt.event.ActionListener
@@ -69,17 +70,16 @@ public class ProgramFrame extends JFrame {
 
         statePanelOpen = new StatePanelOpen(this);
         contentPane.add(statePanelOpen, BorderLayout.EAST);
-        
+
         isStatePanelOpen = true;
 
         statePanelClosed = new StatePanelClosed(this);
-        
-        
+
     }
 
     /**
-     * This method will switch between the StatePanelOpen and the
-     * StatePanelClosed. Only one of them will be shown at a time.
+     * This method will switch between the {@code StatePanelOpen} and the
+     * {@code StatePanelClosed}. Only one of them will be shown at a time.
      * 
      * @see StatePanelOpen
      * @see StatePanelClosed
@@ -94,15 +94,15 @@ public class ProgramFrame extends JFrame {
             add(statePanelOpen, BorderLayout.EAST);
             isStatePanelOpen = true;
         }
-        
+
         revalidate();
         repaint();
     }
 
     /**
-     * This method will return the InputPanel.
+     * This method will return the {@code InputPanel}.
      * 
-     * @return The InputPanel
+     * @return The {@code InputPanel}.
      * @see InputPanel
      */
     public InputPanel getInputPanel() {
@@ -110,9 +110,9 @@ public class ProgramFrame extends JFrame {
     }
 
     /**
-     * This method will return the ControlPanel.
+     * This method will return the {@code ControlPanel}.
      * 
-     * @return The ControlPanel
+     * @return The {@code ControlPanel}.
      * @see ControlPanel
      */
     public ControlPanel getControlPanel() {
@@ -120,15 +120,21 @@ public class ProgramFrame extends JFrame {
     }
 
     /**
-     * This method will return the StatePanelOpen.
+     * This method will return the {@code StatePanelOpen}.
      * 
-     * @return The StatePanelOpen
+     * @return The {@code StatePanelOpen}.
      * @see StatePanelOpen
      */
     public StatePanelOpen getStatePanelOpen() {
         return statePanelOpen;
     }
-    
+
+    /**
+     * Opens a {@code JFileChooser}, so the user can set the path to his JDK.
+     * 
+     * @return The path chosen by the user.
+     * @see JFileChooser
+     */
     public File getCompilerPath() {
         JFileChooser pathChooser = new JFileChooser(System.getProperty("java.home"));
         pathChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);

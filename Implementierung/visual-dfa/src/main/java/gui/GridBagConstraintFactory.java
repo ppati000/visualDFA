@@ -4,25 +4,31 @@ import java.awt.GridBagConstraints;
 import java.awt.Insets;
 
 /**
- * Utility class to create GridBagConstraints with standard properties set.
+ * Utility class to create {@code GridBagConstraints} with standard properties
+ * set.
  * 
  * @author Michael
  *
  * @see GridBagConstraints
  */
 public class GridBagConstraintFactory {
-    
-    private GridBagConstraintFactory(){
-        
+
+    private GridBagConstraintFactory() {
+
     }
 
     /**
-     * Creates standard GridBagConstraints with a given position and size.
+     * Creates standard {@code GridBagConstraints} with a given position and
+     * size.
      * 
-     * @param x The horizontal placement in the grid.
-     * @param y The vertical placement in the grid.
-     * @param width The number of cells the component should take up horizontally.
-     * @param height The number of cells the component should take up vertically.
+     * @param x
+     *            the horizontal placement in the grid
+     * @param y
+     *            the vertical placement in the grid
+     * @param width
+     *            the number of cells the component should take up horizontally
+     * @param height
+     *            the number of cells the component should take up vertically
      * @return GridBagConstraints with standard properties.
      * 
      * @see GridBagConstraints

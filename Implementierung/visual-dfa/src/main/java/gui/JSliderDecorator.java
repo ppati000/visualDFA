@@ -5,7 +5,7 @@ import javax.swing.JSlider;
 import javax.swing.event.ChangeListener;
 
 /**
- * A utility class to set standard properties for JSliders.
+ * A utility class to set standard properties for {@code JSliders}.
  * 
  * @author Michael
  * 
@@ -14,9 +14,10 @@ import javax.swing.event.ChangeListener;
 public class JSliderDecorator {
 
     private JComponentDecorator componentDecorator;
-    
+
     /**
-     * Pass a JComponentDecorator to set standard JComponent properties.
+     * Pass a {@code JComponentDecorator} to set standard {@code JComponent}
+     * properties.
      * 
      * @param componentDecorator
      * @see JComponentDecorator
@@ -25,22 +26,27 @@ public class JSliderDecorator {
     public JSliderDecorator(JComponentDecorator componentDecorator) {
         this.componentDecorator = componentDecorator;
     }
-    
+
     /**
-     * Set standard properties for a JSlider.
-     * First calls the decorate method on the JComponentDecorator, then adds JSlider specific properties.
+     * Set standard properties for a {@code JSlider}. First calls the decorate
+     * method on the {@code JComponentDecorator}, then adds {@code JSlider}
+     * specific properties.
      * 
-     * @param comp JSlider on which the properties are set.
-     * @param maxValue The maximum value for the JSlider.
-     * @param minorTickspacing 
+     * @param comp
+     *            {@code JSlider} on which the properties are set
+     * @param maxValue
+     *            the maximum value for the {@code JSlider}
+     * @param minorTickspacing
      * @param majorTickspacing
-     * @param l The ChangeListener for the JSlider.
+     * @param l
+     *            the {@code ChangeListener} for the {@code JSlider}
      * 
      * @see JSlider
      * @see JComponentDecorator
      * @see ChangeListener
      */
-    public void decorateSlider(JSlider comp, int maxValue, int minorTickspacing, int majorTickspacing, ChangeListener l) {
+    public void decorateSlider(JSlider comp, int maxValue, int minorTickspacing, int majorTickspacing,
+            ChangeListener l) {
         componentDecorator.decorate(comp);
         comp.setMaximum(maxValue);
         comp.setMinimum(0);

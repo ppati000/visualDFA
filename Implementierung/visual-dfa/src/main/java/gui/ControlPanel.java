@@ -22,8 +22,8 @@ import javax.swing.border.BevelBorder;
 import javax.swing.border.CompoundBorder;
 
 /**
- * The ControlPanel Class contains UI-elements to let the user control the
- * control flow graph.
+ * The {@code ControlPanel} Class contains UI-elements to let the user control
+ * the control flow graph.
  * 
  * @author Michael
  *
@@ -48,22 +48,24 @@ public class ControlPanel extends JPanel {
     private JLabel lblDelayInSeconds;
 
     private StepSliderChangeListener stepListener;
-    
+
     private boolean isPlayButtonAdded;
 
     /**
-     * Create the panel. Set the controller, so the ActionListeners can access
-     * it.
+     * Create the panel. Set the {@code Controller}, so the
+     * {@code ActionListener}s can access it.
      * 
      * @param ctrl
-     *            The Controller to be accessed in case of events.
+     *            the {@code Controller} to be accessed in case of events
      * 
      * @see controller.Controller
      * @see ActionListener
      */
     public ControlPanel(Controller ctrl) {
 
-        setBorder(new CompoundBorder(new BevelBorder(BevelBorder.RAISED, Colors.GREY_BORDER.getColor(), null, null, null), new EmptyBorder(5, 5, 5, 5)));
+        setBorder(
+                new CompoundBorder(new BevelBorder(BevelBorder.RAISED, Colors.GREY_BORDER.getColor(), null, null, null),
+                        new EmptyBorder(5, 5, 5, 5)));
         setBackground(Colors.BACKGROUND.getColor());
 
         this.ctrl = ctrl;
@@ -90,9 +92,10 @@ public class ControlPanel extends JPanel {
         jLaDecorator.decorateLabel(lblDelayInSeconds, "Step delay (seconds)");
         GridBagConstraints gbc_lblDelayInSeconds = GridBagConstraintFactory.getStandardGridBagConstraints(7, 1, 2, 1);
         add(lblDelayInSeconds, gbc_lblDelayInSeconds);
-        
+
         btnStopAnalysis = new JButton();
-        jBuDecorator.decorateIconButton(btnStopAnalysis, "icons/rounded-black-square-shape.png", 0.5, new StopListener(), "Stop");
+        jBuDecorator.decorateIconButton(btnStopAnalysis, "icons/rounded-black-square-shape.png", 0.5,
+                new StopListener(), "Stop");
         btnStopAnalysis.setBackground(Colors.WHITE_BACKGROUND.getColor());
         btnStopAnalysis.setForeground(Colors.DARK_TEXT.getColor());
 
@@ -156,7 +159,7 @@ public class ControlPanel extends JPanel {
      * of the control flow graph.
      * 
      * @param step
-     *            The step to be set.
+     *            the step to be set
      */
     public void setSliderStep(int step) {
         stepSlider.removeChangeListener(stepListener);
@@ -169,7 +172,7 @@ public class ControlPanel extends JPanel {
      * the total number of steps in the control flow graph.
      * 
      * @param steps
-     *            The total number of steps.
+     *            the total number of steps
      */
     public void setTotalSteps(int steps) {
         stepSlider.removeChangeListener(stepListener);
@@ -179,12 +182,14 @@ public class ControlPanel extends JPanel {
     }
 
     /**
-     * Set the activity state of the ControlPanel. ACTIVATED: All UI-elements
-     * are activated. PLAYING: Only the DelaySlider and the PauseButton are
-     * activated. DEACTIVATED: All UI-elements are deactivated.
+     * Set the activity state of the {@code ControlPanel}. {@code ACTIVATED}:
+     * All UI-elements are activated. {@code PLAYING}: Only the
+     * {@code DelaySlider} and the {@code PauseButton} are activated.
+     * {@code DEACTIVATED}: All UI-elements are deactivated.
      * 
      * @param cps
-     *            An ENUM which defines the activity state of the ControlPanel.
+     *            an ENUM which defines the activity state of the
+     *            {@code ControlPanel}
      * 
      * @see ControlPanelState
      */
@@ -268,29 +273,30 @@ public class ControlPanel extends JPanel {
     }
 
     /**
-     * Look up the current position of the DelaySlider and return it.
+     * Look up the current position of the {@code DelaySlider} and return it.
      * 
-     * @return The position of the DelaySlider.
+     * @return The position of the {@code DelaySlider}.
      */
     public int getDelaySliderPosition() {
         return delaySlider.getValue();
     }
 
     /**
-     * Look up the current position of the StepSlider and return it.
+     * Look up the current position of the {@code StepSlider} and return it.
      * 
-     * @return The position of the StepSlider.
+     * @return The position of the {@code StepSlider}.
      */
     public int getSliderStep() {
         return stepSlider.getValue();
     }
-    
+
     /**
-     * Implementation of an ActionListener which informs the controller,
-     * when the Stop button has been clicked.
+     * Implementation of an {@code ActionListener} which informs the
+     * {@code Controller}, when the Stop button has been clicked.
+     * 
      * @author Michael
      *
-     * @see ActionListener 
+     * @see ActionListener
      */
     private class StopListener implements ActionListener {
 
@@ -303,11 +309,12 @@ public class ControlPanel extends JPanel {
     }
 
     /**
-     * Implementation of an ActionListener which informs the controller,
-     * when the PreviousBlock button has been clicked.
+     * Implementation of an {@code ActionListener} which informs the
+     * {@code Controller}, when the PreviousBlock button has been clicked.
+     * 
      * @author Michael
      *
-     * @see ActionListener 
+     * @see ActionListener
      */
     private class PreviousBlockListener implements ActionListener {
 
@@ -320,11 +327,12 @@ public class ControlPanel extends JPanel {
     }
 
     /**
-     * Implementation of an ActionListener which informs the controller,
-     * when the PreviousLine button has been clicked.
+     * Implementation of an {@code ActionListener} which informs the
+     * {@code Controller}, when the PreviousLine button has been clicked.
+     * 
      * @author Michael
      *
-     * @see ActionListener 
+     * @see ActionListener
      */
     private class PreviousLineListener implements ActionListener {
 
@@ -337,11 +345,12 @@ public class ControlPanel extends JPanel {
     }
 
     /**
-     * Implementation of an ActionListener which informs the controller,
-     * when the NextLine button has been clicked.
+     * Implementation of an {@code ActionListener} which informs the
+     * {@code Controller}, when the NextLine button has been clicked.
+     * 
      * @author Michael
      *
-     * @see ActionListener 
+     * @see ActionListener
      */
     private class NextLineListener implements ActionListener {
 
@@ -354,11 +363,12 @@ public class ControlPanel extends JPanel {
     }
 
     /**
-     * Implementation of an ActionListener which informs the controller,
-     * when the NextBlock button has been clicked.
+     * Implementation of an {@code ActionListener} which informs the
+     * {@code Controller}, when the NextBlock button has been clicked.
+     * 
      * @author Michael
      *
-     * @see ActionListener 
+     * @see ActionListener
      */
     private class NextBlockListener implements ActionListener {
 
@@ -370,8 +380,9 @@ public class ControlPanel extends JPanel {
     }
 
     /**
-     * Implementation of a ChangeListener which informs the controller,
-     * when the position of the StepSlider has changed.
+     * Implementation of a {@code ChangeListener} which informs the
+     * {@code Controller}, when the position of the StepSlider has changed.
+     * 
      * @author Michael
      *
      * @see ChangeListener
@@ -386,36 +397,38 @@ public class ControlPanel extends JPanel {
     }
 
     /**
-     * Implementation of an ActionListener which informs the controller,
-     * when the Play button has been clicked. Furthermore exchanges the Play button
-     * with the Pause button
+     * Implementation of an {@code ActionListener} which informs the
+     * {@code Controller}, when the Play button has been clicked. Furthermore
+     * exchanges the Play button with the Pause button
+     * 
      * @author Michael
      *
-     * @see ActionListener 
+     * @see ActionListener
      */
     private class PlayListener implements ActionListener {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            
+
             ctrl.play();
         }
 
     }
 
     /**
-     * Implementation of an ActionListener which informs the controller,
-     * when the Pause button has been clicked. Furthermore exchanges the Pause button
-     * for the Play button.
+     * Implementation of an {@code ActionListener} which informs the
+     * {@code Controller}, when the Pause button has been clicked. Furthermore
+     * exchanges the Pause button for the Play button.
+     * 
      * @author Michael
      *
-     * @see ActionListener 
+     * @see ActionListener
      */
     private class PauseListener implements ActionListener {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            
+
             ctrl.pause();
 
         }

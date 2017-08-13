@@ -1,7 +1,8 @@
 package gui;
 
 /**
- * Contains the quality options the user can select in the GraphExportBox.
+ * Contains the quality options the user can select in the
+ * {@code GraphExportBox}.
  * 
  * @author Michael
  *

@@ -1,5 +1,55 @@
 \part{Änderungen des Entwurfs}
 
+\section{DFAFramework}
+
+Die größte Änderung besteht in der Aufteilung des Interfaces \inlinecode{Lattice} in die drei Interfaces \inlinecode{Initializer}, \inlinecode{Transition} und \inlinecode{Join}, jeweils mit dem Typparameter \inlinecode{E extends LatticeElement}, der das verwendete \inlinecode{LatticeElement} angibt.
+Dabei hat jedes der drei neuen Interfaces genau eine Methode, die die von dem Interface dargestellte Operation beschreibt:
+
+\begin{itemize}
+	\item \inlinecode{Initializer<E extends LatticeElement>}: initialisiert eine Analyse mittels \inlinecode{getInitialStates():Map<Block,BlockState<E>>}
+	\item \inlinecode{Join<E extends LatticeElement>}: führt Join-Operationen mittels \inlinecode{join(Set<E>):E} aus
+	\item \inlinecode{Transition<E extends LatticeElement>}: führt Transitionen mittels \inlinecode{transition(E,Unit):E} aus
+\end{itemize}
+
+Diese Aufteilung ermöglicht eine vollständig modulare Implementierung der Analysen, \inlinecode{Initializer}, \inlinecode{Join} und \inlinecode{Transition} sind vollständig austauschbar (vorausgesetzt die typparameter sind kompatibel).
+
+Die ehemals abstrakte Klasse \inlinecode{DataFlowAnalysis<E extends LatticeElement>} ist nun ein Interface, welches von den Interfaces \inlinecode{Initializer}, \inlinecode{Join} und \inlinecode{Transition} erbt.
+Damit stellt \inlinecode{DataFlowAnalysis} alle für die Ausführung einer Datenflussanalyse benötigten Operationen bereit.
+
+Zusätzlich zum Interface \inlinecode{DataFlowAnalysis} wurde noch die abstrakte Klasse \inlinecode{CompositeDataFlowAnalysis<E extends LatticeElement>} hinzugefügt, die \inlinecode{DataFlowAnalysis} implementiert und einen Konstruktor bereitstellt, der einen \inlinecode{Initializer}, einen \inlinecode{Join} und eine \inlinecode{Transition} entgegennimmt.
+\inlinecode{getInitialStates}, \inlinecode{join} und \inlinecode{transition} werden dann an die entsprechenden Methoden der übergebenen Objekte delegiert.
+Dies erlaubt das zusammensetzten neuer Datenflussanalysen aus einzelnen Komponenten (vorausgesetzt die Typparameter sind kompatibel).
+
+Die Rolle der ehemaligen \inlinecode{DataFlowAnalysis} übernimmt die abstrakte Klasse \inlinecode{DFAFactory<E extends LatticeElement>}.
+Damit wurde der Rückgabetyp der Methode \inlinecode{getAnalysis(String)} von \inlinecode{AnalysisLoader} auch zu \inlinecode{DFAFactory} angepasst.
+
+Weiter ist die Klasse \inlinecode{SimpleBlockGraph} hinzugekommen.
+Diese erbt von \inlinecode{soot.toolkits.graph.BriefBlockGraph} erbt und lediglich dafür sorgt, dass die \inlinecode{getTails}-Methode höchstens einen \inlinecode{Block} zurückgibt (dass es also höchstens einen Endblock gibt). Dies wird durch Einfügen eines künstlichen Endblocks erreicht, falls der ursprüngliche \inlinecode{BriefBlockGraph} mehrere Endblöcke hat.
+
+Eine weitere neue Klasse ist \inlinecode{DFAPrecalcController}, welche die Vorberechnung einer \inlinecode{DFAExecution} kontrolliert (zu diesem Zweck wurde dem Konstruktor ein Parameter vom Typ \inlinecode{DFAPrecalcController} hinzugefügt).
+Beispielsweise kann die Vorberechnung mittels \inlinecode{pause(waitTime : int)} pausiert werden (z. B. um zu Verhindern, dass zu viel Speicher belegt wird, während der Nutzer längere Zeit sich in einem Menü befindet) und dann mit \inlinecode{continue()} fortgesetzt werden.
+Eine Vorberechnung kann auch mit \inlinecode{stop()} gestoppt werden.
+Dann wird ein Zwischenergebnis gespeichert und die Vorberechnung abgebrochen.
+
+Als Exception-Klassen wurde \inlinecode{DFAException} sowie die Unterklassen \inlinecode{UnsupportedValueException} und \inlinecode{UnsupportedStatementException}.
+Diese werden benutzt um Probleme bei der Ausführung einer Datenflussanalyse zu signalisieren (z. B. wenn nicht unterstützte Instruktionen angetroffen werden, die nicht einfach ignoriert werden können).
+
+\subsection{Kleine Änderungen}
+
+Im Folgenden werden weitere kleine Änderungen zusammengefasst:
+
+\inlinecode{Color} wurde umbenannt in \inlinecode{LogicalColor}.
+
+Der Parameter \inlinecode{cpy : AnalysisState} im Konstruktor \inlinecode{AnalysisState(..., cpy : AnalysisState)} wurde ersetzt durch die beiden Parameter \inlinecode{stateMap : Map<AbstractBlock, BlockState<E>>} und \inlinecode{colorMap : Map<BasicBlock, LogicalColor>}.
+Weiter wurden die \inlinecode{(protected)} Methoden \inlinecode{setStateMap(Map<AbstractBlock, BlockState<E>>)}, \inlinecode{getStateMap():Map<AbstractBlock, BlockState<E>>}, \inlinecode{setColorMap(Map<BasicBlock, LogicalColor>)}, \inlinecode{getColorMap():Map<BasicBlock, LogicalColor>} zum setzen bzw. erhalten der \inlinecode{Map}s für die \inlinecode{BlockState}s und \inlinecode{LogicalColor}s.
+Die Methoden \inlinecode{getState(...):BlockState<E>} und \inlinecode{setState(...)} wurden zu \inlinecode{getBlockState(...):BlockState<E>} und \inlinecode{setBlockState(...)} umbenannt.
+
+In der Klasse \inlinecode{BlockState<E extends LatticeElement>} wurden die beiden \inlinecode{(protected)} Methoden \inlinecode{setInState(E)} und \inlinecode{setOutState(E)} hinzugefügt.
+
+In der Klasse \inlinecode{BasicBlock} wurde die \inlinecode{(protected)} Methode \inlinecode{setElementaryBlocks(List<ElementaryBlock>)} hinzugefügt.
+Weiter wurden \inlinecode{setCorrespondingSootBlock(...)} und \inlinecode{getCorrespondingSootBlock()} zu \inlinecode{setSootBlock(...)} und \inlinecode{getSootBlock()} umbenannt.
+
+In der Klasse \inlinecode{ElementaryBlock} wurde die \inlinecode{(protected)} Methode \inlinecode{setUnit(Unit)} hinzugefügt.
 
 \section{GUI}
 
@@ -11,15 +61,15 @@ Das GUI-Package hat 11 neue Klassen gegenüber dem Entwurf aufzuweisen. 10 davon
 \begin{itemize}
 	\item \textbf{Colors:}
 Ein \inlinecode{Enum}, welches Konstanten für die Farben der Benutzeroberfläche beinhaltet.
-	
+
 	\item \textbf{ControlPanelState:} Ein \inlinecode{Enum}, welches die möglichen Zustände des \inlinecode{ControlPanel} beinhaltet.
-	
+
 	\item \textbf{Option:} Ein \inlinecode{Enum}, welches bei Dialogen mit verschiedenen Optionen die vom Benutzer ausgewählte Option repräsentiert.
-	
+
 	\item \textbf{Quality:} Ein \inlinecode{Enum}, welches die ausgewählte Qualität in der \inlinecode{GraphExportBox} repräsentiert.
-	
+
 	\item \textbf{IconLoader:} Eine \enquote{Utility}-Klasse, welche eine statische Methode zur Verfügung stellt, um Bilder für die Benutzeroberfläche in das Programm zu laden und zu skalieren.
-	
+
 	\item \textbf{JComponentDecorator:} Eine \enquote{Utility}-Klasse, welche auf \inlinecode{JComponent}s Standardwerte setzt, damit diese nicht für jede Komponente einzeln gesetzt werden müssen. Dies reduziert Codeverdopplung.
 
 	\item \textbf{JButtonDecorator:} Eine \enquote{Utility}-Klasse, welche einen \inlinecode{JButton} zuerst dem \inlinecode{JComponentDecorator} übergibt und dann selbst Standardwerte für \inlinecode{JButton}s setzt.
@@ -30,7 +80,7 @@ Ein \inlinecode{Enum}, welches Konstanten für die Farben der Benutzeroberfläch
 
 	\item \textbf{GridBagConstraintFactory:} Eine \enquote{Utility}-Klasse, welche Standard-\inlinecode{GridBagConstraints} für eine \inlinecode{Swing}-Komponente erstellt. Diese bestimmen Platz und Größe einer Komponente im \inlinecode{GridBagLayout}.
 
-\end{itemize} 
+\end{itemize}
 
 Außerdem hat eine Komponente mehr Funktionalität gebraucht, als im Entwurf veranschlagt war. Diese ist das \inlinecode{CodeField}.
 Im Entwurf war eine einfache \inlinecode{JTextArea} vorgesehen, jetzt ist das \inlinecode{CodeField} eine Klasse die von \inlinecode{JScrollPane} erbt und zwei \inlinecode{JTextArea}s beinhaltet.

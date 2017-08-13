@@ -1,5 +1,6 @@
 package gui;
 
+import java.awt.BorderLayout;
 import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -7,6 +8,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
+import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
 /**
@@ -53,12 +55,25 @@ public class MessageBox extends DialogBox {
         contentPanel.setBackground(Colors.BACKGROUND.getColor());
         
         messageArea = new JTextArea();
+        int i = message.length();
+        //This makes boxes with more text larger than boxes with fewer text
+        if ((i / 25) > 4) {
+            messageArea.setColumns(30);
+            messageArea.setRows(15);
+        } else {
+            messageArea.setColumns(25);
+            messageArea.setRows(4);
+        }
+     
         new JComponentDecorator().decorate(messageArea);
         messageArea.setEditable(false);
         messageArea.setLineWrap(true);
         messageArea.setWrapStyleWord(true);
         messageArea.setText(message);
-        contentPanel.add(messageArea);
+        
+        JScrollPane messagePane = new JScrollPane(messageArea);
+        messagePane.setBorder(null);
+        contentPanel.add(messagePane);
     }
 
     /**

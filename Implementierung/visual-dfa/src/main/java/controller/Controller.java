@@ -37,7 +37,7 @@ public class Controller {
 
     private static final String PACKAGE_NAME = "dfa.analyses";
     private static final String CLASS_PATH = System.getProperty("user.dir");
-    private static final String PRECALC_ABORT = "This will stop the calculation. Do you want to see intermediate results? "
+    private static final String ABORT_PRECALC_MESSAGE = "This will stop the calculation. Do you want to see intermediate results? "
             + "Click \"cancel\" to continue with the calculation, click \"No\" to stop the analysis and click \"Yes\" to show the intermediate results.";
     private static final String ABORT_MESSAGE = "This leads to a complete deletion of the graph and the calculation. Would you like to continue?";
     private static final String EXCEPTION_TITLE = "Exception caused by analysis calculation";
@@ -53,10 +53,8 @@ public class Controller {
     private VisualGraphPanel visualGraphPanel;
     private AnalysisLoader analysisLoader;
     private WorklistManager worklistManager;
-    private Thread autoplay;
-    private Thread precalc;
+    private Thread precalcThread;
     private DFAPrecalcController precalcController;
-    private DFAPrecalculator precalculator;
     private boolean shouldContinue = false;
 
     /**
@@ -82,7 +80,10 @@ public class Controller {
     }
 
     /**
-     * 
+     * Method that asks the user for the path to his or her JDK with a file
+     * chooser and saves the selection in a configuration file. If the
+     * configuration file already exists, the information is read from this file
+     * and the user is not asked.
      */
     public void pathSelection() {
         String pathName = System.getProperty("user.home") + System.getProperty("file.separator") + "visualDfa";
@@ -138,25 +139,27 @@ public class Controller {
     }
 
     /**
-     * 
+     * Defines the code that is written in the editor of the input panel at
+     * program start.
      */
     public void setDefaultCode() {
         //@formatter:off
-        String codeExample = " public class Example {" + System.lineSeparator()
-                + "    public void helloWorld(boolean print, int x) {" + System.lineSeparator() 
-                + "        if (print) {" + System.lineSeparator() 
-                + "            System.out.println(\"Hello World!\");" + System.lineSeparator()
-                + "             while (x < 10) {" + System.lineSeparator() 
-                + "                 x = x + 1;" + System.lineSeparator() 
-                + "                   if (x == 5) {" + System.lineSeparator()
-                + "                       int y = 5;" + System.lineSeparator() 
-                + "                       x = y * 3;" + System.lineSeparator() 
-                + "                   }" + System.lineSeparator() 
-                + "             }" + System.lineSeparator() 
-                + "         } else {" + System.lineSeparator() 
-                + "            x = 0;" + System.lineSeparator() 
-                + "         }" + System.lineSeparator() 
-                + "    }" + System.lineSeparator()
+        String codeExample = 
+                  "public class Example {" + System.lineSeparator()
+                + "  public void helloWorld(boolean print, int x) {" + System.lineSeparator() 
+                + "    if (print) {" + System.lineSeparator() 
+                + "      System.out.println(\"Hello World!\");" + System.lineSeparator()
+                + "        while (x < 10) {" + System.lineSeparator() 
+                + "          x = x + 1;" + System.lineSeparator() 
+                + "          if (x == 5) {" + System.lineSeparator()
+                + "            int y = 5;" + System.lineSeparator() 
+                + "            x = y * 3;" + System.lineSeparator() 
+                + "          }" + System.lineSeparator() 
+                + "        }" + System.lineSeparator() 
+                + "    } else {" + System.lineSeparator() 
+                + "       x = 0;" + System.lineSeparator() 
+                + "    }" + System.lineSeparator() 
+                + "  }" + System.lineSeparator()
                 + "}";
         //@formatter:on
         this.programFrame.getInputPanel().setCode(codeExample);
@@ -274,16 +277,17 @@ public class Controller {
         }
         visibilityPlaying();
         this.shouldContinue = true;
-        this.autoplay = new Thread(autoplayDriver);
+        Thread autoplayThread = new Thread(autoplayDriver);
         try {
-            this.autoplay.start();
+            autoplayThread.start();
         } catch (IllegalThreadStateException e) {
             e.printStackTrace();
         }
     }
 
     /**
-     * Returns the chosen delay.
+     * Method that return the chosen delay selected in the delaySlider of the
+     * {@code ControlPanel}.
      * 
      * @return delay, the user has set
      */
@@ -292,7 +296,12 @@ public class Controller {
     }
 
     /**
-     * @return if autoplay should continue and tests if a breakpoint was reached
+     * Method that checks if the Thread of the {@code AutoplayDriver} should
+     * continue or not. The {@code AutoplayDriver} should stop if the animation
+     * has reached a breakpoint or if the user paused it.
+     * 
+     * @return {@code true} if the autoplay should continue, {@code false}
+     *         otherwise
      */
     public boolean shouldContinue() {
         if (this.dfaExecution.isAtBreakpoint()) {
@@ -313,11 +322,11 @@ public class Controller {
     /**
      * Creates a new {@code CodeProcessor} to process the input of the user and
      * creates a {@code SimpleBlockGraph} of the chosen method. Precalculates
-     * the steps of the analysis with the {@code DFAPrecalculator}. The
-     * {@code GraphUIController} is invoked to display the CFG. The
-     * {@code ControlPanel}, the {@code StatePanel} and the
-     * {@code VisualGraphPanel} are activated and the {@code InputPanel} is
-     * deactivated.
+     * the steps of the analysis with the {@code DFAPrecalculator} and an
+     * instance of {@code DFAPrecalcController}. The {@code GraphUIController}
+     * is invoked to display the CFG. The {@code ControlPanel}, the
+     * {@code StatePanel} and the {@code VisualGraphPanel} are activated and the
+     * {@code InputPanel} is deactivated.
      */
     public void startAnalysis() {
         // Collect information
@@ -359,18 +368,19 @@ public class Controller {
         String methodSignature = selectionBox.getSelectedMethod();
         SimpleBlockGraph blockGraph = graphBuilder.buildGraph(methodSignature);
         this.precalcController = new DFAPrecalcController();
-
+        DFAPrecalculator precalculator = null;
         try {
             Worklist worklist = this.worklistManager.getWorklist(worklistName, blockGraph);
-            DFAFactory<LatticeElement> dfaFactory = analysisLoader.getDFAFactory(analysisName);
-            this.precalculator = new DFAPrecalculator(dfaFactory, worklist, blockGraph, this.precalcController, this);
+            @SuppressWarnings("unchecked")
+            DFAFactory<? extends LatticeElement> dfaFactory = analysisLoader.getDFAFactory(analysisName);
+            precalculator = new DFAPrecalculator(dfaFactory, worklist, blockGraph, this.precalcController, this);
         } catch (IllegalArgumentException e) {
             e.printStackTrace();
         }
 
-        this.precalc = new Thread(precalculator);
+        this.precalcThread = new Thread(precalculator);
         try {
-            this.precalc.start();
+            this.precalcThread.start();
         } catch (IllegalThreadStateException e) {
             e.printStackTrace();
         }
@@ -378,7 +388,9 @@ public class Controller {
     }
 
     /**
-     * 
+     * Method that is invoked when the precalcution is terminated. It sets the
+     * {@code DFAExecution} and controls the setting of the {@code ControlPanel}
+     * . The {@code GraphUIController} is started.
      */
     public void completedAnalysis() {
         this.dfaExecution = this.precalcController.getResult();
@@ -396,16 +408,18 @@ public class Controller {
      * {@code VisualGraphPanel} through the {@code GraphUIController}. The
      * {@code ControlPanel}, the {@code StatePanel} and the
      * {@code VisualGraphPanel} are deactivated and the {@code InputPanel} is
-     * activated. Deprecated method thread.stop is needed to deal with infinite
+     * activated. First the Thread in that the precalculation is running is
+     * stopped with the {@code DFAPrecalcController}. If that does not work the
+     * deprecated method {@code Thread.stop} is needed to deal with infinite
      * loops in the precalculation. The used Dataflow Analysis can be
-     * implemented by the user and we cannot assume the correctness of theses
-     * analyses.
+     * implemented by the user and the correctness of theses analyses can not be
+     * assumed.
      */
     @SuppressWarnings("deprecation")
     public void stopAnalysis() {
         if (precalcController.getPrecalcState() == DFAPrecalcController.PrecalcState.CALCULATING
                 || precalcController.getPrecalcState() == DFAPrecalcController.PrecalcState.PAUSED) {
-            OptionBox optionBox = new OptionBox(this.programFrame, "Stop Calculation", PRECALC_ABORT);
+            OptionBox optionBox = new OptionBox(this.programFrame, "Stop Calculation", ABORT_PRECALC_MESSAGE);
             if (optionBox.getOption() == Option.NO_OPTION) {
                 if (!(precalcController.getPrecalcState() == DFAPrecalcController.PrecalcState.CALCULATING)) {
                     visibilityInput();
@@ -419,8 +433,8 @@ public class Controller {
                         e1.printStackTrace();
                     }
                 }
-                if (this.precalc.isAlive()) {
-                    this.precalc.stop();
+                if (this.precalcThread.isAlive()) {
+                    this.precalcThread.stop();
                 }
                 visibilityInput();
             } else if ((optionBox.getOption() == Option.YES_OPTION)) {
@@ -436,8 +450,8 @@ public class Controller {
                         e1.printStackTrace();
                     }
                 }
-                if (this.precalc.isAlive()) {
-                    this.precalc.stop();
+                if (this.precalcThread.isAlive()) {
+                    this.precalcThread.stop();
                     visibilityInput();
                 }
             }

@@ -121,11 +121,7 @@ Zwei Klassen wurden umbenannt und eine dieser Klassen hat eine leicht andere Fun
 \subsection{Geänderte Klassen}
 
 \begin{itemize}
-	\item \textbf{<<Interface>> Filter:} wurde zu \textbf{class Filter} geändert, da diese übergeordnete Klasse dafür sorgt, dass die Methoden, die manuell für die Taint-Analyse hinzugefügt wurden, herausgefiltert werden, egal welcher abgeleitete Filter verwendet wird.
-	
-	\item \textbf{NoFilter implements Filter} wurde zu \textbf{NoFilter extends Filter} geändert.
-	
-	\item \textbf{StandardFilter implements Filter} wurde zu \textbf{StandardFilter extends Filter} geändert.
+	\item \textbf{<<Interface>> Filter:} wurde zu \textbf{class Filter} geändert, da diese Oberklasse dafür sorgt, dass die Methoden, die manuell für die Taint-Analyse hinzugefügt wurden, herausgefiltert werden, egal welcher abgeleitete Filter verwendet wird.
 \end{itemize}
 
 \subsection{Hinzugefügte Methoden}
@@ -162,15 +158,13 @@ Zwei Klassen wurden umbenannt und eine dieser Klassen hat eine leicht andere Fun
 \subsection{Hinzugefügte Methoden}
 
 \begin{itemize}
-	\item \textbf{public void completedAnalysis():} In der Klasse \inlinecode{Controller}. Diese Methode wird ausgeführt, nachdem die Vorberechnung Analyse beendet wurde. Sie setzt die \inlinecode{DFAExecution}, Einstellung am \inlinecode{ControlPanel} und startet den Aufbau eines CFG im \inlinecode{GraphUIController}.
+	\item \textbf{public void completedAnalysis():} In der Klasse \inlinecode{Controller}. Diese Methode wird ausgeführt, nachdem die Vorberechnung der Analyse beendet wurde. Sie setzt die \inlinecode{DFAExecution}, Einstellung am \inlinecode{ControlPanel} und startet den Aufbau eines CFG im \inlinecode{GraphUIController}.
 	
 	\item \textbf{public void createExceptionBox(String message):} In der Klasse \inlinecode{Controller}. Diese Methode wird vom \inlinecode{DFAPrecalculator} aufgerufen, wenn während der Berechnung der Analyse eine Exception auftritt. Nähere Informationen zu dieser Exception werden dem Bentuzer in einer \inlinecode{MessageBox} ausgegeben.
 	
 	\item \textbf{public int getDelay():} In der Klasse \inlinecode{Controller}. Diese Methode gibt das aktuell im \inlinecode{ControlPanel} ausgewählte Delay zurück. Damit kann dieser Wert auch während der automatischen Wiedergabe der Analyseschritte geändert werden.
 	
-	\item \textbf{public List<String> getWorklist():} In der Klasse \inlinecode{Controller}. Diese Methode gibt eine Liste alle verfügbarere \inlinecode{Worklist}s aus. Diese werden in der GUI dargestellt.
-	
-	\item \textbf{public int getDelay():} In der Klasse \inlinecode{Controller}. Diese Methode gibt das aktuell im \inlinecode{ControlPanel} ausgewählte Delay zurück. Damit kann dieser Wert auch während der automatischen Wiedergabe der Analyseschritte geändert werden.
+	\item \textbf{public List<String> getWorklist():} In der Klasse \inlinecode{Controller}. Diese Methode gibt eine Liste aller verfügbarer \inlinecode{Worklist}s aus. Diese werden in der GUI dargestellt.
 	
 	\item \textbf{public void pathSelection():} In der Klasse \inlinecode{Controller}. Diese Methode wird direkt bei Programmstart ausgeführt. Sie sorgt dafür, dass der Benutzer nach dem Pfad seiner JDK gefragt wird, falls dieser noch nicht in der Konfigurationsdatei gespeichert ist. 
 	
@@ -178,19 +172,19 @@ Zwei Klassen wurden umbenannt und eine dieser Klassen hat eine leicht andere Fun
 	
 	\item \textbf{public boolean shouldContinue():} In der Klasse \inlinecode{Controller}. Diese Methode wird während der automatischen Wiedergabe mehrmals aufgerufen. Sie bestimmt ob diese weiter ausgeführt oder abgebrochen wird, falls ein Breakpoint erreicht wurde oder der Benutzer auf Pause geklickt hat.
 	
-	\item \textbf{protected void visibilityInput(), protected void visibilityWorking(), protected void visiblityPlaying(), protected void visibilityPrecalculating():} In der Klasse \inlinecode{Controller.} Diese Methoden setzten die Sichtbarkeit und Modifizierbarkeit der unterschiedliche Panels der GUI, in Abhängigkeit vom aktuellen Zustand des Programms.
+	\item \textbf{protected void visibilityInput(),}\textbf{protected void visibilityWorking(,)}\textbf{protected void visiblityPlaying(),}\textbf{protected void visibilityPrecalculating():} In der Klasse \inlinecode{Controller}. Diese Methoden setzten die Sichtbarkeit und Modifizierbarkeit der unterschiedliche Panels der GUI, in Abhängigkeit vom aktuellen Zustand des Programms.
 \end{itemize}
 
 \subsection{Geänderte Methoden}
 
 \begin{itemize}
-	\item \textbf{public void DFAPrecalculator(DataFlowAnalysis dfa, Worklist w, Blockgraph bg):} In der \inlinecode{DFAPrecalculator}-Klasse wurde in \textbf{public void DFAPrecalculator(DFAFactory<? extends LatticeElement> dfa, Worklist w, SimpleBlockGraph simpleBg, DFAPrecalcController precalcController, Controller controller):} geändert. Diese Änderungen ergeben sich durch die Entwurfsänderung des Packages DFAFramework.
+	\item \textbf{public void DFAPrecalculator(DataFlowAnalysis dfa, Worklist w, Blockgraph bg):} In der \inlinecode{DFAPrecalculator}-Klasse wurde in \textbf{public void DFAPrecalculator(DFAFactory<? extends LatticeElement> dfa, Worklist w, }\textbf{SimpleBlockGraph simpleBg, DFAPrecalcController precalcController, Controller controller):} geändert. Diese Änderungen ergeben sich durch die Entwurfsänderung des Packages DFAFramework.
 \end{itemize}
 
 
 \subsection{Entfernte Methoden}
 
 \begin{itemize}
-	\item \textbf{public DFAExecution getDFAExecution():} In der \inlinecode{DFAPrecalculator}-Klasse. Durch die hinzugefügte Klasse \inlinecode{DFAPrecalcController}, mit deren Instanz eine DFAExecution erhalten werden kann, wird diese Methode nicht mehr benötigt.
+	\item \textbf{public DFAExecution getDFAExecution():} In der \inlinecode{DFAPrecalculator}-Klasse. Durch die hinzugefügte Klasse \inlinecode{DFAPrecalcController}, mit deren Instanz eine \inlinecode{DFAExecution} erhalten werden kann, wird diese Methode nicht mehr benötigt.
 \end{itemize}
 

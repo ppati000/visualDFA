@@ -69,7 +69,6 @@ public class GraphBuilder {
      *            filter, that decides which methods will be filtered out
      * @return list of all remaining methods
      */
-    // TODO do we want to have constructors in our method selection?
     public List<String> getMethods(Filter filter) {
         List<String> filteredMethods = new ArrayList<String>();
         for (SootMethod method : this.methods) {

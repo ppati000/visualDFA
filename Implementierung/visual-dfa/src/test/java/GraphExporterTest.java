@@ -108,7 +108,7 @@ public class GraphExporterTest {
 
 
         CodeProcessor codeProcessor = new CodeProcessor(code);
-        GraphBuilder builder = new GraphBuilder(codeProcessor.getPathName(), codeProcessor.getClassName());
+        GraphBuilder builder = new GraphBuilder(codeProcessor.getPath(), codeProcessor.getClassName());
         SimpleBlockGraph blockGraph = builder.buildGraph("int test(int)");
 
         WorklistManager manager = WorklistManager.getInstance();

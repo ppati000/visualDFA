@@ -16,12 +16,10 @@ import dfa.framework.Worklist;
  */
 public class DFAPrecalculator implements Runnable {
 
-    private DFAExecution<? extends LatticeElement> dfaExecution;
     private DFAFactory<? extends LatticeElement> factory;
     private Worklist worklist;
     private SimpleBlockGraph simpleBlockGraph;
     private DFAPrecalcController precalcController;
-
     private Controller controller;
 
     /**
@@ -66,27 +64,13 @@ public class DFAPrecalculator implements Runnable {
      */
     public void run() {
         try {
-            this.dfaExecution = new DFAExecution(this.factory, this.worklist, this.simpleBlockGraph,
-                    this.precalcController);
+            new DFAExecution(this.factory, this.worklist, this.simpleBlockGraph, this.precalcController);
+            this.controller.completedAnalysis();
         } catch (DFAException e) {
             this.controller.createExceptionBox(e.getMessage());
-            this.precalcController.stopPrecalc();
             this.controller.visibilityInput();
         } catch (RuntimeException e) {
             System.out.println("an unexpected error occured");
         }
     }
-
-    /**
-     * Returns the dfaExecution.
-     * 
-     * @return created instance of {@code DFAExecution}
-     */
-    public DFAExecution<? extends LatticeElement> getDFAExecution() {
-        if (this.dfaExecution == null) {
-            throw new IllegalStateException("dfaExecution must no be null");
-        }
-        return this.dfaExecution;
-    }
-
 }

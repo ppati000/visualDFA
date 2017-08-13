@@ -45,9 +45,9 @@ public class GraphUIControllerTest {
         assertEquals("", codeProcessor.getErrorMessage());
 
         System.out.println(codeProcessor.getClassName());
-        System.out.println(codeProcessor.getPathName());
+        System.out.println(codeProcessor.getPath());
 
-        GraphBuilder builder = new GraphBuilder(codeProcessor.getPathName(), codeProcessor.getClassName());
+        GraphBuilder builder = new GraphBuilder(codeProcessor.getPath(), codeProcessor.getClassName());
         SimpleBlockGraph blockGraph = builder.buildGraph("void helloWorld(boolean)");
 
         DFAExecution<DummyElement> dfa = new DFAExecution<DummyElement>(new DummyFactory(), new NaiveWorklist(), blockGraph, new DFAPrecalcController());

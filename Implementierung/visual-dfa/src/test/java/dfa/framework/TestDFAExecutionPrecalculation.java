@@ -29,14 +29,14 @@ public class TestDFAExecutionPrecalculation {
         CodeProcessor cp = new CodeProcessor(tstMethodConstantFoldingSimple.method);
         Assert.assertTrue(cp.wasSuccessful());
 
-        GraphBuilder gb = new GraphBuilder(cp.getPathName(), cp.getClassName());
+        GraphBuilder gb = new GraphBuilder(cp.getPath(), cp.getClassName());
         bgConstantFoldingSimple = gb.buildGraph(tstMethodConstantFoldingSimple.signature);
         
         TestMethod tstMethodConstantFoldingProgSpec = getCodeProductSpec();
         cp = new CodeProcessor(tstMethodConstantFoldingProgSpec.method);
         Assert.assertTrue(cp.wasSuccessful());
 
-        gb = new GraphBuilder(cp.getPathName(), cp.getClassName());
+        gb = new GraphBuilder(cp.getPath(), cp.getClassName());
         bgConstantFoldingProgSpec = gb.buildGraph(tstMethodConstantFoldingProgSpec.signature);
     }
     

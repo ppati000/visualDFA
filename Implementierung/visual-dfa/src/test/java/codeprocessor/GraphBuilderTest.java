@@ -28,7 +28,7 @@ public class GraphBuilderTest {
         assertEquals("", codeProcessor.getErrorMessage());
         assertEquals("CodeFragment", codeProcessor.getClassName());
         assertEquals(true, codeProcessor.wasSuccessful());
-        GraphBuilder builder = new GraphBuilder(codeProcessor.getPathName(), codeProcessor.getClassName());
+        GraphBuilder builder = new GraphBuilder(codeProcessor.getPath(), codeProcessor.getClassName());
         SimpleBlockGraph blockGraph = builder.buildGraph(builder.getMethods(new NoFilter()).get(1));
         assertEquals(4, blockGraph.size());
         assertEquals(false, blockGraph.getBlocks().isEmpty());
@@ -62,7 +62,7 @@ public class GraphBuilderTest {
         assertEquals(true, codeProcessor.wasSuccessful());
         assertEquals("", codeProcessor.getErrorMessage());
         assertEquals("CodeFragment", codeProcessor.getClassName());
-        GraphBuilder builder = new GraphBuilder(codeProcessor.getPathName(), codeProcessor.getClassName());
+        GraphBuilder builder = new GraphBuilder(codeProcessor.getPath(), codeProcessor.getClassName());
         SimpleBlockGraph blockGraph = builder.buildGraph(builder.getMethods(new NoFilter()).get(1));
         assertEquals(7, blockGraph.size());
         assertEquals(false, blockGraph.getBlocks().isEmpty());
@@ -95,7 +95,7 @@ public class GraphBuilderTest {
         assertEquals(true, codeProcessor.wasSuccessful());
         assertEquals("", codeProcessor.getErrorMessage());
         assertEquals("CodeFragment", codeProcessor.getClassName());
-        GraphBuilder builder = new GraphBuilder(codeProcessor.getPathName(), codeProcessor.getClassName());
+        GraphBuilder builder = new GraphBuilder(codeProcessor.getPath(), codeProcessor.getClassName());
         SimpleBlockGraph blockGraph = builder.buildGraph(builder.getMethods(new NoFilter()).get(1));
         assertEquals(7, blockGraph.size());
         assertEquals(false, blockGraph.getBlocks().isEmpty());
@@ -126,7 +126,7 @@ public class GraphBuilderTest {
             assertEquals(true, codeProcessor2.wasSuccessful());
             assertEquals("", codeProcessor2.getErrorMessage());
             assertEquals("CodeFragment", codeProcessor2.getClassName());
-            GraphBuilder builder2 = new GraphBuilder(codeProcessor2.getPathName(), codeProcessor2.getClassName());
+            GraphBuilder builder2 = new GraphBuilder(codeProcessor2.getPath(), codeProcessor2.getClassName());
             SimpleBlockGraph blockGraph2 = builder2.buildGraph(builder2.getMethods(new NoFilter()).get(1));
             assertEquals(9, blockGraph2.size());
             assertEquals(false, blockGraph2.getBlocks().isEmpty());

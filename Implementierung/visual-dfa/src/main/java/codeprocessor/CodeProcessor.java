@@ -128,7 +128,6 @@ public class CodeProcessor {
     private String getClassNameOfCode(String codeToCompile) {
         int startOfClass = codeToCompile.indexOf("class");
         String tryToFindName = codeToCompile.substring(startOfClass + 5).trim();
-        // TODO Zeilenumbruch behandeln
         int endOfClassName;
         for (endOfClassName = 0; endOfClassName < tryToFindName.length(); ++endOfClassName) {
             char c = tryToFindName.charAt(endOfClassName);
@@ -207,7 +206,7 @@ public class CodeProcessor {
      * 
      * @return the pathName.
      */
-    public String getPathName() {
+    public String getPath() {
         return this.pathName;
     }
 

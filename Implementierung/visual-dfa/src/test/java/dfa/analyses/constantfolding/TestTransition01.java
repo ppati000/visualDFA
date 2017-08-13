@@ -46,35 +46,35 @@ public class TestTransition01 {
         CodeProcessor cp = new CodeProcessor(testMethodAllConstant.method);
         Assert.assertTrue(cp.wasSuccessful());
 
-        GraphBuilder gb = new GraphBuilder(cp.getPathName(), cp.getClassName());
+        GraphBuilder gb = new GraphBuilder(cp.getPath(), cp.getClassName());
         bgAllConstant = gb.buildGraph(testMethodAllConstant.signature);
         
         TestMethod testMethodAllConstantConflict = getCodeAllConstantConflict();
         cp = new CodeProcessor(testMethodAllConstantConflict.method);
         Assert.assertTrue(cp.wasSuccessful());
 
-        gb = new GraphBuilder(cp.getPathName(), cp.getClassName());
+        gb = new GraphBuilder(cp.getPath(), cp.getClassName());
         bgAllConstantConflict = gb.buildGraph(testMethodAllConstantConflict.signature);
         
         TestMethod testMethodNonConstant = getCodeNonConstant();
         cp = new CodeProcessor(testMethodNonConstant.method);
         Assert.assertTrue(cp.wasSuccessful());
         
-        gb = new GraphBuilder(cp.getPathName(), cp.getClassName());
+        gb = new GraphBuilder(cp.getPath(), cp.getClassName());
         bgNonConstant = gb.buildGraph(testMethodNonConstant.signature);
         
         TestMethod testMethodIntArithmetic = getCodeIntArithmetic();
         cp = new CodeProcessor(testMethodIntArithmetic.method);
         Assert.assertTrue(cp.wasSuccessful());
 
-        gb = new GraphBuilder(cp.getPathName(), cp.getClassName());
+        gb = new GraphBuilder(cp.getPath(), cp.getClassName());
         bgIntArithmetic = gb.buildGraph(testMethodIntArithmetic.signature);
         
         TestMethod testMethodIntBitOps = getCodeIntBitOps();
         cp = new CodeProcessor(testMethodIntBitOps.method);
         Assert.assertTrue(cp.wasSuccessful());
 
-        gb = new GraphBuilder(cp.getPathName(), cp.getClassName());
+        gb = new GraphBuilder(cp.getPath(), cp.getClassName());
         bgIntBitOps = gb.buildGraph(testMethodIntBitOps.signature);
     }
     

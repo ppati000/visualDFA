@@ -1,2 +1,65 @@
 \part{Änderungen des Entwurfs}
-Hello
+
+
+\section{GUI}
+
+\subsection{Hinzugefügte Klassen}
+
+
+Das GUI-Package hat 11 neue Klassen gegenüber dem Entwurf aufzuweisen. 10 davon sind reine \enquote{Utility}-Klassen und \inlinecode{Enum}-Klassen für Konstanten.
+
+\begin{itemize}
+	\item \textbf{Colors:}
+Ein \inlinecode{Enum}, welches Konstanten für die Farben der Benutzeroberfläche beinhaltet.
+	
+	\item \textbf{ControlPanelState:} Ein \inlinecode{Enum}, welches die möglichen Zustände des \inlinecode{ControlPanel} beinhaltet.
+	
+	\item \textbf{Option:} Ein \inlinecode{Enum}, welches bei Dialogen mit verschiedenen Optionen die vom Benutzer ausgewählte Option repräsentiert.
+	
+	\item \textbf{Quality:} Ein \inlinecode{Enum}, welches die ausgewählte Qualität in der \inlinecode{GraphExportBox} repräsentiert.
+	
+	\item \textbf{IconLoader:} Eine \enquote{Utility}-Klasse, welche eine statische Methode zur Verfügung stellt, um Bilder für die Benutzeroberfläche in das Programm zu laden und zu skalieren.
+	
+	\item \textbf{JComponentDecorator:} Eine \enquote{Utility}-Klasse, welche auf \inlinecode{JComponent}s Standardwerte setzt, damit diese nicht für jede Komponente einzeln gesetzt werden müssen. Dies reduziert Codeverdopplung.
+
+	\item \textbf{JButtonDecorator:} Eine \enquote{Utility}-Klasse, welche einen \inlinecode{JButton} zuerst dem \inlinecode{JComponentDecorator} übergibt und dann selbst Standardwerte für \inlinecode{JButton}s setzt.
+
+	\item \textbf{JLabelDecorator:} Eine \enquote{Utility}-Klasse, welche ein \inlinecode{JLabel} zuerst dem \inlinecode{JComponentDecorator} übergibt und dann Standardwerte für \inlinecode{JLabel}s setzt.
+
+	\item \textbf{JSliderDecorator:} Eine \enquote{Utility}-Klasse, welche einen \inlinecode{JSlider} zuerst dem \inlinecode{JComponentDecorator} übergibt und dann Standardwerte für \inlinecode{JSlider} setzt.
+
+	\item \textbf{GridBagConstraintFactory:} Eine \enquote{Utility}-Klasse, welche Standard-\inlinecode{GridBagConstraints} für eine \inlinecode{Swing}-Komponente erstellt. Diese bestimmen Platz und Größe einer Komponente im \inlinecode{GridBagLayout}.
+
+\end{itemize} 
+
+Außerdem hat eine Komponente mehr Funktionalität gebraucht, als im Entwurf veranschlagt war. Diese ist das \inlinecode{CodeField}.
+Im Entwurf war eine einfache \inlinecode{JTextArea} vorgesehen, jetzt ist das \inlinecode{CodeField} eine Klasse die von \inlinecode{JScrollPane} erbt und zwei \inlinecode{JTextArea}s beinhaltet.
+
+\subsection{Hinzugefügte Methoden}
+
+
+Einige Klassen haben neue Funktionalität hinzugefügt bekommen.
+
+\begin{itemize}
+
+	\item \textbf{public File getCompilerPath():} In der \inlinecode{ProgramFrame}-Klasse. Der Benutzer muss beim ersten Starten des Programms den Pfad zu seiner \inlinecode{JDK} angeben, damit sein Programm-Code kompiliert werden kann. Dieser Pfad kann vom \inlinecode{Controller} hier abgefragt werden.
+
+	\item \textbf{public void setCode(String code):} In der \inlinecode{InputPanel}-Klasse.
+Übergibt einen \inlinecode{String} an das \inlinecode{CodeField}.
+
+	\item \textbf{public void reset():} In der \inlinecode{StatePanelOpen}-Klasse. Setzt den Inhalt dieses \inlinecode{JPanel}s auf den Ausgangszustand zurück.
+
+	\item \textbf{public Option getOption():} In der \inlinecode{MethodSelectionBox} und der \inlinecode{GraphExportBox}. Hierüber kann die ausgewählte Option des Benutzers abgefragt werden.
+
+\end{itemize}
+
+\subsection{Geänderte Klassen}
+
+
+Zwei Klassen wurden umbenannt und eine dieser Klassen hat eine leicht andere Funktion.
+
+\begin{itemize}
+	\item \textbf{WarningBox:} wurde in \inlinecode{OptionBox} umbenannt und hat nun drei statt zwei \inlinecode{JButtons} zum Auswählen.
+
+	\item \textbf{AlertBox:} wurde in \inlinecode{MessageBox} umbenannt.
+\end{itemize}

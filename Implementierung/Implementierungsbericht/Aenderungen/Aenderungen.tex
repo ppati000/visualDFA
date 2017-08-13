@@ -27,9 +27,10 @@ Damit wurde der Rückgabetyp der Methode \inlinecode{getAnalysis(String)} von \i
 Weiter ist die Klasse \inlinecode{SimpleBlockGraph} hinzugekommen.
 Diese erbt von \inlinecode{soot.toolkits.graph.}\inlinecode{BriefBlockGraph} und sorgt lediglich dafür, dass die \inlinecode{getTails}-Methode höchstens einen \inlinecode{Block} zurückgibt (dass es also höchstens einen Endblock gibt). Dies wird durch Einfügen eines künstlichen Endblocks erreicht, falls der ursprüngliche \inlinecode{BriefBlockGraph} mehrere Endblöcke hat.
 
+\newpage
 Eine weitere neue Klasse ist \inlinecode{DFAPrecalcController}, welche die Vorberechnung einer \inlinecode{DFAExecution} kontrolliert. Zu diesem Zweck wurde dem Konstruktor ein Parameter vom Typ \inlinecode{DFAPrecalcController} hinzugefügt.
-Beispielsweise kann die Vorberechnung mittels \inlinecode{pause(waitTime : int)} pausiert werden und dann mit \inlinecode{continue()} fortgesetzt werden. 
-Dies ist z. B. nützlich, um zu verhindern, dass zu viel Speicher belegt wird, während sich der Nutzer längere Zeit in einem Menü befindet. 
+Beispielsweise kann die Vorberechnung mittels \inlinecode{pause(waitTime : int)} pausiert werden und dann mit \inlinecode{continue()} fortgesetzt werden.
+Dies ist z. B. nützlich, um zu verhindern, dass zu viel Speicher belegt wird, während sich der Nutzer längere Zeit in einem Menü befindet.
 Eine Vorberechnung kann auch mit \inlinecode{stop()} gestoppt werden.
 Dann wird ein Zwischenergebnis gespeichert und die Vorberechnung abgebrochen.
 
@@ -81,6 +82,7 @@ Eine weitere neue Klasse ist \inlinecode{LocalComparator}, der eine Ordnung auf 
 	\includegraphics[width=1.0\textwidth]{Aenderungen/Klassendiagramme/Analyses_Impl.png}
 \end{figure}
 
+\newpage
 \section{GUI}
 
 \subsection{Hinzugefügte Klassen}
@@ -115,6 +117,7 @@ Ein \inlinecode{Enum}, welches Konstanten für die Farben der Benutzeroberfläch
 Außerdem hat eine Komponente mehr Funktionalität gebraucht, als im Entwurf veranschlagt war. Diese ist das \inlinecode{CodeField}.
 Im Entwurf war eine einfache \inlinecode{JTextArea} vorgesehen, jetzt ist das \inlinecode{CodeField} eine Klasse die von \inlinecode{JScrollPane} erbt und zwei \inlinecode{JTextArea}s beinhaltet.
 
+\newpage
 \subsection{Hinzugefügte Methoden}
 
 
@@ -144,6 +147,7 @@ Zwei Klassen wurden umbenannt und eine dieser Klassen hat eine leicht andere Fun
 	\item \textbf{AlertBox:} wurde in \inlinecode{MessageBox} umbenannt.
 \end{itemize}
 
+\newpage 
 \section{CodeProcessor}
 
 \subsection{Geänderte Klassen}
@@ -162,9 +166,9 @@ Zwei Klassen wurden umbenannt und eine dieser Klassen hat eine leicht andere Fun
 
 \begin{itemize}
 	\item \textbf{public String getPackageName():} in der \inlinecode{CodeProcessor}-Klasse wurde in \textbf{public String getPath():} umbenannt, da diese Methode den absoluten Pfad zu der gespeicherten .class-Datei zurück gibt.
-	
+
 	\item \textbf{public BlockGraph buildGraph(String methodSignature):} in der \inlinecode{GraphBuilder}-Klasse wurde zu \textbf{public SimpleBlockGraph buildGraph(String methodSignature):} geändert, da ein \inlinecode{SimpleBlockGraph} genauere Voraussetzungen spezifiziert.
-	
+
 	\item \textbf{public boolean filter(String methodSignature):} in der \inlinecode{Filter}-Klasse wurde zu \textbf{public boolean filter(SootMethod method):} geändert, da man mit Hilfe von Soot herausfinden kann, ob eine \inlinecode{SootMethod} eine Standard Java Methode ist oder nicht. Diese Methode wird von den abgeleiteten Klassen \inlinecode{NoFilter} und \inlinecode{StandardFilter} implementiert.
 \end{itemize}
 
@@ -187,22 +191,23 @@ Zwei Klassen wurden umbenannt und eine dieser Klassen hat eine leicht andere Fun
 
 \begin{itemize}
 	\item \textbf{public void completedAnalysis():} In der Klasse \inlinecode{Controller}. Diese Methode wird ausgeführt, nachdem die Vorberechnung der Analyse beendet wurde. Sie setzt die \inlinecode{DFAExecution}, Einstellung am \inlinecode{ControlPanel} und startet den Aufbau eines CFG im \inlinecode{GraphUIController}.
-	
+
 	\item \textbf{public void createExceptionBox(String message):} In der Klasse \inlinecode{Controller}. Diese Methode wird vom \inlinecode{DFAPrecalculator} aufgerufen, wenn während der Berechnung der Analyse eine Exception auftritt. Nähere Informationen zu dieser Exception werden dem Bentuzer in einer \inlinecode{MessageBox} ausgegeben.
-	
+
 	\item \textbf{public int getDelay():} In der Klasse \inlinecode{Controller}. Diese Methode gibt das aktuell im \inlinecode{ControlPanel} ausgewählte Delay zurück. Damit kann dieser Wert auch während der automatischen Wiedergabe der Analyseschritte geändert werden.
-	
+
 	\item \textbf{public List<String> getWorklist():} In der Klasse \inlinecode{Controller}. Diese Methode gibt eine Liste aller verfügbarer \inlinecode{Worklist}s aus. Diese werden in der GUI dargestellt.
-	
-	\item \textbf{public void pathSelection():} In der Klasse \inlinecode{Controller}. Diese Methode wird direkt bei Programmstart ausgeführt. Sie sorgt dafür, dass der Benutzer nach dem Pfad seiner JDK gefragt wird, falls dieser noch nicht in der Konfigurationsdatei gespeichert ist. 
-	
+
+	\item \textbf{public void pathSelection():} In der Klasse \inlinecode{Controller}. Diese Methode wird direkt bei Programmstart ausgeführt. Sie sorgt dafür, dass der Benutzer nach dem Pfad seiner JDK gefragt wird, falls dieser noch nicht in der Konfigurationsdatei gespeichert ist.
+
 	\item \textbf{public void setDefaultCode():} In der Klasse \inlinecode{Controller}. Diese Methode sorgt dafür, das ein Beispielcode im Editor bei Programmstart dargestellt wird, mit welchem eine erste Analyse durchgeführt werden kann.
-	
+
 	\item \textbf{public boolean shouldContinue():} In der Klasse \inlinecode{Controller}. Diese Methode wird während der automatischen Wiedergabe mehrmals aufgerufen. Sie bestimmt ob diese weiter ausgeführt oder abgebrochen wird, falls ein Breakpoint erreicht wurde oder der Benutzer auf Pause geklickt hat.
-	
+
 	\item \textbf{protected void visibilityInput(),}\textbf{protected void visibilityWorking(,)}\textbf{protected void visiblityPlaying(),}\textbf{protected void visibilityPrecalculating():} In der Klasse \inlinecode{Controller}. Diese Methoden setzten die Sichtbarkeit und Modifizierbarkeit der unterschiedliche Panels der GUI, in Abhängigkeit vom aktuellen Zustand des Programms.
 \end{itemize}
 
+\newpage
 \subsection{Geänderte Methoden}
 
 \begin{itemize}
@@ -216,3 +221,99 @@ Zwei Klassen wurden umbenannt und eine dieser Klassen hat eine leicht andere Fun
 	\item \textbf{public DFAExecution getDFAExecution():} In der \inlinecode{DFAPrecalculator}-Klasse. Durch die hinzugefügte Klasse \inlinecode{DFAPrecalcController}, mit deren Instanz eine \inlinecode{DFAExecution} erhalten werden kann, wird diese Methode nicht mehr benötigt.
 \end{itemize}
 
+\newpage
+\section{Visual Graph}
+
+\subsection{Hinzugefügte Klassen}
+
+Es wurde die Klasse \inlinecode{RestrictedMxGraph} hinzugefügt. Diese erbt direkt von der JGraphX-Klasse \inlinecode{mxGraph} und setzt automatisch einige Attribute des Graphen.
+Dazu gehören sowohl visuelle als auch funktionale Attribute. Insbesondere wird die Erstellung von neuen Kanten durch den Benutzer unterbunden und die Verschiebung von Zeilenblöcken und Kanten deaktiviert.
+
+\subsection{Entfernte Klassen}
+
+Die Klasse \inlinecode{GraphListener} wurde entfernt.
+Ursprünglich war geplant, jede \inlinecode{mxCell} mit einem eigenen Listener-Objekt auszustatten.
+Dies wurde durch die maßgeblich simplere Implementierung ersetzt, welche einmalig einen anonymen \inlinecode{mxIEventListener} für den gesamten Graphen setzt.
+Bei einer Änderung der Block- oder Zeilenauswahl wird an diesen ein \inlinecode{mxEventObject} übergeben, welches alle nötigen Informationen zur ausgewählten mxCell enthält.
+
+\subsection{Hinzugefügte Methoden}
+
+\subsubsection{GraphUIController}
+\begin{itemize}
+  \item \textbf{public void setStatePanel(StatePanelOpen statePanel)}: Diese Methode ist notwendig, damit der \inlinecode{GraphUIController} nach Änderung der Block- oder Zeilenauswahl das \inlinecode{StatePanelOpen} aktualisieren kann.
+\end{itemize}
+
+\subsubsection{UIAbstractBlock}
+\begin{itemize}
+  \item \textbf{abstract public AbstractBlock getDFABlock()}: Gibt den diesem Block entsprechenden Block aus dem DFAFramework zurück. Dies wird benötigt, um den zugehörigen \inlinecode{BlockState} ermitteln zu können.
+
+  \item \textbf{abstract public String getText()}: Gibt den Text des Blocks zurück (je nach Unterklasse eine Zeile oder alle Zeilen). Dies wird benötigt, um den so erhaltenen Text im \inlinecode{StatePanelOpen} anzeigen zu können.
+
+  \item \textbf{abstract public int[] getBlockAndLineNumbers()}: Gibt ein Array der Form [<Blocknummer>, <Zeilennummer>] zurück. Dies wird ebenfalls zur Informationsanzeige im \inlinecode{StatePanelOpen} verwendet.
+
+  \item \textbf{public void setBlockNumber(int blockNumber)}: Wird benutzt, um die Block- bzw. Zeilennummer zu setzen. Dies geschieht im \inlinecode{GraphUIController}.
+\end{itemize}
+
+\subsubsection{UIBasicBlock}
+\begin{itemize}
+  \item \textbf{public void renderChildren()}: Ruft \inlinecode{render()} auf allen eingefügten Zeilenblöcken auf. Ursprünglich sollte diese Methode privat sein und von der \inlinecode{render()}-Methode dieses Blocks aufgerufen werden. Dies erwies sich wegen des Auto-Layouts als problematisch, da dieses angewendet werden muss, bevor die Zeilenblöcke eingefügt werden.
+\end{itemize}
+
+\subsubsection{UILineBlock}
+\begin{itemize}
+  \item \textbf{protected void setBlockMap(Map<AbstractBlock, UIAbstractBlock> map)}: Stellt dem Panel ein Block-Mapping zur Verfügung, um in der Jump-to-Action-Funktion mit Hilfe des aktuellen Blocks des DFAFrameworks den entsprechenden visuellen Block als ausgewählt markieren zu können. Dies wird vom \inlinecode{GraphUIController} durchgeführt.
+  \item \textbf{public mxGraphComponent getGraphComponent()}: Diese Methode wird vom \inlinecode{GraphUIController} benötigt, um \inlinecode{UILineBlock}s zu erstellen.
+  \item \textbf{public void setParentFrame(Frame frame)}: Dies wird benötigt, um den modalen Graph-Export-Dialog korrekt anzeigen zu können.
+  \item \textbf{public void setJumpToAction(boolean enabled)}: Wird benötigt, um im Graph-Export die Jump-to-Action-Funktion programmatisch zu aktivieren.
+\end{itemize}
+
+\subsection{Geänderte Methoden}
+
+\subsubsection{GraphExporter}
+
+\begin{itemize}
+  \item \textbf{exportCurrentGraph(mxGraph graph, double scale, UIAbstractBlock selectedBlock, BlockState state)}: Nimmt nun kein \inlinecode{StatePanelOpen} mehr entgegen, sondern stattdessen direkt den ausgewählten Block sowie dessen Zustand.
+  \item \textbf{batchExport(DFAExecution dfa, double scale, boolean includeLineSteps)}: Nimmt nun analog zu \inlinecode{exportCurrentGraph()} einen \inlinecode{scale}-Parameter entgegen.
+\end{itemize}
+
+\subsubsection{UIBasicBlock}
+
+Der Konstruktor nimmt zusätzlich ein \inlinecode{mxGraph}-Objekt, das zum Rendern benötigt wird, und eine \inlinecode{DFAExecution} entgegen.
+Letztere ist notwendig, um die Farbe des Blocks korrekt setzen zu können.
+
+\subsubsection{UIEdge}
+
+Analog zum \inlinecode{UIBasicBlock} wird hier ebenfalls ein \inlinecode{mxGraph}-Objekt im Konstruktor übergeben.
+
+\subsubsection{UILineBlock}
+
+Auch hier wird ein \inlinecode{mxGraph}-Objekt im Konstruktor übergeben.
+Zusätzlich wird auch das zugehörige \inlinecode{mxGraphComponent}-Objekt übergeben, um einen \inlinecode{MouseListener} für Breakpoints setzen zu können und den Zeilencode bei Überlänge korrekt, abhängig von der systemspezifischen Zeichenbreite, abschneiden zu können.
+
+\subsubsection{VisualGraphPanel}
+
+\begin{itemize}
+  \item \textbf{public void renderGraph(final DFAExecution dfa, boolean isFirstRender)}: Beide Parameter wurden neu hinzugefügt. \inlinecode{dfa} wird für den Graph-Export benötigt, während \inlinecode{isFirstRender} festlegt, ob das Auto-Layout aufgerufen und der Graph sichtbar gemacht werden soll.
+  \item \textbf{public mxGraph getMxGraph()}: Umbenannt (ursprünglich \inlinecode{getGraph()}).
+\end{itemize}
+
+\subsection{Entfernte Methoden}
+
+\subsubsection{GraphUIController}
+
+Die Methoden \inlinecode{toggleBreakpoint()}, \inlinecode{exportGraph()} und \inlinecode{toggleJumpToAction()} wurden entfernt, da entsprechende Funktionalität und Zustände ausschließlich im \inlinecode{VisualGraphPanel} von Bedeutung sind.
+
+Weiterhin wurde \inlinecode{getVisualGraphPanel()} entfernt, da das Panel allen betreffenden Klassen bereits bekannt ist.
+
+\subsubsection{UIAbstractBlock}
+
+Die Methode \inlinecode{setColor()} wurde entfernt, da die Farbe nun direkt in der \inlinecode{render()}-Methode des \inlinecode{UIBasicBlock}s abgefragt wird.
+
+\subsubsection{UILineBlock}
+
+Die Methode \inlinecode{toggleBreakpoint()} wurde entfernt, da die entsprechende Logik ausschließlich intern in einem anonymen Listener verwendet wird.
+
+
+\subsubsection{VisualGraphPanel}
+
+Die Methode \inlinecode{showGraphExportDialog()} wurde entfernt, da diese Funktionalität ausschließlich intern verwendet wird.

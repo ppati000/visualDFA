@@ -887,7 +887,7 @@ public class TestTransition01 {
         TestUtils.assertLocalValue(TestUtils.getCfIntValue(0), "top", aliasMap, currentCfe);
         TestUtils.assertLocalValue(TestUtils.getCfIntValue(0), "one", aliasMap, currentCfe);
         TestUtils.assertLocalValue(TestUtils.getCfIntValue(0), "zero", aliasMap, currentCfe);
-        TestUtils.assertLocalValue(TestUtils.getCfIntValue(0), "allZeros", aliasMap, currentCfe);
+        TestUtils.assertLocalValue(TestUtils.getCfIntValue(0), "allOnes", aliasMap, currentCfe);
         TestUtils.assertLocalValue(TestUtils.getCfIntValue(0), "b", aliasMap, currentCfe);
         TestUtils.assertLocalValue(TestUtils.getCfIntValue(0), "c", aliasMap, currentCfe);
         TestUtils.assertLocalValue(TestUtils.getCfIntValue(0), "r", aliasMap, currentCfe);
@@ -900,7 +900,7 @@ public class TestTransition01 {
         TestUtils.assertLocalValue(Value.getBottom(), "top", aliasMap, currentCfe);
         TestUtils.assertLocalValue(Value.getBottom(), "one", aliasMap, currentCfe);
         TestUtils.assertLocalValue(Value.getBottom(), "zero", aliasMap, currentCfe);
-        TestUtils.assertLocalValue(Value.getBottom(), "allZeros", aliasMap, currentCfe);
+        TestUtils.assertLocalValue(Value.getBottom(), "allOnes", aliasMap, currentCfe);
         TestUtils.assertLocalValue(Value.getBottom(), "b", aliasMap, currentCfe);
         TestUtils.assertLocalValue(Value.getBottom(), "c", aliasMap, currentCfe);
         TestUtils.assertLocalValue(Value.getBottom(), "r", aliasMap, currentCfe);
@@ -912,7 +912,7 @@ public class TestTransition01 {
         TestUtils.assertLocalValue(TestUtils.getCfIntValue(0), "top", aliasMap, currentCfe);
         TestUtils.assertLocalValue(TestUtils.getCfIntValue(0), "one", aliasMap, currentCfe);
         TestUtils.assertLocalValue(TestUtils.getCfIntValue(0), "zero", aliasMap, currentCfe);
-        TestUtils.assertLocalValue(TestUtils.getCfIntValue(0), "allZeros", aliasMap, currentCfe);
+        TestUtils.assertLocalValue(TestUtils.getCfIntValue(0), "allOnes", aliasMap, currentCfe);
         TestUtils.assertLocalValue(TestUtils.getCfIntValue(0), "b", aliasMap, currentCfe);
         TestUtils.assertLocalValue(TestUtils.getCfIntValue(0), "c", aliasMap, currentCfe);
         TestUtils.assertLocalValue(TestUtils.getCfIntValue(0), "r", aliasMap, currentCfe);
@@ -922,7 +922,7 @@ public class TestTransition01 {
         TestUtils.assertLocalValue(Value.getTop(), "top", aliasMap, currentCfe);
         TestUtils.assertLocalValue(TestUtils.getCfIntValue(0), "one", aliasMap, currentCfe);
         TestUtils.assertLocalValue(TestUtils.getCfIntValue(0), "zero", aliasMap, currentCfe);
-        TestUtils.assertLocalValue(TestUtils.getCfIntValue(0), "allZeros", aliasMap, currentCfe);
+        TestUtils.assertLocalValue(TestUtils.getCfIntValue(0), "allOnes", aliasMap, currentCfe);
         TestUtils.assertLocalValue(TestUtils.getCfIntValue(0), "b", aliasMap, currentCfe);
         TestUtils.assertLocalValue(TestUtils.getCfIntValue(0), "c", aliasMap, currentCfe);
         TestUtils.assertLocalValue(TestUtils.getCfIntValue(0), "r", aliasMap, currentCfe);
@@ -932,7 +932,7 @@ public class TestTransition01 {
         TestUtils.assertLocalValue(Value.getTop(), "top", aliasMap, currentCfe);
         TestUtils.assertLocalValue(TestUtils.getCfIntValue(1), "one", aliasMap, currentCfe);
         TestUtils.assertLocalValue(TestUtils.getCfIntValue(0), "zero", aliasMap, currentCfe);
-        TestUtils.assertLocalValue(TestUtils.getCfIntValue(0), "allZeros", aliasMap, currentCfe);
+        TestUtils.assertLocalValue(TestUtils.getCfIntValue(0), "allOnes", aliasMap, currentCfe);
         TestUtils.assertLocalValue(TestUtils.getCfIntValue(0), "b", aliasMap, currentCfe);
         TestUtils.assertLocalValue(TestUtils.getCfIntValue(0), "c", aliasMap, currentCfe);
         TestUtils.assertLocalValue(TestUtils.getCfIntValue(0), "r", aliasMap, currentCfe);
@@ -942,7 +942,7 @@ public class TestTransition01 {
         TestUtils.assertLocalValue(Value.getTop(), "top", aliasMap, currentCfe);
         TestUtils.assertLocalValue(TestUtils.getCfIntValue(1), "one", aliasMap, currentCfe);
         TestUtils.assertLocalValue(TestUtils.getCfIntValue(0), "zero", aliasMap, currentCfe);
-        TestUtils.assertLocalValue(TestUtils.getCfIntValue(0), "allZeros", aliasMap, currentCfe);
+        TestUtils.assertLocalValue(TestUtils.getCfIntValue(0), "allOnes", aliasMap, currentCfe);
         TestUtils.assertLocalValue(TestUtils.getCfIntValue(0), "b", aliasMap, currentCfe);
         TestUtils.assertLocalValue(TestUtils.getCfIntValue(0), "c", aliasMap, currentCfe);
         TestUtils.assertLocalValue(TestUtils.getCfIntValue(0), "r", aliasMap, currentCfe);
@@ -952,7 +952,7 @@ public class TestTransition01 {
         TestUtils.assertLocalValue(Value.getTop(), "top", aliasMap, currentCfe);
         TestUtils.assertLocalValue(TestUtils.getCfIntValue(1), "one", aliasMap, currentCfe);
         TestUtils.assertLocalValue(TestUtils.getCfIntValue(0), "zero", aliasMap, currentCfe);
-        TestUtils.assertLocalValue(TestUtils.getCfIntValue(-1), "allZeros", aliasMap, currentCfe);
+        TestUtils.assertLocalValue(TestUtils.getCfIntValue(-1), "allOnes", aliasMap, currentCfe);
         TestUtils.assertLocalValue(TestUtils.getCfIntValue(0), "b", aliasMap, currentCfe);
         TestUtils.assertLocalValue(TestUtils.getCfIntValue(0), "c", aliasMap, currentCfe);
         TestUtils.assertLocalValue(TestUtils.getCfIntValue(0), "r", aliasMap, currentCfe);
@@ -962,7 +962,7 @@ public class TestTransition01 {
         TestUtils.assertLocalValue(Value.getTop(), "top", aliasMap, currentCfe);
         TestUtils.assertLocalValue(TestUtils.getCfIntValue(1), "one", aliasMap, currentCfe);
         TestUtils.assertLocalValue(TestUtils.getCfIntValue(0), "zero", aliasMap, currentCfe);
-        TestUtils.assertLocalValue(TestUtils.getCfIntValue(-1), "allZeros", aliasMap, currentCfe);
+        TestUtils.assertLocalValue(TestUtils.getCfIntValue(-1), "allOnes", aliasMap, currentCfe);
         TestUtils.assertLocalValue(TestUtils.getCfIntValue(0x7E6FC290), "b", aliasMap, currentCfe);
         TestUtils.assertLocalValue(TestUtils.getCfIntValue(0), "c", aliasMap, currentCfe);
         TestUtils.assertLocalValue(TestUtils.getCfIntValue(0), "r", aliasMap, currentCfe);
@@ -972,7 +972,7 @@ public class TestTransition01 {
         TestUtils.assertLocalValue(Value.getTop(), "top", aliasMap, currentCfe);
         TestUtils.assertLocalValue(TestUtils.getCfIntValue(1), "one", aliasMap, currentCfe);
         TestUtils.assertLocalValue(TestUtils.getCfIntValue(0), "zero", aliasMap, currentCfe);
-        TestUtils.assertLocalValue(TestUtils.getCfIntValue(-1), "allZeros", aliasMap, currentCfe);
+        TestUtils.assertLocalValue(TestUtils.getCfIntValue(-1), "allOnes", aliasMap, currentCfe);
         TestUtils.assertLocalValue(TestUtils.getCfIntValue(0x7E6FC290), "b", aliasMap, currentCfe);
         TestUtils.assertLocalValue(TestUtils.getCfIntValue(13), "c", aliasMap, currentCfe);
         TestUtils.assertLocalValue(TestUtils.getCfIntValue(0), "r", aliasMap, currentCfe);
@@ -983,7 +983,7 @@ public class TestTransition01 {
         TestUtils.assertLocalValue(Value.getTop(), "top", aliasMap, currentCfe);
         TestUtils.assertLocalValue(TestUtils.getCfIntValue(1), "one", aliasMap, currentCfe);
         TestUtils.assertLocalValue(TestUtils.getCfIntValue(0), "zero", aliasMap, currentCfe);
-        TestUtils.assertLocalValue(TestUtils.getCfIntValue(-1), "allZeros", aliasMap, currentCfe);
+        TestUtils.assertLocalValue(TestUtils.getCfIntValue(-1), "allOnes", aliasMap, currentCfe);
         TestUtils.assertLocalValue(TestUtils.getCfIntValue(0x7E6FC290), "b", aliasMap, currentCfe);
         TestUtils.assertLocalValue(TestUtils.getCfIntValue(13), "c", aliasMap, currentCfe);
         TestUtils.assertLocalValue(TestUtils.getCfIntValue(0x7E6FC29D), "r", aliasMap, currentCfe);
@@ -993,7 +993,7 @@ public class TestTransition01 {
         TestUtils.assertLocalValue(Value.getTop(), "top", aliasMap, currentCfe);
         TestUtils.assertLocalValue(TestUtils.getCfIntValue(1), "one", aliasMap, currentCfe);
         TestUtils.assertLocalValue(TestUtils.getCfIntValue(0), "zero", aliasMap, currentCfe);
-        TestUtils.assertLocalValue(TestUtils.getCfIntValue(-1), "allZeros", aliasMap, currentCfe);
+        TestUtils.assertLocalValue(TestUtils.getCfIntValue(-1), "allOnes", aliasMap, currentCfe);
         TestUtils.assertLocalValue(TestUtils.getCfIntValue(0x7E6FC290), "b", aliasMap, currentCfe);
         TestUtils.assertLocalValue(TestUtils.getCfIntValue(13), "c", aliasMap, currentCfe);
         TestUtils.assertLocalValue(Value.getTop(), "r", aliasMap, currentCfe);
@@ -1003,7 +1003,7 @@ public class TestTransition01 {
         TestUtils.assertLocalValue(Value.getTop(), "top", aliasMap, currentCfe);
         TestUtils.assertLocalValue(TestUtils.getCfIntValue(1), "one", aliasMap, currentCfe);
         TestUtils.assertLocalValue(TestUtils.getCfIntValue(0), "zero", aliasMap, currentCfe);
-        TestUtils.assertLocalValue(TestUtils.getCfIntValue(-1), "allZeros", aliasMap, currentCfe);
+        TestUtils.assertLocalValue(TestUtils.getCfIntValue(-1), "allOnes", aliasMap, currentCfe);
         TestUtils.assertLocalValue(TestUtils.getCfIntValue(0x7E6FC290), "b", aliasMap, currentCfe);
         TestUtils.assertLocalValue(TestUtils.getCfIntValue(13), "c", aliasMap, currentCfe);
         TestUtils.assertLocalValue(TestUtils.getCfIntValue(-1), "r", aliasMap, currentCfe);
@@ -1013,7 +1013,7 @@ public class TestTransition01 {
         TestUtils.assertLocalValue(Value.getTop(), "top", aliasMap, currentCfe);
         TestUtils.assertLocalValue(TestUtils.getCfIntValue(1), "one", aliasMap, currentCfe);
         TestUtils.assertLocalValue(TestUtils.getCfIntValue(0), "zero", aliasMap, currentCfe);
-        TestUtils.assertLocalValue(TestUtils.getCfIntValue(-1), "allZeros", aliasMap, currentCfe);
+        TestUtils.assertLocalValue(TestUtils.getCfIntValue(-1), "allOnes", aliasMap, currentCfe);
         TestUtils.assertLocalValue(TestUtils.getCfIntValue(0x7E6FC290), "b", aliasMap, currentCfe);
         TestUtils.assertLocalValue(TestUtils.getCfIntValue(13), "c", aliasMap, currentCfe);
         TestUtils.assertLocalValue(TestUtils.getCfIntValue(0), "r", aliasMap, currentCfe);
@@ -1023,7 +1023,7 @@ public class TestTransition01 {
         TestUtils.assertLocalValue(Value.getTop(), "top", aliasMap, currentCfe);
         TestUtils.assertLocalValue(TestUtils.getCfIntValue(1), "one", aliasMap, currentCfe);
         TestUtils.assertLocalValue(TestUtils.getCfIntValue(0), "zero", aliasMap, currentCfe);
-        TestUtils.assertLocalValue(TestUtils.getCfIntValue(-1), "allZeros", aliasMap, currentCfe);
+        TestUtils.assertLocalValue(TestUtils.getCfIntValue(-1), "allOnes", aliasMap, currentCfe);
         TestUtils.assertLocalValue(TestUtils.getCfIntValue(0x7E6FC290), "b", aliasMap, currentCfe);
         TestUtils.assertLocalValue(TestUtils.getCfIntValue(13), "c", aliasMap, currentCfe);
         TestUtils.assertLocalValue(Value.getTop(), "r", aliasMap, currentCfe);
@@ -1033,7 +1033,7 @@ public class TestTransition01 {
         TestUtils.assertLocalValue(Value.getTop(), "top", aliasMap, currentCfe);
         TestUtils.assertLocalValue(TestUtils.getCfIntValue(1), "one", aliasMap, currentCfe);
         TestUtils.assertLocalValue(TestUtils.getCfIntValue(0), "zero", aliasMap, currentCfe);
-        TestUtils.assertLocalValue(TestUtils.getCfIntValue(-1), "allZeros", aliasMap, currentCfe);
+        TestUtils.assertLocalValue(TestUtils.getCfIntValue(-1), "allOnes", aliasMap, currentCfe);
         TestUtils.assertLocalValue(TestUtils.getCfIntValue(0x7E6FC290), "b", aliasMap, currentCfe);
         TestUtils.assertLocalValue(TestUtils.getCfIntValue(13), "c", aliasMap, currentCfe);
         TestUtils.assertLocalValue(TestUtils.getCfIntValue(0), "r", aliasMap, currentCfe);
@@ -1043,7 +1043,7 @@ public class TestTransition01 {
         TestUtils.assertLocalValue(Value.getTop(), "top", aliasMap, currentCfe);
         TestUtils.assertLocalValue(TestUtils.getCfIntValue(1), "one", aliasMap, currentCfe);
         TestUtils.assertLocalValue(TestUtils.getCfIntValue(0), "zero", aliasMap, currentCfe);
-        TestUtils.assertLocalValue(TestUtils.getCfIntValue(-1), "allZeros", aliasMap, currentCfe);
+        TestUtils.assertLocalValue(TestUtils.getCfIntValue(-1), "allOnes", aliasMap, currentCfe);
         TestUtils.assertLocalValue(TestUtils.getCfIntValue(0x7E6FC290), "b", aliasMap, currentCfe);
         TestUtils.assertLocalValue(TestUtils.getCfIntValue(13), "c", aliasMap, currentCfe);
         TestUtils.assertLocalValue(TestUtils.getCfIntValue(0x7E6FC29D), "r", aliasMap, currentCfe);
@@ -1053,7 +1053,7 @@ public class TestTransition01 {
         TestUtils.assertLocalValue(Value.getTop(), "top", aliasMap, currentCfe);
         TestUtils.assertLocalValue(TestUtils.getCfIntValue(1), "one", aliasMap, currentCfe);
         TestUtils.assertLocalValue(TestUtils.getCfIntValue(0), "zero", aliasMap, currentCfe);
-        TestUtils.assertLocalValue(TestUtils.getCfIntValue(-1), "allZeros", aliasMap, currentCfe);
+        TestUtils.assertLocalValue(TestUtils.getCfIntValue(-1), "allOnes", aliasMap, currentCfe);
         TestUtils.assertLocalValue(TestUtils.getCfIntValue(0x7E6FC290), "b", aliasMap, currentCfe);
         TestUtils.assertLocalValue(TestUtils.getCfIntValue(13), "c", aliasMap, currentCfe);
         TestUtils.assertLocalValue(Value.getTop(), "r", aliasMap, currentCfe);
@@ -1063,7 +1063,7 @@ public class TestTransition01 {
         TestUtils.assertLocalValue(Value.getTop(), "top", aliasMap, currentCfe);
         TestUtils.assertLocalValue(TestUtils.getCfIntValue(1), "one", aliasMap, currentCfe);
         TestUtils.assertLocalValue(TestUtils.getCfIntValue(0), "zero", aliasMap, currentCfe);
-        TestUtils.assertLocalValue(TestUtils.getCfIntValue(-1), "allZeros", aliasMap, currentCfe);
+        TestUtils.assertLocalValue(TestUtils.getCfIntValue(-1), "allOnes", aliasMap, currentCfe);
         TestUtils.assertLocalValue(TestUtils.getCfIntValue(0x7E6FC290), "b", aliasMap, currentCfe);
         TestUtils.assertLocalValue(TestUtils.getCfIntValue(13), "c", aliasMap, currentCfe);
         TestUtils.assertLocalValue(TestUtils.getCfIntValue(13), "r", aliasMap, currentCfe);
@@ -1073,7 +1073,7 @@ public class TestTransition01 {
         TestUtils.assertLocalValue(Value.getTop(), "top", aliasMap, currentCfe);
         TestUtils.assertLocalValue(TestUtils.getCfIntValue(1), "one", aliasMap, currentCfe);
         TestUtils.assertLocalValue(TestUtils.getCfIntValue(0), "zero", aliasMap, currentCfe);
-        TestUtils.assertLocalValue(TestUtils.getCfIntValue(-1), "allZeros", aliasMap, currentCfe);
+        TestUtils.assertLocalValue(TestUtils.getCfIntValue(-1), "allOnes", aliasMap, currentCfe);
         TestUtils.assertLocalValue(TestUtils.getCfIntValue(0x7E6FC290), "b", aliasMap, currentCfe);
         TestUtils.assertLocalValue(TestUtils.getCfIntValue(13), "c", aliasMap, currentCfe);
         TestUtils.assertLocalValue(TestUtils.getCfIntValue(0xFFFFFFF2), "r", aliasMap, currentCfe);
@@ -1083,7 +1083,7 @@ public class TestTransition01 {
         TestUtils.assertLocalValue(Value.getTop(), "top", aliasMap, currentCfe);
         TestUtils.assertLocalValue(TestUtils.getCfIntValue(1), "one", aliasMap, currentCfe);
         TestUtils.assertLocalValue(TestUtils.getCfIntValue(0), "zero", aliasMap, currentCfe);
-        TestUtils.assertLocalValue(TestUtils.getCfIntValue(-1), "allZeros", aliasMap, currentCfe);
+        TestUtils.assertLocalValue(TestUtils.getCfIntValue(-1), "allOnes", aliasMap, currentCfe);
         TestUtils.assertLocalValue(TestUtils.getCfIntValue(0x7E6FC290), "b", aliasMap, currentCfe);
         TestUtils.assertLocalValue(TestUtils.getCfIntValue(13), "c", aliasMap, currentCfe);
         TestUtils.assertLocalValue(TestUtils.getCfIntValue(0x81903D6F), "r", aliasMap, currentCfe);
@@ -1093,7 +1093,7 @@ public class TestTransition01 {
         TestUtils.assertLocalValue(Value.getTop(), "top", aliasMap, currentCfe);
         TestUtils.assertLocalValue(TestUtils.getCfIntValue(1), "one", aliasMap, currentCfe);
         TestUtils.assertLocalValue(TestUtils.getCfIntValue(0), "zero", aliasMap, currentCfe);
-        TestUtils.assertLocalValue(TestUtils.getCfIntValue(-1), "allZeros", aliasMap, currentCfe);
+        TestUtils.assertLocalValue(TestUtils.getCfIntValue(-1), "allOnes", aliasMap, currentCfe);
         TestUtils.assertLocalValue(TestUtils.getCfIntValue(0x7E6FC290), "b", aliasMap, currentCfe);
         TestUtils.assertLocalValue(TestUtils.getCfIntValue(13), "c", aliasMap, currentCfe);
         TestUtils.assertLocalValue(Value.getTop(), "r", aliasMap, currentCfe);
@@ -1103,7 +1103,7 @@ public class TestTransition01 {
         TestUtils.assertLocalValue(Value.getTop(), "top", aliasMap, currentCfe);
         TestUtils.assertLocalValue(TestUtils.getCfIntValue(1), "one", aliasMap, currentCfe);
         TestUtils.assertLocalValue(TestUtils.getCfIntValue(0), "zero", aliasMap, currentCfe);
-        TestUtils.assertLocalValue(TestUtils.getCfIntValue(-1), "allZeros", aliasMap, currentCfe);
+        TestUtils.assertLocalValue(TestUtils.getCfIntValue(-1), "allOnes", aliasMap, currentCfe);
         TestUtils.assertLocalValue(TestUtils.getCfIntValue(0x7E6FC290), "b", aliasMap, currentCfe);
         TestUtils.assertLocalValue(TestUtils.getCfIntValue(13), "c", aliasMap, currentCfe);
         TestUtils.assertLocalValue(TestUtils.getCfIntValue(0xF9BF0A40), "r", aliasMap, currentCfe);
@@ -1113,7 +1113,7 @@ public class TestTransition01 {
         TestUtils.assertLocalValue(Value.getTop(), "top", aliasMap, currentCfe);
         TestUtils.assertLocalValue(TestUtils.getCfIntValue(1), "one", aliasMap, currentCfe);
         TestUtils.assertLocalValue(TestUtils.getCfIntValue(0), "zero", aliasMap, currentCfe);
-        TestUtils.assertLocalValue(TestUtils.getCfIntValue(-1), "allZeros", aliasMap, currentCfe);
+        TestUtils.assertLocalValue(TestUtils.getCfIntValue(-1), "allOnes", aliasMap, currentCfe);
         TestUtils.assertLocalValue(TestUtils.getCfIntValue(0x7E6FC290), "b", aliasMap, currentCfe);
         TestUtils.assertLocalValue(TestUtils.getCfIntValue(13), "c", aliasMap, currentCfe);
         TestUtils.assertLocalValue(TestUtils.getCfIntValue(0xF8520000), "r", aliasMap, currentCfe);
@@ -1123,7 +1123,7 @@ public class TestTransition01 {
         TestUtils.assertLocalValue(Value.getTop(), "top", aliasMap, currentCfe);
         TestUtils.assertLocalValue(TestUtils.getCfIntValue(1), "one", aliasMap, currentCfe);
         TestUtils.assertLocalValue(TestUtils.getCfIntValue(0), "zero", aliasMap, currentCfe);
-        TestUtils.assertLocalValue(TestUtils.getCfIntValue(-1), "allZeros", aliasMap, currentCfe);
+        TestUtils.assertLocalValue(TestUtils.getCfIntValue(-1), "allOnes", aliasMap, currentCfe);
         TestUtils.assertLocalValue(TestUtils.getCfIntValue(0x7E6FC290), "b", aliasMap, currentCfe);
         TestUtils.assertLocalValue(TestUtils.getCfIntValue(13), "c", aliasMap, currentCfe);
         TestUtils.assertLocalValue(TestUtils.getCfIntValue(0xF37E1480), "r", aliasMap, currentCfe);       // Java-specific shift
@@ -1133,7 +1133,7 @@ public class TestTransition01 {
         TestUtils.assertLocalValue(Value.getTop(), "top", aliasMap, currentCfe);
         TestUtils.assertLocalValue(TestUtils.getCfIntValue(1), "one", aliasMap, currentCfe);
         TestUtils.assertLocalValue(TestUtils.getCfIntValue(0), "zero", aliasMap, currentCfe);
-        TestUtils.assertLocalValue(TestUtils.getCfIntValue(-1), "allZeros", aliasMap, currentCfe);
+        TestUtils.assertLocalValue(TestUtils.getCfIntValue(-1), "allOnes", aliasMap, currentCfe);
         TestUtils.assertLocalValue(TestUtils.getCfIntValue(0x7E6FC290), "b", aliasMap, currentCfe);
         TestUtils.assertLocalValue(TestUtils.getCfIntValue(13), "c", aliasMap, currentCfe);
         TestUtils.assertLocalValue(Value.getTop(), "r", aliasMap, currentCfe);
@@ -1143,7 +1143,7 @@ public class TestTransition01 {
         TestUtils.assertLocalValue(Value.getTop(), "top", aliasMap, currentCfe);
         TestUtils.assertLocalValue(TestUtils.getCfIntValue(1), "one", aliasMap, currentCfe);
         TestUtils.assertLocalValue(TestUtils.getCfIntValue(0), "zero", aliasMap, currentCfe);
-        TestUtils.assertLocalValue(TestUtils.getCfIntValue(-1), "allZeros", aliasMap, currentCfe);
+        TestUtils.assertLocalValue(TestUtils.getCfIntValue(-1), "allOnes", aliasMap, currentCfe);
         TestUtils.assertLocalValue(TestUtils.getCfIntValue(0x7E6FC290), "b", aliasMap, currentCfe);
         TestUtils.assertLocalValue(TestUtils.getCfIntValue(13), "c", aliasMap, currentCfe);
         TestUtils.assertLocalValue(Value.getTop(), "r", aliasMap, currentCfe);
@@ -1153,7 +1153,7 @@ public class TestTransition01 {
         TestUtils.assertLocalValue(Value.getTop(), "top", aliasMap, currentCfe);
         TestUtils.assertLocalValue(TestUtils.getCfIntValue(1), "one", aliasMap, currentCfe);
         TestUtils.assertLocalValue(TestUtils.getCfIntValue(0), "zero", aliasMap, currentCfe);
-        TestUtils.assertLocalValue(TestUtils.getCfIntValue(-1), "allZeros", aliasMap, currentCfe);
+        TestUtils.assertLocalValue(TestUtils.getCfIntValue(-1), "allOnes", aliasMap, currentCfe);
         TestUtils.assertLocalValue(TestUtils.getCfIntValue(0x7E6FC290), "b", aliasMap, currentCfe);
         TestUtils.assertLocalValue(TestUtils.getCfIntValue(13), "c", aliasMap, currentCfe);
         TestUtils.assertLocalValue(TestUtils.getCfIntValue(0x1F9BF0A4), "r", aliasMap, currentCfe);
@@ -1163,7 +1163,7 @@ public class TestTransition01 {
         TestUtils.assertLocalValue(Value.getTop(), "top", aliasMap, currentCfe);
         TestUtils.assertLocalValue(TestUtils.getCfIntValue(1), "one", aliasMap, currentCfe);
         TestUtils.assertLocalValue(TestUtils.getCfIntValue(0), "zero", aliasMap, currentCfe);
-        TestUtils.assertLocalValue(TestUtils.getCfIntValue(-1), "allZeros", aliasMap, currentCfe);
+        TestUtils.assertLocalValue(TestUtils.getCfIntValue(-1), "allOnes", aliasMap, currentCfe);
         TestUtils.assertLocalValue(TestUtils.getCfIntValue(0x7E6FC290), "b", aliasMap, currentCfe);
         TestUtils.assertLocalValue(TestUtils.getCfIntValue(13), "c", aliasMap, currentCfe);
         TestUtils.assertLocalValue(TestUtils.getCfIntValue(0x0003F37E), "r", aliasMap, currentCfe);
@@ -1174,7 +1174,7 @@ public class TestTransition01 {
         TestUtils.assertLocalValue(Value.getTop(), "top", aliasMap, currentCfe);
         TestUtils.assertLocalValue(TestUtils.getCfIntValue(1), "one", aliasMap, currentCfe);
         TestUtils.assertLocalValue(TestUtils.getCfIntValue(0), "zero", aliasMap, currentCfe);
-        TestUtils.assertLocalValue(TestUtils.getCfIntValue(-1), "allZeros", aliasMap, currentCfe);
+        TestUtils.assertLocalValue(TestUtils.getCfIntValue(-1), "allOnes", aliasMap, currentCfe);
         TestUtils.assertLocalValue(TestUtils.getCfIntValue(0x7E6FC290), "b", aliasMap, currentCfe);
         TestUtils.assertLocalValue(TestUtils.getCfIntValue(13), "c", aliasMap, currentCfe);
         TestUtils.assertLocalValue(TestUtils.getCfIntValue(0x0FCDF852), "r", aliasMap, currentCfe);      // Java-specific shift
@@ -1184,7 +1184,7 @@ public class TestTransition01 {
         TestUtils.assertLocalValue(Value.getTop(), "top", aliasMap, currentCfe);
         TestUtils.assertLocalValue(TestUtils.getCfIntValue(1), "one", aliasMap, currentCfe);
         TestUtils.assertLocalValue(TestUtils.getCfIntValue(0), "zero", aliasMap, currentCfe);
-        TestUtils.assertLocalValue(TestUtils.getCfIntValue(-1), "allZeros", aliasMap, currentCfe);
+        TestUtils.assertLocalValue(TestUtils.getCfIntValue(-1), "allOnes", aliasMap, currentCfe);
         TestUtils.assertLocalValue(TestUtils.getCfIntValue(0x7E6FC290), "b", aliasMap, currentCfe);
         TestUtils.assertLocalValue(TestUtils.getCfIntValue(13), "c", aliasMap, currentCfe);
         TestUtils.assertLocalValue(Value.getTop(), "r", aliasMap, currentCfe);
@@ -1194,7 +1194,7 @@ public class TestTransition01 {
         TestUtils.assertLocalValue(Value.getTop(), "top", aliasMap, currentCfe);
         TestUtils.assertLocalValue(TestUtils.getCfIntValue(1), "one", aliasMap, currentCfe);
         TestUtils.assertLocalValue(TestUtils.getCfIntValue(0), "zero", aliasMap, currentCfe);
-        TestUtils.assertLocalValue(TestUtils.getCfIntValue(-1), "allZeros", aliasMap, currentCfe);
+        TestUtils.assertLocalValue(TestUtils.getCfIntValue(-1), "allOnes", aliasMap, currentCfe);
         TestUtils.assertLocalValue(TestUtils.getCfIntValue(0x7E6FC290), "b", aliasMap, currentCfe);
         TestUtils.assertLocalValue(TestUtils.getCfIntValue(13), "c", aliasMap, currentCfe);
         TestUtils.assertLocalValue(Value.getTop(), "r", aliasMap, currentCfe);
@@ -1205,7 +1205,7 @@ public class TestTransition01 {
         TestUtils.assertLocalValue(Value.getTop(), "top", aliasMap, currentCfe);
         TestUtils.assertLocalValue(TestUtils.getCfIntValue(1), "one", aliasMap, currentCfe);
         TestUtils.assertLocalValue(TestUtils.getCfIntValue(0), "zero", aliasMap, currentCfe);
-        TestUtils.assertLocalValue(TestUtils.getCfIntValue(-1), "allZeros", aliasMap, currentCfe);
+        TestUtils.assertLocalValue(TestUtils.getCfIntValue(-1), "allOnes", aliasMap, currentCfe);
         TestUtils.assertLocalValue(TestUtils.getCfIntValue(0x7E6FC290), "b", aliasMap, currentCfe);
         TestUtils.assertLocalValue(TestUtils.getCfIntValue(-13), "c", aliasMap, currentCfe);
         TestUtils.assertLocalValue(Value.getTop(), "r", aliasMap, currentCfe);
@@ -1215,7 +1215,7 @@ public class TestTransition01 {
         TestUtils.assertLocalValue(Value.getTop(), "top", aliasMap, currentCfe);
         TestUtils.assertLocalValue(TestUtils.getCfIntValue(1), "one", aliasMap, currentCfe);
         TestUtils.assertLocalValue(TestUtils.getCfIntValue(0), "zero", aliasMap, currentCfe);
-        TestUtils.assertLocalValue(TestUtils.getCfIntValue(-1), "allZeros", aliasMap, currentCfe);
+        TestUtils.assertLocalValue(TestUtils.getCfIntValue(-1), "allOnes", aliasMap, currentCfe);
         TestUtils.assertLocalValue(TestUtils.getCfIntValue(0x7E6FC290), "b", aliasMap, currentCfe);
         TestUtils.assertLocalValue(TestUtils.getCfIntValue(-13), "c", aliasMap, currentCfe);
         TestUtils.assertLocalValue(TestUtils.getCfIntValue(0x3FFFFFFC), "r", aliasMap, currentCfe);
@@ -1225,7 +1225,7 @@ public class TestTransition01 {
         TestUtils.assertLocalValue(Value.getTop(), "top", aliasMap, currentCfe);
         TestUtils.assertLocalValue(TestUtils.getCfIntValue(1), "one", aliasMap, currentCfe);
         TestUtils.assertLocalValue(TestUtils.getCfIntValue(0), "zero", aliasMap, currentCfe);
-        TestUtils.assertLocalValue(TestUtils.getCfIntValue(-1), "allZeros", aliasMap, currentCfe);
+        TestUtils.assertLocalValue(TestUtils.getCfIntValue(-1), "allOnes", aliasMap, currentCfe);
         TestUtils.assertLocalValue(TestUtils.getCfIntValue(0x7E6FC290), "b", aliasMap, currentCfe);
         TestUtils.assertLocalValue(TestUtils.getCfIntValue(-13), "c", aliasMap, currentCfe);
         TestUtils.assertLocalValue(TestUtils.getCfIntValue(0x1FFF), "r", aliasMap, currentCfe);       // Java-specific shift
@@ -1235,7 +1235,7 @@ public class TestTransition01 {
         TestUtils.assertLocalValue(Value.getTop(), "top", aliasMap, currentCfe);
         TestUtils.assertLocalValue(TestUtils.getCfIntValue(1), "one", aliasMap, currentCfe);
         TestUtils.assertLocalValue(TestUtils.getCfIntValue(0), "zero", aliasMap, currentCfe);
-        TestUtils.assertLocalValue(TestUtils.getCfIntValue(-1), "allZeros", aliasMap, currentCfe);
+        TestUtils.assertLocalValue(TestUtils.getCfIntValue(-1), "allOnes", aliasMap, currentCfe);
         TestUtils.assertLocalValue(TestUtils.getCfIntValue(0x7E6FC290), "b", aliasMap, currentCfe);
         TestUtils.assertLocalValue(TestUtils.getCfIntValue(-13), "c", aliasMap, currentCfe);
         TestUtils.assertLocalValue(TestUtils.getCfIntValue(0x1FFFFFFE), "r", aliasMap, currentCfe);       // Java-specific shift
@@ -1245,7 +1245,7 @@ public class TestTransition01 {
         TestUtils.assertLocalValue(Value.getTop(), "top", aliasMap, currentCfe);
         TestUtils.assertLocalValue(TestUtils.getCfIntValue(1), "one", aliasMap, currentCfe);
         TestUtils.assertLocalValue(TestUtils.getCfIntValue(0), "zero", aliasMap, currentCfe);
-        TestUtils.assertLocalValue(TestUtils.getCfIntValue(-1), "allZeros", aliasMap, currentCfe);
+        TestUtils.assertLocalValue(TestUtils.getCfIntValue(-1), "allOnes", aliasMap, currentCfe);
         TestUtils.assertLocalValue(TestUtils.getCfIntValue(0x7E6FC290), "b", aliasMap, currentCfe);
         TestUtils.assertLocalValue(TestUtils.getCfIntValue(-13), "c", aliasMap, currentCfe);
         TestUtils.assertLocalValue(Value.getTop(), "r", aliasMap, currentCfe);
@@ -1255,7 +1255,7 @@ public class TestTransition01 {
         TestUtils.assertLocalValue(Value.getTop(), "top", aliasMap, currentCfe);
         TestUtils.assertLocalValue(TestUtils.getCfIntValue(1), "one", aliasMap, currentCfe);
         TestUtils.assertLocalValue(TestUtils.getCfIntValue(0), "zero", aliasMap, currentCfe);
-        TestUtils.assertLocalValue(TestUtils.getCfIntValue(-1), "allZeros", aliasMap, currentCfe);
+        TestUtils.assertLocalValue(TestUtils.getCfIntValue(-1), "allOnes", aliasMap, currentCfe);
         TestUtils.assertLocalValue(TestUtils.getCfIntValue(0x7E6FC290), "b", aliasMap, currentCfe);
         TestUtils.assertLocalValue(TestUtils.getCfIntValue(-13), "c", aliasMap, currentCfe);
         TestUtils.assertLocalValue(Value.getTop(), "r", aliasMap, currentCfe);
@@ -1321,7 +1321,7 @@ public class TestTransition01 {
             } else if (localName.equals("l3")) {
                 aliasMap.setAlias("l3", "zero");
             } else if (localName.equals("l4")) {
-                aliasMap.setAlias("l4", "allZeros");
+                aliasMap.setAlias("l4", "allOnes");
             } else if (localName.equals("l5")) {
                 aliasMap.setAlias("l5", "b");
             } else if (localName.equals("l6")) {

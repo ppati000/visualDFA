@@ -78,6 +78,8 @@ public class JButtonDecorator {
         componentDecorator.decorate(comp);
         comp.setText(text);
         comp.addActionListener(actListener);
+        
+        //Remove the Space keyStroke from the standard InputMap so custom key - inputs can work
         comp.getInputMap().put(KeyStroke.getKeyStroke("SPACE"), "none");
         comp.setFocusPainted(false);
     }

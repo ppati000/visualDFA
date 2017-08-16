@@ -269,6 +269,26 @@ public class ConstantBitsElement extends LocalMapElement<BitValueArray> {
             return new BitValueArray(LONG_SIZE, BitValue.BOTTOM);
         }
 
+        public static BitValueArray getTop(int length) {
+            if (length == INT_SIZE) {
+                return getIntTop();
+            } else if (length == LONG_SIZE) {
+                return getLongTop();
+            } else {
+                throw new IllegalArgumentException("length must be INT_SIZE or LONG_SIZE");
+            }
+        }
+
+        public static BitValueArray getBottom(int length) {
+            if (length == INT_SIZE) {
+                return getIntBottom();
+            } else if (length == LONG_SIZE) {
+                return getLongBottom();
+            } else {
+                throw new IllegalArgumentException("length must be INT_SIZE or LONG_SIZE");
+            }
+        }
+
         /**
          * Returns the length of {@code bitValues}.
          * 
@@ -290,6 +310,46 @@ public class ConstantBitsElement extends LocalMapElement<BitValueArray> {
         public boolean isConst() {
             for (BitValue val : bitValues) {
                 if (val == BitValue.BOTTOM || val == BitValue.TOP) {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        public boolean isPowerOfTwo() {
+            if (!isConst()) {
+                return false;
+            }
+            int foundOnes = 0;
+            for (BitValue bit : bitValues) {
+                switch (bit) {
+                case TOP:
+                    return false;
+                case BOTTOM:
+                    return false;
+                case ONE:
+                    foundOnes++;
+                case ZERO: // ignore
+                }
+            }
+            return (foundOnes == 1);
+        }
+
+        public int getPositionOfOne() {
+            if (!isPowerOfTwo()) {
+                return -1;
+            }
+            for (int i = 0; i < getLength(); i++) {
+                if (bitValues[i] == BitValue.ONE) {
+                    return i;
+                }
+            }
+            return -1;
+        }
+
+        public boolean isZero() {
+            for (BitValue bit : bitValues) {
+                if (bit != BitValue.ZERO) {
                     return false;
                 }
             }

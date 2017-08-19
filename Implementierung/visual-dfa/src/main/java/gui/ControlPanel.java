@@ -138,16 +138,30 @@ public class ControlPanel extends JPanel {
 
         delaySlider = new JSlider();
         jSliDecorator.decorateSlider(delaySlider, 10, 1, 1, null);
+        
+        //Put Labels to the DelaySlider
         Hashtable<Integer, JLabel> delaySliderLabelTable = new Hashtable<>();
         JLabel tickLabel_1 = new JLabel();
-        jLaDecorator.decorateLabel(tickLabel_1, "" + delaySlider.getMaximum());
+        jLaDecorator.decorateLabel(tickLabel_1, "" + delaySlider.getMinimum());
         JLabel tickLabel_2 = new JLabel();
-        jLaDecorator.decorateLabel(tickLabel_2, "" + delaySlider.getMaximum() / 10);
+        jLaDecorator.decorateLabel(tickLabel_2, "0.2");
         JLabel tickLabel_3 = new JLabel();
-        jLaDecorator.decorateLabel(tickLabel_3, "" + delaySlider.getMinimum());
-        delaySliderLabelTable.put(new Integer(delaySlider.getMaximum()), tickLabel_1);
-        delaySliderLabelTable.put(new Integer(delaySlider.getMaximum() / 10), tickLabel_2);
-        delaySliderLabelTable.put(new Integer(delaySlider.getMinimum()), tickLabel_3);
+        jLaDecorator.decorateLabel(tickLabel_3, "0.4");
+        JLabel tickLabel_4 = new JLabel();
+        jLaDecorator.decorateLabel(tickLabel_4, "0.6");
+        JLabel tickLabel_5 = new JLabel();
+        jLaDecorator.decorateLabel(tickLabel_5, "0.8");
+        JLabel tickLabel_6 = new JLabel();
+        jLaDecorator.decorateLabel(tickLabel_6, "1");
+        JLabel tickLabel_7 = new JLabel();
+        jLaDecorator.decorateLabel(tickLabel_7, "5");
+        delaySliderLabelTable.put(new Integer(delaySlider.getMinimum()), tickLabel_1);
+        delaySliderLabelTable.put(new Integer(1), tickLabel_2);
+        delaySliderLabelTable.put(new Integer(2), tickLabel_3);
+        delaySliderLabelTable.put(new Integer(3), tickLabel_4);
+        delaySliderLabelTable.put(new Integer(4), tickLabel_5);
+        delaySliderLabelTable.put(new Integer(5), tickLabel_6);
+        delaySliderLabelTable.put(new Integer(delaySlider.getMaximum()), tickLabel_7);
         delaySlider.setLabelTable(delaySliderLabelTable);
         delaySlider.setPaintLabels(true);
         GridBagConstraints gbc_delaySlider = GridBagConstraintFactory.getStandardGridBagConstraints(7, 2, 2, 2);
@@ -279,6 +293,24 @@ public class ControlPanel extends JPanel {
      */
     public int getDelaySliderPosition() {
         return delaySlider.getValue();
+        
+    }
+    
+    /**
+     * Look up the current position of the {@code DelaySlider} and return it.
+     * 
+     * 
+     * @return The position of the {@code DelaySlider}.
+     */
+    public double getDelay() {
+        int value = delaySlider.getValue();
+        if (value <= 5) {
+            // returns values 0, 0.2 ... 0.8, 1
+            return value / 5;
+        } else {
+            //returns values 2, 3, ... 5
+            return value - 4;
+        }
     }
 
     /**

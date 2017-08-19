@@ -38,11 +38,11 @@ public class GraphUIControllerTest {
             "if print == 0 goto $r0 = <java.lang.System: java.io.PrintStream out>";
 
     private final String secondBlockOutput = "$r1 = <java.lang.System: java.io.PrintStream out>\n" +
-            "virtualinvoke $r1.<java.io.PrintStream: void println()>()\n" +
+            "virtualinvoke $r1.<java.io.PrintStream: void println(java.lang.String)>(\"Hello World!\")\n" +
             "goto [?= return]";
 
     private final String thirdBlockOutput = "$r0 = <java.lang.System: java.io.PrintStream out>\n" +
-            "virtualinvoke $r0.<java.io.PrintStream: void println()>()";
+            "virtualinvoke $r0.<java.io.PrintStream: void println(java.lang.String)>(\"Not Hello World!\")";
 
 
     @Before

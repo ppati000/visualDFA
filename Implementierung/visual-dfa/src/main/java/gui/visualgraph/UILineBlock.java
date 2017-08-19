@@ -83,7 +83,11 @@ public class UILineBlock extends UIAbstractBlock {
             geo.setRelative(false);
 
             FontMetrics metrics = graphComponent.getFontMetrics(new Font(Font.MONOSPACED, Font.PLAIN, Styles.TEXT_SIZE));
-            String baseText = elementaryBlock.getUnit().toString().replace("virtualinvoke", "invoke").replace("staticinvoke", "invoke");
+            String baseText = elementaryBlock.getUnit().toString()
+                    .replaceAll("^(static|virtual|special|interface|dynamic)invoke\\s", "invoke ")
+                    .replaceAll("\\s(static|virtual|special|interface|dynamic)invoke\\s", " invoke ")
+                    .replaceAll("\\sgoto\\s.*$", " goto") // Remove everything after "goto" to avoid confusion from text like 'goto (branch)'.
+                    .replaceAll("^goto\\s.*$", "goto");
 
             // Handle long labels: Use BLOCK_WIDTH - 20 for word wrap to leave some space for appending "…".
             String[] splitLabel = mxUtils.wordWrap(baseText, metrics, Styles.BLOCK_WIDTH - 20);

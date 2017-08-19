@@ -5,6 +5,7 @@ import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
@@ -63,7 +64,7 @@ public class MethodSelectionBox extends DialogBox {
         contentPanel.setLayout(new BorderLayout());
         contentPanel.setBackground(Colors.BACKGROUND.getColor());
         JScrollPane radioScrollPane = new JScrollPane();
-        radioScrollPane.setPreferredSize(new Dimension(0, 200));
+
         JPanel radioPane = new JPanel();
         radioPane.setLayout(new BoxLayout(radioPane, BoxLayout.PAGE_AXIS));
         radioPane.setBackground(Colors.BACKGROUND.getColor());
@@ -86,6 +87,15 @@ public class MethodSelectionBox extends DialogBox {
 
         }
         radioScrollPane.setViewportView(radioPane);
+        radioScrollPane.setBorder(null);
+        // If there are many methods, so the panel is higher than half the
+        // screen set preferred height to half the screen and add something to the
+        // width so the scrollbar will not be in front of some text
+        if (radioPane.getPreferredSize().getHeight() > (Toolkit.getDefaultToolkit().getScreenSize().getHeight() / 2)) {
+            radioScrollPane.setPreferredSize(new Dimension((int) (radioPane.getPreferredSize().getWidth()) + 20,
+                    (int) (Toolkit.getDefaultToolkit().getScreenSize().getHeight() / 2)));
+        }
+
         contentPanel.add(radioScrollPane, BorderLayout.CENTER);
 
     }

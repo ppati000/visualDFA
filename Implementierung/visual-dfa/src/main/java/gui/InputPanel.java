@@ -237,37 +237,9 @@ public class InputPanel extends JPanel {
             JFileChooser openChooser = new JFileChooser(TEMPORARY_FOLDER);
 
             openChooser.setAcceptAllFileFilterUsed(false);
-            openChooser.addChoosableFileFilter(new FileFilter() {
+            openChooser.addChoosableFileFilter(new JavaFileFilter());
+            openChooser.addChoosableFileFilter(new AllFileFilter());
 
-                @Override
-                public String getDescription() {
-
-                    return ".java";
-                }
-
-                @Override
-                public boolean accept(File f) {
-                    if (f.isDirectory()) {
-                        return false;
-                    }
-
-                    String ext = null;
-                    String s = f.getName();
-                    int i = s.lastIndexOf('.');
-
-                    if (i > 0 && i < s.length() - 1) {
-                        ext = s.substring(i + 1).toLowerCase();
-                        if (ext.equals("java")) {
-                            return true;
-                        } else {
-                            return false;
-                        }
-                    } else {
-                        return false;
-                    }
-
-                }
-            });
             int returnVal = openChooser.showOpenDialog(btnOpen);
             if (returnVal == JFileChooser.APPROVE_OPTION) {
                 File file = openChooser.getSelectedFile();
@@ -310,37 +282,9 @@ public class InputPanel extends JPanel {
             JFileChooser saveChooser = new JFileChooser(TEMPORARY_FOLDER);
 
             saveChooser.setAcceptAllFileFilterUsed(false);
-            saveChooser.addChoosableFileFilter(new FileFilter() {
+            saveChooser.addChoosableFileFilter(new JavaFileFilter());
 
-                @Override
-                public String getDescription() {
-
-                    return ".java";
-                }
-
-                @Override
-                public boolean accept(File f) {
-                    if (f.isDirectory()) {
-                        return false;
-                    }
-
-                    String ext = null;
-                    String s = f.getName();
-                    int i = s.lastIndexOf('.');
-
-                    if (i > 0 && i < s.length() - 1) {
-                        ext = s.substring(i + 1).toLowerCase();
-                        if (ext.equals("java")) {
-                            return true;
-                        } else {
-                            return false;
-                        }
-                    } else {
-                        return false;
-                    }
-
-                }
-            });
+            saveChooser.addChoosableFileFilter(new AllFileFilter());
 
             int returnVal = saveChooser.showSaveDialog(btnSave);
             if (returnVal == JFileChooser.APPROVE_OPTION) {
@@ -358,6 +302,51 @@ public class InputPanel extends JPanel {
             }
         }
 
+    }
+    
+    private class JavaFileFilter extends FileFilter {
+        @Override
+        public String getDescription() {
+
+            return ".java";
+        }
+
+        @Override
+        public boolean accept(File f) {
+            if (f.isDirectory()) {
+                return true;
+            }
+
+            String ext = null;
+            String s = f.getName();
+            int i = s.lastIndexOf('.');
+
+            if (i > 0 && i < s.length() - 1) {
+                ext = s.substring(i + 1).toLowerCase();
+                if (ext.equals("java")) {
+                    return true;
+                } else {
+                    return false;
+                }
+            } else {
+                return false;
+            }
+
+        }
+    }
+    
+    private class AllFileFilter extends FileFilter {
+
+        @Override
+        public boolean accept(File f) {
+            return true;
+        }
+
+        @Override
+        public String getDescription() {
+            return "*.*";
+        }
+        
     }
 
 }

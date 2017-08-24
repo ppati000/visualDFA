@@ -130,14 +130,34 @@ public class UILineBlock extends UIAbstractBlock {
         }
     }
 
+    /**
+     * Returns this line's text content (a single line {@code String}).
+     *
+     * @return text content
+     */
     @Override
     public String getText() {
         return elementaryBlock.getUnit().toString();
     }
 
+    /**
+     * Returns the parent block number.
+     *
+     * @return parent block number
+     */
     @Override
-    public int[] getBlockAndLineNumbers() {
-        return new int[] {parent.blockNumber, blockNumber};
+    public int getBlockNumber() {
+        return parent.blockNumber;
+    }
+
+    /**
+     * Returns this line's number.
+     *
+     * @return line number
+     */
+    @Override
+    public int getLineNumber() {
+        return blockNumber;
     }
 
     /**

@@ -184,10 +184,11 @@ public class GraphUIController {
             String inStateString = inState == null ? "<not set>" : inState.getStringRepresentation();
             String outStateString = outState == null ? "<not set>" : outState.getStringRepresentation();
 
-            int[] blockAndLineNumbers = uiAbstractBlock.getBlockAndLineNumbers();
             String text = uiAbstractBlock.getText();
-            int blockNumber = blockAndLineNumbers[0];
-            int lineNumber = blockAndLineNumbers[1];
+            int blockNumber = uiAbstractBlock.getBlockNumber();
+
+            // Parent block selected? Then lineNumber == -1, but first code line for StatePanelOpen should be 0 as it shows the whole block.
+            int lineNumber = Math.max(uiAbstractBlock.getLineNumber(), 0);
 
             statePanel.setIn(inStateString);
             statePanel.setOut(outStateString);

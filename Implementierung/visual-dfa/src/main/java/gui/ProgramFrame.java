@@ -1,14 +1,9 @@
 package gui;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.Frame;
-import java.awt.Rectangle;
+import java.awt.*;
 import java.io.File;
+import java.lang.reflect.Method;
 
-import javax.swing.ActionMap;
-import javax.swing.InputMap;
-import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -36,8 +31,6 @@ public class ProgramFrame extends JFrame {
     private static final Dimension MIN_SIZE = new Dimension(1200, 800);
     private static final Rectangle STANDARD_BOUNDS = new Rectangle(0, 0, 1600, 800);
 
-    private Controller ctrl;
-
     /**
      * Creates a {@code JFrame} and its content. Sets theLayout of the
      * ContentPane.
@@ -51,9 +44,6 @@ public class ProgramFrame extends JFrame {
      */
 
     public ProgramFrame(Controller ctrl) {
-
-        this.ctrl = ctrl;
-
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         
         setBounds(STANDARD_BOUNDS);
@@ -84,6 +74,9 @@ public class ProgramFrame extends JFrame {
 
         statePanelClosed = new StatePanelClosed(this);
 
+        if (System.getProperty("os.name").toLowerCase().contains("mac") && getWindows().length != 0) {
+            enableMacOSFullscreen(getWindows()[0]);
+        }
     }
 
     /**
@@ -94,7 +87,7 @@ public class ProgramFrame extends JFrame {
      * @see StatePanelClosed
      */
     public void switchStatePanel() {
-        if (isStatePanelOpen == true) {
+        if (isStatePanelOpen) {
             remove(statePanelOpen);
             add(statePanelClosed, BorderLayout.EAST);
             isStatePanelOpen = false;
@@ -152,5 +145,18 @@ public class ProgramFrame extends JFrame {
             returnVal = pathChooser.showOpenDialog(this);
         }
         return pathChooser.getSelectedFile();
+    }
+
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    private static void enableMacOSFullscreen(Window window) {
+        try {
+            Class util = Class.forName("com.apple.eawt.FullScreenUtilities");
+            Class params[] = new Class[]{Window.class, Boolean.TYPE};
+            Method method = util.getMethod("setWindowCanFullScreen", params);
+            method.invoke(util, window, true);
+        } catch (Exception ex) {
+            System.err.println("Could not enable macOS fullscreen capability. Fullscreen mode will be unavailable. \n"
+              + ex.getMessage());
+        }
     }
 }

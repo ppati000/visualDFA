@@ -41,6 +41,7 @@ public class VisualGraphPanel extends JPanel {
     private Frame parentFrame = null;
     private Map<AbstractBlock, UIAbstractBlock> blockMap;
     private UIAbstractBlock selectedBlock;
+    private boolean hasRendered = false;
 
     /**
      * Creates a new {@code VisualGraphPanel}.
@@ -100,14 +101,12 @@ public class VisualGraphPanel extends JPanel {
     }
 
     /**
-     * Renders all previously inserted blocks and edges.
+     * Renders all previously inserted blocks and edges, and invokes the auto-layouter if first render.
      *
      * @param dfa
      *         the {@code DFAExecution} that should be used to render this graph
-     * @param isFirstRender
-     *         If {@code true}, the auto-layouter is called after inserting all parent blocks. Used on first render.
      */
-    public void renderGraph(final DFAExecution dfa, boolean isFirstRender) {
+    public void renderGraph(final DFAExecution dfa) {
         AnalysisState analysisState = dfa.getCurrentAnalysisState();
 
         graph.getModel().beginUpdate();
@@ -121,8 +120,9 @@ public class VisualGraphPanel extends JPanel {
         }
 
         // Apply layout before rendering child blocks, so that the layouter doesn't mess with them.
-        if (isFirstRender) {
+        if (!hasRendered) {
             autoLayoutAndShowGraph();
+            hasRendered = true;
 
             graphExport.addActionListener(new ActionListener() {
                 @Override

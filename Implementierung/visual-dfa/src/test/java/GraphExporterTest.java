@@ -63,7 +63,7 @@ public class GraphExporterTest {
         panel.insertEdge(edge5);
         panel.insertEdge(edge6);
 
-        panel.renderGraph(dfa, true);
+        panel.renderGraph(dfa);
 
         fakeStatePanel = new JPanel();
         fakeStatePanel.setLayout(new BorderLayout());

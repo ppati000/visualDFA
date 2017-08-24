@@ -35,7 +35,7 @@ public class VisualGraphPanelTest {
     public void graphShouldContainBasicBlock() {
         panel.insertBasicBlock(new UIBasicBlock(graph, mockBasicBlock, dfa));
 
-        panel.renderGraph(dfa, true);
+        panel.renderGraph(dfa);
         Object[] cells = graph.getChildVertices(graph.getDefaultParent());
 
         assertEquals(1, cells.length);
@@ -53,7 +53,7 @@ public class VisualGraphPanelTest {
         basicBlock.insertLineBlock(secondLineBlock);
 
         panel.insertBasicBlock(basicBlock);
-        panel.renderGraph(dfa, true);
+        panel.renderGraph(dfa);
 
         Object[] cells = graph.getChildVertices(graph.getDefaultParent());
         mxCell parentCell = (mxCell) cells[0];
@@ -84,7 +84,7 @@ public class VisualGraphPanelTest {
         panel.insertBasicBlock(basicBlock1);
         panel.insertBasicBlock(basicBlock2);
         panel.insertEdge(edge);
-        panel.renderGraph(dfa, true);
+        panel.renderGraph(dfa);
 
         Object[] cells = graph.getChildVertices(graph.getDefaultParent());
         mxCell firstCell = (mxCell) cells[0];

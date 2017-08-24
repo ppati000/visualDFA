@@ -200,6 +200,7 @@ public class VisualGraphPanel extends JPanel {
      */
     public void deleteGraph() {
         initialGraphState();
+        repaint();
     }
 
     /**
@@ -333,6 +334,9 @@ public class VisualGraphPanel extends JPanel {
         button.setBackground(Colors.LIGHT_TEXT.getColor());
         button.setForeground(Colors.DARK_TEXT.getColor());
         button.setBorder(new LineBorder(Colors.LIGHT_BACKGROUND.getColor(), 2, true));
+
+        // Remove default "Space Bar = click" behavior, so it doesn't interfere with keyboard shortcuts.
+        button.getInputMap().put(KeyStroke.getKeyStroke("SPACE"), "none");
 
         final ButtonModel startModel = button.getModel();
         startModel.addChangeListener(new ChangeListener() {

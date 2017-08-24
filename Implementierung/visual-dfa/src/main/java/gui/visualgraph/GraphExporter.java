@@ -1,6 +1,8 @@
 package gui.visualgraph;
 
+import com.mxgraph.model.mxCell;
 import com.mxgraph.util.mxCellRenderer;
+import com.mxgraph.util.mxConstants;
 import com.mxgraph.view.mxGraph;
 import dfa.framework.BlockState;
 import dfa.framework.DFAExecution;
@@ -9,6 +11,7 @@ import gui.*;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.nio.Buffer;
 import java.util.ArrayList;
 
 /**
@@ -37,11 +40,23 @@ public class GraphExporter {
      * @return a {@code BufferedImage} containing the graph and the selected block state
      */
     public static BufferedImage exportCurrentGraph(mxGraph graph, double scale, UIAbstractBlock selectedBlock, BlockState state) {
-        BufferedImage graphImage = mxCellRenderer.createBufferedImage(graph, null, scale, null, true, null);
+        BufferedImage graphImage;
 
         int stateImageWidth = (int) (STATE_AREA_WIDTH * scale);
         BufferedImage stateImage = null;
         if (selectedBlock != null && state != null) {
+            // Selection strokes are not rendered by createBufferedImage(), so we fake them using a border.
+            // First step: Get the current border color, so we can reset it after creating the BufferedImage.
+            mxCell currentCell = selectedBlock.getMxCell();
+            String originalStrokeColor = (String) graph.getCellStyle(currentCell).get(mxConstants.STYLE_STROKECOLOR);
+
+            // Second step: Add selection border, create BufferedImage, then reset border.
+            graph.setCellStyles(mxConstants.STYLE_STROKECOLOR, Styles.SELECTION_BORDER_COLOR, new Object[]{currentCell});
+            graph.setCellStyles(mxConstants.STYLE_STROKEWIDTH, String.valueOf(Styles.SELECTION_STROKE_WIDTH), new Object[]{selectedBlock.getMxCell()});
+            graphImage = mxCellRenderer.createBufferedImage(graph, null, scale, null, true, null);
+            graph.setCellStyles(mxConstants.STYLE_STROKECOLOR, originalStrokeColor == null ? mxConstants.NONE : originalStrokeColor, new Object[]{currentCell});
+            graph.setCellStyles(mxConstants.STYLE_STROKEWIDTH, String.valueOf(Styles.DEFAULT_STROKE_WIDTH), new Object[]{currentCell});
+
             LatticeElement inState = state.getInState();
             LatticeElement outState = state.getOutState();
             String in = inState == null ? "<not set>" : inState.getStringRepresentation();
@@ -49,7 +64,7 @@ public class GraphExporter {
 
             int[] blockAndLineNumbers = selectedBlock.getBlockAndLineNumbers();
 
-            stateImage  = new BufferedImage(stateImageWidth, graphImage.getHeight(), BufferedImage.TYPE_INT_ARGB);
+            stateImage = new BufferedImage(stateImageWidth, graphImage.getHeight(), BufferedImage.TYPE_INT_ARGB);
             Graphics2D gO = stateImage.createGraphics();
             gO.setFont(new Font(Font.MONOSPACED, Font.BOLD, (int) (FONT_SIZE * scale)));
             gO.setColor(Colors.DARK_TEXT.getColor());
@@ -79,6 +94,8 @@ public class GraphExporter {
                 height += lineHeight;
                 gO.drawString(s, 0, height);
             }
+        } else {
+            graphImage = mxCellRenderer.createBufferedImage(graph, null, scale, null, true, null);
         }
 
         BufferedImage result = new BufferedImage(graphImage.getWidth() + stateImageWidth + 2 * PADDING, graphImage.getHeight(), BufferedImage.TYPE_INT_ARGB);

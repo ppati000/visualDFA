@@ -112,7 +112,7 @@ public class GraphUIController {
             }
         }
 
-        panel.renderGraph(dfa, true);
+        panel.renderGraph(dfa);
 
         for (UIAbstractBlock block : uiBlocks) {
             mxCellMap.put(block.getMxCell(), block);
@@ -158,7 +158,7 @@ public class GraphUIController {
             throw new IllegalStateException("Graph has not been built using start() yet.");
         }
 
-        panel.renderGraph(dfa, false);
+        panel.renderGraph(dfa);
         updateStatePanel();
     }
 

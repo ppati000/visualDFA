@@ -118,6 +118,11 @@ public class UIBasicBlock extends UIAbstractBlock {
         return dfaBasicBlock;
     }
 
+    /**
+     * Returns the text content of all lines in this block. (multi-line {@code String}).
+     *
+     * @return text content
+     */
     @Override
     public String getText() {
         String text = "";
@@ -129,8 +134,23 @@ public class UIBasicBlock extends UIAbstractBlock {
         return text.trim();
     }
 
+    /**
+     * Returns this block's number.
+     *
+     * @return block number
+     */
     @Override
-    public int[] getBlockAndLineNumbers() {
-        return new int[]{blockNumber, 0};
+    public int getBlockNumber() {
+        return blockNumber;
+    }
+
+    /**
+     * Returns -1 as this is a parent block (method is used as a sentinel for graph export and {@code StatePanelOpen}).
+     *
+     * @return -1
+     */
+    @Override
+    public int getLineNumber() {
+        return -1;
     }
 }

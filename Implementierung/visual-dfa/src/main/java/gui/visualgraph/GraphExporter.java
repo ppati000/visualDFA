@@ -47,7 +47,8 @@ public class GraphExporter {
             String in = inState == null ? "<not set>" : inState.getStringRepresentation();
             String out = outState == null ? "<not set>" : outState.getStringRepresentation();
 
-            int[] blockAndLineNumbers = selectedBlock.getBlockAndLineNumbers();
+            int blockNumber = selectedBlock.getBlockNumber();
+            int lineNumber = selectedBlock.getLineNumber();
 
             stateImage  = new BufferedImage(stateImageWidth, graphImage.getHeight(), BufferedImage.TYPE_INT_ARGB);
             Graphics2D gO = stateImage.createGraphics();
@@ -59,8 +60,8 @@ public class GraphExporter {
             int lineHeight = (int) (LINE_HEIGHT * scale);
 
             int height = lineHeight;
-            String selectionString = "Selected Position: (" + blockAndLineNumbers[0];
-            selectionString += blockAndLineNumbers[1] == -1 ? ")" : ", " + blockAndLineNumbers[1] + ")";
+            String selectionString = "Selected Position: (" + blockNumber;
+            selectionString += lineNumber == -1 ? ")" : ", " + lineNumber + ")";
 
             gO.drawString(selectionString, 0, height);
 

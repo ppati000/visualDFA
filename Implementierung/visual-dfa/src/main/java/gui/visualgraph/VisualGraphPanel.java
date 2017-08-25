@@ -53,7 +53,6 @@ public class VisualGraphPanel extends JPanel {
     public VisualGraphPanel() {
         this.basicBlocks = new ArrayList<>();
         this.edges = new ArrayList<>();
-        this.graph = new RestrictedMxGraph();
         this.blockMap = new HashMap<>();
         setLayout(new BorderLayout());
 
@@ -263,6 +262,15 @@ public class VisualGraphPanel extends JPanel {
      */
     public List<UIBasicBlock> getBasicBlocks() {
         return basicBlocks;
+    }
+
+    /**
+     * Returns a list of {@code UIEdge}s in the graph.
+     *
+     * @return list of {@code UIEdge}s
+     */
+    public List<UIEdge> getEdges() {
+        return edges;
     }
 
     /**

@@ -110,56 +110,34 @@ public class GraphExporter {
         return result;
     }
 
-    public static ArrayList<BufferedImage> batchExport(DFAExecution dfa, double scale, boolean includeLineSteps) {
+    public static void batchExportAsync(DFAExecution dfa, double scale, boolean includeLineSteps, GraphExportCallback callback) {
         dfa = dfa.clone();
 
-        StatePanelOpen statePanel = new StatePanelOpen(null);
-        statePanel.setSize(300, 1080);
         VisualGraphPanel panel = new VisualGraphPanel();
         panel.setJumpToAction(true);
 
         GraphUIController controller = new GraphUIController(panel);
-        controller.setStatePanel(statePanel);
         controller.start(dfa);
 
-        if (includeLineSteps) {
-            return performLineBatchExport(dfa, controller, panel, scale);
-        }
-
-        return performBlockBatchExport(dfa, controller, panel, scale);
-    }
-
-    private static ArrayList<BufferedImage> performBlockBatchExport(DFAExecution dfa, GraphUIController controller,
-                                                                    VisualGraphPanel panel, double scale) {
         ArrayList<BufferedImage> result = new ArrayList<>();
+        int totalSteps = includeLineSteps ? dfa.getTotalElementarySteps() : dfa.getTotalBlockSteps();
+        callback.setMaxStep(totalSteps + 1);
 
-        for (int blockStep = 0; blockStep < dfa.getTotalBlockSteps(); blockStep++) {
-            dfa.setCurrentBlockStep(blockStep);
+        for (int step = 0; step < totalSteps; step++) {
+            if (includeLineSteps) {
+                dfa.setCurrentElementaryStep(step);
+            } else {
+                dfa.setCurrentBlockStep(step);
+            }
             controller.refresh();
 
             UIAbstractBlock selectedBlock = panel.getSelectedBlock();
             BlockState state = selectedBlock == null ? null : dfa.getCurrentAnalysisState().getBlockState(selectedBlock.getDFABlock());
 
-            result.add(exportCurrentGraph(panel.getMxGraph(), scale, selectedBlock, state));
+            callback.onImageExported(exportCurrentGraph(panel.getMxGraph(), scale, selectedBlock, state));
+            callback.setExportStep(step);
         }
 
-        return result;
-    }
-
-    private static ArrayList<BufferedImage> performLineBatchExport(DFAExecution dfa, GraphUIController controller,
-                                                                   VisualGraphPanel panel, double scale) {
-        ArrayList<BufferedImage> result = new ArrayList<>();
-
-        for (int lineStep = 0; lineStep < dfa.getTotalElementarySteps(); lineStep++) {
-            dfa.setCurrentElementaryStep(lineStep);
-            controller.refresh();
-
-            UIAbstractBlock selectedBlock = panel.getSelectedBlock();
-            BlockState state = selectedBlock == null ? null : dfa.getCurrentAnalysisState().getBlockState(selectedBlock.getDFABlock());
-
-            result.add(exportCurrentGraph(panel.getMxGraph(), scale, selectedBlock, state));
-        }
-
-        return result;
+        callback.done();
     }
 }

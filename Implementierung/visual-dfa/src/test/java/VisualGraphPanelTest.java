@@ -1,4 +1,5 @@
 import com.mxgraph.model.mxCell;
+import com.mxgraph.swing.mxGraphComponent;
 import com.mxgraph.view.mxGraph;
 import dfa.framework.AnalysisState;
 import dfa.framework.BasicBlock;
@@ -39,9 +40,18 @@ public class VisualGraphPanelTest {
         Object[] cells = graph.getChildVertices(graph.getDefaultParent());
 
         assertEquals(1, cells.length);
-        assertEquals(Styles.LINE_HEIGHT, ((mxCell) cells[0]).getGeometry().getHeight(), DELTA);
+        mxCell basicBlockCell = (mxCell) cells[0];
+        assertEquals(Styles.LINE_HEIGHT, basicBlockCell.getGeometry().getHeight(), DELTA);
+        assertEquals(0, graph.getChildVertices(basicBlockCell).length);
 
-        assertEquals(0, graph.getChildVertices(cells[0]).length);
+        assertEquals(true, graph.isCellMovable(basicBlockCell));
+        assertEquals(true, graph.isCellSelectable(basicBlockCell));
+        assertEquals(false, graph.isCellFoldable(basicBlockCell, false));
+        assertEquals(false, graph.isCellFoldable(basicBlockCell, true));
+        assertEquals(false, graph.isCellEditable(basicBlockCell));
+        assertEquals(false, graph.isCellConnectable(basicBlockCell));
+        assertEquals(false, graph.isCellResizable(basicBlockCell));
+
     }
 
     @Test
@@ -73,17 +83,25 @@ public class VisualGraphPanelTest {
         assertEquals(Styles.LINE_HEIGHT / 2, childCells[2].getGeometry().getHeight(), DELTA); // breakpoint cell
         assertEquals(Styles.LINE_HEIGHT, childCells[3].getGeometry().getHeight(), DELTA);
         assertEquals(2 * Styles.LINE_HEIGHT, childCells[3].getGeometry().getY(), DELTA);
+
+        assertEquals(false, graph.isCellMovable(childCells[0]));
+        assertEquals(true, graph.isCellSelectable(childCells[0]));
+        assertEquals(false, graph.isCellFoldable(childCells[0], false));
+        assertEquals(false, graph.isCellFoldable(childCells[0], true));
+        assertEquals(false, graph.isCellEditable(childCells[0]));
+        assertEquals(false, graph.isCellConnectable(childCells[0]));
+        assertEquals(false, graph.isCellResizable(childCells[0]));
     }
 
     @Test
     public void graphShouldContainEdges() {
         UIBasicBlock basicBlock1 = new UIBasicBlock(graph, mockBasicBlock, dfa);
         UIBasicBlock basicBlock2 = new UIBasicBlock(graph, mockBasicBlock, dfa);
-        UIEdge edge = new UIEdge(graph, basicBlock1, basicBlock2);
+        UIEdge uiEdge = new UIEdge(graph, basicBlock1, basicBlock2);
 
         panel.insertBasicBlock(basicBlock1);
         panel.insertBasicBlock(basicBlock2);
-        panel.insertEdge(edge);
+        panel.insertEdge(uiEdge);
         panel.renderGraph(dfa);
 
         Object[] cells = graph.getChildVertices(graph.getDefaultParent());
@@ -96,6 +114,43 @@ public class VisualGraphPanelTest {
 
         assertEquals(1, graph.getEdges(firstCell).length);
         assertEquals(1, graph.getEdges(secondCell).length);
-        assertEquals(1, graph.getEdgesBetween(firstCell, secondCell).length);
+
+        Object[] edges = graph.getEdgesBetween(firstCell, secondCell);
+        assertEquals(1, edges.length);
+
+        mxCell edge = (mxCell) edges[0];
+
+        assertEquals(false, graph.isCellMovable(edge));
+        assertEquals(false, graph.isCellSelectable(edge));
+        assertEquals(false, graph.isCellFoldable(edge, false));
+        assertEquals(false, graph.isCellFoldable(edge, true));
+        assertEquals(false, graph.isCellEditable(edge));
+        assertEquals(false, graph.isCellConnectable(edge));
+        assertEquals(false, graph.isCellResizable(edge));
+    }
+
+    @Test
+    public void shouldSetBreakpoint() {
+        UIBasicBlock basicBlock = new UIBasicBlock(graph, mockBasicBlock, dfa);
+        UILineBlock lineBlock = new UILineBlock(mockBlock, panel.getGraphComponent(), graph, basicBlock);
+
+        panel.insertBasicBlock(basicBlock);
+        basicBlock.insertLineBlock(lineBlock);
+        panel.renderGraph(dfa);
+
+        mxCell breakpointCell = lineBlock.getBreakpointCell();
+        assertEquals("strokeColor=none;fillColor=rgba(255, 255, 255, 0)", breakpointCell.getStyle());
+        assertEquals(false, lineBlock.getDFABlock().hasBreakpoint());
+        assertEquals(false, lineBlock.hasBreakpoint());
+
+        lineBlock.toggleBreakpoint();
+        assertEquals("strokeColor=none;fillColor=#dd7063", breakpointCell.getStyle());
+        assertEquals(true, lineBlock.getDFABlock().hasBreakpoint());
+        assertEquals(true, lineBlock.hasBreakpoint());
+
+        lineBlock.toggleBreakpoint();
+        assertEquals("strokeColor=none;fillColor=rgba(255, 255, 255, 0)", breakpointCell.getStyle());
+        assertEquals(false, lineBlock.getDFABlock().hasBreakpoint());
+        assertEquals(false, lineBlock.hasBreakpoint());
     }
 }

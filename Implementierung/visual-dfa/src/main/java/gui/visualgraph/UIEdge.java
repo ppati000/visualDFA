@@ -41,4 +41,22 @@ public class UIEdge extends VisualGraphElement {
             cell = (mxCell) graph.insertEdge(graph.getDefaultParent(), null, null, from.getMxCell(), to.getMxCell());
         }
     }
+
+    /**
+     * Returns the block this edge originates from.
+     *
+     * @return origin block
+     */
+    public UIBasicBlock getFrom() {
+        return from;
+    }
+
+    /**
+     * Returns the block this edge points to.
+     *
+     * @return block pointed to
+     */
+    public UIBasicBlock getTo() {
+        return to;
+    }
 }

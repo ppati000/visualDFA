@@ -29,6 +29,7 @@ public class GraphExporterTest {
     private DFAExecution dfa = mock(DFAExecution.class);
     private BasicBlock basicBlock = mock(BasicBlock.class);
     private mxGraph graph;
+    private final Object lock = new Object();
 
     @Before
     public void createPanelAndGraph() {
@@ -98,7 +99,7 @@ public class GraphExporterTest {
     }
 
     @Test
-    public void shouldPerformBatchExport() {
+    public void shouldPerformBatchExport() throws InterruptedException {
         String code = "public class shouldPerformBatchExportClass { int test(int a) { " +
                 "        if (a < 10) { " +
                 "          a = 20; " +
@@ -112,20 +113,82 @@ public class GraphExporterTest {
         SimpleBlockGraph blockGraph = builder.buildGraph("int test(int)");
 
         WorklistManager manager = WorklistManager.getInstance();
-        DFAExecution<DummyElement> dfa = new DFAExecution<DummyElement>(new DummyFactory(), manager.getWorklist(manager.getWorklistNames().get(0), blockGraph), blockGraph, new DFAPrecalcController());
+        final DFAExecution<DummyElement> dfa = new DFAExecution<DummyElement>(new DummyFactory(), manager.getWorklist(manager.getWorklistNames().get(0), blockGraph), blockGraph, new DFAPrecalcController());
         dfa.setCurrentBlockStep(0);
 
-        ArrayList<BufferedImage> imageList = GraphExporter.batchExport(dfa, 1.0, true);
+        final TestGraphExportCallback testCallback = new TestGraphExportCallback();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                GraphExporter.batchExportAsync(dfa, 1.0, true, testCallback);
+            }
+        }).start();
 
+        synchronized (lock) {
+            lock.wait();
+        }
+
+        ArrayList<BufferedImage> imageList = testCallback.images;
+
+        assertEquals(dfa.getTotalElementarySteps() + 1, testCallback.maxStep);
         assertEquals(dfa.getTotalElementarySteps(), imageList.size());
-
         assertTrue(TestUtils.deltaEqual(603, imageList.get(0).getWidth(), 60));
         assertTrue(TestUtils.deltaEqual(299, imageList.get(0).getHeight(), 60));
 
-        ArrayList<BufferedImage> blockImageList = GraphExporter.batchExport(dfa, 3.0, false);
+        for (int i = 0; i < dfa.getTotalElementarySteps(); i++) {
+            assertEquals(i, (int) testCallback.steps.get(i));
+        }
 
+        final TestGraphExportCallback blockTestCallback = new TestGraphExportCallback();
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                GraphExporter.batchExportAsync(dfa, 3.0, false, blockTestCallback);
+            }
+        }).start();
+
+        synchronized (lock) {
+            lock.wait();
+        }
+
+        ArrayList<BufferedImage> blockImageList = blockTestCallback.images;
+
+        assertEquals(dfa.getTotalBlockSteps() + 1, blockTestCallback.maxStep);
         assertEquals(dfa.getTotalBlockSteps(), blockImageList.size());
         assertTrue(TestUtils.deltaEqual(1729, blockImageList.get(0).getWidth(), 180));
         assertTrue(TestUtils.deltaEqual(895, blockImageList.get(0).getHeight(), 180));
+
+        for (int i = 0; i < dfa.getTotalBlockSteps(); i++) {
+            assertEquals(i, (int) blockTestCallback.steps.get(i));
+        }
+    }
+
+    private class TestGraphExportCallback implements GraphExportCallback {
+        private ArrayList<BufferedImage> images = new ArrayList<>();
+        private ArrayList<Integer> steps = new ArrayList<>();
+        private int maxStep;
+
+        @Override
+        public void setMaxStep(int step) {
+            maxStep = step;
+        }
+
+        @Override
+        public void setExportStep(int step) {
+            steps.add(step);
+        }
+
+        @Override
+        public void onImageExported(BufferedImage image) {
+            images.add(image);
+        }
+
+        @Override
+        public void done() {
+            synchronized (lock) {
+                lock.notifyAll();
+            }
+        }
     }
 }

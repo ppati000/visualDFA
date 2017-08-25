@@ -29,7 +29,7 @@ import java.util.List;
 /**
  * @author Patrick Petrovic
  *
- *         Panel used to display the visual graph.
+ * Panel used to display the visual graph.
  */
 public class VisualGraphPanel extends JPanel {
     private List<UIBasicBlock> basicBlocks;
@@ -42,6 +42,10 @@ public class VisualGraphPanel extends JPanel {
     private Map<AbstractBlock, UIAbstractBlock> blockMap;
     private UIAbstractBlock selectedBlock;
     private boolean hasRendered = false;
+    private boolean isExportInProgress = false;
+
+    private final String outputPath = System.getProperty("user.home") + File.separator + "visualDFA";
+    private final int fakeProgressBarMaxValue = 42;
 
     /**
      * Creates a new {@code VisualGraphPanel}.
@@ -130,38 +134,62 @@ public class VisualGraphPanel extends JPanel {
                     GraphExportBox exportBox = new GraphExportBox(parentFrame);
 
                     if (exportBox.getOption() == Option.YES_OPTION) {
+                        graphExport.setEnabled(false);
+
                         float scale = exportBox.getQuality().ordinal() + 1;
-                        String outputPath = System.getProperty("user.home") + File.separator + "visualDFA";
+                        final long timestamp = new Date().getTime();
 
-                        try {
-                            List<BufferedImage> images;
+                        if (exportBox.isBatchExport()) {
+                            new GraphBatchExportThread(dfa, scale, exportBox.includeLineStates(), new GraphExportProgressView(outputPath) {
+                                private int index = 0;
 
-                            if (exportBox.isBatchExport()) {
-                                images = GraphExporter.batchExport(dfa, scale, exportBox.includeLineStates());
-                            } else {
-                                images = new ArrayList<>();
-                                BlockState state = selectedBlock == null ? null : dfa.getCurrentAnalysisState().getBlockState(selectedBlock.getDFABlock());
-
-                                images.add(GraphExporter.exportCurrentGraph(graph, scale, selectedBlock, state));
-                            }
-
-                            File outputDir = new File(outputPath);
-                            long timestamp = new Date().getTime();
-
-                            if (!new File(outputPath).exists()) {
-                                boolean result = outputDir.mkdir();
-                                if (!result) {
-                                    throw new IOException();
+                                @Override
+                                public void onImageExported(BufferedImage image) {
+                                    try {
+                                        saveImage(image, timestamp, index);
+                                        index++;
+                                    } catch (IOException ex) {
+                                        showExportErrorBox();
+                                    }
                                 }
-                            }
 
-                            for (int i = 0; i < images.size(); i++) {
-                                File outputFile = new File(outputPath + File.separator + "export_" + timestamp + "_" + i + ".png");
-                                ImageIO.write(images.get(i), "PNG", outputFile);
+                                @Override
+                                public void done() {
+                                    graphExport.setEnabled(true);
+                                    super.done();
+                                }
+                            }).start();
+                        } else {
+                            BlockState state = selectedBlock == null ? null : dfa.getCurrentAnalysisState().getBlockState(selectedBlock.getDFABlock());
+                            final GraphExportProgressView view = new GraphExportProgressView(outputPath);
+
+                            // Fake a progress bar to the user if no batch export, so it is not too fast.
+                            new Thread() {
+                                @Override
+                                public void run() {
+                                    view.setMaxStep(fakeProgressBarMaxValue);
+                                    try {
+                                        Thread.sleep(100);
+
+                                        for (int i = 0; i < fakeProgressBarMaxValue; i++) {
+                                            Thread.sleep(15);
+                                            view.setExportStep(i);
+                                        }
+
+                                        graphExport.setEnabled(true);
+                                    } catch (InterruptedException ex) {
+                                        // Ignored.
+                                    }
+
+                                    view.done();
+                                }
+                            }.start();
+
+                            try {
+                                saveImage(GraphExporter.exportCurrentGraph(graph, scale, selectedBlock, state), timestamp, 0);
+                            } catch (IOException ex) {
+                                showExportErrorBox();
                             }
-                        } catch (IOException ex) {
-                            new MessageBox(parentFrame, "Graph Export Failed", "An error occured while saving your image(s). \n" +
-                                    "Please ensure " + outputPath + " is a writable directory.").setVisible(true);
                         }
                     }
                 }
@@ -292,6 +320,25 @@ public class VisualGraphPanel extends JPanel {
      */
     public UIAbstractBlock getSelectedBlock() {
         return this.selectedBlock;
+    }
+
+    private void saveImage(BufferedImage image, long timestamp, int index) throws IOException {
+        File outputDir = new File(outputPath);
+
+        if (!new File(outputPath).exists()) {
+            boolean result = outputDir.mkdir();
+            if (!result) {
+                throw new IOException();
+            }
+        }
+
+        File outputFile = new File(outputPath + File.separator + "export_" + timestamp + "_" + index + ".png");
+        ImageIO.write(image, "PNG", outputFile);
+    }
+
+    private void showExportErrorBox() {
+        new MessageBox(parentFrame, "Graph Export Failed", "An error occured while saving your image(s). \n" +
+                "Please ensure " + outputPath + " is a writable directory.");
     }
 
     private void autoLayoutAndShowGraph() {

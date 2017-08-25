@@ -367,20 +367,20 @@ public class ReachingDefinitionsElement extends LocalMapElement<Definition> {
 
         @Override
         public void caseCmplExpr(CmplExpr expr) {
-            // TODO Auto-generated method stub
-
+            String[] opString = retrieveStringPair(expr);
+            result = "(" + opString[0] + ") cmpl (" + opString[1] + ")";
         }
 
         @Override
         public void caseCmpgExpr(CmpgExpr expr) {
-            // TODO Auto-generated method stub
-
+            String[] opString = retrieveStringPair(expr);
+            result = "(" + opString[0] + ") cmpg (" + opString[1] + ")";
         }
 
         @Override
         public void caseCmpExpr(CmpExpr expr) {
-            // TODO Auto-generated method stub
-
+            String[] opString = retrieveStringPair(expr);
+            result = "(" + opString[0] + ") cmp (" + opString[1] + ")";
         }
 
         @Override

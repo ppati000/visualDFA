@@ -307,6 +307,7 @@ public class VisualGraphPanel extends JPanel {
         basicBlocks = new ArrayList<>();
         edges = new ArrayList<>();
         graph = new RestrictedMxGraph();
+        hasRendered = false;
 
         if (graphComponent != null) {
             remove(graphComponent);

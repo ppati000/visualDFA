@@ -14,11 +14,11 @@ import soot.toolkits.graph.BlockGraph;
 import soot.toolkits.graph.BriefBlockGraph;
 
 /**
- * @author Sebastian Rauch 
- *
- *         A {@code SimpleBlockGraph} is a {@code BriefBlockGraph} that has at most one tail (the {@code List} returned
- *         by {@code getTails()} contains at most one {@code Block}). A {@code SimpleBlockGraph} also has at most one
- *         head (the {@code List} returned by {@code getHeads} contains at most one {@code Block}).
+ * A {@code SimpleBlockGraph} is a {@code BriefBlockGraph} that has at most one tail (the {@code List} returned by
+ * {@code getTails()} contains at most one {@code Block}). A {@code SimpleBlockGraph} also has at most one head (the
+ * {@code List} returned by {@code getHeads} contains at most one {@code Block}).
+ * 
+ * @author Sebastian Rauch
  */
 public class SimpleBlockGraph extends BriefBlockGraph {
 

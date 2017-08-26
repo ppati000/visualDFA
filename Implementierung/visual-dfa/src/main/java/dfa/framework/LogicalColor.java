@@ -1,9 +1,9 @@
 package dfa.framework;
 
 /**
- * @author Sebastian Rauch 
- * 
- *         A {@code LogicalColor} describes the relation of a {@code BasicBlock} to a {@code Worklist}.
+ * A {@code LogicalColor} describes the relation of a {@code BasicBlock} to a {@code Worklist}.
+ *
+ * @author Sebastian Rauch
  */
 public enum LogicalColor {
 

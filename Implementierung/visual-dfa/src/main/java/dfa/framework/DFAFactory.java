@@ -1,10 +1,10 @@
 package dfa.framework;
 
 /**
- * @author Sebastian Rauch 
- *
- *         A {@code DFAFactory} provides the name and direction of a dataflow analysis. It creates a
- *         {@code DataFlowAnalysis} from a given {@code SingleTailedBlockGraph}.
+ * A {@code DFAFactory} provides the name and direction of a dataflow analysis. It creates a {@code DataFlowAnalysis}
+ * from a given {@code SingleTailedBlockGraph}.
+ * 
+ * @author Sebastian Rauch
  *
  * @param <E>
  *        the type of {@code LatticeElement} used by this {@code DFAFactory}

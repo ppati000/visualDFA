@@ -5,10 +5,10 @@ import java.util.LinkedList;
 import java.util.Random;
 
 /**
- * @author Sebastian Rauch 
- *
- *         A {@code RandomWorklist} is a {@code Worklist} which chooses the next {@code BasicBlock} to be retrieved
- *         (pseudo-) randomly among the {@code BasicBlock}s on the {@code RandomWorklist}.
+ * A {@code RandomWorklist} is a {@code Worklist} which chooses the next {@code BasicBlock} to be retrieved (pseudo-)
+ * randomly among the {@code BasicBlock}s on the {@code RandomWorklist}.
+ * 
+ * @author Sebastian Rauch
  */
 public class RandomWorklist implements Worklist {
 

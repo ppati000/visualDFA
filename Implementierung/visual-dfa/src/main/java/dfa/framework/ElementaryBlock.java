@@ -3,10 +3,10 @@ package dfa.framework;
 import soot.Unit;
 
 /**
- * @author Sebastian Rauch 
- *
- *         An {@code ElementaryBlock} represents one {@code Unit} ('line') inside a {@code BasicBlock}. An
- *         {@code ElementaryBlock} can also be marked with a breakpoint.
+ * An {@code ElementaryBlock} represents one {@code Unit} ('line') inside a {@code BasicBlock}. An
+ * {@code ElementaryBlock} can also be marked with a breakpoint.
+ * 
+ * @author Sebastian Rauch
  */
 public class ElementaryBlock extends AbstractBlock {
 

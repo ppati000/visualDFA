@@ -7,13 +7,14 @@ import soot.Unit;
 import soot.toolkits.graph.Block;
 
 /**
- * @author Sebastian Rauch 
- * 
- *         A {@code CompositeDataFlowAnalysis} combines a {@code Join}, a {@code Transition} and an {@code Initializer}
- *         into a {@code DataFlowAnalysis}.
+ * A {@code CompositeDataFlowAnalysis} combines a {@code Join}, a {@code Transition} and an {@code Initializer} into a
+ * {@code DataFlowAnalysis}.
  *
  * @param <E>
  *        the type of {@code LatticeElement} used in this {@code CompositeDataFlowAnalysis}
+ * 
+ * @author Sebastian Rauch
+ * 
  */
 public class CompositeDataFlowAnalysis<E extends LatticeElement> implements DataFlowAnalysis<E> {
 

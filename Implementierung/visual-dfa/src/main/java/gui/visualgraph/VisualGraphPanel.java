@@ -40,6 +40,7 @@ public class VisualGraphPanel extends JPanel {
     private mxGraph graph;
     private Frame parentFrame = null;
     private Map<AbstractBlock, UIAbstractBlock> blockMap;
+    private GraphExporter graphExporter;
     private UIAbstractBlock selectedBlock;
     private boolean hasRendered = false;
     private boolean isExportInProgress = false;
@@ -66,6 +67,7 @@ public class VisualGraphPanel extends JPanel {
 
         graphExport.setIcon(IconLoader.loadIcon("icons/share-symbol.png", 0.2));
         graphExport.setPreferredSize(new Dimension(130, 40));
+        graphExporter = new GraphExporter();
 
         JPanel buttonGroup = new JPanel();
         buttonGroup.setLayout(new FlowLayout(FlowLayout.RIGHT));
@@ -139,7 +141,7 @@ public class VisualGraphPanel extends JPanel {
                         final long timestamp = new Date().getTime();
 
                         if (exportBox.isBatchExport()) {
-                            new GraphBatchExportThread(dfa, scale, exportBox.includeLineStates(), new GraphExportProgressView(outputPath) {
+                            new GraphBatchExportThread(graphExporter, dfa, scale, exportBox.includeLineStates(), new GraphExportProgressView(outputPath) {
                                 private int index = 0;
 
                                 @Override
@@ -185,7 +187,7 @@ public class VisualGraphPanel extends JPanel {
                             }.start();
 
                             try {
-                                saveImage(GraphExporter.exportCurrentGraph(graph, scale, selectedBlock, state), timestamp, 0);
+                                saveImage(graphExporter.exportCurrentGraph(graph, scale, selectedBlock, state), timestamp, 0);
                             } catch (IOException ex) {
                                 showExportErrorBox();
                             }
@@ -309,6 +311,15 @@ public class VisualGraphPanel extends JPanel {
      */
     public void setJumpToAction(boolean enabled) {
         jumpToAction.setSelected(enabled);
+    }
+
+    /**
+     * Tells whether Jump to Action is enabled.
+     *
+     * @return true iff Jump to Action enabled
+     */
+    public boolean isJumpToActionEnabled() {
+        return jumpToAction.isSelected();
     }
 
     /**

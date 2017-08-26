@@ -16,8 +16,8 @@ import java.util.Map;
 /**
  * @author Patrick Petrovic
  *
- *         Main interface for interaction. Provides important methods to get data from DFAFramework and to build the
- *         visual graph. Additionally, it handles creation of VisualGraphPanel and graph export.
+ * Main interface for interaction. Provides important methods to get data from DFAFramework and to build the visual
+ * graph. Additionally, it handles creation of VisualGraphPanel and graph export.
  */
 public class GraphUIController {
     private VisualGraphPanel panel;
@@ -125,12 +125,12 @@ public class GraphUIController {
                 ArrayList<mxCell> selectedCells = (ArrayList<mxCell>) mxEventObject.getProperty("removed");
 
 
-                    if (selectedCells != null && selectedCells.size() > 0) {
-                        mxCell selectedCell = selectedCells.get(0);
-                        panel.setSelectedBlock( mxCellMap.get(selectedCell));
+                if (selectedCells != null && selectedCells.size() > 0) {
+                    mxCell selectedCell = selectedCells.get(0);
+                    panel.setSelectedBlock(mxCellMap.get(selectedCell));
 
-                    } else {
-                        panel.setSelectedBlock( null);
+                } else {
+                    panel.setSelectedBlock(null);
 
                 }
 
@@ -159,7 +159,11 @@ public class GraphUIController {
         }
 
         panel.renderGraph(dfa);
-        updateStatePanel();
+
+        // If Jump to Action is enabled, the block selection will change, automatically triggering updateStatePanel().
+        if (!panel.isJumpToActionEnabled()) {
+            updateStatePanel();
+        }
     }
 
     /**
@@ -193,7 +197,7 @@ public class GraphUIController {
             statePanel.setIn(inStateString);
             statePanel.setOut(outStateString);
             statePanel.setSelectedLine(text, blockNumber, lineNumber);
-        } else if (statePanel != null){
+        } else if (statePanel != null) {
             statePanel.reset();
         }
     }

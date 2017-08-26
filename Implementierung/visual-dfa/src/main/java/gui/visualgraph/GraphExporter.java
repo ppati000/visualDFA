@@ -39,7 +39,7 @@ public class GraphExporter {
      *
      * @return a {@code BufferedImage} containing the graph and the selected block state
      */
-    public static BufferedImage exportCurrentGraph(mxGraph graph, double scale, UIAbstractBlock selectedBlock, BlockState state) {
+    public BufferedImage exportCurrentGraph(mxGraph graph, double scale, UIAbstractBlock selectedBlock, BlockState state) {
         BufferedImage graphImage;
 
         int stateImageWidth = (int) (STATE_AREA_WIDTH * scale);
@@ -110,7 +110,7 @@ public class GraphExporter {
         return result;
     }
 
-    public static void batchExportAsync(DFAExecution dfa, double scale, boolean includeLineSteps, GraphExportCallback callback) {
+    public void batchExportAsync(DFAExecution dfa, double scale, boolean includeLineSteps, GraphExportCallback callback) {
         dfa = dfa.clone();
 
         VisualGraphPanel panel = new VisualGraphPanel();

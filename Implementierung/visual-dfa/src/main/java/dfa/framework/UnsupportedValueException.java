@@ -3,9 +3,10 @@ package dfa.framework;
 import soot.Value;
 
 /**
- * @author Sebastian Rauch 
+ * An {@code Exception} thrown to indicate that an unsupported {@code soot.Value} was encountered.
  * 
- *         An {@code Exception} thrown to indicate that an unsupported {@code soot.Value} was encountered.
+ * @author Sebastian Rauch
+ *
  */
 public class UnsupportedValueException extends DFAException {
 

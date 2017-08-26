@@ -3,7 +3,6 @@ package dfa.analyses;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Objects;
-import java.util.SortedMap;
 
 import soot.PrimType;
 import soot.Type;
@@ -17,8 +16,6 @@ import soot.jimple.internal.JimpleLocal;
  */
 public class TaintElement extends LocalMapElement<TaintElement.Value> {
 
-    private SortedMap<JimpleLocal, Value> localMap;
-    
     /**
      * Determines whether a certain type of Local is accepted (can be contained in) a {@code TaintElement}.
      * 
@@ -35,18 +32,14 @@ public class TaintElement extends LocalMapElement<TaintElement.Value> {
         super(localMap, LocalMapElement.DEFAULT_COMPARATOR);
     }
 
-    public TaintElement() {
-        super();
-    }
-
     @Override
     public String getStringRepresentation() {
-        if (localMap.isEmpty()) {
+        if (getLocalMap().isEmpty()) {
             return "";
         }
         
         StringBuilder sb = new StringBuilder();
-        Iterator<Map.Entry<JimpleLocal, Value>> entryIt = localMap.entrySet().iterator();
+        Iterator<Map.Entry<JimpleLocal, Value>> entryIt = getLocalMap().entrySet().iterator();
         Map.Entry<JimpleLocal, Value> entry = entryIt.next();
         sb.append(entry.getKey().getName()).append(": ").append(entry.getValue());
         
@@ -59,7 +52,7 @@ public class TaintElement extends LocalMapElement<TaintElement.Value> {
         return sb.toString();
     }
 
-    static class Value {
+    public static class Value {
 
         private TaintState taintState;
         
@@ -86,6 +79,15 @@ public class TaintElement extends LocalMapElement<TaintElement.Value> {
             this.taintState = taintState;
         }
         
+        public boolean equals(Object o) {
+            if (! (o instanceof Value)) {
+                return false;
+            }
+            
+            Value val = (Value) o;
+            return getTaintState() == val.getTaintState() && wasViolated() == val.wasViolated();
+        }
+        
         public String toString() {
             if (wasViolated()) {
                 return taintState + " (v)";
@@ -96,7 +98,7 @@ public class TaintElement extends LocalMapElement<TaintElement.Value> {
     }
     
     
-    enum TaintState {
+    public enum TaintState {
         // TODO use proper bottom-symbol
         TAINTED("tainted"), CLEAN("clean"), BOTTOM("B");
         
@@ -118,12 +120,12 @@ public class TaintElement extends LocalMapElement<TaintElement.Value> {
         }
 
         TaintElement e = (TaintElement) o;
-        return localMap.equals(e.getLocalMap());        
+        return getLocalMap().equals(e.getLocalMap());        
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(localMap);
+        return Objects.hash(getLocalMap());
     }
 
     @Override

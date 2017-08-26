@@ -12,11 +12,11 @@ import soot.Unit;
 import soot.toolkits.graph.Block;
 
 /**
- * @author Sebastian Rauch 
- *
- *         A {@code ControlFlowGraph} is a graph that consists of basic-blocks and the edges between those indicate the
- *         possible control flow. A {@code ControlFlowGraph} has exactly one start-block and at most one end-block (no
- *         end-block is possible).
+ * A {@code ControlFlowGraph} is a graph that consists of basic-blocks and the edges between those indicate the possible
+ * control flow. A {@code ControlFlowGraph} has exactly one start-block and at most one end-block (no end-block is
+ * possible).
+ * 
+ * @author Sebastian Rauch
  */
 public class ControlFlowGraph {
 

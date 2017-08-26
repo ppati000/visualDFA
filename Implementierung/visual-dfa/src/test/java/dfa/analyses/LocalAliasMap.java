@@ -6,11 +6,10 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import dfa.analyses.ConstantFoldingElement.Value;
 import soot.Local;
 import soot.jimple.internal.JimpleLocal;
 
-public class LocalAliasMap {
+public class LocalAliasMap<V> {
 
     private Set<Local> locals;
     
@@ -38,7 +37,7 @@ public class LocalAliasMap {
         return aliasMap.get(alias);
     }
     
-    public Value getValueByAliasOrOriginalName(String name, Map<JimpleLocal, Value> map) {
+    public V getValueByAliasOrOriginalName(String name, Map<JimpleLocal, V> map) {
         JimpleLocal local = getLocalByAliasOrName(name);
         return map.get(local);
     }

@@ -11,8 +11,8 @@ import dfa.analyses.ConstantBitsFactory;
 import dfa.analyses.ConstantFoldingFactory;
 import dfa.analyses.ReachingDefinitionsFactory;
 import dfa.analyses.TaintFactory;
-import dfa.analyses.testanalyses.DummyFactory;
 
+// TODO replace with something that actually works ... thank's soot
 public class AnalysisLoader {
 
     private String packageName;

@@ -1,12 +1,14 @@
 package dfa.framework;
 
 /**
- * @author Sebastian Rauch 
  * 
- *         A {@code BlockState} represents an in-state an an out-state.
+ * A {@code BlockState} represents an in-state an an out-state.
  *
  * @param <E>
  *        the type of {@code LatticeElement} used in this {@code BlockState}
+ * 
+ * @author Sebastian Rauch
+ * 
  */
 public class BlockState<E extends LatticeElement> {
 

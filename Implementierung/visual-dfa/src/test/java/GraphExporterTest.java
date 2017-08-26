@@ -12,6 +12,8 @@ import static org.junit.Assert.*;
 import org.junit.*;
 
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -30,6 +32,8 @@ public class GraphExporterTest {
     private BasicBlock basicBlock = mock(BasicBlock.class);
     private mxGraph graph;
     private final Object lock = new Object();
+    private final GraphExporter graphExporter = new GraphExporter();
+    private final GraphExporter mockExporter = mock(GraphExporter.class);
 
     @Before
     public void createPanelAndGraph() {
@@ -76,7 +80,7 @@ public class GraphExporterTest {
 
     @Test
     public void shouldCreateSmallExportImage() throws IOException {
-        BufferedImage exportedImage = GraphExporter.exportCurrentGraph(graph, 1.0, null, null);
+        BufferedImage exportedImage = graphExporter.exportCurrentGraph(graph, 1.0, null, null);
         BufferedImage referenceImage = ImageIO.read(getClass().getResourceAsStream("/export-small.png"));
 
         assertEquals("", TestUtils.bufferedImagesEqual(exportedImage, referenceImage, 10, 100, 10));
@@ -84,7 +88,7 @@ public class GraphExporterTest {
 
     @Test
     public void shouldCreateMediumExportImage() throws IOException {
-        BufferedImage exportedImage = GraphExporter.exportCurrentGraph(graph, 2.0, null, null);
+        BufferedImage exportedImage = graphExporter.exportCurrentGraph(graph, 2.0, null, null);
         BufferedImage referenceImage = ImageIO.read(getClass().getResourceAsStream("/export-medium.png"));
 
         assertEquals("", TestUtils.bufferedImagesEqual(exportedImage, referenceImage, 10, 300, 10));
@@ -92,7 +96,7 @@ public class GraphExporterTest {
 
     @Test
     public void shouldCreateLargeExportImage() throws IOException {
-        BufferedImage exportedImage = GraphExporter.exportCurrentGraph(graph, 3.0, null, null);
+        BufferedImage exportedImage = graphExporter.exportCurrentGraph(graph, 3.0, null, null);
         BufferedImage referenceImage = ImageIO.read(getClass().getResourceAsStream("/export-large.png"));
 
         assertEquals("", TestUtils.bufferedImagesEqual(exportedImage, referenceImage, 10, 800, 10));
@@ -120,7 +124,7 @@ public class GraphExporterTest {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                GraphExporter.batchExportAsync(dfa, 1.0, true, testCallback);
+                graphExporter.batchExportAsync(dfa, 1.0, true, testCallback);
             }
         }).start();
 
@@ -144,7 +148,7 @@ public class GraphExporterTest {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                GraphExporter.batchExportAsync(dfa, 3.0, false, blockTestCallback);
+                graphExporter.batchExportAsync(dfa, 3.0, false, blockTestCallback);
             }
         }).start();
 
@@ -162,6 +166,12 @@ public class GraphExporterTest {
         for (int i = 0; i < dfa.getTotalBlockSteps(); i++) {
             assertEquals(i, (int) blockTestCallback.steps.get(i));
         }
+    }
+
+    @Test
+    public void graphBatchExportThreadShouldWork() throws InterruptedException {
+        new GraphBatchExportThread(mockExporter, dfa, 3.0, false, null).run(); // Runs in current thread.
+        verify(mockExporter, times(1)).batchExportAsync(dfa, 3.0, false, null);
     }
 
     private class TestGraphExportCallback implements GraphExportCallback {

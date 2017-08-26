@@ -3,9 +3,9 @@ package dfa.framework;
 import java.util.Iterator;
 
 /**
- * @author Sebastian Rauch 
+ * A {@code Worklist} contains {@code BasicBlock}s that need to be processed.
  * 
- *         A {@code Worklist} contains {@code BasicBlock}s that need to be processed.
+ * @author Sebastian Rauch
  */
 public interface Worklist extends Cloneable, Iterable<BasicBlock> {
 

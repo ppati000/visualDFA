@@ -3,12 +3,12 @@ package dfa.framework;
 import soot.Unit;
 
 /**
- * @author Sebastian Rauch 
- * 
- *         A {@code Transition} executes a transition of a given {@code LatticeElement} on a given {@code Unit}.
+ * A {@code Transition} executes a transition of a given {@code LatticeElement} on a given {@code Unit}.
  *
  * @param <E>
  *        the type of {@code LatticeElement} to perform transitions on
+ * 
+ * @author Sebastian Rauch
  */
 public interface Transition<E extends LatticeElement> {
 

@@ -1,29 +1,43 @@
-package dfa.framework;
+package dfa;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map.Entry;
+import java.util.Set;
 
 import org.junit.Assert;
 
-import dfa.analyses.ConstantFoldingElement;
-import dfa.analyses.LocalAliasMap;
 import dfa.analyses.ConstantFoldingElement.Value;
+import dfa.analyses.LocalAliasMap;
+import dfa.analyses.LocalMapElement;
 import soot.Unit;
 import soot.jimple.IntConstant;
+import soot.jimple.internal.JimpleLocal;
 import soot.toolkits.graph.Block;
 
-public class TestUtils {
+public class TestUtils<V> {
     
-    public static Value getCfIntValue(int c) {
+    private boolean print = true;
+    
+    public Value getCfIntValue(int c) {
         return new Value(IntConstant.v(c));
     }
     
-    public static void assertLocalValue(Value expected, String name, LocalAliasMap aliasMap, ConstantFoldingElement e) {
+    public void assertLocalValue(Object expected, String name, LocalMapElement<V> e) {
+        Set<Entry<JimpleLocal, V>> entries = e.getLocalMap().entrySet();
+        for (Entry<JimpleLocal, V> entry : entries) {
+            if (entry.getKey().getName().equals(name)) {
+                Assert.assertEquals(expected, entry.getValue());
+            }
+        }
+    }
+    
+    public void assertLocalValue(Object expected, String name, LocalAliasMap<V> aliasMap, LocalMapElement<V> e) {
         Assert.assertEquals(expected, aliasMap.getValueByAliasOrOriginalName(name, e.getLocalMap()));
     }
     
-    public static List<Unit> getUnitsFromBlock(Block block) {
+    public List<Unit> getUnitsFromBlock(Block block) {
         List<Unit> units = new ArrayList<Unit>();
         
         Iterator<Unit> unitIt = block.iterator();
@@ -35,7 +49,7 @@ public class TestUtils {
         return units;
     }
     
-    public static String unitsToString(List<Unit> units) {
+    public String unitsToString(List<Unit> units) {
         if (units.isEmpty()) {
             return "";
         }
@@ -51,7 +65,7 @@ public class TestUtils {
         return sb.toString();
     }
     
-    public static String blockToString(Block block) {
+    public String blockToString(Block block) {
         Iterator<Unit> unitIt = block.iterator();
         if (!unitIt.hasNext()) {
             return new String();
@@ -65,6 +79,16 @@ public class TestUtils {
         }
         
         return sb.toString();
+    }
+    
+    public void setPrint(boolean p) {
+        this.print = p;
+    }
+    
+    public void printInfo(Object o) {
+        if (print) {
+            System.out.println(o);
+        }
     }
     
 

@@ -170,7 +170,6 @@ public class ConstantFoldingTransition implements Transition<ConstantFoldingElem
         @Override
         public void caseIdentityStmt(IdentityStmt stmt) {
             // this is only used for parameter initialization (so set to TOP)
-            
             JimpleLocal lValLocal;
             if (stmt.getLeftOp() instanceof JimpleLocal) {
                 lValLocal = (JimpleLocal) stmt.getLeftOp();

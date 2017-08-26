@@ -9,6 +9,7 @@ import org.junit.Test;
 import codeprocessor.CodeProcessor;
 import codeprocessor.GraphBuilder;
 import dfa.TestMethod;
+import dfa.TestUtils;
 import dfa.analyses.ConstantFoldingElement;
 import dfa.analyses.ConstantFoldingElement.Value;
 import dfa.analyses.ConstantFoldingFactory;
@@ -19,6 +20,8 @@ import soot.Local;
 import soot.util.Chain;
 
 public class TestDFAExecutionPrecalculation {
+    
+    private static TestUtils<Value> tu = new TestUtils<Value>();
     
     private static SimpleBlockGraph bgConstantFoldingSimple;
     private static SimpleBlockGraph bgConstantFoldingProgSpec;
@@ -54,7 +57,7 @@ public class TestDFAExecutionPrecalculation {
         Assert.assertEquals(0, dfaExecution.getCurrentBlockStep());
         
         ControlFlowGraph cfg = dfaExecution.getCFG();
-        LocalAliasMap aliasMap = buildAliasMapSimple();
+        LocalAliasMap<Value> aliasMap = buildAliasMapSimple();
         
         BasicBlock startBlock = cfg.getStartBlock();
         BasicBlock endBlock = cfg.getEndBlock();
@@ -63,18 +66,18 @@ public class TestDFAExecutionPrecalculation {
         BlockState<ConstantFoldingElement> initStartBlockState = initialAnalysisState.getBlockState(startBlock);
         ConstantFoldingElement initStartBlockInState = initStartBlockState.getInState();
         
-        TestUtils.assertLocalValue(TestUtils.getCfIntValue(0), "top", aliasMap, initStartBlockInState);
-        TestUtils.assertLocalValue(TestUtils.getCfIntValue(0), "one", aliasMap, initStartBlockInState);
-        TestUtils.assertLocalValue(TestUtils.getCfIntValue(0), "x", aliasMap, initStartBlockInState);
-        TestUtils.assertLocalValue(TestUtils.getCfIntValue(0), "y", aliasMap, initStartBlockInState);
-        TestUtils.assertLocalValue(TestUtils.getCfIntValue(0), "z", aliasMap, initStartBlockInState);
+        tu.assertLocalValue(tu.getCfIntValue(0), "top", aliasMap, initStartBlockInState);
+        tu.assertLocalValue(tu.getCfIntValue(0), "one", aliasMap, initStartBlockInState);
+        tu.assertLocalValue(tu.getCfIntValue(0), "x", aliasMap, initStartBlockInState);
+        tu.assertLocalValue(tu.getCfIntValue(0), "y", aliasMap, initStartBlockInState);
+        tu.assertLocalValue(tu.getCfIntValue(0), "z", aliasMap, initStartBlockInState);
         
         ConstantFoldingElement initStartBlockOutState = initStartBlockState.getOutState();
-        TestUtils.assertLocalValue(Value.getBottom(), "top", aliasMap, initStartBlockOutState);
-        TestUtils.assertLocalValue(Value.getBottom(), "one", aliasMap, initStartBlockOutState);
-        TestUtils.assertLocalValue(Value.getBottom(), "x", aliasMap, initStartBlockOutState);
-        TestUtils.assertLocalValue(Value.getBottom(), "y", aliasMap, initStartBlockOutState);
-        TestUtils.assertLocalValue(Value.getBottom(), "z", aliasMap, initStartBlockOutState);
+        tu.assertLocalValue(Value.getBottom(), "top", aliasMap, initStartBlockOutState);
+        tu.assertLocalValue(Value.getBottom(), "one", aliasMap, initStartBlockOutState);
+        tu.assertLocalValue(Value.getBottom(), "x", aliasMap, initStartBlockOutState);
+        tu.assertLocalValue(Value.getBottom(), "y", aliasMap, initStartBlockOutState);
+        tu.assertLocalValue(Value.getBottom(), "z", aliasMap, initStartBlockOutState);
 
         // on to the next block-step
         dfaExecution.nextBlockStep();
@@ -83,11 +86,11 @@ public class TestDFAExecutionPrecalculation {
         AnalysisState<ConstantFoldingElement> aState = dfaExecution.getCurrentAnalysisState();
        
         ConstantFoldingElement startBlockFinalOutState = aState.getBlockState(startBlock).getOutState();
-        TestUtils.assertLocalValue(Value.getTop(), "top", aliasMap, startBlockFinalOutState);
-        TestUtils.assertLocalValue(TestUtils.getCfIntValue(1), "one", aliasMap, startBlockFinalOutState);
-        TestUtils.assertLocalValue(TestUtils.getCfIntValue(17), "x", aliasMap, startBlockFinalOutState);
-        TestUtils.assertLocalValue(TestUtils.getCfIntValue(0), "y", aliasMap, startBlockFinalOutState);
-        TestUtils.assertLocalValue(TestUtils.getCfIntValue(0), "z", aliasMap, startBlockFinalOutState);
+        tu.assertLocalValue(Value.getTop(), "top", aliasMap, startBlockFinalOutState);
+        tu.assertLocalValue(tu.getCfIntValue(1), "one", aliasMap, startBlockFinalOutState);
+        tu.assertLocalValue(tu.getCfIntValue(17), "x", aliasMap, startBlockFinalOutState);
+        tu.assertLocalValue(tu.getCfIntValue(0), "y", aliasMap, startBlockFinalOutState);
+        tu.assertLocalValue(tu.getCfIntValue(0), "z", aliasMap, startBlockFinalOutState);
         
         // skip the two branches of the if
         dfaExecution.nextBlockStep();
@@ -97,11 +100,11 @@ public class TestDFAExecutionPrecalculation {
         aState = dfaExecution.getCurrentAnalysisState();
         
         ConstantFoldingElement endBlockInState = aState.getBlockState(endBlock).getInState();
-        TestUtils.assertLocalValue(Value.getTop(), "top", aliasMap, endBlockInState);
-        TestUtils.assertLocalValue(TestUtils.getCfIntValue(1), "one", aliasMap, endBlockInState);
-        TestUtils.assertLocalValue(Value.getTop(), "x", aliasMap, endBlockInState);
-        TestUtils.assertLocalValue(TestUtils.getCfIntValue(0), "y", aliasMap, endBlockInState);
-        TestUtils.assertLocalValue(TestUtils.getCfIntValue(0), "z", aliasMap, endBlockInState);
+        tu.assertLocalValue(Value.getTop(), "top", aliasMap, endBlockInState);
+        tu.assertLocalValue(tu.getCfIntValue(1), "one", aliasMap, endBlockInState);
+        tu.assertLocalValue(Value.getTop(), "x", aliasMap, endBlockInState);
+        tu.assertLocalValue(tu.getCfIntValue(0), "y", aliasMap, endBlockInState);
+        tu.assertLocalValue(tu.getCfIntValue(0), "z", aliasMap, endBlockInState);
         
         // on to the very end
         while (dfaExecution.nextElementaryStep());
@@ -111,11 +114,11 @@ public class TestDFAExecutionPrecalculation {
         aState = dfaExecution.getCurrentAnalysisState();
         
         ConstantFoldingElement endBlockOutState = aState.getBlockState(endBlock).getOutState();
-        TestUtils.assertLocalValue(Value.getTop(), "top", aliasMap, endBlockOutState);
-        TestUtils.assertLocalValue(TestUtils.getCfIntValue(1), "one", aliasMap, endBlockOutState);
-        TestUtils.assertLocalValue(Value.getTop(), "x", aliasMap, endBlockOutState);
-        TestUtils.assertLocalValue(TestUtils.getCfIntValue(0), "y", aliasMap, endBlockOutState);
-        TestUtils.assertLocalValue(Value.getTop(), "z", aliasMap, endBlockOutState);
+        tu.assertLocalValue(Value.getTop(), "top", aliasMap, endBlockOutState);
+        tu.assertLocalValue(tu.getCfIntValue(1), "one", aliasMap, endBlockOutState);
+        tu.assertLocalValue(Value.getTop(), "x", aliasMap, endBlockOutState);
+        tu.assertLocalValue(tu.getCfIntValue(0), "y", aliasMap, endBlockOutState);
+        tu.assertLocalValue(Value.getTop(), "z", aliasMap, endBlockOutState);
     }
     
     private static TestMethod getCodeSimple() {
@@ -137,11 +140,11 @@ public class TestDFAExecutionPrecalculation {
         return new TestMethod(signature, method);
     }
     
-    private LocalAliasMap buildAliasMapSimple() {
+    private LocalAliasMap<Value> buildAliasMapSimple() {
         Body body = bgConstantFoldingSimple.getBlocks().get(0).getBody();
         Chain<Local> locals = body.getLocals();
         
-        LocalAliasMap aliasMap = new LocalAliasMap(body.getLocals());
+        LocalAliasMap<Value> aliasMap = new LocalAliasMap<Value>(body.getLocals());
         Iterator<Local> localIt = locals.iterator();
         while (localIt.hasNext()) {
             Local l = localIt.next();
@@ -175,7 +178,7 @@ public class TestDFAExecutionPrecalculation {
         Assert.assertEquals(0, dfaExecution.getCurrentBlockStep());
         
         ControlFlowGraph cfg = dfaExecution.getCFG();
-        LocalAliasMap aliasMap = buildAliasMapProductSpec();
+        LocalAliasMap<Value> aliasMap = buildAliasMapProductSpec();
         
         BasicBlock startBlock = cfg.getStartBlock();
         BasicBlock endBlock = cfg.getEndBlock();
@@ -184,16 +187,16 @@ public class TestDFAExecutionPrecalculation {
         BlockState<ConstantFoldingElement> initStartBlockState = initialAnalysisState.getBlockState(startBlock);
         ConstantFoldingElement initStartBlockInState = initStartBlockState.getInState();
         
-        TestUtils.assertLocalValue(TestUtils.getCfIntValue(0), "n", aliasMap, initStartBlockInState);
-        TestUtils.assertLocalValue(TestUtils.getCfIntValue(0), "one", aliasMap, initStartBlockInState);
-        TestUtils.assertLocalValue(TestUtils.getCfIntValue(0), "x", aliasMap, initStartBlockInState);
-        TestUtils.assertLocalValue(TestUtils.getCfIntValue(0), "y", aliasMap, initStartBlockInState);
+        tu.assertLocalValue(tu.getCfIntValue(0), "n", aliasMap, initStartBlockInState);
+        tu.assertLocalValue(tu.getCfIntValue(0), "one", aliasMap, initStartBlockInState);
+        tu.assertLocalValue(tu.getCfIntValue(0), "x", aliasMap, initStartBlockInState);
+        tu.assertLocalValue(tu.getCfIntValue(0), "y", aliasMap, initStartBlockInState);
         
         ConstantFoldingElement initStartBlockOutState = initStartBlockState.getOutState();
-        TestUtils.assertLocalValue(Value.getBottom(), "n", aliasMap, initStartBlockOutState);
-        TestUtils.assertLocalValue(Value.getBottom(), "one", aliasMap, initStartBlockOutState);
-        TestUtils.assertLocalValue(Value.getBottom(), "x", aliasMap, initStartBlockOutState);
-        TestUtils.assertLocalValue(Value.getBottom(), "y", aliasMap, initStartBlockOutState);
+        tu.assertLocalValue(Value.getBottom(), "n", aliasMap, initStartBlockOutState);
+        tu.assertLocalValue(Value.getBottom(), "one", aliasMap, initStartBlockOutState);
+        tu.assertLocalValue(Value.getBottom(), "x", aliasMap, initStartBlockOutState);
+        tu.assertLocalValue(Value.getBottom(), "y", aliasMap, initStartBlockOutState);
 
         // on to the next block-step
         dfaExecution.nextBlockStep();
@@ -202,10 +205,10 @@ public class TestDFAExecutionPrecalculation {
         AnalysisState<ConstantFoldingElement> aState = dfaExecution.getCurrentAnalysisState();
        
         ConstantFoldingElement startBlockFinalOutState = aState.getBlockState(startBlock).getOutState();
-        TestUtils.assertLocalValue(Value.getTop(), "n", aliasMap, startBlockFinalOutState);
-        TestUtils.assertLocalValue(TestUtils.getCfIntValue(1), "one", aliasMap, startBlockFinalOutState);
-        TestUtils.assertLocalValue(TestUtils.getCfIntValue(6), "x", aliasMap, startBlockFinalOutState);
-        TestUtils.assertLocalValue(Value.getTop(), "y", aliasMap, startBlockFinalOutState);
+        tu.assertLocalValue(Value.getTop(), "n", aliasMap, startBlockFinalOutState);
+        tu.assertLocalValue(tu.getCfIntValue(1), "one", aliasMap, startBlockFinalOutState);
+        tu.assertLocalValue(tu.getCfIntValue(6), "x", aliasMap, startBlockFinalOutState);
+        tu.assertLocalValue(Value.getTop(), "y", aliasMap, startBlockFinalOutState);
         
         // forwards to the end-block (final iteration)
         dfaExecution.nextBlockStep();
@@ -213,14 +216,13 @@ public class TestDFAExecutionPrecalculation {
         dfaExecution.nextBlockStep();
         dfaExecution.nextBlockStep();
         
-//        Assert.assertEquals(5, dfaExecution.getCurrentBlockStep());
         aState = dfaExecution.getCurrentAnalysisState();
         
         ConstantFoldingElement endBlockInState = aState.getBlockState(endBlock).getInState();
-        TestUtils.assertLocalValue(Value.getTop(), "n", aliasMap, endBlockInState);
-        TestUtils.assertLocalValue(TestUtils.getCfIntValue(1), "one", aliasMap, endBlockInState);
-        TestUtils.assertLocalValue(TestUtils.getCfIntValue(6), "x", aliasMap, endBlockInState);
-        TestUtils.assertLocalValue(Value.getTop(), "y", aliasMap, endBlockInState);
+        tu.assertLocalValue(Value.getTop(), "n", aliasMap, endBlockInState);
+        tu.assertLocalValue(tu.getCfIntValue(1), "one", aliasMap, endBlockInState);
+        tu.assertLocalValue(tu.getCfIntValue(6), "x", aliasMap, endBlockInState);
+        tu.assertLocalValue(Value.getTop(), "y", aliasMap, endBlockInState);
 
         // on to the very end
         while (dfaExecution.nextElementaryStep());
@@ -230,10 +232,10 @@ public class TestDFAExecutionPrecalculation {
         aState = dfaExecution.getCurrentAnalysisState();
         
         ConstantFoldingElement endBlockOutState = aState.getBlockState(endBlock).getOutState();
-        TestUtils.assertLocalValue(Value.getTop(), "n", aliasMap, endBlockOutState);
-        TestUtils.assertLocalValue(TestUtils.getCfIntValue(1), "one", aliasMap, endBlockOutState);
-        TestUtils.assertLocalValue(TestUtils.getCfIntValue(6), "x", aliasMap, endBlockOutState);
-        TestUtils.assertLocalValue(Value.getTop(), "y", aliasMap, endBlockOutState);
+        tu.assertLocalValue(Value.getTop(), "n", aliasMap, endBlockOutState);
+        tu.assertLocalValue(tu.getCfIntValue(1), "one", aliasMap, endBlockOutState);
+        tu.assertLocalValue(tu.getCfIntValue(6), "x", aliasMap, endBlockOutState);
+        tu.assertLocalValue(Value.getTop(), "y", aliasMap, endBlockOutState);
     }
     
     private static TestMethod getCodeProductSpec() {
@@ -256,11 +258,11 @@ public class TestDFAExecutionPrecalculation {
         return new TestMethod(signature, method);
     }
     
-    private LocalAliasMap buildAliasMapProductSpec() {
+    private LocalAliasMap<Value> buildAliasMapProductSpec() {
         Body body = bgConstantFoldingProgSpec.getBlocks().get(0).getBody();
         Chain<Local> locals = body.getLocals();
         
-        LocalAliasMap aliasMap = new LocalAliasMap(body.getLocals());
+        LocalAliasMap<Value> aliasMap = new LocalAliasMap<Value>(body.getLocals());
         Iterator<Local> localIt = locals.iterator();
         while (localIt.hasNext()) {
             Local l = localIt.next();

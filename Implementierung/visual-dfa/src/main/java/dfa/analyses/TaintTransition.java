@@ -1,5 +1,8 @@
 package dfa.analyses;
 
+import java.util.Map;
+import java.util.Set;
+
 import dfa.analyses.TaintElement.TaintState;
 import dfa.framework.TaintAnalysisTag;
 import dfa.framework.Transition;
@@ -123,7 +126,7 @@ public class TaintTransition implements Transition<TaintElement> {
             JimpleLocal lValLocal;
             if (stmt.getLeftOp() instanceof JimpleLocal) {
                 lValLocal = (JimpleLocal) stmt.getLeftOp();
-                if (!ConstantFoldingElement.isLocalTypeAccepted(lValLocal.getType())) {
+                if (!TaintElement.isLocalTypeAccepted(lValLocal.getType())) {
                     return;
                 }
             } else if (!(stmt.getLeftOp() instanceof Ref)) {
@@ -169,7 +172,7 @@ public class TaintTransition implements Transition<TaintElement> {
             JimpleLocal lValLocal;
             if (stmt.getLeftOp() instanceof JimpleLocal) {
                 lValLocal = (JimpleLocal) stmt.getLeftOp();
-                if (!ConstantFoldingElement.isLocalTypeAccepted(lValLocal.getType())) {
+                if (!TaintElement.isLocalTypeAccepted(lValLocal.getType())) {
                     return;
                 }
             } else if (!(stmt.getLeftOp() instanceof Ref)) {
@@ -191,12 +194,32 @@ public class TaintTransition implements Transition<TaintElement> {
 
         @Override
         public void caseInvokeStmt(InvokeStmt stmt) {
+            
             InvokeExpr invokeExpr = stmt.getInvokeExpr();
-            if (invokeExpr.getArgCount() != 1) {
-                // ignore since this can't be any special mathod for taint-analysis
+            if (invokeExpr.getArgCount() > 1) {
+                // ignore since this can't be any special method for taint-analysis
                 return;
             }
-
+            
+            if (invokeExpr.getArgCount() == 0) {
+                
+                // this handles the parameterless sensitive
+                SootMethod method = invokeExpr.getMethod();
+                if (method.hasTag(TaintAnalysisTag.SENSITIVE_TAG.getName())) {
+                    Set<Map.Entry<JimpleLocal, TaintElement.Value>> entries = inputElement.getLocalMap().entrySet();
+                    for (Map.Entry<JimpleLocal, TaintElement.Value> e : entries) {
+                        TaintElement.Value val = e.getValue();
+                        if (val.getTaintState() == TaintState.TAINTED && ! val.wasViolated()) {
+                            // we only need to do something if this is the first violation
+                            JimpleLocal local = e.getKey();
+                            TaintElement.Value inValue = inputElement.getValue(local);
+                            outputElement.setValue(local, new TaintElement.Value(inValue.getTaintState(), true));
+                        }
+                    }
+                }
+                return;
+            }
+            
             if (!(invokeExpr.getArg(0) instanceof JimpleLocal)) {
                 // ignore, since we can only taint locals
                 return;
@@ -208,20 +231,24 @@ public class TaintTransition implements Transition<TaintElement> {
             }
 
             SootMethod method = invokeExpr.getMethod();
+            TaintElement.Value inValue = inputElement.getValue(local);
             if (method.hasTag(TaintAnalysisTag.TAINT_TAG.getName())) {
                 // taint
-                TaintElement.Value inValue = inputElement.getValue(local);
-                outputElement.setValue(local, new TaintElement.Value(TaintState.TAINTED, inValue.wasViolated()));
+                if (inValue.getTaintState() != TaintState.TAINTED) {
+                    outputElement.setValue(local, new TaintElement.Value(TaintState.TAINTED, inValue.wasViolated()));
+                }
             } else if (method.hasTag(TaintAnalysisTag.CLEAN_TAG.getName())) {
                 // clean
-                TaintElement.Value inValue = inputElement.getValue(local);
-                outputElement.setValue(local, new TaintElement.Value(TaintState.CLEAN, inValue.wasViolated()));
+                if (inValue.getTaintState() != TaintState.CLEAN) {
+                    outputElement.setValue(local, new TaintElement.Value(TaintState.CLEAN, inValue.wasViolated()));
+                }
             } else if (method.hasTag(TaintAnalysisTag.SENSITIVE_TAG.getName())) {
                 // sensitive
-                TaintElement.Value inValue = inputElement.getValue(local);
-                boolean isViolated = inValue.wasViolated() | inValue.getTaintState().equals(TaintState.TAINTED);
-                outputElement.setValue(local, new TaintElement.Value(inValue.getTaintState(), isViolated));
+                if (!inValue.wasViolated() && inValue.getTaintState() == TaintState.TAINTED) {
+                    outputElement.setValue(local, new TaintElement.Value(TaintState.TAINTED, true));
+                }
             }
+            
         }
 
         @Override
@@ -427,11 +454,11 @@ public class TaintTransition implements Transition<TaintElement> {
             op.apply(eval);
 
             TaintElement.Value opVal = eval.getResult();
-            result = new TaintElement.Value(opVal.getTaintState(), false);
+            result = new TaintElement.Value(opVal.getTaintState(), opVal.wasViolated());
         }
 
         @Override
-        public void caseDynamicInvokeExpr(DynamicInvokeExpr expr) {
+        public void caseDynamicInvokeExpr(DynamicInvokeExpr expr) { 
             result = new TaintElement.Value(TaintState.TAINTED, false);
         }
 

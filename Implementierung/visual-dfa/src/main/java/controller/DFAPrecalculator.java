@@ -80,7 +80,8 @@ public class DFAPrecalculator implements Runnable {
             this.controller.createExceptionBox(e.getMessage());
             this.controller.visibilityInput();
         } catch (RuntimeException e) {
-            System.out.println("an unexpected error occured");
+            System.out.println("An unexpected error occured during the precalculation of the analysis: ");
+            e.printStackTrace();
         }
     }
 }

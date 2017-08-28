@@ -36,7 +36,12 @@ public class CodeProcessor {
             + "public static void __clean(double d){}" + "public static void __clean(char c){}"
             + "public static void __clean(long l){}" + "public static void __clean(short s){}"
             + "public static void __clean(byte b){}" + "public static void __clean(float f){}";
-    private static final String DEFAULT_SENSITIVE_METHOD = "public static void __sensitive() {}";
+    private static final String DEFAULT_SENSITIVE_METHODS = "public static void __sensitive() {}"
+            + "public static void __sensitive(Object o) {}" + "public static void __sensitive(boolean b) {}"
+            + "public static void __sensitive(int i) {}" + "public static void __sensitive(double d) {}"
+            + "public static void __sensitive(char c) {}" + "public static void __sensitive(long l) {}"
+            + "public static void __sensitive(short s) {}" + "public static void __sensitive(byte b) {}"
+            + "public static void __sensitive(float f) {}";
 
     /**
      * Creates a {@code CodeProcessor} with the given code fragment and compiles
@@ -108,7 +113,7 @@ public class CodeProcessor {
 
     private String getTaintWrap(String code) {
         int endIndex = code.lastIndexOf("}");
-        code = code.substring(0, endIndex) + DEFAULT_TAINT_METHODS + DEFAULT_CLEAN_METHODS + DEFAULT_SENSITIVE_METHOD
+        code = code.substring(0, endIndex) + DEFAULT_TAINT_METHODS + DEFAULT_CLEAN_METHODS + DEFAULT_SENSITIVE_METHODS
                 + "}";
         return code;
     }

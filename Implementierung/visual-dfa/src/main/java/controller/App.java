@@ -20,21 +20,19 @@ public final class App {
      *            command line input
      */
     public static void main(String[] args) {
-        final Controller ctrl = new Controller();
-        final ProgramFrame frame = new ProgramFrame(ctrl);
+        final Controller controller = new Controller();
+        final ProgramFrame programFrame = new ProgramFrame(controller);
         EventQueue.invokeLater(new Runnable() {
             public void run() {
                 try {
-                    frame.setVisible(true);
-
+                    programFrame.setVisible(true);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
         });
-        ctrl.setProgramFrame(frame);
-        ctrl.visibilityInput();
-        ctrl.pathSelection();
-        ctrl.setDefaultCode();
+        controller.setProgramFrame(programFrame);
+        controller.parseOptionFile();
+        controller.setDefaultCode();
     }
 }

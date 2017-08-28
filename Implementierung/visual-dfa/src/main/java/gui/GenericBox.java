@@ -133,7 +133,7 @@ public class GenericBox extends DialogBox {
     
     public boolean showAgain() {
         if (hasNotShowCheckbox) {
-            return notShowCheckbox.isSelected();
+            return !notShowCheckbox.isSelected();
         } else {
             return true;
         }

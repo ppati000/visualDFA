@@ -25,7 +25,7 @@ import soot.jimple.internal.JimpleLocal;
  *
  */
 public class ConstantFoldingElement extends LocalMapElement<Value> {
-
+    
     /**
      * Determines whether a certain type of Local is accepted (can be contained in) a {@code ConstantFoldingElement}.
      * 
@@ -189,18 +189,15 @@ public class ConstantFoldingElement extends LocalMapElement<Value> {
 
         @Override
         public String toString() {
-            // TODO use proper symbols
             switch (getType()) {
             case BOTTOM:
-                return "B";
-            // return "\u22A5";
+                return LocalMapElement.BOTTOM_SYMBOL;
             case TOP:
-                return "T";
-            // return "\u22A4";
+                return LocalMapElement.TOP_SYMBOL;
             case CONST:
                 return constToString(getConstant());
             default:
-                throw new IllegalStateException();
+                return "";  // ignore
             }
         }
 
@@ -210,7 +207,7 @@ public class ConstantFoldingElement extends LocalMapElement<Value> {
             } else if (c instanceof LongConstant) {
                 return String.valueOf(((LongConstant) c).value);
             } else {
-                throw new IllegalStateException();
+                throw new IllegalStateException("unknown ArithmeticConstant");
             }
         }
 

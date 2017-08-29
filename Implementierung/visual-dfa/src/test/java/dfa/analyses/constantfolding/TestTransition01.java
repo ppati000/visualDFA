@@ -1332,6 +1332,5 @@ public class TestTransition01 {
         return aliasMap;
     }
     
-    // TODO test int comparisons (but this is a major pain to do since Java-Bytecode only has conditional jumps)
 
 }

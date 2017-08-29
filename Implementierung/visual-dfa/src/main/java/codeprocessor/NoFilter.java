@@ -10,6 +10,7 @@ import soot.SootMethod;
  */
 public class NoFilter extends Filter {
 
+    @Override
     /**
      * Filter for a given method, that decides if the method passes the filter
      * or not.

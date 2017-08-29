@@ -10,6 +10,7 @@ import dfa.framework.DFAFactory;
 import dfa.framework.DFAPrecalcController;
 import dfa.framework.LatticeElement;
 import dfa.framework.SimpleBlockGraph;
+import dfa.framework.StaticAnalysisLoader;
 import dfa.framework.Worklist;
 import dfa.framework.WorklistManager;
 import gui.visualgraph.VisualGraphPanel;
@@ -29,7 +30,8 @@ import gui.visualgraph.GraphUIController;
  */
 public class Controller {
 
-    // private static final String PACKAGE_NAME = "dfa.analyses"; // no longer needed
+    // private static final String PACKAGE_NAME = "dfa.analyses"; // no longer
+    // needed
     private static final String CLASS_PATH = System.getProperty("user.dir");
     private static final String ABORT_PRECALC_MESSAGE = "Do you want to stop the precalculation? You can also show intermediate results if the analysis state allows this.";
     private static final String ABORT_MESSAGE = "This leads to a complete deletion of the graph and the calculation. Would you like to continue?";
@@ -58,13 +60,17 @@ public class Controller {
      */
     public Controller() {
         // TODO @Anika the dirPrefix is only a temporary fix
-        // the analyses-classes can be put in .../anyDirectory/dfa/analyses and the argument to the
-        // AnalysisLoader-constructor must then be '.../anyDirectory' (the immediate parent of /dfa), otherwise the
+        // the analyses-classes can be put in .../anyDirectory/dfa/analyses and
+        // the argument to the
+        // AnalysisLoader-constructor must then be '.../anyDirectory' (the
+        // immediate parent of /dfa), otherwise the
         // package structure does not match the folder structure
 
         try {
-            String dirPrefix = "\\src\\test\\resources";
-            this.analysisLoader = new AnalysisLoader(CLASS_PATH + dirPrefix);
+            //TODO
+            String dirPrefix = System.getProperty("file.separator") + "src" + System.getProperty("file.separator")
+                    + "test" + System.getProperty("file.separator") + "resources";
+            this.analysisLoader = new StaticAnalysisLoader(CLASS_PATH + dirPrefix);
         } catch (IllegalStateException e) {
             e.printStackTrace();
         }
@@ -308,7 +314,7 @@ public class Controller {
         DFAPrecalculator precalculator = null;
         try {
             Worklist worklist = this.worklistManager.getWorklist(worklistName, blockGraph);
-            @SuppressWarnings("unchecked")
+            //@SuppressWarnings("unchecked")
             DFAFactory<? extends LatticeElement> dfaFactory = analysisLoader.getDFAFactory(analysisName);
             precalculator = new DFAPrecalculator(dfaFactory, worklist, blockGraph, this.precalcController, this);
         } catch (IllegalArgumentException e) {

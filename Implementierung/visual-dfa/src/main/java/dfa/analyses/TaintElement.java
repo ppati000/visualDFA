@@ -15,7 +15,7 @@ import soot.jimple.internal.JimpleLocal;
  *
  */
 public class TaintElement extends LocalMapElement<TaintElement.Value> {
-
+    
     /**
      * Determines whether a certain type of Local is accepted (can be contained in) a {@code TaintElement}.
      * 
@@ -30,6 +30,10 @@ public class TaintElement extends LocalMapElement<TaintElement.Value> {
 
     public TaintElement(Map<JimpleLocal, Value> localMap) {
         super(localMap, LocalMapElement.DEFAULT_COMPARATOR);
+    }
+    
+    public TaintElement() {
+        super();
     }
 
     @Override
@@ -59,6 +63,10 @@ public class TaintElement extends LocalMapElement<TaintElement.Value> {
         private boolean violated;
         
         public Value(TaintState taintState, boolean violated) {
+            if (taintState == null) {
+                throw new IllegalArgumentException("taintState must not be null");
+            }
+            
             setTaintState(taintState);
             setViolated(violated);
         }
@@ -99,8 +107,7 @@ public class TaintElement extends LocalMapElement<TaintElement.Value> {
     
     
     public enum TaintState {
-        // TODO use proper bottom-symbol
-        TAINTED("tainted"), CLEAN("clean"), BOTTOM("B");
+        TAINTED("tainted"), CLEAN("clean"), BOTTOM(LocalMapElement.BOTTOM_SYMBOL);
         
         private String description;
         

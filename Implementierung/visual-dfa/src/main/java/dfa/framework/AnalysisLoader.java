@@ -1,5 +1,11 @@
 package dfa.framework;
 
+import java.io.File;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -7,39 +13,27 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
-import dfa.analyses.ConstantBitsFactory;
-import dfa.analyses.ConstantFoldingFactory;
-import dfa.analyses.ReachingDefinitionsFactory;
-import dfa.analyses.TaintFactory;
-
-// TODO replace with something that actually works ... thank's soot
 public class AnalysisLoader {
 
-    private String packageName;
-    private String searchPath;
+    private static final String CLASS_FILE_EXTENSION = "class";
+
+    private String basePath;
 
     private List<String> analysisNames;
     private Map<String, DFAFactory<? extends LatticeElement>> analyses;
 
-    public AnalysisLoader(String packageName, String searchPath) {
-        if (packageName == null) {
-            throw new IllegalArgumentException("packageName must not be null");
-        }
-
+    // TODO remove packageName parameter
+    public AnalysisLoader(String searchPath) {
         if (searchPath == null) {
             throw new IllegalArgumentException("searchPath must not be null");
         }
 
-        this.packageName = packageName;
-        this.searchPath = searchPath;
+        this.basePath = searchPath;
     }
 
-    public String getPackageName() {
-        return packageName;
-    }
 
     public String getSearchPath() {
-        return searchPath;
+        return basePath;
     }
 
     /**
@@ -53,70 +47,114 @@ public class AnalysisLoader {
      * @param logger
      *        a {@code Logger} used to report problems to (if {@code null} is given, problems are not reported)
      */
+    @SuppressWarnings("unchecked")
     public void loadAnalyses(Logger logger) {
-        // this is just a temporary solution
+
+        File baseDir = new File(basePath);
 
         analysisNames = new LinkedList<String>();
         analyses = new HashMap<String, DFAFactory<? extends LatticeElement>>();
 
-        //DummyFactory dummyFactory = new DummyFactory();
-        //String dummyName = dummyFactory.getName();
+        List<ClassInfoPack> candidates = new LinkedList<ClassInfoPack>();
+        getClassFiles(baseDir, candidates, null);
 
-        ConstantFoldingFactory cfFactory = new ConstantFoldingFactory();
-        ConstantBitsFactory cbFactory = new ConstantBitsFactory();
-        ReachingDefinitionsFactory rdFactory = new ReachingDefinitionsFactory();
-        TaintFactory tFactory = new TaintFactory();
+        ClassLoader classLoader = null;
+        try {
+            classLoader = new URLClassLoader(new URL[] { baseDir.toURI().toURL() });
+        } catch (MalformedURLException e) {
+            logWarning(logger, e.getMessage(), "no analyses could be loaded");
+        }
 
-        //analysisNames.add(dummyName);
-        //analyses.put(dummyName, dummyFactory);
-        
+        if (classLoader == null) {
+            return;
+        }
 
-        analysisNames.add(cfFactory.getName());
-        analyses.put(cfFactory.getName(), cfFactory);
-        
-        analysisNames.add(cbFactory.getName());
-        analyses.put(cbFactory.getName(), cbFactory);
-        
-        analysisNames.add(rdFactory.getName());
-        analyses.put(rdFactory.getName(), rdFactory);
-        
-        analysisNames.add(tFactory.getName());
-        analyses.put(tFactory.getName(), tFactory);
+        for (ClassInfoPack p : candidates) {
+            Class<?> cls = null;
+            try {
+                cls = classLoader.loadClass(p.getFullClassName());
+            } catch (ClassNotFoundException e) {
+                logWarning(logger, e.getMessage(), "ignoring " + p.getFullClassName());
+            }
 
-        // TODO resolve NoSuchMethodError on Reflections(packageName)
-        // or more likely: find another way to load analyses
-        /*
-         * Reflections reflections = new Reflections(packageName);
-         * 
-         * List<Class<? extends DFAFactory>> analysisClasses = new ArrayList<Class<? extends
-         * DFAFactory>>(reflections.getSubTypesOf(DFAFactory.class));
-         * 
-         * if (analysisNames == null) { analysisNames = new LinkedList<String>(); analyses = new HashMap<String,
-         * DFAFactory>(); }
-         * 
-         * for (Class<? extends DFAFactory> analysisClass : analysisClasses) { Constructor<?> constructor = null;
-         * 
-         * String className = analysisClass.getCanonicalName(); try { constructor = analysisClass.getConstructor(); }
-         * catch (NoSuchMethodException | SecurityException e) { logWarning(logger,
-         * "cannot retrieve parameterless constructor of " + className, "ignoring " + className); e.printStackTrace(); }
-         * 
-         * if (constructor == null) { // skip this DFAFactory continue; }
-         * 
-         * DFAFactory dfaFactory = null; try { dfaFactory = (DFAFactory) constructor.newInstance(); } catch
-         * (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-         * logWarning(logger, "cannot invoke constructor of " + className, "ignoring " + className);
-         * e.printStackTrace(); } catch (RuntimeException e) { logWarning(logger, "constructor of " + className +
-         * " threw " + e.getMessage(), "ignoring " + className); }
-         * 
-         * if (dfaFactory == null) { // skip this DFAFactory continue; }
-         * 
-         * String analysisName = dfaFactory.getName();
-         * 
-         * if (analysisNames.contains(analysisName)) { logWarning(logger, "name collision for " + analysisName,
-         * "ignoring last one"); continue; }
-         * 
-         * analysisNames.add(analysisName); analyses.put(analysisName, dfaFactory); }
-         */
+            if (cls == null || !DFAFactory.class.isAssignableFrom(cls)) {
+                continue;
+            }
+
+            Class<DFAFactory<? extends LatticeElement>> factoryClass = null;
+            try {
+                factoryClass = (Class<DFAFactory<? extends LatticeElement>>) cls;
+            } catch (ClassCastException e) {
+                logWarning(logger, e.getMessage(), "ignoring " + p.getFullClassName());
+            }
+
+            if (factoryClass == null) {
+                continue;
+            }
+
+            String className = factoryClass.getCanonicalName();
+            Constructor<?> constructor = null;
+            try {
+                constructor = factoryClass.getConstructor();
+            } catch (NoSuchMethodException | SecurityException e) {
+                logWarning(logger, "cannot retrieve parameterless constructor of " + className,
+                        "ignoring " + className);
+            }
+
+            if (constructor == null) {
+                continue; // skip this DFAFactory
+            }
+
+            DFAFactory<? extends LatticeElement> dfaFactory = null;
+            try {
+                dfaFactory = (DFAFactory<? extends LatticeElement>) constructor.newInstance();
+            } catch (InstantiationException | IllegalAccessException | IllegalArgumentException
+                    | InvocationTargetException e) {
+                logWarning(logger, "cannot invoke constructor of " + className, "ignoring " + className);
+            } catch (RuntimeException e) {
+                logWarning(logger, "constructor of " + className + " threw " + e.getMessage(), "ignoring " + className);
+            }
+
+            if (dfaFactory == null) {
+                continue; // skip this DFAFactory
+            }
+
+            String analysisName = dfaFactory.getName();
+
+            if (analysisNames.contains(analysisName)) {
+                logWarning(logger, "name collision for " + analysisName, "ignoring second one");
+                continue;
+            }
+            analysisNames.add(analysisName);
+            analyses.put(analysisName, dfaFactory);
+        }
+
+        // this is just a temporary solution
+        // analysisNames = new LinkedList<String>();
+        // analyses = new HashMap<String, DFAFactory<? extends LatticeElement>>();
+        //
+        // //DummyFactory dummyFactory = new DummyFactory();
+        // //String dummyName = dummyFactory.getName();
+        //
+        // ConstantFoldingFactory cfFactory = new ConstantFoldingFactory();
+        // ConstantBitsFactory cbFactory = new ConstantBitsFactory();
+        // ReachingDefinitionsFactory rdFactory = new ReachingDefinitionsFactory();
+        // TaintFactory tFactory = new TaintFactory();
+        //
+        // analysisNames.add(cfFactory.getName());
+        // analyses.put(cfFactory.getName(), cfFactory);
+        //
+        // analysisNames.add(cbFactory.getName());
+        // analyses.put(cbFactory.getName(), cbFactory);
+        //
+        // analysisNames.add(rdFactory.getName());
+        // analyses.put(rdFactory.getName(), rdFactory);
+        //
+        // analysisNames.add(tFactory.getName());
+        // analyses.put(tFactory.getName(), tFactory);
+        //
+        // analysisNames.add(dummyName);
+        // analyses.put(dummyName, dummyFactory);
     }
 
     public List<String> getAnalysesNames() {
@@ -127,7 +165,7 @@ public class AnalysisLoader {
         return Collections.unmodifiableList(analysisNames);
     }
 
-    public DFAFactory getDFAFactory(String analysisName) {
+    public DFAFactory<? extends LatticeElement> getDFAFactory(String analysisName) {
         if (analysisNames == null) {
             throw new IllegalStateException("no analyses have been loaded");
         }
@@ -137,6 +175,38 @@ public class AnalysisLoader {
         }
 
         return analyses.get(analysisName);
+    }
+
+    private void getClassFiles(File dir, List<ClassInfoPack> candidates, String packagePrefix) {
+        File[] files = dir.listFiles();
+        
+        if (files == null) {
+            return;
+        }
+        
+        for (File file : files) {
+            if (file.isDirectory()) {
+                String newPackagePrefix = "";
+                if (packagePrefix != null) {
+                    newPackagePrefix = packagePrefix + ".";
+                }
+
+                newPackagePrefix += file.getName();
+                getClassFiles(file, candidates, newPackagePrefix);
+            } else {
+                String fileName = file.getName();
+                int lastDotIdx = fileName.lastIndexOf('.');
+                if (lastDotIdx < 0 || lastDotIdx >= fileName.length() - 1) {
+                    continue;
+                }
+
+                String fileExtension = fileName.substring(lastDotIdx + 1);
+                if (CLASS_FILE_EXTENSION.equals(fileExtension)) {
+                    String className = fileName.substring(0, lastDotIdx);
+                    candidates.add(new ClassInfoPack(file, packagePrefix, className));
+                }
+            }
+        }
     }
 
     private void logWarning(Logger logger, String... warningMsg) {
@@ -156,6 +226,21 @@ public class AnalysisLoader {
         }
 
         logger.warning(sb.toString());
+    }
+
+    private class ClassInfoPack {
+
+        public final String packagePrefix;
+        public final String className;
+
+        public ClassInfoPack(File file, String packagePrefix, String className) {
+            this.packagePrefix = packagePrefix;
+            this.className = className;
+        }
+
+        public String getFullClassName() {
+            return packagePrefix + "." + className;
+        }
     }
 
 }

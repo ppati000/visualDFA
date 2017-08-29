@@ -508,8 +508,7 @@ public class TestTransition01 {
         return new TestMethod(signature, method);
     }
 
-
-    @Test 
+    @Test
     public void testIf() {
         // we need to do setup here, because soot acts weird
         TestMethod testMethod = getCodeIf();

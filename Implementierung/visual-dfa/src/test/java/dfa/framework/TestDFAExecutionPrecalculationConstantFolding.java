@@ -19,7 +19,7 @@ import soot.Body;
 import soot.Local;
 import soot.util.Chain;
 
-public class TestDFAExecutionPrecalculation {
+public class TestDFAExecutionPrecalculationConstantFolding {
     
     private static TestUtils<Value> tu = new TestUtils<Value>();
     

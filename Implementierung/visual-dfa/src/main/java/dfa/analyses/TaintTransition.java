@@ -57,7 +57,6 @@ import soot.jimple.NopStmt;
 import soot.jimple.NullConstant;
 import soot.jimple.OrExpr;
 import soot.jimple.ParameterRef;
-import soot.jimple.Ref;
 import soot.jimple.RemExpr;
 import soot.jimple.RetStmt;
 import soot.jimple.ReturnStmt;
@@ -129,12 +128,8 @@ public class TaintTransition implements Transition<TaintElement> {
                 if (!TaintElement.isLocalTypeAccepted(lValLocal.getType())) {
                     return;
                 }
-            } else if (!(stmt.getLeftOp() instanceof Ref)) {
-                assert false : "Something went horribly wrong!";
-                return;
             } else {
-                // ignore
-                return;
+                return; // ignore
             }
 
             soot.Value rVal = stmt.getRightOp();
@@ -175,12 +170,8 @@ public class TaintTransition implements Transition<TaintElement> {
                 if (!TaintElement.isLocalTypeAccepted(lValLocal.getType())) {
                     return;
                 }
-            } else if (!(stmt.getLeftOp() instanceof Ref)) {
-                assert false : "Something went horribly wrong!";
-                return;
             } else {
-                // ignore
-                return;
+                return; // ignore
             }
 
             boolean violated = inputElement.getValue(lValLocal).wasViolated(); // should be false
@@ -194,22 +185,22 @@ public class TaintTransition implements Transition<TaintElement> {
 
         @Override
         public void caseInvokeStmt(InvokeStmt stmt) {
-            
+
             InvokeExpr invokeExpr = stmt.getInvokeExpr();
             if (invokeExpr.getArgCount() > 1) {
                 // ignore since this can't be any special method for taint-analysis
                 return;
             }
-            
+
             if (invokeExpr.getArgCount() == 0) {
-                
+
                 // this handles the parameterless sensitive
                 SootMethod method = invokeExpr.getMethod();
                 if (method.hasTag(TaintAnalysisTag.SENSITIVE_TAG.getName())) {
                     Set<Map.Entry<JimpleLocal, TaintElement.Value>> entries = inputElement.getLocalMap().entrySet();
                     for (Map.Entry<JimpleLocal, TaintElement.Value> e : entries) {
                         TaintElement.Value val = e.getValue();
-                        if (val.getTaintState() == TaintState.TAINTED && ! val.wasViolated()) {
+                        if (val.getTaintState() == TaintState.TAINTED && !val.wasViolated()) {
                             // we only need to do something if this is the first violation
                             JimpleLocal local = e.getKey();
                             TaintElement.Value inValue = inputElement.getValue(local);
@@ -219,7 +210,7 @@ public class TaintTransition implements Transition<TaintElement> {
                 }
                 return;
             }
-            
+
             if (!(invokeExpr.getArg(0) instanceof JimpleLocal)) {
                 // ignore, since we can only taint locals
                 return;
@@ -248,7 +239,7 @@ public class TaintTransition implements Transition<TaintElement> {
                     outputElement.setValue(local, new TaintElement.Value(TaintState.TAINTED, true));
                 }
             }
-            
+
         }
 
         @Override
@@ -458,7 +449,7 @@ public class TaintTransition implements Transition<TaintElement> {
         }
 
         @Override
-        public void caseDynamicInvokeExpr(DynamicInvokeExpr expr) { 
+        public void caseDynamicInvokeExpr(DynamicInvokeExpr expr) {
             result = new TaintElement.Value(TaintState.TAINTED, false);
         }
 

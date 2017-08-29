@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.junit.Assert;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import dfa.analyses.ConstantBitsFactory;
@@ -24,7 +25,7 @@ public class TestAnalysisLoader {
         classesDir = new File("src/test/resources");
     }
     
-    @Test
+    @Test @Ignore
     public void test01() {
         AnalysisLoader loader = new AnalysisLoader(classesDir.getAbsolutePath());
         

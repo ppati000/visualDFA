@@ -11,8 +11,16 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.logging.Logger;
 
+/**
+ * An {@code AnalysisLoader} loads {@code DFAFactory}-classes from a given directory and instantiates them. The folder
+ * structure must match the package structure. This means, that if the base-directory given to an {@code AnalysisLoader}
+ * is .../baseDir, a class compiled under pkg.subpkg must be put into .../baseDir/pkg/subpkg in order to be loaded.
+ * 
+ * @author Sebastian Rauch
+ */
 public class AnalysisLoader {
 
     private static final String CLASS_FILE_EXTENSION = "class";
@@ -22,18 +30,37 @@ public class AnalysisLoader {
     private List<String> analysisNames;
     private Map<String, DFAFactory<? extends LatticeElement>> analyses;
 
-    // TODO remove packageName parameter
-    public AnalysisLoader(String searchPath) {
-        if (searchPath == null) {
+    /**
+     * Creates a {@code AnalysisLoader} with the given path to search for {@code DFAFactory}s.
+     * 
+     * @param basePath
+     *        the path which is the root of the package structure
+     */
+    public AnalysisLoader(String basePath) {
+        if (basePath == null) {
             throw new IllegalArgumentException("searchPath must not be null");
         }
 
-        this.basePath = searchPath;
+        setBasePath(basePath);
     }
 
-
-    public String getSearchPath() {
+    /**
+     * Returns the current base path.
+     * 
+     * @return the current base path
+     */
+    public String getBasePath() {
         return basePath;
+    }
+
+    /**
+     * Sets the current base path.
+     * 
+     * @param basePath
+     *        the new base path
+     */
+    protected void setBasePath(String basePath) {
+        this.basePath = basePath;
     }
 
     /**
@@ -52,8 +79,7 @@ public class AnalysisLoader {
 
         File baseDir = new File(basePath);
 
-        analysisNames = new LinkedList<String>();
-        analyses = new HashMap<String, DFAFactory<? extends LatticeElement>>();
+        Map<String, DFAFactory<? extends LatticeElement>> factoryMap = new HashMap<>();
 
         List<ClassInfoPack> candidates = new LinkedList<ClassInfoPack>();
         getClassFiles(baseDir, candidates, null);
@@ -121,42 +147,22 @@ public class AnalysisLoader {
 
             String analysisName = dfaFactory.getName();
 
-            if (analysisNames.contains(analysisName)) {
+            if (factoryMap.containsKey(analysisName)) {
                 logWarning(logger, "name collision for " + analysisName, "ignoring second one");
                 continue;
             }
-            analysisNames.add(analysisName);
-            analyses.put(analysisName, dfaFactory);
+
+            factoryMap.put(analysisName, dfaFactory);
         }
 
-        // this is just a temporary solution
-        // analysisNames = new LinkedList<String>();
-        // analyses = new HashMap<String, DFAFactory<? extends LatticeElement>>();
-        //
-        // //DummyFactory dummyFactory = new DummyFactory();
-        // //String dummyName = dummyFactory.getName();
-        //
-        // ConstantFoldingFactory cfFactory = new ConstantFoldingFactory();
-        // ConstantBitsFactory cbFactory = new ConstantBitsFactory();
-        // ReachingDefinitionsFactory rdFactory = new ReachingDefinitionsFactory();
-        // TaintFactory tFactory = new TaintFactory();
-        //
-        // analysisNames.add(cfFactory.getName());
-        // analyses.put(cfFactory.getName(), cfFactory);
-        //
-        // analysisNames.add(cbFactory.getName());
-        // analyses.put(cbFactory.getName(), cbFactory);
-        //
-        // analysisNames.add(rdFactory.getName());
-        // analyses.put(rdFactory.getName(), rdFactory);
-        //
-        // analysisNames.add(tFactory.getName());
-        // analyses.put(tFactory.getName(), tFactory);
-        //
-        // analysisNames.add(dummyName);
-        // analyses.put(dummyName, dummyFactory);
+        setAnalyses(factoryMap);
     }
 
+    /**
+     * Returns a {@code List} of the names of the {@code DFAFactory}-instances known to this {@code AnalysisLoader}.
+     * 
+     * @return a {@code List} of the names of all known {@code DFAFactory}-instances
+     */
     public List<String> getAnalysesNames() {
         if (analysisNames == null) {
             throw new IllegalStateException("no analyses have been loaded");
@@ -165,6 +171,17 @@ public class AnalysisLoader {
         return Collections.unmodifiableList(analysisNames);
     }
 
+    /**
+     * Fetches a {@code DFAFactory} by name.
+     * 
+     * @param analysisName
+     *        the name of the {@code DFAFactory} to return
+     * @return a {@code DFAFactory} with the given name or {@code null} if no such {@code DFAFactory} is known to this
+     *         {@code AnalysisLoader}
+     * 
+     * @throws IllegalStateException
+     *         if {@code loadAnalyses} has not been called yet
+     */
     public DFAFactory<? extends LatticeElement> getDFAFactory(String analysisName) {
         if (analysisNames == null) {
             throw new IllegalStateException("no analyses have been loaded");
@@ -177,13 +194,30 @@ public class AnalysisLoader {
         return analyses.get(analysisName);
     }
 
+    /**
+     * Sets the {@code DFAFactory}-instances for this {@code AnalysisLoader}.
+     * 
+     * @param factoryMap
+     *        a {@code Map} that maps names to {@code DFAFactory}-instances
+     */
+    protected void setAnalyses(Map<String, DFAFactory<? extends LatticeElement>> factoryMap) {
+        this.analysisNames = new LinkedList<>();
+        this.analyses = new HashMap<>();
+
+        Set<Map.Entry<String, DFAFactory<? extends LatticeElement>>> entries = factoryMap.entrySet();
+        for (Map.Entry<String, DFAFactory<? extends LatticeElement>> entry : entries) {
+            this.analysisNames.add(entry.getKey());
+            this.analyses.put(entry.getKey(), entry.getValue());
+        }
+    }
+
     private void getClassFiles(File dir, List<ClassInfoPack> candidates, String packagePrefix) {
         File[] files = dir.listFiles();
-        
+
         if (files == null) {
             return;
         }
-        
+
         for (File file : files) {
             if (file.isDirectory()) {
                 String newPackagePrefix = "";

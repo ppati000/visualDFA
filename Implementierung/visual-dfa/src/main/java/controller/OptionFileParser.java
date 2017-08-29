@@ -9,7 +9,8 @@ import java.io.IOException;
 
 import javax.tools.ToolProvider;
 
-import gui.MessageBox;
+import gui.GenericBox;
+import gui.Option;
 import gui.ProgramFrame;
 
 /**
@@ -98,7 +99,7 @@ public class OptionFileParser {
         } else {
             System.out.println("hier");
             return false;
-            
+
         }
         File selectedJDKPath = new File(jdkPath);
         if (!validJREPath(selectedJDKPath)) {
@@ -115,8 +116,8 @@ public class OptionFileParser {
         if (!path.exists()) {
             return false;
         }
-        String testIfJREPath = path.getAbsolutePath().trim() + System.getProperty("file.separator") + "bin"
-                + System.getProperty("file.separator") + "java.exe";
+        //TODO does it really look like that in other OS
+        String testIfJREPath = path.getAbsolutePath().trim() + System.getProperty("file.separator") + "bin";
         File jreFile = new File(testIfJREPath.toString());
         if (!jreFile.exists()) {
             return false;
@@ -125,11 +126,23 @@ public class OptionFileParser {
     }
 
     private void askForJDKPath() {
-        new MessageBox(this.programFrame, "JDK Path", PATH_SELECTION);
+        /*if (ToolProvider.getSystemJavaCompiler() != null) {
+            this.compilerPath = System.getProperty("java.home");
+            return;
+        }*/
+        GenericBox box = new GenericBox(this.programFrame, "JDK Path", PATH_SELECTION, "Select", "Close Program", null,
+                false, Option.YES_OPTION);
+        if (box.getOption() == Option.NO_OPTION) {
+            System.exit(0);
+        }
         File selectedPath = this.programFrame.getCompilerPath();
         boolean isJREPath = validJREPath(selectedPath);
         while (!isJREPath || (ToolProvider.getSystemJavaCompiler() == null)) {
-            new MessageBox(this.programFrame, "JDK Path", NO_COMPILER_FOUND);
+            box = new GenericBox(this.programFrame, "JDK Path", NO_COMPILER_FOUND, "Select", "Close Program", null,
+                    false, Option.YES_OPTION);
+            if (box.getOption() == Option.NO_OPTION) {
+                System.exit(0);
+            }
             selectedPath = this.programFrame.getCompilerPath();
             if (isJREPath) {
                 System.setProperty("java.home", selectedPath.getAbsolutePath());

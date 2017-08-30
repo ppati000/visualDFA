@@ -1,6 +1,7 @@
 package dfa.analyses;
 
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -259,7 +260,7 @@ public class ReachingDefinitionsElement extends LocalMapElement<Definition> {
         @Override
         public void caseMethodHandle(MethodHandle c) {
             result = c.toString();
-            // TODO Documentation?
+            // TODO What does MethodHandle.toString() do?
         }
 
         @Override
@@ -385,7 +386,12 @@ public class ReachingDefinitionsElement extends LocalMapElement<Definition> {
 
         @Override
         public void caseCastExpr(CastExpr expr) {
-            // TODO Auto-generated method stub
+            StringRepresentation valueSwitch = new StringRepresentation(inputDefinition);
+            Value op = expr.getOp();
+            op.apply(valueSwitch);
+            Type type = expr.getCastType();
+            result = type.toString() + valueSwitch.getResult();
+            // TODO What does Type.toString() do?
         }
 
         @Override
@@ -432,57 +438,114 @@ public class ReachingDefinitionsElement extends LocalMapElement<Definition> {
             result = "instanceof " + valueSwitch.getResult();
         }
 
+        /**
+         * Combines the cases of all different invoke expressions
+         * 
+         * @param methodName
+         *        the name of the method to be invoked
+         * @param args
+         *        the arguments of the method to be
+         */
+        private void invokeExpr(String methodName, List<Value> args) {
+            StringBuilder sb = new StringBuilder();
+            sb.append(methodName + "(");
+            StringRepresentation valueSwitch = new StringRepresentation(inputDefinition);
+            String prefix = "";
+            for (Value v : args) {
+                v.apply(valueSwitch);
+                sb.append(valueSwitch.getResult() + prefix);
+                prefix = ", ";
+            }
+            sb.append(")");
+            result = sb.toString();
+        }
+
         @Override
         public void caseInterfaceInvokeExpr(InterfaceInvokeExpr expr) {
-            // TODO implement Expression
+            String methodName = expr.getMethod().getName();
+            List<Value> args = expr.getArgs();
+            invokeExpr(methodName, args);
         }
 
         @Override
         public void caseDynamicInvokeExpr(DynamicInvokeExpr expr) {
-            // TODO implement Expression
+            String methodName = expr.getMethod().getName();
+            List<Value> args = expr.getArgs();
+            invokeExpr(methodName, args);
         }
 
         @Override
         public void caseLengthExpr(LengthExpr expr) {
-            // TODO implement Expression
+            StringRepresentation valueSwitch = new StringRepresentation(inputDefinition);
+            Value op = expr.getOp();
+            op.apply(valueSwitch);
+            result = "arraylength(" + valueSwitch.getResult() + ")";
         }
 
         @Override
         public void caseNewArrayExpr(NewArrayExpr expr) {
-            // TODO implement Expression
+            StringRepresentation valueSwitch = new StringRepresentation(inputDefinition);
+            Value size = expr.getSize();
+            size.apply(valueSwitch);
+            result = "new " + expr.getBaseType().toString() + "[" + valueSwitch.getResult() + "]";
+            // TODO What does Type.toString() do?
         }
 
         @Override
         public void caseNewExpr(NewExpr expr) {
-            // TODO implement Expression
+            result = "new " + expr.getBaseType().toString();
+            // TODO What does Type.toString() do?
         }
 
         @Override
         public void caseNewMultiArrayExpr(NewMultiArrayExpr expr) {
-            // TODO implement Expression
+            StringBuilder sb = new StringBuilder();
+            sb.append("new " + expr.getBaseType().toString());
+            int sizeCount = expr.getSizeCount();
+            for (int i = 0; i < sizeCount; i++) {
+                StringRepresentation valueSwitch = new StringRepresentation(inputDefinition);
+                Value size = expr.getSize(i);
+                size.apply(valueSwitch);
+                sb.append("[" + valueSwitch.getResult() + "]");
+            }
+            result = sb.toString();
+            // TODO What does Type.toString() do?
         }
 
         @Override
         public void caseSpecialInvokeExpr(SpecialInvokeExpr expr) {
-            // TODO implement Expression
+            String methodName = expr.getMethod().getName();
+            List<Value> args = expr.getArgs();
+            invokeExpr(methodName, args);
         }
 
         @Override
         public void caseStaticInvokeExpr(StaticInvokeExpr expr) {
-            // TODO implement Expression
+            String methodName = expr.getMethod().getName();
+            List<Value> args = expr.getArgs();
+            invokeExpr(methodName, args);
         }
 
         @Override
         public void caseVirtualInvokeExpr(VirtualInvokeExpr expr) {
-            // TODO implement Expression
+            String methodName = expr.getMethod().getName();
+            List<Value> args = expr.getArgs();
+            invokeExpr(methodName, args);
         }
 
         // RefSwitch
 
         @Override
         public void caseArrayRef(ArrayRef ref) {
-            result = ref.getBase().toString();
-            // TODO implement correctly
+            StringRepresentation valueSwitch = new StringRepresentation(inputDefinition);
+            Value op = ref.getBase();
+            op.apply(valueSwitch);
+            String base = valueSwitch.getResult();
+            valueSwitch = new StringRepresentation(inputDefinition);
+            Value idx = ref.getIndex();
+            idx.apply(valueSwitch);
+            String index = valueSwitch.getResult();
+            result = base + "[" + index + "]";
         }
 
         @Override
@@ -492,26 +555,25 @@ public class ReachingDefinitionsElement extends LocalMapElement<Definition> {
 
         @Override
         public void caseInstanceFieldRef(InstanceFieldRef ref) {
-            result = ref.getBase().toString();
-            // TODO implement correctly
+            StringRepresentation valueSwitch = new StringRepresentation(inputDefinition);
+            Value op = ref.getBase();
+            op.apply(valueSwitch);
+            result = valueSwitch.getResult();
         }
 
         @Override
         public void caseParameterRef(ParameterRef ref) {
-            result = ref.toString();
-            // TODO implement correctly
+            result = "@parameter" + ref.getIndex();
         }
 
         @Override
         public void caseStaticFieldRef(StaticFieldRef ref) {
-            result = ref.getField().toString();
-            // TODO implement correctly
+            result = ref.getField().getName();
         }
 
         @Override
         public void caseThisRef(ThisRef ref) {
-            result = ref.toString();
-            // TODO implement correctly
+            result = "this";
         }
 
         // JimpleValueSwitch

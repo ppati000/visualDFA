@@ -7,26 +7,18 @@ import java.util.Objects;
 
 import dfa.analyses.ReachingDefinitionsElement.Definition;
 import dfa.framework.UnsupportedValueException;
-import soot.BooleanType;
-import soot.ByteType;
-import soot.CharType;
-import soot.IntType;
 import soot.Local;
-import soot.LongType;
-import soot.ShortType;
 import soot.Type;
 import soot.Value;
 import soot.jimple.AddExpr;
 import soot.jimple.AndExpr;
 import soot.jimple.ArrayRef;
-import soot.jimple.BinopExpr;
 import soot.jimple.CastExpr;
 import soot.jimple.CaughtExceptionRef;
 import soot.jimple.ClassConstant;
 import soot.jimple.CmpExpr;
 import soot.jimple.CmpgExpr;
 import soot.jimple.CmplExpr;
-import soot.jimple.ConstantSwitch;
 import soot.jimple.DivExpr;
 import soot.jimple.DoubleConstant;
 import soot.jimple.DynamicInvokeExpr;
@@ -86,26 +78,6 @@ public class ReachingDefinitionsElement extends LocalMapElement<Definition> {
         super();
     }
 
-    /**
-     * Sets the {@code Definition} mapped to the given {@code JimpleLocal}.
-     * 
-     * @param local
-     *        the {@code JimpleLocal} for which the {@code Definition} is set
-     * @param def
-     *        the {@code Definition} to set
-     * @throws IllegalArgumentException
-     *         if {@code local} is {@code null} or {@code def} is null
-     */
-    public void setDefinition(JimpleLocal local, Definition def) {
-        if (def == null) {
-            throw new IllegalArgumentException("der must not be null!");
-        }
-        if (local == null) {
-            throw new IllegalArgumentException("local must not be null!");
-        }
-        localMap.put(local, def);
-    }
-
     @Override
     public boolean equals(Object o) {
         if (!(o instanceof ReachingDefinitionsElement)) {
@@ -132,15 +104,17 @@ public class ReachingDefinitionsElement extends LocalMapElement<Definition> {
 
         Iterator<Map.Entry<JimpleLocal, Definition>> entryIt = localMap.entrySet().iterator();
         Map.Entry<JimpleLocal, Definition> entry;
-        if (entryIt.hasNext()) {
-            entry = entryIt.next();
-            sb.append(entry.getKey().getName()).append(" = ").append(entry.getValue());
-        }
-
+        boolean firstOutput = false;
         while (entryIt.hasNext()) {
             entry = entryIt.next();
-            sb.append('\n');
-            sb.append(entry.getKey().getName()).append(" = ").append(entry.getValue());
+            Definition def = entry.getValue();
+            if (def.isActualDefinition()) {
+                if (firstOutput) {
+                    sb.append('\n');
+                }
+                sb.append(entry.getKey().getName()).append(" = ").append(def);
+                firstOutput = true;
+            }
         }
 
         return sb.toString();
@@ -155,22 +129,27 @@ public class ReachingDefinitionsElement extends LocalMapElement<Definition> {
         private static final Definition BOTTOM = new Definition(DefinitionType.BOTTOM);
         private static final Definition TOP = new Definition(DefinitionType.TOP);
 
-        // TODO use proper symbols (after testing)
-        private static final String BOTTOM_SYMBOL = /* "\u22A5" */ "B";
-        private static final String TOP_SYMBOL = /* "\u22A4" */ "T";
-
-        private soot.Value val;
+        private Value val = null;
         private DefinitionType type;
 
         public Definition(DefinitionType type) {
+            if (type == null) {
+                throw new IllegalArgumentException("type must not be null");
+            }
+            
             this.type = type;
         }
 
-        public Definition(soot.Value val) {
+        public Definition(Value val) {
+            if (val == null) {
+                throw new IllegalArgumentException("val must nnot be null");
+            }
+            
             this.val = val;
+            this.type = DefinitionType.DEFINITION;
         }
 
-        public soot.Value getValue() {
+        public Value getValue() {
             return val;
         }
 
@@ -183,21 +162,43 @@ public class ReachingDefinitionsElement extends LocalMapElement<Definition> {
         }
 
         public boolean isActualDefinition() {
-            return (this.type == DefinitionType.DEFINITION);
+            return this.type == DefinitionType.DEFINITION;
+        }
+        
+        public DefinitionType getDefType() {
+            return this.type;
         }
 
         @Override
         public String toString() {
-            if (this.type == DefinitionType.TOP) {
-                return TOP_SYMBOL;
-            } else if (this.type == DefinitionType.BOTTOM) {
-                return BOTTOM_SYMBOL;
-            } else {
+            if (isActualDefinition()) {
                 StringRepresentation valueSwitch = new StringRepresentation(this);
                 val.apply(valueSwitch);
                 return valueSwitch.getResult();
+            } else {
+                return "";
             }
         }
+        
+        @Override
+        public boolean equals(Object o) {
+            if (! (o instanceof Definition)) {
+                return false;
+            }
+            
+            Definition def = (Definition) o;
+            if (getDefType() != def.getDefType()) {
+                return false;
+            }
+            
+            if (getDefType() == DefinitionType.DEFINITION) {
+                return getValue().equals(def.getValue());
+            } 
+            
+            return true;
+        }
+        
+        
     }
 
     /**
@@ -597,7 +598,7 @@ public class ReachingDefinitionsElement extends LocalMapElement<Definition> {
      * 
      *         Distinguishes actual Definitions from top and bottom.
      */
-    enum DefinitionType {
+    public enum DefinitionType {
         /**
          * for bottom
          */

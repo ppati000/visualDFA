@@ -10,6 +10,7 @@ import codeprocessor.CodeProcessor;
 import codeprocessor.GraphBuilder;
 import dfa.TestMethod;
 import dfa.TestUtils;
+import dfa.ValueHelper;
 import dfa.analyses.ConstantFoldingElement;
 import dfa.analyses.ConstantFoldingElement.Value;
 import dfa.analyses.ConstantFoldingFactory;
@@ -66,11 +67,11 @@ public class TestDFAExecutionPrecalculationConstantFolding {
         BlockState<ConstantFoldingElement> initStartBlockState = initialAnalysisState.getBlockState(startBlock);
         ConstantFoldingElement initStartBlockInState = initStartBlockState.getInState();
         
-        tu.assertLocalValue(tu.getCfIntValue(0), "top", aliasMap, initStartBlockInState);
-        tu.assertLocalValue(tu.getCfIntValue(0), "one", aliasMap, initStartBlockInState);
-        tu.assertLocalValue(tu.getCfIntValue(0), "x", aliasMap, initStartBlockInState);
-        tu.assertLocalValue(tu.getCfIntValue(0), "y", aliasMap, initStartBlockInState);
-        tu.assertLocalValue(tu.getCfIntValue(0), "z", aliasMap, initStartBlockInState);
+        tu.assertLocalValue(ValueHelper.getCfIntValue(0), "top", aliasMap, initStartBlockInState);
+        tu.assertLocalValue(ValueHelper.getCfIntValue(0), "one", aliasMap, initStartBlockInState);
+        tu.assertLocalValue(ValueHelper.getCfIntValue(0), "x", aliasMap, initStartBlockInState);
+        tu.assertLocalValue(ValueHelper.getCfIntValue(0), "y", aliasMap, initStartBlockInState);
+        tu.assertLocalValue(ValueHelper.getCfIntValue(0), "z", aliasMap, initStartBlockInState);
         
         ConstantFoldingElement initStartBlockOutState = initStartBlockState.getOutState();
         tu.assertLocalValue(Value.getBottom(), "top", aliasMap, initStartBlockOutState);
@@ -87,10 +88,10 @@ public class TestDFAExecutionPrecalculationConstantFolding {
        
         ConstantFoldingElement startBlockFinalOutState = aState.getBlockState(startBlock).getOutState();
         tu.assertLocalValue(Value.getTop(), "top", aliasMap, startBlockFinalOutState);
-        tu.assertLocalValue(tu.getCfIntValue(1), "one", aliasMap, startBlockFinalOutState);
-        tu.assertLocalValue(tu.getCfIntValue(17), "x", aliasMap, startBlockFinalOutState);
-        tu.assertLocalValue(tu.getCfIntValue(0), "y", aliasMap, startBlockFinalOutState);
-        tu.assertLocalValue(tu.getCfIntValue(0), "z", aliasMap, startBlockFinalOutState);
+        tu.assertLocalValue(ValueHelper.getCfIntValue(1), "one", aliasMap, startBlockFinalOutState);
+        tu.assertLocalValue(ValueHelper.getCfIntValue(17), "x", aliasMap, startBlockFinalOutState);
+        tu.assertLocalValue(ValueHelper.getCfIntValue(0), "y", aliasMap, startBlockFinalOutState);
+        tu.assertLocalValue(ValueHelper.getCfIntValue(0), "z", aliasMap, startBlockFinalOutState);
         
         // skip the two branches of the if
         dfaExecution.nextBlockStep();
@@ -101,10 +102,10 @@ public class TestDFAExecutionPrecalculationConstantFolding {
         
         ConstantFoldingElement endBlockInState = aState.getBlockState(endBlock).getInState();
         tu.assertLocalValue(Value.getTop(), "top", aliasMap, endBlockInState);
-        tu.assertLocalValue(tu.getCfIntValue(1), "one", aliasMap, endBlockInState);
+        tu.assertLocalValue(ValueHelper.getCfIntValue(1), "one", aliasMap, endBlockInState);
         tu.assertLocalValue(Value.getTop(), "x", aliasMap, endBlockInState);
-        tu.assertLocalValue(tu.getCfIntValue(0), "y", aliasMap, endBlockInState);
-        tu.assertLocalValue(tu.getCfIntValue(0), "z", aliasMap, endBlockInState);
+        tu.assertLocalValue(ValueHelper.getCfIntValue(0), "y", aliasMap, endBlockInState);
+        tu.assertLocalValue(ValueHelper.getCfIntValue(0), "z", aliasMap, endBlockInState);
         
         // on to the very end
         while (dfaExecution.nextElementaryStep());
@@ -115,9 +116,9 @@ public class TestDFAExecutionPrecalculationConstantFolding {
         
         ConstantFoldingElement endBlockOutState = aState.getBlockState(endBlock).getOutState();
         tu.assertLocalValue(Value.getTop(), "top", aliasMap, endBlockOutState);
-        tu.assertLocalValue(tu.getCfIntValue(1), "one", aliasMap, endBlockOutState);
+        tu.assertLocalValue(ValueHelper.getCfIntValue(1), "one", aliasMap, endBlockOutState);
         tu.assertLocalValue(Value.getTop(), "x", aliasMap, endBlockOutState);
-        tu.assertLocalValue(tu.getCfIntValue(0), "y", aliasMap, endBlockOutState);
+        tu.assertLocalValue(ValueHelper.getCfIntValue(0), "y", aliasMap, endBlockOutState);
         tu.assertLocalValue(Value.getTop(), "z", aliasMap, endBlockOutState);
     }
     
@@ -187,10 +188,10 @@ public class TestDFAExecutionPrecalculationConstantFolding {
         BlockState<ConstantFoldingElement> initStartBlockState = initialAnalysisState.getBlockState(startBlock);
         ConstantFoldingElement initStartBlockInState = initStartBlockState.getInState();
         
-        tu.assertLocalValue(tu.getCfIntValue(0), "n", aliasMap, initStartBlockInState);
-        tu.assertLocalValue(tu.getCfIntValue(0), "one", aliasMap, initStartBlockInState);
-        tu.assertLocalValue(tu.getCfIntValue(0), "x", aliasMap, initStartBlockInState);
-        tu.assertLocalValue(tu.getCfIntValue(0), "y", aliasMap, initStartBlockInState);
+        tu.assertLocalValue(ValueHelper.getCfIntValue(0), "n", aliasMap, initStartBlockInState);
+        tu.assertLocalValue(ValueHelper.getCfIntValue(0), "one", aliasMap, initStartBlockInState);
+        tu.assertLocalValue(ValueHelper.getCfIntValue(0), "x", aliasMap, initStartBlockInState);
+        tu.assertLocalValue(ValueHelper.getCfIntValue(0), "y", aliasMap, initStartBlockInState);
         
         ConstantFoldingElement initStartBlockOutState = initStartBlockState.getOutState();
         tu.assertLocalValue(Value.getBottom(), "n", aliasMap, initStartBlockOutState);
@@ -206,8 +207,8 @@ public class TestDFAExecutionPrecalculationConstantFolding {
        
         ConstantFoldingElement startBlockFinalOutState = aState.getBlockState(startBlock).getOutState();
         tu.assertLocalValue(Value.getTop(), "n", aliasMap, startBlockFinalOutState);
-        tu.assertLocalValue(tu.getCfIntValue(1), "one", aliasMap, startBlockFinalOutState);
-        tu.assertLocalValue(tu.getCfIntValue(6), "x", aliasMap, startBlockFinalOutState);
+        tu.assertLocalValue(ValueHelper.getCfIntValue(1), "one", aliasMap, startBlockFinalOutState);
+        tu.assertLocalValue(ValueHelper.getCfIntValue(6), "x", aliasMap, startBlockFinalOutState);
         tu.assertLocalValue(Value.getTop(), "y", aliasMap, startBlockFinalOutState);
         
         // forwards to the end-block (final iteration)
@@ -220,8 +221,8 @@ public class TestDFAExecutionPrecalculationConstantFolding {
         
         ConstantFoldingElement endBlockInState = aState.getBlockState(endBlock).getInState();
         tu.assertLocalValue(Value.getTop(), "n", aliasMap, endBlockInState);
-        tu.assertLocalValue(tu.getCfIntValue(1), "one", aliasMap, endBlockInState);
-        tu.assertLocalValue(tu.getCfIntValue(6), "x", aliasMap, endBlockInState);
+        tu.assertLocalValue(ValueHelper.getCfIntValue(1), "one", aliasMap, endBlockInState);
+        tu.assertLocalValue(ValueHelper.getCfIntValue(6), "x", aliasMap, endBlockInState);
         tu.assertLocalValue(Value.getTop(), "y", aliasMap, endBlockInState);
 
         // on to the very end
@@ -233,8 +234,8 @@ public class TestDFAExecutionPrecalculationConstantFolding {
         
         ConstantFoldingElement endBlockOutState = aState.getBlockState(endBlock).getOutState();
         tu.assertLocalValue(Value.getTop(), "n", aliasMap, endBlockOutState);
-        tu.assertLocalValue(tu.getCfIntValue(1), "one", aliasMap, endBlockOutState);
-        tu.assertLocalValue(tu.getCfIntValue(6), "x", aliasMap, endBlockOutState);
+        tu.assertLocalValue(ValueHelper.getCfIntValue(1), "one", aliasMap, endBlockOutState);
+        tu.assertLocalValue(ValueHelper.getCfIntValue(6), "x", aliasMap, endBlockOutState);
         tu.assertLocalValue(Value.getTop(), "y", aliasMap, endBlockOutState);
     }
     

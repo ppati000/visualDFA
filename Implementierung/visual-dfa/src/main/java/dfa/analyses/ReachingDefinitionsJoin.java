@@ -25,10 +25,6 @@ public class ReachingDefinitionsJoin implements Join<ReachingDefinitionsElement>
 
         @Override
         public Definition doValueJoin(Set<ReachingDefinitionsElement> elements, JimpleLocal local) {
-            if (elements.isEmpty()) {
-                throw new IllegalArgumentException("there must be at least one value to join");
-            }
-
             Iterator<? extends LocalMapElement<Definition>> elementIt = elements.iterator();
             Definition refVal = elementIt.next().getValue(local);
 

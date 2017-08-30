@@ -16,6 +16,7 @@ import soot.DoubleType;
 import soot.FloatType;
 import soot.IntType;
 import soot.LongType;
+import soot.RefType;
 import soot.ShortType;
 import soot.UnknownType;
 import soot.VoidType;
@@ -130,6 +131,7 @@ public class TestConstantFoldingElement {
 
         Assert.assertFalse(ConstantFoldingElement.isLocalTypeAccepted(FloatType.v()));
         Assert.assertFalse(ConstantFoldingElement.isLocalTypeAccepted(DoubleType.v()));
+        Assert.assertFalse(ConstantFoldingElement.isLocalTypeAccepted(RefType.v()));
         Assert.assertFalse(ConstantFoldingElement.isLocalTypeAccepted(UnknownType.v()));
         Assert.assertFalse(ConstantFoldingElement.isLocalTypeAccepted(VoidType.v()));
     }

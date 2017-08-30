@@ -123,7 +123,7 @@ public class StatePanelOpen extends JPanel {
      *            activate {@code true} or deactivate {@code false} the panel
      */
     public void setActivated(boolean b) {
-        btnClose.setEnabled(b);
+        btnClose.setEnabled(true);
         lblTitle.setEnabled(b);
         lblPosition.setEnabled(b);
         lineField.setEnabled(b);

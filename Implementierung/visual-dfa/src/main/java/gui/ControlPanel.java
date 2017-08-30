@@ -102,47 +102,45 @@ public class ControlPanel extends JPanel {
         add(lblDelayInSeconds, gbc_lblDelayInSeconds);
 
         btnStopAnalysis = new JButton();
-        jBuDecorator.decorateIconButton(btnStopAnalysis, "icons/rounded-black-square-shape.png", 0.5,
-                new StopListener(), "Stop");
-        btnStopAnalysis.setBackground(Colors.WHITE_BACKGROUND.getColor());
-        btnStopAnalysis.setForeground(Colors.DARK_TEXT.getColor());
-
+        jBuDecorator.decorateIconButton(btnStopAnalysis, "icons/rounded-white-square-shape.png", 0.3,
+                new StopListener(), null);
+        
         btnStopAnalysis.setHorizontalTextPosition(SwingConstants.CENTER);
         btnStopAnalysis.setVerticalTextPosition(SwingConstants.BOTTOM);
         GridBagConstraints gbc_btnStopAnalysis = GridBagConstraintFactory.getStandardGridBagConstraints(0, 1, 1, 3);
         add(btnStopAnalysis, gbc_btnStopAnalysis);
 
         btnPreviousBlock = new JButton();
-        jBuDecorator.decorateIconButton(btnPreviousBlock, "icons/rewind-button.png", 0.5, new PreviousBlockListener(),
+        jBuDecorator.decorateIconButton(btnPreviousBlock, "icons/rewind-button.png", 0.3, new PreviousBlockListener(),
                 null);
         GridBagConstraints gbc_btnPreviousBlock = GridBagConstraintFactory.getStandardGridBagConstraints(2, 1, 1, 3);
         add(btnPreviousBlock, gbc_btnPreviousBlock);
 
         btnPreviousLine = new JButton();
-        jBuDecorator.decorateIconButton(btnPreviousLine, "icons/step-backward.png", 0.5, new PreviousLineListener(),
+        jBuDecorator.decorateIconButton(btnPreviousLine, "icons/step-backward.png", 0.3, new PreviousLineListener(),
                 null);
 
         GridBagConstraints gbc_btnPreviousLine = GridBagConstraintFactory.getStandardGridBagConstraints(3, 1, 1, 3);
         add(btnPreviousLine, gbc_btnPreviousLine);
 
         btnPlay = new JButton();
-        jBuDecorator.decorateIconButton(btnPlay, "icons/play-button.png", 0.6, new PlayListener(), null);
+        jBuDecorator.decorateIconButton(btnPlay, "icons/play-button.png", 0.35, new PlayListener(), null);
 
         btnPause = new JButton();
-        jBuDecorator.decorateIconButton(btnPause, "icons/pause-symbol.png", 0.6, new PauseListener(), null);
+        jBuDecorator.decorateIconButton(btnPause, "icons/pause-symbol.png", 0.35, new PauseListener(), null);
 
         gbc_btnPlayPause = GridBagConstraintFactory.getStandardGridBagConstraints(4, 1, 1, 3);
         add(btnPlay, gbc_btnPlayPause);
         isPlayButtonAdded = true;
 
         btnNextLine = new JButton();
-        jBuDecorator.decorateIconButton(btnNextLine, "icons/step-forward.png", 0.5, new NextLineListener(), null);
+        jBuDecorator.decorateIconButton(btnNextLine, "icons/step-forward.png", 0.3, new NextLineListener(), null);
 
         GridBagConstraints gbc_btnNextLine = GridBagConstraintFactory.getStandardGridBagConstraints(5, 1, 1, 3);
         add(btnNextLine, gbc_btnNextLine);
 
         btnNextBlock = new JButton();
-        jBuDecorator.decorateIconButton(btnNextBlock, "icons/fast-forward-arrows.png", 0.5, new NextBlockListener(),
+        jBuDecorator.decorateIconButton(btnNextBlock, "icons/fast-forward-arrows.png", 0.3, new NextBlockListener(),
                 null);
         GridBagConstraints gbc_btnNextBlock = GridBagConstraintFactory.getStandardGridBagConstraints(6, 1, 1, 3);
         add(btnNextBlock, gbc_btnNextBlock);

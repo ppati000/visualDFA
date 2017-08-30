@@ -7,6 +7,7 @@ import java.lang.reflect.Method;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.JSplitPane;
 
 import controller.Controller;
 import gui.visualgraph.VisualGraphPanel;
@@ -55,12 +56,14 @@ public class ProgramFrame extends JFrame {
         setContentPane(contentPane);
 
         inputPanel = new InputPanel(ctrl);
-        contentPane.add(inputPanel, BorderLayout.WEST);
 
         JPanel centerPan = new JPanel();
         contentPane.add(centerPan, BorderLayout.CENTER);
         centerPan.setLayout(new BorderLayout(0, 0));
-
+        
+        JSplitPane inputGraphSplit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,  inputPanel, centerPan);
+        contentPane.add(inputGraphSplit, BorderLayout.CENTER);
+        
         visualGraphPanel = ctrl.getVisualGraphPanel();
         centerPan.add(visualGraphPanel, BorderLayout.CENTER);
 

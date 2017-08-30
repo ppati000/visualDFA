@@ -47,8 +47,7 @@ public class InputPanel extends JPanel {
     private JComboBox<String> comboBox_Worklists;
     private JButton btnStartAnalysis;
     private JCheckBox cb_Filter;
-    private static final String TEMPORARY_FOLDER = System.getProperty("user.home")
-            + System.getProperty("file.separator") + "visualDfa";
+    
 
     /**
      * Create the {@code JPanel}. Set the {@code Controller}, so the
@@ -72,7 +71,7 @@ public class InputPanel extends JPanel {
         gridBagLayout.columnWidths = new int[] { 0, 0 };
         gridBagLayout.rowHeights = new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
         gridBagLayout.columnWeights = new double[] { 0.5, 0.5 };
-        gridBagLayout.rowWeights = new double[] { 0.5, 0.5, 0.5, 0.5, 0.0, 0.5, 0.0, 0.0, 0.5, 0.0, 0.0, 0.5, 0.1,
+        gridBagLayout.rowWeights = new double[] { 0.5, 0.5, 0.5, 0.5, 0.0, 0.1, 0.0, 0.0, 0.1, 0.0, 0.0, 0.1, 0.1,
                 0.1 };
         setLayout(gridBagLayout);
 
@@ -234,7 +233,7 @@ public class InputPanel extends JPanel {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            JFileChooser openChooser = new JFileChooser(TEMPORARY_FOLDER);
+            JFileChooser openChooser = new JFileChooser(ctrl.getProgramOutputPath());
 
             openChooser.setAcceptAllFileFilterUsed(false);
             openChooser.addChoosableFileFilter(new JavaFileFilter());
@@ -279,7 +278,7 @@ public class InputPanel extends JPanel {
         @Override
         public void actionPerformed(ActionEvent e) {
 
-            JFileChooser saveChooser = new JFileChooser(TEMPORARY_FOLDER);
+            JFileChooser saveChooser = new JFileChooser(ctrl.getProgramOutputPath());
 
             saveChooser.setAcceptAllFileFilterUsed(false);
             saveChooser.addChoosableFileFilter(new JavaFileFilter());

@@ -217,7 +217,7 @@ public class InputPanel extends JPanel {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            ctrl.startAnalysis();
+            ctrl.startAnalysis(null);
         }
 
     }

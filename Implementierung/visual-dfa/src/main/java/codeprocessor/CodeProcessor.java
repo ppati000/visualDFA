@@ -101,7 +101,11 @@ public class CodeProcessor {
         code = code.replaceAll("//.*?\r", "").trim();
 
         // remove several line comments
-        code = code.replaceAll("//.*|(\"(?:\\\\[^\"]|\\\\\"|.)*?\")|(?s)/\\*.*?\\*/", "").trim();
+        // code =
+        // code.replaceAll("//.*|(\"(?:\\\\[^\"]|\\\\\"|.)*?\")|(?s)/\\*.*?\\*/",
+        // "").trim();
+
+        code = code.replaceAll("/\\*(?:.|[\\n\\r])*?\\*/", "").trim();
 
         // delete package information
         if (code.startsWith("package")) {

@@ -55,15 +55,14 @@ public class TestReachingDefinitionsInitializer {
         ReachingDefinitionsElement initInState = initMap.get(onlyBlock).getInState();
         ReachingDefinitionsElement initOutState = initMap.get(onlyBlock).getOutState();
         
-        
-        tu.assertLocalValue(ValueHelper.getRDDefInt(0), "b", initInState);
-        tu.assertLocalValue(ValueHelper.getRDDefInt(0), "by", initInState);
-        tu.assertLocalValue(ValueHelper.getRDDefInt(0), "c", initInState);
-        tu.assertLocalValue(ValueHelper.getRDDefInt(0), "s", initInState);
-        tu.assertLocalValue(ValueHelper.getRDDefInt(0), "i", initInState);
-        tu.assertLocalValue(ValueHelper.getRDDefLong(0), "l", initInState);
-        
         Definition bottom = ReachingDefinitionsElement.Definition.getBottom();
+        tu.assertLocalValue(bottom, "b", initInState);
+        tu.assertLocalValue(bottom, "by", initInState);
+        tu.assertLocalValue(bottom, "c", initInState);
+        tu.assertLocalValue(bottom, "s", initInState);
+        tu.assertLocalValue(bottom, "i", initInState);
+        tu.assertLocalValue(bottom, "l", initInState);
+        
         tu.assertLocalValue(bottom, "b", initOutState);
         tu.assertLocalValue(bottom, "by", initOutState);
         tu.assertLocalValue(bottom, "c", initOutState);

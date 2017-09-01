@@ -7,6 +7,7 @@ import java.util.Objects;
 
 import dfa.analyses.ReachingDefinitionsElement.Definition;
 import dfa.framework.UnsupportedValueException;
+import soot.ArrayType;
 import soot.Local;
 import soot.Type;
 import soot.Value;
@@ -112,7 +113,9 @@ public class ReachingDefinitionsElement extends LocalMapElement<Definition> {
                 if (firstOutput) {
                     sb.append('\n');
                 }
-                sb.append(entry.getKey().getName()).append(" = ").append(def);
+                sb.append(entry.getKey().getName());
+                sb.append(" = ");
+                sb.append(def);
                 firstOutput = true;
             }
         }
@@ -137,12 +140,16 @@ public class ReachingDefinitionsElement extends LocalMapElement<Definition> {
                 throw new IllegalArgumentException("type must not be null");
             }
             
+            if (type == DefinitionType.DEFINITION) {
+                throw new IllegalArgumentException("DEFINITION is not a valid type");
+            }
+            
             this.type = type;
         }
 
         public Definition(Value val) {
             if (val == null) {
-                throw new IllegalArgumentException("val must nnot be null");
+                throw new IllegalArgumentException("val must not be null");
             }
             
             this.val = val;
@@ -391,8 +398,7 @@ public class ReachingDefinitionsElement extends LocalMapElement<Definition> {
             Value op = expr.getOp();
             op.apply(valueSwitch);
             Type type = expr.getCastType();
-            result = type.toString() + valueSwitch.getResult();
-            // TODO What does Type.toString() do?
+            result = "(" + type.toString() + ") " + valueSwitch.getResult();
         }
 
         @Override
@@ -436,43 +442,22 @@ public class ReachingDefinitionsElement extends LocalMapElement<Definition> {
             Value op = expr.getOp();
             StringRepresentation valueSwitch = new StringRepresentation(inputDefinition);
             op.apply(valueSwitch);
-            result = "instanceof " + valueSwitch.getResult();
-        }
-
-        /**
-         * Combines the cases of all different invoke expressions
-         * 
-         * @param methodName
-         *        the name of the method to be invoked
-         * @param args
-         *        the arguments of the method to be
-         */
-        private void invokeExpr(String methodName, List<Value> args) {
-            StringBuilder sb = new StringBuilder();
-            sb.append(methodName + "(");
-            StringRepresentation valueSwitch = new StringRepresentation(inputDefinition);
-            String prefix = "";
-            for (Value v : args) {
-                v.apply(valueSwitch);
-                sb.append(valueSwitch.getResult() + prefix);
-                prefix = ", ";
-            }
-            sb.append(")");
-            result = sb.toString();
+            result = valueSwitch.getResult() + " instanceof " + expr.getCheckType();
         }
 
         @Override
         public void caseInterfaceInvokeExpr(InterfaceInvokeExpr expr) {
             String methodName = expr.getMethod().getName();
             List<Value> args = expr.getArgs();
-            invokeExpr(methodName, args);
+            dynamicInvokeExpr(expr.getBase().toString(), methodName, args);
         }
 
         @Override
         public void caseDynamicInvokeExpr(DynamicInvokeExpr expr) {
+            // TODO is this correct?
             String methodName = expr.getMethod().getName();
             List<Value> args = expr.getArgs();
-            invokeExpr(methodName, args);
+            staticInvokeExpr(methodName, args);
         }
 
         @Override
@@ -489,19 +474,23 @@ public class ReachingDefinitionsElement extends LocalMapElement<Definition> {
             Value size = expr.getSize();
             size.apply(valueSwitch);
             result = "new " + expr.getBaseType().toString() + "[" + valueSwitch.getResult() + "]";
-            // TODO What does Type.toString() do?
         }
 
         @Override
         public void caseNewExpr(NewExpr expr) {
             result = "new " + expr.getBaseType().toString();
-            // TODO What does Type.toString() do?
         }
 
         @Override
         public void caseNewMultiArrayExpr(NewMultiArrayExpr expr) {
             StringBuilder sb = new StringBuilder();
-            sb.append("new " + expr.getBaseType().toString());
+            ArrayType arrayType = expr.getBaseType();
+            while (arrayType.numDimensions > 1) {
+                arrayType = (ArrayType) arrayType.getElementType();
+            }
+            
+            Type type = arrayType.getElementType();
+            sb.append("new " + type.toString());
             int sizeCount = expr.getSizeCount();
             for (int i = 0; i < sizeCount; i++) {
                 StringRepresentation valueSwitch = new StringRepresentation(inputDefinition);
@@ -510,28 +499,27 @@ public class ReachingDefinitionsElement extends LocalMapElement<Definition> {
                 sb.append("[" + valueSwitch.getResult() + "]");
             }
             result = sb.toString();
-            // TODO What does Type.toString() do?
         }
 
         @Override
         public void caseSpecialInvokeExpr(SpecialInvokeExpr expr) {
             String methodName = expr.getMethod().getName();
             List<Value> args = expr.getArgs();
-            invokeExpr(methodName, args);
+            dynamicInvokeExpr(expr.getBase().toString(), methodName, args);
         }
 
         @Override
         public void caseStaticInvokeExpr(StaticInvokeExpr expr) {
             String methodName = expr.getMethod().getName();
             List<Value> args = expr.getArgs();
-            invokeExpr(methodName, args);
+            staticInvokeExpr(methodName, args);
         }
 
         @Override
         public void caseVirtualInvokeExpr(VirtualInvokeExpr expr) {
             String methodName = expr.getMethod().getName();
             List<Value> args = expr.getArgs();
-            invokeExpr(methodName, args);
+            dynamicInvokeExpr(expr.getBase().toString(), methodName, args);
         }
 
         // RefSwitch
@@ -591,6 +579,44 @@ public class ReachingDefinitionsElement extends LocalMapElement<Definition> {
         public void defaultCase(Object arg0) {
             assert false : "No soot Value - You fucked up!";
         }
+        
+        /**
+         * Combines the cases of all different dynamic invoke expressions 
+         * 
+         * @param methodName
+         *        the name of the method to be invoked
+         * @param args
+         *        the arguments of the method to be
+         */
+        private void dynamicInvokeExpr(String objectName, String methodName, List<Value> args) {
+            StringBuilder sb = new StringBuilder(objectName);
+            sb.append(".");
+            sb.append(methodName + "(");
+            StringRepresentation valueSwitch = new StringRepresentation(inputDefinition);
+            String prefix = "";
+            for (Value v : args) {
+                v.apply(valueSwitch);
+                sb.append(prefix).append(valueSwitch.getResult());
+                prefix = ", ";
+            }
+            sb.append(")");
+            result = sb.toString();
+        }
+        
+        private void staticInvokeExpr(String methodName, List<Value> args) {
+            StringBuilder sb = new StringBuilder();
+            sb.append(methodName + "(");
+            StringRepresentation valueSwitch = new StringRepresentation(inputDefinition);
+            String prefix = "";
+            for (Value v : args) {
+                v.apply(valueSwitch);
+                sb.append(prefix).append(valueSwitch.getResult());
+                prefix = ", ";
+            }
+            sb.append(")");
+            result = sb.toString();
+        }
+        
     }
 
     /**

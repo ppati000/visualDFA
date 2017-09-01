@@ -21,7 +21,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
-@Ignore // TODO QA: These tests are not passing on Windows because of minor rendering differences.
+// TODO QA: These tests are not passing on Windows because of minor rendering differences.
 public class GraphExporterTest {
     private VisualGraphPanel panel;
     private JPanel fakeStatePanel;
@@ -86,6 +86,8 @@ public class GraphExporterTest {
     public void shouldCreateMediumExportImage() throws IOException {
         BufferedImage exportedImage = GraphExporter.exportCurrentGraph(graph, 2.0, null, null);
         BufferedImage referenceImage = ImageIO.read(getClass().getResourceAsStream("/export-medium.png"));
+
+        ImageIO.write(exportedImage, "PNG", new File("./hello.png"));
 
         assertEquals("", TestUtils.bufferedImagesEqual(exportedImage, referenceImage, 10, 300, 10));
     }

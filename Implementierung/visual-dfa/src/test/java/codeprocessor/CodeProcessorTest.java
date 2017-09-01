@@ -3,6 +3,7 @@ package codeprocessor;
 import static org.junit.Assert.*;
 import java.io.File;
 import org.junit.*;
+
 /**
  * Test for {@code CodeProcessor}
  * 
@@ -68,7 +69,6 @@ public class CodeProcessorTest {
                 + System.lineSeparator() + "*/" + System.lineSeparator() + "System.out.println(\"juhu\");"
                 + System.lineSeparator() + "}}";
         CodeProcessor test = new CodeProcessor(codeFragment);
-        System.out.println(test.getErrorMessage());
         assertEquals("TestClass", test.getClassName());
         assertEquals(true, test.wasSuccessful());
     }

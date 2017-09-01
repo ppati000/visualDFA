@@ -106,6 +106,7 @@ public class OptionFileParser {
             return false;
         }
         this.compilerPath = selectedJDKPath.getAbsolutePath();
+        System.setProperty("java.home", selectedJDKPath.getAbsolutePath());
         if (ToolProvider.getSystemJavaCompiler() == null) {
             return false;
         }
@@ -116,7 +117,7 @@ public class OptionFileParser {
         if (!path.exists()) {
             return false;
         }
-        //TODO does it really look like that in other OS
+        // TODO does it really look like that in other OS
         String testIfJREPath = path.getAbsolutePath().trim() + System.getProperty("file.separator") + "bin";
         File jreFile = new File(testIfJREPath.toString());
         if (!jreFile.exists()) {
@@ -126,10 +127,10 @@ public class OptionFileParser {
     }
 
     private void askForJDKPath() {
-        /*if (ToolProvider.getSystemJavaCompiler() != null) {
+        if (ToolProvider.getSystemJavaCompiler() != null) {
             this.compilerPath = System.getProperty("java.home");
             return;
-        }*/
+        }
         GenericBox box = new GenericBox(this.programFrame, "JDK Path", PATH_SELECTION, "Select", "Close Program", null,
                 false, Option.YES_OPTION);
         if (box.getOption() == Option.NO_OPTION) {
@@ -137,6 +138,9 @@ public class OptionFileParser {
         }
         File selectedPath = this.programFrame.getCompilerPath();
         boolean isJREPath = validJREPath(selectedPath);
+        if (isJREPath) {
+            System.setProperty("java.home", selectedPath.getAbsolutePath());
+        }
         while (!isJREPath || (ToolProvider.getSystemJavaCompiler() == null)) {
             box = new GenericBox(this.programFrame, "JDK Path", NO_COMPILER_FOUND, "Select", "Close Program", null,
                     false, Option.YES_OPTION);
@@ -144,6 +148,7 @@ public class OptionFileParser {
                 System.exit(0);
             }
             selectedPath = this.programFrame.getCompilerPath();
+            isJREPath = validJREPath(selectedPath);
             if (isJREPath) {
                 System.setProperty("java.home", selectedPath.getAbsolutePath());
             }
@@ -155,7 +160,7 @@ public class OptionFileParser {
         File fileDirectory = new File(this.programOutputPath);
         this.optionFile = new File(fileDirectory, OPTION_FILE_NAME);
         FileWriter writer;
-        try {
+        try { 
             writer = new FileWriter(optionFile);
             writer.write("jdkpath=" + this.compilerPath + ";" + System.lineSeparator());
             writer.write("closebox=" + this.showBox + ";" + System.lineSeparator());
@@ -180,5 +185,6 @@ public class OptionFileParser {
         this.optionFile.delete();
         writeNewFile();
     }
+
 
 }

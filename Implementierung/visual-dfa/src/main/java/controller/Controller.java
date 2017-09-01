@@ -53,12 +53,17 @@ public class Controller {
     private DFAPrecalcController precalcController;
     private boolean shouldContinue = false;
 
+    public DFAExecution getDFAExecution() {
+        return this.dfaExecution;
+    }
+
     /**
      * Creates a new {@code Controller} and loads the available analyses with an
      * instance of {@code AnalysisLoader}. Creates a {@code VisualGraphPanel}
      * and a {@code GraphUIController}.
      */
     public Controller() {
+
         // TODO @Anika the dirPrefix is only a temporary fix
         // the analyses-classes can be put in .../anyDirectory/dfa/analyses and
         // the argument to the
@@ -67,7 +72,7 @@ public class Controller {
         // package structure does not match the folder structure
 
         try {
-            //TODO
+            // TODO
             String dirPrefix = System.getProperty("file.separator") + "src" + System.getProperty("file.separator")
                     + "test" + System.getProperty("file.separator") + "resources";
             this.analysisLoader = new StaticAnalysisLoader(CLASS_PATH + dirPrefix);
@@ -275,7 +280,7 @@ public class Controller {
      * {@code StatePanel} and the {@code VisualGraphPanel} are activated and the
      * {@code InputPanel} is deactivated.
      */
-    public void startAnalysis() {
+    public DFAPrecalcController startAnalysis(String methodSignature) {
         // Collect information
         visibilityPrecalculating();
         String analysisName = programFrame.getInputPanel().getAnalysis();
@@ -284,12 +289,11 @@ public class Controller {
         boolean hasFilter = programFrame.getInputPanel().isFilterSelected();
 
         // Process code with instance of {@code CodeProcessor}
-        CodeProcessor processor = null;
-        processor = new CodeProcessor(code);
+        CodeProcessor processor = new CodeProcessor(code);
         if (!processor.wasSuccessful()) {
             new MessageBox(programFrame, "Compilation Error", processor.getErrorMessage());
             visibilityInput();
-            return;
+            return null;
         }
         String packageName = processor.getPath();
         String className = processor.getClassName();
@@ -302,19 +306,23 @@ public class Controller {
         } else {
             filter = new NoFilter();
         }
+
         List<String> methodList = graphBuilder.getMethods(filter);
-        MethodSelectionBox selectionBox = new MethodSelectionBox(programFrame, methodList);
-        if (selectionBox.getOption() == Option.CANCEL_OPTION) {
-            visibilityInput();
-            return;
+        if (methodSignature == null) {
+            MethodSelectionBox selectionBox = new MethodSelectionBox(programFrame, methodList);
+            if (selectionBox.getOption() == Option.CANCEL_OPTION) {
+                visibilityInput();
+                return null;
+            }
+            methodSignature = selectionBox.getSelectedMethod();
         }
-        String methodSignature = selectionBox.getSelectedMethod();
+
         SimpleBlockGraph blockGraph = graphBuilder.buildGraph(methodSignature);
         this.precalcController = new DFAPrecalcController();
         DFAPrecalculator precalculator = null;
         try {
             Worklist worklist = this.worklistManager.getWorklist(worklistName, blockGraph);
-            //@SuppressWarnings("unchecked")
+            // @SuppressWarnings("unchecked")
             DFAFactory<? extends LatticeElement> dfaFactory = analysisLoader.getDFAFactory(analysisName);
             precalculator = new DFAPrecalculator(dfaFactory, worklist, blockGraph, this.precalcController, this);
         } catch (IllegalArgumentException e) {
@@ -328,6 +336,7 @@ public class Controller {
             e.printStackTrace();
         }
         visibilityPrecalculating();
+        return this.precalcController;
     }
 
     /**

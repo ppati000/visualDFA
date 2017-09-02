@@ -1,3 +1,5 @@
+package gui.visualgraph;
+
 import java.awt.*;
 import java.awt.image.BufferedImage;
 

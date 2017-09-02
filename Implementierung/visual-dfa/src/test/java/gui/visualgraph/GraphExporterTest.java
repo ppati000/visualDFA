@@ -1,3 +1,5 @@
+package gui.visualgraph;
+
 import codeprocessor.CodeProcessor;
 import codeprocessor.GraphBuilder;
 import controller.Controller;
@@ -84,7 +86,7 @@ public class GraphExporterTest {
         BufferedImage exportedImage = graphExporter.exportCurrentGraph(graph, 1.0, null, null);
         BufferedImage referenceImage = ImageIO.read(getClass().getResourceAsStream("/export-small.png"));
 
-        assertEquals("", TestUtils.bufferedImagesEqual(exportedImage, referenceImage, 10, 100, 10));
+        Assert.assertEquals("", TestUtils.bufferedImagesEqual(exportedImage, referenceImage, 10, 100, 10));
     }
 
     @Test
@@ -92,7 +94,7 @@ public class GraphExporterTest {
         BufferedImage exportedImage = graphExporter.exportCurrentGraph(graph, 2.0, null, null);
         BufferedImage referenceImage = ImageIO.read(getClass().getResourceAsStream("/export-medium.png"));
 
-        assertEquals("", TestUtils.bufferedImagesEqual(exportedImage, referenceImage, 10, 300, 10));
+        Assert.assertEquals("", TestUtils.bufferedImagesEqual(exportedImage, referenceImage, 10, 300, 10));
     }
 
     @Test
@@ -100,7 +102,7 @@ public class GraphExporterTest {
         BufferedImage exportedImage = graphExporter.exportCurrentGraph(graph, 3.0, null, null);
         BufferedImage referenceImage = ImageIO.read(getClass().getResourceAsStream("/export-large.png"));
 
-        assertEquals("", TestUtils.bufferedImagesEqual(exportedImage, referenceImage, 10, 800, 10));
+        Assert.assertEquals("", TestUtils.bufferedImagesEqual(exportedImage, referenceImage, 10, 800, 10));
     }
 
     @Test

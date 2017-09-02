@@ -11,7 +11,6 @@ import org.junit.Test;
 import codeprocessor.CodeProcessor;
 import codeprocessor.Filter;
 import codeprocessor.GraphBuilder;
-import codeprocessor.NoFilter;
 import dfa.TestMethod;
 import dfa.TestUtils;
 import dfa.analyses.TaintElement;
@@ -38,7 +37,7 @@ public class TestTransition01 {
     private static final TaintElement.Value VAL_TAINTED_V = new TaintElement.Value(TaintState.TAINTED, true);
 
     private static void addTags(SootClass c) {
-        Filter filter = new NoFilter();
+        Filter filter = new Filter();
         List<SootMethod> methods = c.getMethods();
         for (SootMethod method : methods) {
             filter.filter(method);

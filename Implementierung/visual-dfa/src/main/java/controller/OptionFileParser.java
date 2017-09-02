@@ -19,12 +19,11 @@ import gui.ProgramFrame;
  */
 public class OptionFileParser {
 
-    private static final String PATH_SELECTION = ""
-            + "Select the path to your \"jre\" folder which is located in the JDK(!) folder. "
-            + "Example: C:\\Programme\\Java\\jdk1.7.0_76\\jre";
+    private static final String PATH_SELECTION = "Select the path to your JDK 1.7 folder. "
+            + "Example: C:\\Programme\\Java\\jdk1.7.0_76";
     private static final String NO_COMPILER_FOUND = "No Java compiler could be found in your selected directory. "
             + "Please set the path correctly as the program needs a functional java compiler for analysing code. "
-            + "Example: C:\\Programme\\Java\\jdk1.7.0_76\\jre";
+            + "Example: C:\\Programme\\Java\\jdk1.7.0_76";
     private static final String OPTION_FILE_NAME = "visualDfaOptions.txt";
     private boolean showBox = true;
     private String compilerPath = "";
@@ -106,7 +105,7 @@ public class OptionFileParser {
             return false;
         }
         this.compilerPath = selectedJDKPath.getAbsolutePath();
-        System.setProperty("java.home", selectedJDKPath.getAbsolutePath());
+        System.setProperty("java.home", this.compilerPath);
         if (ToolProvider.getSystemJavaCompiler() == null) {
             return false;
         }
@@ -114,7 +113,7 @@ public class OptionFileParser {
     }
 
     private boolean validJREPath(File path) {
-        if (!path.exists()) {
+        if ((path == null) || !path.exists()) {
             return false;
         }
         // TODO does it really look like that in other OS
@@ -123,7 +122,13 @@ public class OptionFileParser {
         if (!jreFile.exists()) {
             return false;
         }
-        return true;
+        String[] files = jreFile.list();
+        for (String name: files) {
+            if (name.startsWith("java")) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private void askForJDKPath() {
@@ -131,12 +136,13 @@ public class OptionFileParser {
             this.compilerPath = System.getProperty("java.home");
             return;
         }
+
         GenericBox box = new GenericBox(this.programFrame, "JDK Path", PATH_SELECTION, "Select", "Close Program", null,
                 false, Option.YES_OPTION);
         if (box.getOption() == Option.NO_OPTION) {
             System.exit(0);
         }
-        File selectedPath = this.programFrame.getCompilerPath();
+        File selectedPath = modifyInput(this.programFrame.getCompilerPath());
         boolean isJREPath = validJREPath(selectedPath);
         if (isJREPath) {
             System.setProperty("java.home", selectedPath.getAbsolutePath());
@@ -147,13 +153,29 @@ public class OptionFileParser {
             if (box.getOption() == Option.NO_OPTION) {
                 System.exit(0);
             }
-            selectedPath = this.programFrame.getCompilerPath();
+
+            selectedPath = modifyInput(this.programFrame.getCompilerPath());
             isJREPath = validJREPath(selectedPath);
             if (isJREPath) {
                 System.setProperty("java.home", selectedPath.getAbsolutePath());
             }
         }
         this.compilerPath = selectedPath.getAbsolutePath();
+    }
+
+    private File modifyInput(File selectedPath) {
+        File windowsPath = new File(selectedPath.getAbsolutePath() + System.getProperty("file.separator") + "jre");
+        System.out.println("windoes:" + windowsPath);
+        File macPath = new File(selectedPath.getAbsolutePath() + System.getProperty("file.separator") + "Contents"
+                
+                + System.getProperty("file.separator") + "Home" + System.getProperty("file.separator") + "jre");
+        System.out.println("mac: " + macPath);
+        if (windowsPath.exists()) {
+            return windowsPath;
+        } else if (macPath.exists()) {
+            return macPath;
+        }
+        return null;
     }
 
     private void writeNewFile() {

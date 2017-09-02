@@ -6,6 +6,13 @@ import java.util.Objects;
 import java.util.TreeMap;
 
 import dfa.analyses.ConstantBitsElement.BitValueArray;
+import soot.BooleanType;
+import soot.ByteType;
+import soot.CharType;
+import soot.IntType;
+import soot.LongType;
+import soot.ShortType;
+import soot.Type;
 import soot.jimple.ArithmeticConstant;
 import soot.jimple.IntConstant;
 import soot.jimple.LongConstant;
@@ -20,11 +27,16 @@ import soot.jimple.internal.JimpleLocal;
 public class ConstantBitsElement extends LocalMapElement<BitValueArray> {
 
     /**
-     * a {@code Comparator} to define an order on {@code JimpleLocal}s
+     * Determines whether a certain type of Local is accepted (can be contained in) a {@code ConstantBitsElement}.
+     * 
+     * @param local
+     *        the {@code JimpleLocal} in question
+     * @return {@code true} if the given {@code JimpleLocal} is accepted, {@code false} otherwise
      */
-    // public static final LocalComparator COMPARATOR = new LocalComparator();
-
-    // private SortedMap<JimpleLocal, BitValueArray> localMap;
+    public static boolean isLocalTypeAccepted(Type type) {
+        return type instanceof BooleanType || type instanceof ByteType || type instanceof CharType
+                || type instanceof ShortType || type instanceof IntType || type instanceof LongType;
+    }
 
     /**
      * Creates a {@code ConstantBitsElement} with the given mapping.

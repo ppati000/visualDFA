@@ -143,7 +143,7 @@ public class ConstantBitsTransition implements Transition<ConstantBitsElement> {
             if (stmt.getLeftOp() instanceof JimpleLocal) {
                 lValLocal = (JimpleLocal) stmt.getLeftOp();
                 Type type = lValLocal.getType();
-                if (!(type instanceof PrimType)) {
+                if (!ConstantBitsElement.isLocalTypeAccepted(type)) {
                     // ignore
                     return;
                 }
@@ -196,7 +196,7 @@ public class ConstantBitsTransition implements Transition<ConstantBitsElement> {
             if (stmt.getLeftOp() instanceof JimpleLocal) {
                 lValLocal = (JimpleLocal) stmt.getLeftOp();
                 Type type = lValLocal.getType();
-                if (!(type instanceof PrimType)) {
+                if (!ConstantBitsElement.isLocalTypeAccepted(type)) {
                     // ignore
                     return;
                 }
@@ -727,13 +727,13 @@ public class ConstantBitsTransition implements Transition<ConstantBitsElement> {
                                 for (int j = 0; j < length; j++) {
                                     if (op1Values[j] == BitValue.TOP) {
                                         op1ValuesPossibility[j] =
-                                                BitValueArray.booleanToBitValue((counter1 & ((long) 1 << j)) != 0);
+                                                BitValueArray.booleanToBitValue((counter1 & (1L << j)) != 0);
                                     } else {
                                         op1ValuesPossibility[j] = op1Values[j];
                                     }
                                     if (op2Values[j] == BitValue.TOP) {
                                         op2ValuesPossibility[j] =
-                                                BitValueArray.booleanToBitValue((counter2 & ((long) 1 << j)) != 0);
+                                                BitValueArray.booleanToBitValue((counter2 & (1L << j)) != 0);
                                     } else {
                                         op2ValuesPossibility[j] = op2Values[j];
                                     }
@@ -1094,13 +1094,13 @@ public class ConstantBitsTransition implements Transition<ConstantBitsElement> {
                             for (int j = 0; j < length; j++) {
                                 if (op1Values[j] == BitValue.TOP) {
                                     op1ValuesPossibility[j] =
-                                            BitValueArray.booleanToBitValue((counter1 & ((long) 1 << j)) != 0);
+                                            BitValueArray.booleanToBitValue((counter1 & (1L << j)) != 0);
                                 } else {
                                     op1ValuesPossibility[j] = op1Values[j];
                                 }
                                 if (op2Values[j] == BitValue.TOP) {
                                     op2ValuesPossibility[j] =
-                                            BitValueArray.booleanToBitValue((counter2 & ((long) 1 << j)) != 0);
+                                            BitValueArray.booleanToBitValue((counter2 & (1L << j)) != 0);
                                 } else {
                                     op2ValuesPossibility[j] = op2Values[j];
                                 }
@@ -1148,14 +1148,14 @@ public class ConstantBitsTransition implements Transition<ConstantBitsElement> {
                             long maxVal = maxMinAbs[0];
                             long minVal = maxMinAbs[1];
                             for (int l = 0; l < length; l++) {
-                                if (!foundZero && (minVal & (1 << l)) != 1) {
+                                if (!foundZero && (minVal & (1L << l)) != 1) {
                                     foundZero = true;
                                     zeroPos = l;
                                     break;
                                 }
                             }
                             for (int p = length - 1; p >= 0; p--) {
-                                if (!foundOne && (maxVal & (1 << p)) != 0) {
+                                if (!foundOne && (maxVal & (1L << p)) != 0) {
                                     foundOne = true;
                                     onePos = p;
                                     break;
@@ -1178,14 +1178,14 @@ public class ConstantBitsTransition implements Transition<ConstantBitsElement> {
                             long maxVal = -maxMinAbs[1];
                             long minVal = -maxMinAbs[0];
                             for (int m = 0; m < length; m++) {
-                                if (!foundOne && (maxVal & (1 << m)) != 0) {
+                                if (!foundOne && (maxVal & (1L << m)) != 0) {
                                     foundOne = true;
                                     onePos = m;
                                     break;
                                 }
                             }
                             for (int n = length - 1; n >= 0; n++) {
-                                if (!foundZero && (minVal & (1 << n)) != 1) {
+                                if (!foundZero && (minVal & (1L << n)) != 1) {
                                     foundZero = true;
                                     zeroPos = n;
                                     break;
@@ -1284,13 +1284,13 @@ public class ConstantBitsTransition implements Transition<ConstantBitsElement> {
                                 for (int j = 0; j < length; j++) {
                                     if (op1Values[j] == BitValue.TOP) {
                                         op1ValuesPossibility[j] =
-                                                BitValueArray.booleanToBitValue((counter1 & ((long) 1 << j)) != 0);
+                                                BitValueArray.booleanToBitValue((counter1 & (1L << j)) != 0);
                                     } else {
                                         op1ValuesPossibility[j] = op1Values[j];
                                     }
                                     if (op2Values[j] == BitValue.TOP) {
                                         op2ValuesPossibility[j] =
-                                                BitValueArray.booleanToBitValue((counter2 & ((long) 1 << j)) != 0);
+                                                BitValueArray.booleanToBitValue((counter2 & (1L << j)) != 0);
                                     } else {
                                         op2ValuesPossibility[j] = op2Values[j];
                                     }
@@ -1401,7 +1401,7 @@ public class ConstantBitsTransition implements Transition<ConstantBitsElement> {
                         BitValue[] resultingValues = new BitValue[length];
                         int highestTopBitPos = -1;
                         for (int a = length; a >= 0; a--) {
-                            if ((resultingMaxAbs & (1 << a)) != 0) {
+                            if ((resultingMaxAbs & (1L << a)) != 0) {
                                 highestTopBitPos = a;
                                 break;
                             } else {
@@ -1744,8 +1744,7 @@ public class ConstantBitsTransition implements Transition<ConstantBitsElement> {
                         BitValue[] op2ValuesPossibility = new BitValue[op2Length];
                         for (int j = 0; j < op2Length; j++) {
                             if (op2Values[j] == BitValue.TOP) {
-                                op2ValuesPossibility[j] =
-                                        BitValueArray.booleanToBitValue((counter & ((long) 1 << j)) != 0);
+                                op2ValuesPossibility[j] = BitValueArray.booleanToBitValue((counter & (1L << j)) != 0);
                             } else {
                                 op2ValuesPossibility[j] = op2Values[j];
                             }
@@ -1802,8 +1801,7 @@ public class ConstantBitsTransition implements Transition<ConstantBitsElement> {
                         BitValue[] op2ValuesPossibility = new BitValue[op2Length];
                         for (int j = 0; j < op2Length; j++) {
                             if (op2Values[j] == BitValue.TOP) {
-                                op2ValuesPossibility[j] =
-                                        BitValueArray.booleanToBitValue((counter & ((long) 1 << j)) != 0);
+                                op2ValuesPossibility[j] = BitValueArray.booleanToBitValue((counter & (1L << j)) != 0);
                             } else {
                                 op2ValuesPossibility[j] = op2Values[j];
                             }
@@ -1861,8 +1859,7 @@ public class ConstantBitsTransition implements Transition<ConstantBitsElement> {
                         BitValue[] op2ValuesPossibility = new BitValue[op2Length];
                         for (int j = 0; j < op2Length; j++) {
                             if (op2Values[j] == BitValue.TOP) {
-                                op2ValuesPossibility[j] =
-                                        BitValueArray.booleanToBitValue((counter & ((long) 1 << j)) != 0);
+                                op2ValuesPossibility[j] = BitValueArray.booleanToBitValue((counter & (1L << j)) != 0);
                             } else {
                                 op2ValuesPossibility[j] = op2Values[j];
                             }
@@ -1944,7 +1941,6 @@ public class ConstantBitsTransition implements Transition<ConstantBitsElement> {
                 // if one of the types is not accepted, the result is top
                 result = top;
             }
-            // TODO Auto-generated method stub
         }
 
         @Override

@@ -61,6 +61,7 @@ import soot.jimple.NopStmt;
 import soot.jimple.NullConstant;
 import soot.jimple.OrExpr;
 import soot.jimple.ParameterRef;
+import soot.jimple.Ref;
 import soot.jimple.RemExpr;
 import soot.jimple.RetStmt;
 import soot.jimple.ReturnStmt;
@@ -93,7 +94,7 @@ public class ConstantFoldingTransition implements Transition<ConstantFoldingElem
     public ConstantFoldingElement transition(ConstantFoldingElement element, Unit unit) {
         Transitioner stmtSwitch = new Transitioner(element);
         unit.apply(stmtSwitch);
-        
+
         return stmtSwitch.getOutputElement();
     }
 
@@ -137,14 +138,18 @@ public class ConstantFoldingTransition implements Transition<ConstantFoldingElem
                 if (!ConstantFoldingElement.isLocalTypeAccepted(lValLocal.getType())) {
                     return;
                 }
+            } else if (!(stmt.getLeftOp() instanceof Ref)) {
+                assert false : "Something went horribly wrong!";
+                return;
             } else {
-                return;     // ignore
+                return; // ignore
             }
 
             Value rVal = stmt.getRightOp();
             Evaluator valueSwitch = new Evaluator(inputElement);
             rVal.apply(valueSwitch);
             ConstantFoldingElement.Value rhs = valueSwitch.getResult();
+
             outputElement.setValue(lValLocal, rhs);
         }
 
@@ -171,16 +176,20 @@ public class ConstantFoldingTransition implements Transition<ConstantFoldingElem
         @Override
         public void caseIdentityStmt(IdentityStmt stmt) {
             // this is only used for parameter initialization (so set to TOP)
+
             JimpleLocal lValLocal;
             if (stmt.getLeftOp() instanceof JimpleLocal) {
                 lValLocal = (JimpleLocal) stmt.getLeftOp();
                 if (!ConstantFoldingElement.isLocalTypeAccepted(lValLocal.getType())) {
                     return;
                 }
+            } else if (!(stmt.getLeftOp() instanceof Ref)) {
+                assert false : "Something went horribly wrong!";
+                return;
             } else {
-                return;     // ignore
+                return; // ignore
             }
-            
+
             outputElement.setValue(lValLocal, ConstantFoldingElement.Value.getTop());
         }
 
@@ -233,7 +242,7 @@ public class ConstantFoldingTransition implements Transition<ConstantFoldingElem
         public void defaultCase(Object arg0) {
             assert false : "Something went horribly wrong!";
         }
-        
+
     }
 
     /**
@@ -355,7 +364,7 @@ public class ConstantFoldingTransition implements Transition<ConstantFoldingElem
             ConstantFoldingElement.Value op1 = operandValues.getFirst();
             ConstantFoldingElement.Value op2 = operandValues.getSecond();
 
-            CosntantRetriever constSwitch = new CosntantRetriever();
+            ConstantRetriever constSwitch = new ConstantRetriever();
             if (op1.isConst()) {
                 op1.getConstant().apply(constSwitch);
                 if (constSwitch.getValue() == 0) {
@@ -406,7 +415,7 @@ public class ConstantFoldingTransition implements Transition<ConstantFoldingElem
             ConstantFoldingElement.Value op1 = operandValues.getFirst();
             ConstantFoldingElement.Value op2 = operandValues.getSecond();
 
-            CosntantRetriever constSwitch = new CosntantRetriever();
+            ConstantRetriever constSwitch = new ConstantRetriever();
             if (op2.equals(top)) {
                 result = top;
             } else if (op2.isConst()) {
@@ -442,7 +451,7 @@ public class ConstantFoldingTransition implements Transition<ConstantFoldingElem
             ConstantFoldingElement.Value op1 = operandValues.getFirst();
             ConstantFoldingElement.Value op2 = operandValues.getSecond();
 
-            CosntantRetriever constSwitch = new CosntantRetriever();
+            ConstantRetriever constSwitch = new ConstantRetriever();
             if (op2.equals(top)) {
                 result = top;
             } else if (op2.isConst()) {
@@ -492,7 +501,7 @@ public class ConstantFoldingTransition implements Transition<ConstantFoldingElem
             ConstantFoldingElement.Value op1 = operandValues.getFirst();
             ConstantFoldingElement.Value op2 = operandValues.getSecond();
 
-            CosntantRetriever constSwitch = new CosntantRetriever();
+            ConstantRetriever constSwitch = new ConstantRetriever();
             if (op1.isConst()) {
                 op1.getConstant().apply(constSwitch);
                 if (constSwitch.getValue() == 0) {
@@ -541,7 +550,7 @@ public class ConstantFoldingTransition implements Transition<ConstantFoldingElem
             ConstantFoldingElement.Value op1 = operandValues.getFirst();
             ConstantFoldingElement.Value op2 = operandValues.getSecond();
 
-            CosntantRetriever constSwitch = new CosntantRetriever();
+            ConstantRetriever constSwitch = new ConstantRetriever();
             if (op1.isConst()) {
                 op1.getConstant().apply(constSwitch);
                 // (long) -1 = 0xFFFFFFFFFFFFFFFF
@@ -612,7 +621,7 @@ public class ConstantFoldingTransition implements Transition<ConstantFoldingElem
                 result = op1;
             } else {
                 // op1 constant
-                CosntantRetriever constSwitch = new CosntantRetriever();
+                ConstantRetriever constSwitch = new ConstantRetriever();
                 op1.getConstant().apply(constSwitch);
                 if (constSwitch.getValue() == 0) {
                     if (op2.equals(bottom)) {
@@ -640,7 +649,7 @@ public class ConstantFoldingTransition implements Transition<ConstantFoldingElem
                 result = op1;
             } else {
                 // op1 constant
-                CosntantRetriever constSwitch = new CosntantRetriever();
+                ConstantRetriever constSwitch = new ConstantRetriever();
                 op1.getConstant().apply(constSwitch);
                 if (constSwitch.getValue() == 0) {
                     if (op2.equals(bottom)) {
@@ -668,7 +677,7 @@ public class ConstantFoldingTransition implements Transition<ConstantFoldingElem
                 result = op1;
             } else {
                 // op1 constant
-                CosntantRetriever constSwitch = new CosntantRetriever();
+                ConstantRetriever constSwitch = new ConstantRetriever();
                 op1.getConstant().apply(constSwitch);
                 if (constSwitch.getValue() == 0) {
                     if (op2.equals(bottom)) {
@@ -709,7 +718,7 @@ public class ConstantFoldingTransition implements Transition<ConstantFoldingElem
             castOp.apply(castSwitch);
             ConstantFoldingElement.Value val = castSwitch.getResult();
             if (val.isConst()) {
-                CosntantRetriever constSwitch = new CosntantRetriever();
+                ConstantRetriever constSwitch = new ConstantRetriever();
                 val.getConstant().apply(constSwitch);
                 long numericVal = constSwitch.value.longValue();
                 ArithmeticConstant res = castIntegerValue(numericVal, expr.getCastType());
@@ -924,7 +933,7 @@ public class ConstantFoldingTransition implements Transition<ConstantFoldingElem
 
             return new Pair<ConstantFoldingElement.Value>(switch1.getResult(), switch2.getResult());
         }
-        
+
         private ArithmeticConstant castIntegerValue(long value, Type castType) {
             if (castType == LongType.v()) {
                 return LongConstant.v(value);
@@ -940,10 +949,10 @@ public class ConstantFoldingTransition implements Transition<ConstantFoldingElem
                 int boolVal = value == 0 ? 0 : 1;
                 return IntConstant.v(boolVal);
             }
-            
+
             return null;
         }
-        
+
     }
 
     /**
@@ -953,7 +962,7 @@ public class ConstantFoldingTransition implements Transition<ConstantFoldingElem
      *         Retrieves the (numeric) values of {@code IntConstant}s or {@code LongConstant}s.
      *
      */
-    private static class CosntantRetriever implements ConstantSwitch {
+    private static class ConstantRetriever implements ConstantSwitch {
 
         private Long value;
 

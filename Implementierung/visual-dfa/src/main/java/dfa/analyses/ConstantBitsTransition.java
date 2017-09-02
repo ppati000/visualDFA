@@ -728,10 +728,14 @@ public class ConstantBitsTransition implements Transition<ConstantBitsElement> {
                                     if (op1Values[j] == BitValue.TOP) {
                                         op1ValuesPossibility[j] =
                                                 BitValueArray.booleanToBitValue((counter1 & ((long) 1 << j)) != 0);
+                                    } else {
+                                        op1ValuesPossibility[j] = op1Values[j];
                                     }
                                     if (op2Values[j] == BitValue.TOP) {
                                         op2ValuesPossibility[j] =
                                                 BitValueArray.booleanToBitValue((counter2 & ((long) 1 << j)) != 0);
+                                    } else {
+                                        op2ValuesPossibility[j] = op2Values[j];
                                     }
                                 }
                                 BitValueArray op1Possibility = new BitValueArray(op1ValuesPossibility);
@@ -1091,10 +1095,14 @@ public class ConstantBitsTransition implements Transition<ConstantBitsElement> {
                                 if (op1Values[j] == BitValue.TOP) {
                                     op1ValuesPossibility[j] =
                                             BitValueArray.booleanToBitValue((counter1 & ((long) 1 << j)) != 0);
+                                } else {
+                                    op1ValuesPossibility[j] = op1Values[j];
                                 }
                                 if (op2Values[j] == BitValue.TOP) {
                                     op2ValuesPossibility[j] =
                                             BitValueArray.booleanToBitValue((counter2 & ((long) 1 << j)) != 0);
+                                } else {
+                                    op2ValuesPossibility[j] = op2Values[j];
                                 }
                             }
                             BitValueArray op1Possibility = new BitValueArray(op1ValuesPossibility);
@@ -1277,10 +1285,14 @@ public class ConstantBitsTransition implements Transition<ConstantBitsElement> {
                                     if (op1Values[j] == BitValue.TOP) {
                                         op1ValuesPossibility[j] =
                                                 BitValueArray.booleanToBitValue((counter1 & ((long) 1 << j)) != 0);
+                                    } else {
+                                        op1ValuesPossibility[j] = op1Values[j];
                                     }
                                     if (op2Values[j] == BitValue.TOP) {
                                         op2ValuesPossibility[j] =
                                                 BitValueArray.booleanToBitValue((counter2 & ((long) 1 << j)) != 0);
+                                    } else {
+                                        op2ValuesPossibility[j] = op2Values[j];
                                     }
                                 }
                                 BitValueArray op1Possibility = new BitValueArray(op1ValuesPossibility);
@@ -1604,19 +1616,98 @@ public class ConstantBitsTransition implements Transition<ConstantBitsElement> {
             commutativeBitwiseOperation(op1, op2, BitOperation.XOR);
         }
 
-        private static BitValueArray shiftLeft(BitValueArray op, int amount) {
-            return op;
-            // TODO implement shiftLeft
+        /**
+         * Shifts the bits of {@code op} by {@code shiftAmount} left.
+         * 
+         * @param op
+         *        the {@code BitValueArray} which is to be shifted left
+         * @param shiftAmount
+         *        the amount of which to shift the bits of {@code op} left
+         * @return the bits of {@code op} shifted left by {@code shiftAmount}
+         */
+        private static BitValueArray shiftLeft(BitValueArray op, int shiftAmount) {
+            int length = op.getBitValues().length;
+            BitValue[] opValues = op.getBitValues();
+            BitValue[] shiftedValues = new BitValue[length];
+            for (int i = 0; i < shiftAmount; i++) {
+                shiftedValues[i] = BitValue.ZERO;
+            }
+            for (int j = shiftAmount; j < length; j++) {
+                shiftedValues[j] = opValues[j - shiftAmount];
+            }
+            return new BitValueArray(shiftedValues);
         }
 
+        /**
+         * Signed-shifts the bits of {@code op} by {@code shiftAmount} right.
+         * 
+         * @param op
+         *        the {@code BitValueArray} which is to be signed-shifted right
+         * @param shiftAmount
+         *        the amount of which to signed-shift the bits of {@code op} right
+         * @return the bits of {@code op} signed-shifted right by {@code shiftAmount}
+         */
         private BitValueArray signedShiftRight(BitValueArray op, int shiftAmount) {
-            return op;
-            // TODO implement signedShiftRight
+            int length = op.getBitValues().length;
+            BitValue sign = op.getBitValues()[length - 1];
+            BitValue[] opValues = op.getBitValues();
+            BitValue[] shiftedValues = new BitValue[length];
+            for (int i = length - 1; i >= length - shiftAmount; i--) {
+                shiftedValues[i] = sign;
+            }
+            for (int j = length - shiftAmount - 1; j >= 0; j--) {
+                shiftedValues[j] = opValues[j + shiftAmount];
+            }
+            return new BitValueArray(shiftedValues);
         }
 
+        /**
+         * Unsigned-shifts the bits of {@code op} by {@code shiftAmount} right.
+         * 
+         * @param op
+         *        the {@code BitValueArray} which is to be unsigned-shifted right
+         * @param shiftAmount
+         *        the amount of which to unsigned-shift the bits of {@code op} right
+         * @return the bits of {@code op} unsigned-shifted right by {@code shiftAmount}
+         */
         private BitValueArray unsignedShiftRight(BitValueArray op, int shiftAmount) {
-            return op;
-            // TODO implement unsignedShiftRight
+            int length = op.getBitValues().length;
+            BitValue[] opValues = op.getBitValues();
+            BitValue[] shiftedValues = new BitValue[length];
+            for (int i = length - 1; i >= length - shiftAmount; i--) {
+                shiftedValues[i] = BitValue.ZERO;
+            }
+            for (int j = length - shiftAmount - 1; j >= 0; j--) {
+                shiftedValues[j] = opValues[j + shiftAmount];
+            }
+            return new BitValueArray(shiftedValues);
+        }
+
+        /**
+         * Returns the {@code int} that is represented by the lowest {@code cutLength} {@code BitValue}s in
+         * {@code op2Values}.
+         * 
+         * @param op2Values
+         *        The array of {@code BitValue}s of which to take the lowest entries
+         * @param cutLength
+         *        the number of entries to take from {@code op2Values}
+         * @return the {@code int} that is represented by the lowest {@code cutLength} {@code BitValue}s in
+         *         {@code op2Values}
+         */
+        private int getShiftAmount(BitValue[] op2Values, int cutLength) {
+            BitValue[] shiftAmountValues = new BitValue[op2Values.length];
+            for (int i = 0; i < cutLength; i++) {
+                shiftAmountValues[i] = op2Values[i];
+            }
+            for (int j = cutLength; j < shiftAmountValues.length; j++) {
+                shiftAmountValues[j] = BitValue.ZERO;
+            }
+            BitValueArray shiftAmountArray = new BitValueArray(shiftAmountValues);
+            ArithmeticConstant c = shiftAmountArray.getConstant();
+            ConstantRetriever constantSwitch = new ConstantRetriever();
+            c.apply(constantSwitch);
+            int shiftAmount = (int) constantSwitch.getValue();
+            return shiftAmount;
         }
 
         @Override
@@ -1627,8 +1718,55 @@ public class ConstantBitsTransition implements Transition<ConstantBitsElement> {
             if (op1.containsBOTTOM() || op2.containsBOTTOM()) {
                 throw new IllegalStateException("Transition of BOTTOM not possible!");
             }
+            if (op1.equals(top) || op2.equals(top)) {
+                // if one is top, the result is top
+                result = top;
 
-            // TODO implement Expression
+            } else if (op2.isConst()) {
+                // if op2 is constant, we can just calculate the shift amount and shift op1 by that amount
+                int cutLength = (op1.getLength() == 32) ? 5 : 6;
+                int shiftAmount = getShiftAmount(op2.getBitValues(), cutLength);
+                result = shiftLeft(op1, shiftAmount);
+
+            } else {
+                // no special case applies and we have TOP bits in op2
+                int numberOfTOPs = getNumberOfTOP(op2);
+                int op1Length = op1.getLength();
+                int op2Length = op2.getLength();
+                int cutLength = (op1.getLength() == 32) ? 5 : 6;
+
+                if (numberOfTOPs <= TOP_TRESHOLD) {
+                    // the number of TOP bits in op2 is small enough to use the heuristic brute force approach
+                    int dim = (1 << numberOfTOPs);
+                    BitValue[] op2Values = op2.getBitValues();
+                    BitValueArray[] op2Possibilities = new BitValueArray[dim];
+                    for (long counter = 0; counter < dim; counter++) {
+                        BitValue[] op2ValuesPossibility = new BitValue[op2Length];
+                        for (int j = 0; j < op2Length; j++) {
+                            if (op2Values[j] == BitValue.TOP) {
+                                op2ValuesPossibility[j] =
+                                        BitValueArray.booleanToBitValue((counter & ((long) 1 << j)) != 0);
+                            } else {
+                                op2ValuesPossibility[j] = op2Values[j];
+                            }
+                        }
+                        int shiftAmount = getShiftAmount(op2ValuesPossibility, cutLength);
+                        op2Possibilities[(int) counter] = shiftLeft(op1, shiftAmount);
+                    }
+
+                    // joining the possibilities
+                    BitValueArray refVal = op2Possibilities[0];
+                    BitValueArray top = BitValueArray.getTop(op1Length);
+                    BitValueArray bottom = BitValueArray.getBottom(op1Length);
+                    for (int j = 1; j < dim; j++) {
+                        refVal = join.getJoinHelper().performSingleJoin(refVal, op2Possibilities[j], op1Length, top,
+                                bottom);
+                    }
+                    result = refVal;
+                } else {
+                    result = top;
+                }
+            }
         }
 
         @Override
@@ -1639,8 +1777,54 @@ public class ConstantBitsTransition implements Transition<ConstantBitsElement> {
             if (op1.containsBOTTOM() || op2.containsBOTTOM()) {
                 throw new IllegalStateException("Transition of BOTTOM not possible!");
             }
+            if (op1.equals(top) || op2.equals(top)) {
+                // if one is top, the result is top
+                result = top;
 
-            // TODO implement Expression
+            } else if (op2.isConst()) {
+                // if op2 is constant, we can just calculate the shift amount and shift op1 by that amount
+                int cutLength = (op1.getLength() == 32) ? 5 : 6;
+                int shiftAmount = getShiftAmount(op2.getBitValues(), cutLength);
+                result = signedShiftRight(op1, shiftAmount);
+            } else {
+                // no special case applies and we have TOP bits in op2
+                int numberOfTOPs = getNumberOfTOP(op2);
+                int op1Length = op1.getLength();
+                int op2Length = op2.getLength();
+                int cutLength = (op1.getLength() == 32) ? 5 : 6;
+
+                if (numberOfTOPs <= TOP_TRESHOLD) {
+                    // the number of TOP bits in op2 is small enough to use the heuristic brute force approach
+                    int dim = (1 << numberOfTOPs);
+                    BitValue[] op2Values = op2.getBitValues();
+                    BitValueArray[] op2Possibilities = new BitValueArray[dim];
+                    for (long counter = 0; counter < dim; counter++) {
+                        BitValue[] op2ValuesPossibility = new BitValue[op2Length];
+                        for (int j = 0; j < op2Length; j++) {
+                            if (op2Values[j] == BitValue.TOP) {
+                                op2ValuesPossibility[j] =
+                                        BitValueArray.booleanToBitValue((counter & ((long) 1 << j)) != 0);
+                            } else {
+                                op2ValuesPossibility[j] = op2Values[j];
+                            }
+                        }
+                        int shiftAmount = getShiftAmount(op2ValuesPossibility, cutLength);
+                        op2Possibilities[(int) counter] = signedShiftRight(op1, shiftAmount);
+                    }
+
+                    // joining the possibilities
+                    BitValueArray refVal = op2Possibilities[0];
+                    BitValueArray top = BitValueArray.getTop(op1Length);
+                    BitValueArray bottom = BitValueArray.getBottom(op1Length);
+                    for (int j = 1; j < dim; j++) {
+                        refVal = join.getJoinHelper().performSingleJoin(refVal, op2Possibilities[j], op1Length, top,
+                                bottom);
+                    }
+                    result = refVal;
+                } else {
+                    result = top;
+                }
+            }
         }
 
         @Override
@@ -1651,103 +1835,146 @@ public class ConstantBitsTransition implements Transition<ConstantBitsElement> {
             if (op1.containsBOTTOM() || op2.containsBOTTOM()) {
                 throw new IllegalStateException("Transition of BOTTOM not possible!");
             }
+            if (op1.equals(top) || op2.equals(top)) {
+                // if one is top, the result is top
+                result = top;
 
-            // TODO implement Expression
+            } else if (op2.isConst()) {
+                // if op2 is constant, we can just calculate the shift amount and shift op1 by that amount
+                int cutLength = (op1.getLength() == 32) ? 5 : 6;
+                int shiftAmount = getShiftAmount(op2.getBitValues(), cutLength);
+                result = unsignedShiftRight(op1, shiftAmount);
+
+            } else {
+                // no special case applies and we have TOP bits in op2
+                int numberOfTOPs = getNumberOfTOP(op2);
+                int op1Length = op1.getLength();
+                int op2Length = op2.getLength();
+                int cutLength = (op1.getLength() == 32) ? 5 : 6;
+
+                if (numberOfTOPs <= TOP_TRESHOLD) {
+                    // the number of TOP bits in op2 is small enough to use the heuristic brute force approach
+                    int dim = (1 << numberOfTOPs);
+                    BitValue[] op2Values = op2.getBitValues();
+                    BitValueArray[] op2Possibilities = new BitValueArray[dim];
+                    for (long counter = 0; counter < dim; counter++) {
+                        BitValue[] op2ValuesPossibility = new BitValue[op2Length];
+                        for (int j = 0; j < op2Length; j++) {
+                            if (op2Values[j] == BitValue.TOP) {
+                                op2ValuesPossibility[j] =
+                                        BitValueArray.booleanToBitValue((counter & ((long) 1 << j)) != 0);
+                            } else {
+                                op2ValuesPossibility[j] = op2Values[j];
+                            }
+                        }
+                        int shiftAmount = getShiftAmount(op2ValuesPossibility, cutLength);
+                        op2Possibilities[(int) counter] = unsignedShiftRight(op1, shiftAmount);
+                    }
+
+                    // joining the possibilities
+                    BitValueArray refVal = op2Possibilities[0];
+                    BitValueArray top = BitValueArray.getTop(op1Length);
+                    BitValueArray bottom = BitValueArray.getBottom(op1Length);
+                    for (int j = 1; j < dim; j++) {
+                        refVal = join.getJoinHelper().performSingleJoin(refVal, op2Possibilities[j], op1Length, top,
+                                bottom);
+                    }
+                    result = refVal;
+                } else {
+                    result = top;
+                }
+            }
         }
 
         @Override
         public void caseCmplExpr(CmplExpr expr) {
-            // TODO Auto-generated method stub
+            // ignore
 
         }
 
         @Override
         public void caseCmpgExpr(CmpgExpr expr) {
-            // TODO Auto-generated method stub
-
+            // ignore
         }
 
         @Override
         public void caseCmpExpr(CmpExpr expr) {
-            // TODO Auto-generated method stub
+            // ignore
 
         }
 
         @Override
         public void caseCastExpr(CastExpr expr) {
+            Type castType = expr.getCastType();
+            Value op = expr.getOp();
+            Type opType = op.getType();
+            if (ConstantBitsElement.isLocalTypeAccepted(castType) && ConstantBitsElement.isLocalTypeAccepted(opType)) {
+                // check if the type of the cast and the type of op are accepted
+                Evaluator ev = new Evaluator(inputElement, join);
+                op.apply(ev);
+                BitValueArray opArray = ev.getResult();
+                BitValue[] opValues = opArray.getBitValues();
+                int length = 0;
+
+                // get length of the resulting BitValueArray
+                if (castType instanceof BooleanType || castType instanceof ByteType || castType instanceof CharType
+                        || castType instanceof ShortType || castType instanceof IntType) {
+                    length = BitValueArray.INT_SIZE;
+                } else if (castType instanceof LongType) {
+                    length = BitValueArray.LONG_SIZE;
+                }
+
+                if (length != opValues.length) {
+                    // if the length of op and the length determined by the cast are not the same, cut or expand op
+                    BitValue[] resultingBits = new BitValue[length];
+                    for (int i = 0; i < Math.min(length, opValues.length); i++) {
+                        resultingBits[i] = opValues[i];
+                    }
+                    for (int j = Math.min(length, opValues.length); j < length; j++) {
+                        resultingBits[j] = opValues[opValues.length - 1];
+                    }
+                    result = new BitValueArray(opValues);
+
+                } else {
+                    // if the length of op ant the length determined by the cast are the same, the result is just op
+                    result = opArray;
+                }
+
+            } else {
+                // if one of the types is not accepted, the result is top
+                result = top;
+            }
             // TODO Auto-generated method stub
         }
 
         @Override
         public void caseEqExpr(EqExpr expr) {
-            ValuePair operandValues = calcOperands(expr);
-            ConstantBitsElement.BitValueArray op1 = operandValues.getFirst();
-            ConstantBitsElement.BitValueArray op2 = operandValues.getSecond();
-            if (op1.containsBOTTOM() || op2.containsBOTTOM()) {
-                throw new IllegalStateException("Transition of BOTTOM not possible!");
-            }
-
-            // TODO implement Expression
+            // ignore
         }
 
         @Override
         public void caseGeExpr(GeExpr expr) {
-            ValuePair operandValues = calcOperands(expr);
-            ConstantBitsElement.BitValueArray op1 = operandValues.getFirst();
-            ConstantBitsElement.BitValueArray op2 = operandValues.getSecond();
-            if (op1.containsBOTTOM() || op2.containsBOTTOM()) {
-                throw new IllegalStateException("Transition of BOTTOM not possible!");
-            }
-
-            // TODO implement Expression
+            // ignore
         }
 
         @Override
         public void caseGtExpr(GtExpr expr) {
-            ValuePair operandValues = calcOperands(expr);
-            ConstantBitsElement.BitValueArray op1 = operandValues.getFirst();
-            ConstantBitsElement.BitValueArray op2 = operandValues.getSecond();
-            if (op1.containsBOTTOM() || op2.containsBOTTOM()) {
-                throw new IllegalStateException("Transition of BOTTOM not possible!");
-            }
-
-            // TODO implement Expression
+            // ignore
         }
 
         @Override
         public void caseLeExpr(LeExpr expr) {
-            ValuePair operandValues = calcOperands(expr);
-            ConstantBitsElement.BitValueArray op1 = operandValues.getFirst();
-            ConstantBitsElement.BitValueArray op2 = operandValues.getSecond();
-            if (op1.containsBOTTOM() || op2.containsBOTTOM()) {
-                throw new IllegalStateException("Transition of BOTTOM not possible!");
-            }
-
-            // TODO implement Expression
+            // ignore
         }
 
         @Override
         public void caseLtExpr(LtExpr expr) {
-            ValuePair operandValues = calcOperands(expr);
-            ConstantBitsElement.BitValueArray op1 = operandValues.getFirst();
-            ConstantBitsElement.BitValueArray op2 = operandValues.getSecond();
-            if (op1.containsBOTTOM() || op2.containsBOTTOM()) {
-                throw new IllegalStateException("Transition of BOTTOM not possible!");
-            }
-
-            // TODO implement Expression
+            // ignore
         }
 
         @Override
         public void caseNeExpr(NeExpr expr) {
-            ValuePair operandValues = calcOperands(expr);
-            ConstantBitsElement.BitValueArray op1 = operandValues.getFirst();
-            ConstantBitsElement.BitValueArray op2 = operandValues.getSecond();
-            if (op1.containsBOTTOM() || op2.containsBOTTOM()) {
-                throw new IllegalStateException("Transition of BOTTOM not possible!");
-            }
-
-            // TODO implement Expression
+            // ignore
         }
 
         @Override

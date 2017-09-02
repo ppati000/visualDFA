@@ -1,0 +1,90 @@
+\documentclass[parskip=full,11pt]{scrartcl}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[german]{babel}
+
+\usepackage[yyyymmdd]{datetime} % must be after babel
+\renewcommand{\dateseparator}{-} % ISO8601 date format
+\usepackage{hyperref}
+\usepackage{listings}
+\usepackage{textcomp}
+
+\usepackage{float}
+\usepackage{enumitem}
+\renewcommand{\familydefault}{\sfdefault}
+\usepackage{graphicx}
+\usepackage{placeins}
+
+\usepackage{lmodern}
+\usepackage{courier}
+
+\usepackage{enumitem}
+\setitemize{itemsep=-8pt}
+\usepackage{csquotes}
+
+
+\usepackage{todonotes} % for todo notes - usage \todo{note}
+
+\usepackage{linegoal,listings}
+\newsavebox{\mylisting}
+\makeatletter
+\newcommand{\lstInline}[2][,]{%
+	\begingroup%
+	\lstset{#1}% Set any keys locally
+	\begin{lrbox}{\mylisting}\lstinline!#2!\end{lrbox}% Store listing in \mylisting
+	\setlength{\@tempdima}{\linegoal}% Space left on line.
+	\ifdim\wd\mylisting>\@tempdima\hfill\\\fi% Insert line break
+	\lstinline!#2!% Reset listing
+	\endgroup%
+}
+\makeatother
+\setlength{\parindent}{0pt}% Just for this example
+
+\lstset{basicstyle=\footnotesize\ttfamily,breaklines=true}
+\lstset{framextopmargin=50pt,frame=bottomline,showstringspaces=false,upquote=true}
+
+
+\RedeclareSectionCommand[style=section,indent=0pt,font=\usekomafont{partnumber}]{part}
+\renewcommand*{\partformat}{\thepart\enskip}
+
+\RedeclareSectionCommand[beforeskip=0pt ,afterskip=0pt]{subparagraph}
+
+\usepackage[bottom = 3 cm, top = 3 cm]{geometry}
+
+\newcommand{\class}[1]{\subsubsection*{\lstinline[basicstyle=\ttfamily\large]{#1}}}
+
+% command for an attribute
+\newcommand{\attr}[4]{\lstinline{[#3]} \textbf{\lstinline{#1 : #2}} \newline #4}
+
+% command for a method
+\newcommand{\method}[5]{\lstinline{[#4]} \textbf{\lstinline{#1(#3) : #2}} \newline #5}
+
+% command for a constructor
+\newcommand{\ctor}[4]{\lstinline{[#3]} \textbf{\lstinline{#1(#2)}} \newline #4}
+
+\newcommand{\inlinecode}[1]{\lstInline[breaklines=true]{#1}}
+
+% make the bullet symbol in lists a circle for level 2
+\renewcommand{\labelitemii}{$\circ$}
+
+% for double quotation marks in listings
+\newcommand{\qq}[1]{``#1``}
+
+\graphicspath{ {images/} }
+
+
+\begin{document}
+	\title{Testbericht: Programmanalyse zum Durchklicken}
+	\author{Nils Jessen \and Anika Nietzer \and Patrick Petrovic \and Sebastian Rauch \and Michael Schieber}
+	
+	\maketitle
+	
+	\newpage
+	\tableofcontents
+
+    \include{Einleitung/Einleitung}
+	\include{Tools/Tools}
+	\include{Bugs/Bugs}
+	\include{Statistiken/Statistiken}
+\end{document}

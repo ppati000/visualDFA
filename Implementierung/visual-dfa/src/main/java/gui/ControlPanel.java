@@ -104,44 +104,50 @@ public class ControlPanel extends JPanel {
         btnStopAnalysis = new JButton();
         jBuDecorator.decorateIconButton(btnStopAnalysis, "icons/rounded-white-square-shape.png", 0.3,
                 new StopListener(), null);
-        
         btnStopAnalysis.setHorizontalTextPosition(SwingConstants.CENTER);
         btnStopAnalysis.setVerticalTextPosition(SwingConstants.BOTTOM);
+        btnStopAnalysis.setToolTipText("Stop Analysis");
         GridBagConstraints gbc_btnStopAnalysis = GridBagConstraintFactory.getStandardGridBagConstraints(0, 1, 1, 3);
         add(btnStopAnalysis, gbc_btnStopAnalysis);
 
         btnPreviousBlock = new JButton();
         jBuDecorator.decorateIconButton(btnPreviousBlock, "icons/rewind-button.png", 0.3, new PreviousBlockListener(),
                 null);
+        btnPreviousBlock.setToolTipText("Previous Block");
         GridBagConstraints gbc_btnPreviousBlock = GridBagConstraintFactory.getStandardGridBagConstraints(2, 1, 1, 3);
         add(btnPreviousBlock, gbc_btnPreviousBlock);
 
         btnPreviousLine = new JButton();
         jBuDecorator.decorateIconButton(btnPreviousLine, "icons/step-backward.png", 0.3, new PreviousLineListener(),
                 null);
-
+        btnPreviousLine.setToolTipText("Previous Line");
         GridBagConstraints gbc_btnPreviousLine = GridBagConstraintFactory.getStandardGridBagConstraints(3, 1, 1, 3);
         add(btnPreviousLine, gbc_btnPreviousLine);
 
         btnPlay = new JButton();
         jBuDecorator.decorateIconButton(btnPlay, "icons/play-button.png", 0.35, new PlayListener(), null);
-
+        btnPlay.setToolTipText("Play");
+        
         btnPause = new JButton();
         jBuDecorator.decorateIconButton(btnPause, "icons/pause-symbol.png", 0.35, new PauseListener(), null);
-
+        btnPause.setToolTipText("Pause");
+        
         gbc_btnPlayPause = GridBagConstraintFactory.getStandardGridBagConstraints(4, 1, 1, 3);
         add(btnPlay, gbc_btnPlayPause);
         isPlayButtonAdded = true;
 
         btnNextLine = new JButton();
         jBuDecorator.decorateIconButton(btnNextLine, "icons/step-forward.png", 0.3, new NextLineListener(), null);
-
+        btnNextLine.setToolTipText("Next Line");
+        
         GridBagConstraints gbc_btnNextLine = GridBagConstraintFactory.getStandardGridBagConstraints(5, 1, 1, 3);
         add(btnNextLine, gbc_btnNextLine);
 
         btnNextBlock = new JButton();
         jBuDecorator.decorateIconButton(btnNextBlock, "icons/fast-forward-arrows.png", 0.3, new NextBlockListener(),
                 null);
+        btnNextBlock.setToolTipText("Next Block");
+        
         GridBagConstraints gbc_btnNextBlock = GridBagConstraintFactory.getStandardGridBagConstraints(6, 1, 1, 3);
         add(btnNextBlock, gbc_btnNextBlock);
 
@@ -207,6 +213,9 @@ public class ControlPanel extends JPanel {
         
         btnNextBlock.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, InputEvent.SHIFT_DOWN_MASK, true), "NextBlock");
         btnNextBlock.getActionMap().put("NextBlock", keyAction);
+        
+        btnStopAnalysis.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, true), "StopAnalysis");
+        btnStopAnalysis.getActionMap().put("StopAnalysis", keyAction);
         
     }
 

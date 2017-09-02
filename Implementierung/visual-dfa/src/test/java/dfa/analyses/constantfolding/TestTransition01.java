@@ -12,6 +12,7 @@ import org.junit.Test;
 
 import codeprocessor.CodeProcessor;
 import codeprocessor.GraphBuilder;
+import controller.Controller;
 import dfa.TestMethod;
 import dfa.TestUtils;
 import dfa.ValueHelper;
@@ -41,36 +42,37 @@ public class TestTransition01 {
 
     @BeforeClass
     public static void setUp() {
+        Controller controller = new Controller();
         TestMethod testMethodAllConstant = getCodeAllConstant();
-        CodeProcessor cp = new CodeProcessor(testMethodAllConstant.method);
+        CodeProcessor cp = new CodeProcessor(testMethodAllConstant.method, controller.getProgramOutputPath());
         Assert.assertTrue(cp.wasSuccessful());
 
         GraphBuilder gb = new GraphBuilder(cp.getPath(), cp.getClassName());
         bgAllConstant = gb.buildGraph(testMethodAllConstant.signature);
 
         TestMethod testMethodAllConstantConflict = getCodeAllConstantConflict();
-        cp = new CodeProcessor(testMethodAllConstantConflict.method);
+        cp = new CodeProcessor(testMethodAllConstantConflict.method, controller.getProgramOutputPath());
         Assert.assertTrue(cp.wasSuccessful());
 
         gb = new GraphBuilder(cp.getPath(), cp.getClassName());
         bgAllConstantConflict = gb.buildGraph(testMethodAllConstantConflict.signature);
 
         TestMethod testMethodNonConstant = getCodeNonConstant();
-        cp = new CodeProcessor(testMethodNonConstant.method);
+        cp = new CodeProcessor(testMethodNonConstant.method, controller.getProgramOutputPath());
         Assert.assertTrue(cp.wasSuccessful());
 
         gb = new GraphBuilder(cp.getPath(), cp.getClassName());
         bgNonConstant = gb.buildGraph(testMethodNonConstant.signature);
 
         TestMethod testMethodIntArithmetic = getCodeIntArithmetic();
-        cp = new CodeProcessor(testMethodIntArithmetic.method);
+        cp = new CodeProcessor(testMethodIntArithmetic.method, controller.getProgramOutputPath());
         Assert.assertTrue(cp.wasSuccessful());
 
         gb = new GraphBuilder(cp.getPath(), cp.getClassName());
         bgIntArithmetic = gb.buildGraph(testMethodIntArithmetic.signature);
 
         TestMethod testMethodIntBitOps = getCodeIntBitOps();
-        cp = new CodeProcessor(testMethodIntBitOps.method);
+        cp = new CodeProcessor(testMethodIntBitOps.method, controller.getProgramOutputPath());
         Assert.assertTrue(cp.wasSuccessful());
 
         gb = new GraphBuilder(cp.getPath(), cp.getClassName());

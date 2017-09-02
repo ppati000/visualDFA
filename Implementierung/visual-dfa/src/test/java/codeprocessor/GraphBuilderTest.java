@@ -5,6 +5,7 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Before;
 import org.junit.Test;
 
+import controller.Controller;
 import dfa.framework.SimpleBlockGraph;
 
 /**
@@ -22,6 +23,7 @@ public class GraphBuilderTest {
      */
     @Before
     public void before() {
+        Controller controller = new Controller();
         //@formatter:off
         String code = "public class CodeFragment1 {"
                 +"// State-of-the-art, modern and highly scalable implementation of Hello World" 
@@ -34,7 +36,7 @@ public class GraphBuilderTest {
                 + "        }" 
                 + "    }}";
         //@formatter:on
-        codeProcessor1 = new CodeProcessor(code);
+        codeProcessor1 = new CodeProcessor(code, controller.getProgramOutputPath());
         //@formatter:off
         String code2 = 
                 " public class CodeFragment2 {"
@@ -52,7 +54,7 @@ public class GraphBuilderTest {
                 + "         }" 
                 + "    }}";
         //@formatter:on
-        codeProcessor2 = new CodeProcessor(code2);
+        codeProcessor2 = new CodeProcessor(code2, controller.getProgramOutputPath());
         //@formatter:off
         String code3 = 
                 " public class CodeFragment3 {"
@@ -74,7 +76,7 @@ public class GraphBuilderTest {
                 + "         }" 
                 + "    }}";
         //@formatter:on
-        codeProcessor3 = new CodeProcessor(code3);
+        codeProcessor3 = new CodeProcessor(code3, controller.getProgramOutputPath());
     }
 
     /**

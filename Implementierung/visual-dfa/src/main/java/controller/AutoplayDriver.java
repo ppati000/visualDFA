@@ -32,12 +32,12 @@ public class AutoplayDriver implements Runnable {
      */
     public void run() {
         // number of times you should wait 50ms long
-        int delayTimes = this.controller.getDelay() * 20;
+        int delayTimes = this.controller.getDelay() / 50;
         lineIterator: while (this.controller.nextLine()) {
             for (int i = 0; i < delayTimes; i++) {
                 try {
                     Thread.sleep((long) 50);
-                    delayTimes = this.controller.getDelay() * 20;
+                    delayTimes = this.controller.getDelay() / 50;
                     if (!this.controller.shouldContinue()) {
                         break lineIterator;
                     }

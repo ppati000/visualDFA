@@ -36,7 +36,7 @@ public class PrecalcTest {
                 + System.lineSeparator() + "    public void helloWorld(boolean print) {" + "        if (print) {"
                 + "            System.out.println(\"Hello World!\");" + "        } else {"
                 + "            System.out.println(\"Not Hello World!\");" + "        }" + "    }}";
-        CodeProcessor processor = new CodeProcessor(code);
+        CodeProcessor processor = new CodeProcessor(code, this.controller.getProgramOutputPath());
         GraphBuilder graphBuilder = new GraphBuilder(processor.getPath(), processor.getClassName());
         this.simpleBlockGraph = graphBuilder.buildGraph(graphBuilder.getMethods(new Filter()).get(1));
         WorklistManager manager = WorklistManager.getInstance();

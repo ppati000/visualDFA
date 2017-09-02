@@ -6,6 +6,7 @@ import org.junit.Test;
 
 import codeprocessor.CodeProcessor;
 import codeprocessor.GraphBuilder;
+import controller.Controller;
 import dfa.TestMethod;
 import dfa.analyses.ReachingDefinitionsElement;
 import dfa.analyses.ReachingDefinitionsFactory;
@@ -32,7 +33,7 @@ public class TestReachingDefinitionsFactory {
     public void testGetAnalysis() {
         // we need to do setup here, because soot acts weird
         TestMethod testMethod = getSomeCode();
-        CodeProcessor cp = new CodeProcessor(testMethod.method);
+        CodeProcessor cp = new CodeProcessor(testMethod.method, (new Controller()).getProgramOutputPath());
 
         Assert.assertTrue(cp.wasSuccessful());
 

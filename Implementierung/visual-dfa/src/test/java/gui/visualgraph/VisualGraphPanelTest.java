@@ -1,3 +1,5 @@
+package gui.visualgraph;
+
 import com.mxgraph.model.mxCell;
 import com.mxgraph.swing.mxGraphComponent;
 import com.mxgraph.view.mxGraph;

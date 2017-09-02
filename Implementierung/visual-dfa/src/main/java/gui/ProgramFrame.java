@@ -47,6 +47,8 @@ public class ProgramFrame extends JFrame {
     public ProgramFrame(Controller ctrl) {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         
+        setTitle("Data-Flow Analysis");
+        
         setBounds(STANDARD_BOUNDS);
         setExtendedState(getExtendedState() | Frame.MAXIMIZED_BOTH);
         setMinimumSize(MIN_SIZE);
@@ -62,6 +64,8 @@ public class ProgramFrame extends JFrame {
         centerPan.setLayout(new BorderLayout(0, 0));
         
         JSplitPane inputGraphSplit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,  inputPanel, centerPan);
+        inputGraphSplit.setDividerSize(5);
+        inputGraphSplit.setDividerLocation(375);
         contentPane.add(inputGraphSplit, BorderLayout.CENTER);
         
         visualGraphPanel = ctrl.getVisualGraphPanel();

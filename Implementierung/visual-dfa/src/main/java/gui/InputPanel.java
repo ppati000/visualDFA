@@ -15,12 +15,12 @@ import javax.swing.JPanel;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
+import javax.swing.border.LineBorder;
 import javax.swing.filechooser.FileFilter;
 
 import controller.Controller;
 import java.awt.GridBagLayout;
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 
 import java.awt.GridBagConstraints;
@@ -46,8 +46,6 @@ public class InputPanel extends JPanel {
     private JLabel lblWorklists;
     private JComboBox<String> comboBox_Worklists;
     private JButton btnStartAnalysis;
-    private JCheckBox cb_Filter;
-    
 
     /**
      * Create the {@code JPanel}. Set the {@code Controller}, so the
@@ -87,6 +85,7 @@ public class InputPanel extends JPanel {
         jBuDecorator.decorateIconButton(btnOpen, "icons/open-folder-outline.png", 0.2, new OpenListener(), "Open ...");
         btnOpen.setBackground(Colors.WHITE_BACKGROUND.getColor());
         btnOpen.setForeground(Colors.DARK_TEXT.getColor());
+        btnOpen.setBorder(new CompoundBorder(new LineBorder(Colors.GREY_BORDER.getColor()), new EmptyBorder(3, 3, 3, 3)));
         GridBagConstraints gbc_btnOpen = GridBagConstraintFactory.getStandardGridBagConstraints(0, 4, 1, 1);
         gbc_btnOpen.insets.set(gbc_btnOpen.insets.top, gbc_btnOpen.insets.left, gbc_btnOpen.insets.bottom, 0);
         add(btnOpen, gbc_btnOpen);
@@ -95,6 +94,7 @@ public class InputPanel extends JPanel {
         jBuDecorator.decorateIconButton(btnSave, "icons/save-file-option.png", 0.2, new SaveListener(), "Save ...");
         btnSave.setBackground(Colors.WHITE_BACKGROUND.getColor());
         btnSave.setForeground(Colors.DARK_TEXT.getColor());
+        btnSave.setBorder(new CompoundBorder(new LineBorder(Colors.GREY_BORDER.getColor()), new EmptyBorder(3, 3, 3, 3)));
         GridBagConstraints gbc_btnSave = GridBagConstraintFactory.getStandardGridBagConstraints(1, 4, 1, 1);
         gbc_btnSave.insets.set(gbc_btnSave.insets.top, 0, gbc_btnSave.insets.bottom, gbc_btnSave.insets.right);
         add(btnSave, gbc_btnSave);
@@ -118,11 +118,6 @@ public class InputPanel extends JPanel {
         GridBagConstraints gbc_comboBox_Worklist = GridBagConstraintFactory.getStandardGridBagConstraints(0, 10, 2, 1);
         gbc_comboBox_Worklist.fill = GridBagConstraints.HORIZONTAL;
         add(comboBox_Worklists, gbc_comboBox_Worklist);
-
-        cb_Filter = new JCheckBox("Filter standard java methods");
-        jCompDecorator.decorate(cb_Filter);
-        GridBagConstraints gbc_cbFilter = GridBagConstraintFactory.getStandardGridBagConstraints(0, 11, 2, 1);
-        add(cb_Filter, gbc_cbFilter);
 
         btnStartAnalysis = new JButton();
         jBuDecorator.decorateButton(btnStartAnalysis, new StartAnalysisListener(), "Start Analysis");
@@ -149,7 +144,6 @@ public class InputPanel extends JPanel {
         lblWorklists.setEnabled(b);
         comboBox_Worklists.setEnabled(b);
         btnStartAnalysis.setEnabled(b);
-        cb_Filter.setEnabled(b);
         codeField.setEnabled(b);
 
     }
@@ -193,16 +187,6 @@ public class InputPanel extends JPanel {
     public String getWorklist() {
         String worklistName = (String) comboBox_Worklists.getSelectedItem();
         return worklistName;
-    }
-
-    /**
-     * Look up if a filter is selected and return this value.
-     * 
-     * @return {@code true} if a filter is selected, {@code false} if not.
-     */
-    public boolean isFilterSelected() {
-
-        return cb_Filter.isSelected();
     }
 
     /**
@@ -302,7 +286,7 @@ public class InputPanel extends JPanel {
         }
 
     }
-    
+
     private class JavaFileFilter extends FileFilter {
         @Override
         public String getDescription() {
@@ -333,7 +317,7 @@ public class InputPanel extends JPanel {
 
         }
     }
-    
+
     private class AllFileFilter extends FileFilter {
 
         @Override
@@ -345,7 +329,7 @@ public class InputPanel extends JPanel {
         public String getDescription() {
             return "*.*";
         }
-        
+
     }
 
 }

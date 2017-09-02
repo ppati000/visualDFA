@@ -3,6 +3,7 @@ package dfa.analyses;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Objects;
+import java.util.TreeMap;
 
 import dfa.analyses.ConstantBitsElement.BitValueArray;
 import soot.jimple.ArithmeticConstant;
@@ -95,8 +96,11 @@ public class ConstantBitsElement extends LocalMapElement<BitValueArray> {
 
     @Override
     public LocalMapElement<BitValueArray> clone() {
-        // TODO implement
-        return null;
+        TreeMap<JimpleLocal, BitValueArray> newMap = new TreeMap<JimpleLocal, BitValueArray>();
+        for (JimpleLocal local : localMap.keySet()) {
+            newMap.put(local, localMap.get(local));
+        }
+        return new ConstantBitsElement(newMap);
     }
 
     // TODO at the moment: String representation has lowest bit in the left
@@ -307,6 +311,11 @@ public class ConstantBitsElement extends LocalMapElement<BitValueArray> {
             return bitValues;
         }
 
+        /**
+         * Returns if this {@code BitValueArray} represents a constant.
+         * 
+         * @return if this {@code BitValueArray} represents a constant
+         */
         public boolean isConst() {
             for (BitValue val : bitValues) {
                 if (val == BitValue.BOTTOM || val == BitValue.TOP) {
@@ -357,6 +366,64 @@ public class ConstantBitsElement extends LocalMapElement<BitValueArray> {
         }
 
         /**
+         * Returns if the constant represented by this {@code BitValueArray} is a power of two.
+         * 
+         * @return if the constant represented by this {@code BitValueArray} is a power of two
+         */
+        public boolean isPowerOfTwo() {
+            if (!isConst()) {
+                return false;
+            }
+            if (bitValues[bitValues.length - 1] != BitValue.ZERO) {
+                return false;
+            }
+            int foundOnes = 0;
+            for (BitValue bit : bitValues) {
+                switch (bit) {
+                case TOP:
+                    return false;
+                case BOTTOM:
+                    return false;
+                case ONE:
+                    foundOnes++;
+                case ZERO: // ignore
+                }
+            }
+            return (foundOnes == 1);
+        }
+
+        /**
+         * Returns the position of the only ONE-bit in {@code bitValues}.
+         * 
+         * @return the position of the only ONE-bit in {@code bitValues}
+         */
+        public int getPositionOfOne() {
+            if (!isPowerOfTwo()) {
+                return -1;
+            }
+            for (int i = 0; i < getLength(); i++) {
+                if (bitValues[i] == BitValue.ONE) {
+                    return i;
+                }
+            }
+            return -1;
+        }
+
+        /**
+         * Returns if the constant represented by this {@code BitValueArray} is zero.
+         * 
+         * @return if the constant represented by this {@code BitValueArray} is azero
+         */
+        public boolean isZero() {
+            for (BitValue bit : bitValues) {
+                if (bit != BitValue.ZERO) {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        /**
          * Returns the {@code ArithmeticConstant} this {@code BitValueArray} represents, if it represents a constant.
          * 
          * @return the {@code ArithmeticConstant} this {@code BitValueArray}, if it represents a constant
@@ -378,6 +445,29 @@ public class ConstantBitsElement extends LocalMapElement<BitValueArray> {
                     return null;
                 }
             }
+        }
+
+        /**
+         * Returns if the constant represented by this {@code BitValueArray} is not negative.
+         * 
+         * @return if the constant represented by this {@code BitValueArray} is not negative
+         */
+        public boolean isNotNegative() {
+            return (bitValues[getLength() - 1] == BitValue.ZERO);
+        }
+
+        /**
+         * Returns if this {@code BitValueArray} contains a bit with the {@code BitValue} BOTTOM.
+         * 
+         * @return if this {@code BitValueArray} contains a bit with the {@code BitValue} BOTTOM
+         */
+        public boolean containsBOTTOM() {
+            for (BitValue bit : bitValues) {
+                if (bit == BitValue.BOTTOM) {
+                    return true;
+                }
+            }
+            return false;
         }
 
         @Override

@@ -80,6 +80,8 @@ public class ProgramFrame extends JFrame {
         if (System.getProperty("os.name").toLowerCase().contains("mac") && getWindows().length != 0) {
             enableMacOSFullscreen(getWindows()[0]);
         }
+
+        setIconImage(IconLoader.loadIcon("./icons/app-icon.png", 1).getImage());
     }
 
     /**

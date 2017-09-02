@@ -5,9 +5,9 @@ import java.awt.EventQueue;
 import gui.ProgramFrame;
 
 /**
- * @author Anika Nietzer This class contains the main method for the program.
+ * This class contains the main method for the program.
  * 
- *
+ * @author Anika Nietzer
  */
 public final class App {
 

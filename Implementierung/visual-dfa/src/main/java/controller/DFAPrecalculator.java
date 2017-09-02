@@ -9,10 +9,10 @@ import dfa.framework.SimpleBlockGraph;
 import dfa.framework.Worklist;
 
 /**
+ * Unit, used by the {@code DFAExecution} to precalculate all analysis steps in
+ * a different thread.
  * 
- * @author Anika Nietzer Unit, used by the {@code DFAExecution} to precalculate
- *         all analysis steps in a different thread.
- *
+ * @author Anika Nietzer
  */
 public class DFAPrecalculator implements Runnable {
 

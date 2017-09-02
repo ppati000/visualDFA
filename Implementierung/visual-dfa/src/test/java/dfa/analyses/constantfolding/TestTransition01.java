@@ -42,37 +42,36 @@ public class TestTransition01 {
 
     @BeforeClass
     public static void setUp() {
-        Controller controller = new Controller();
         TestMethod testMethodAllConstant = getCodeAllConstant();
-        CodeProcessor cp = new CodeProcessor(testMethodAllConstant.method, controller.getProgramOutputPath());
+        CodeProcessor cp = new CodeProcessor(testMethodAllConstant.method);
         Assert.assertTrue(cp.wasSuccessful());
 
         GraphBuilder gb = new GraphBuilder(cp.getPath(), cp.getClassName());
         bgAllConstant = gb.buildGraph(testMethodAllConstant.signature);
 
         TestMethod testMethodAllConstantConflict = getCodeAllConstantConflict();
-        cp = new CodeProcessor(testMethodAllConstantConflict.method, controller.getProgramOutputPath());
+        cp = new CodeProcessor(testMethodAllConstantConflict.method);
         Assert.assertTrue(cp.wasSuccessful());
 
         gb = new GraphBuilder(cp.getPath(), cp.getClassName());
         bgAllConstantConflict = gb.buildGraph(testMethodAllConstantConflict.signature);
 
         TestMethod testMethodNonConstant = getCodeNonConstant();
-        cp = new CodeProcessor(testMethodNonConstant.method, controller.getProgramOutputPath());
+        cp = new CodeProcessor(testMethodNonConstant.method);
         Assert.assertTrue(cp.wasSuccessful());
 
         gb = new GraphBuilder(cp.getPath(), cp.getClassName());
         bgNonConstant = gb.buildGraph(testMethodNonConstant.signature);
 
         TestMethod testMethodIntArithmetic = getCodeIntArithmetic();
-        cp = new CodeProcessor(testMethodIntArithmetic.method, controller.getProgramOutputPath());
+        cp = new CodeProcessor(testMethodIntArithmetic.method);
         Assert.assertTrue(cp.wasSuccessful());
 
         gb = new GraphBuilder(cp.getPath(), cp.getClassName());
         bgIntArithmetic = gb.buildGraph(testMethodIntArithmetic.signature);
 
         TestMethod testMethodIntBitOps = getCodeIntBitOps();
-        cp = new CodeProcessor(testMethodIntBitOps.method, controller.getProgramOutputPath());
+        cp = new CodeProcessor(testMethodIntBitOps.method);
         Assert.assertTrue(cp.wasSuccessful());
 
         gb = new GraphBuilder(cp.getPath(), cp.getClassName());

@@ -30,16 +30,15 @@ public class TestDFAExecutionPrecalculationConstantFolding {
     
     @BeforeClass
     public static void setUp() {
-        Controller controller = new Controller();
         TestMethod tstMethodConstantFoldingSimple = getCodeSimple();
-        CodeProcessor cp = new CodeProcessor(tstMethodConstantFoldingSimple.method, controller.getProgramOutputPath());
+        CodeProcessor cp = new CodeProcessor(tstMethodConstantFoldingSimple.method);
         Assert.assertTrue(cp.wasSuccessful());
 
         GraphBuilder gb = new GraphBuilder(cp.getPath(), cp.getClassName());
         bgConstantFoldingSimple = gb.buildGraph(tstMethodConstantFoldingSimple.signature);
         
         TestMethod tstMethodConstantFoldingProgSpec = getCodeProductSpec();
-        cp = new CodeProcessor(tstMethodConstantFoldingProgSpec.method, controller.getProgramOutputPath());
+        cp = new CodeProcessor(tstMethodConstantFoldingProgSpec.method);
         Assert.assertTrue(cp.wasSuccessful());
 
         gb = new GraphBuilder(cp.getPath(), cp.getClassName());

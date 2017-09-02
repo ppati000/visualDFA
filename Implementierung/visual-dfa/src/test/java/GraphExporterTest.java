@@ -25,7 +25,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
-@Ignore // TODO QA: These tests are not passing on Windows because of minor rendering differences.
 public class GraphExporterTest {
     private VisualGraphPanel panel;
     private JPanel fakeStatePanel;
@@ -113,8 +112,7 @@ public class GraphExporterTest {
                 "        return a*2; " +
                 "      } }";
 
-        Controller controller = new Controller();
-        CodeProcessor codeProcessor = new CodeProcessor(code, controller.getProgramOutputPath());
+        CodeProcessor codeProcessor = new CodeProcessor(code);
         GraphBuilder builder = new GraphBuilder(codeProcessor.getPath(), codeProcessor.getClassName());
         SimpleBlockGraph blockGraph = builder.buildGraph("int test(int)");
 

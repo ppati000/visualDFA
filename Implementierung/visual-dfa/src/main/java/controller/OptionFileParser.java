@@ -14,7 +14,11 @@ import gui.Option;
 import gui.ProgramFrame;
 
 /**
- * @author Anika
+ * The class {@code OptionFileParser} reads in the Option.txt file and sets the
+ * corresponding options. In case that the file does not exists by now, the user
+ * is asked for the jdk path and the file is created.
+ * 
+ * @author Anika Nietzer
  *
  */
 public class OptionFileParser {
@@ -32,8 +36,12 @@ public class OptionFileParser {
     private File optionFile;
 
     /**
+     * Reads out the Option.txt file or creates such a file.
+     * 
      * @param programOutputPath
+     *            the place where the file should be
      * @param programFrame
+     *            programFrame where the messageBox is shown
      */
     public OptionFileParser(String programOutputPath, ProgramFrame programFrame) {
         this.programOutputPath = programOutputPath;
@@ -89,7 +97,7 @@ public class OptionFileParser {
         int stop = content.indexOf(";");
         String jdkPath = content.substring(start, stop).trim();
         start = content.indexOf("closebox=") + 9;
-        stop = content.indexOf(";", start);
+        stop = content.indexOf(";", start); 
         String closeBoxBool = content.substring(start, stop).trim();
         if (closeBoxBool.equals("true")) {
             this.showBox = true;
@@ -190,14 +198,21 @@ public class OptionFileParser {
     }
 
     /**
-     * @return shouldshowbox
+     * Defines whether the {@code GenericBox} when stopping a analysis should be
+     * shown or not.
+     * 
+     * @return shouldshowbox if the box should be shown or not
      */
     public boolean shouldShowBox() {
         return this.showBox;
     }
 
     /**
+     * Change the variable of showMessagBox and writes the information into the
+     * Option.txt file.
+     * 
      * @param showMessageBox
+     *            defines whether the box should be shown or not
      */
     public void setShowBox(boolean showMessageBox) {
         this.showBox = showMessageBox;

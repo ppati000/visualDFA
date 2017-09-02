@@ -26,10 +26,10 @@ import gui.ProgramFrame;
 import gui.visualgraph.GraphUIController;
 
 /**
+ * Central unit, that is responsible for the communication between the GUI and
+ * the remaining packages of the program.
  * 
- * @author Anika Nietzer Central unit, that is responsible for the communication
- *         between the GUI and the remaining packages of the program.
- *
+ * @author Anika Nietzer
  */
 public class Controller {
 
@@ -42,7 +42,8 @@ public class Controller {
     // path for release, load analyses dynamically
     private static final String DYNAMIC_ANALYSES_PATH = findJarPath();
 
-    private final String PROGRAM_OUTPUT_PATH = findJarPath() + System.getProperty("file.separator") + "savedFiles";
+    private static final String PROGRAM_OUTPUT_PATH = System.getProperty("user.home") + System.getProperty("file.separator")
+            + "visualDfa" + System.getProperty("file.separator");
 
     private OptionFileParser fileParser;
     private ProgramFrame programFrame;
@@ -65,10 +66,6 @@ public class Controller {
         }
         File sourceDirectory = (new File(decodedPath)).getParentFile().getParentFile().getParentFile();
         return sourceDirectory.getAbsolutePath();
-    }
-
-    public DFAExecution getDFAExecution() {
-        return this.dfaExecution;
     }
 
     /**
@@ -279,6 +276,10 @@ public class Controller {
      * is invoked to display the CFG. The {@code ControlPanel}, the
      * {@code StatePanel} and the {@code VisualGraphPanel} are activated and the
      * {@code InputPanel} is deactivated.
+     * 
+     * @param methodSignature
+     *            name of method that should be analysed
+     * @return the used {@code DFAPrecalcController}
      */
     public DFAPrecalcController startAnalysis(String methodSignature) {
         // Collect information
@@ -288,7 +289,7 @@ public class Controller {
         String code = programFrame.getInputPanel().getCode();
 
         // Process code with instance of {@code CodeProcessor}
-        CodeProcessor processor = new CodeProcessor(code, this.PROGRAM_OUTPUT_PATH);
+        CodeProcessor processor = new CodeProcessor(code);
         if (!processor.wasSuccessful()) {
             new MessageBox(programFrame, "Compilation Error", processor.getErrorMessage());
             visibilityInput();
@@ -315,7 +316,6 @@ public class Controller {
         DFAPrecalculator precalculator = null;
         try {
             Worklist worklist = this.worklistManager.getWorklist(worklistName, blockGraph);
-            // @SuppressWarnings("unchecked")
             DFAFactory<? extends LatticeElement> dfaFactory = analysisLoader.getDFAFactory(analysisName);
             precalculator = new DFAPrecalculator(dfaFactory, worklist, blockGraph, this.precalcController, this);
         } catch (IllegalArgumentException e) {
@@ -515,15 +515,25 @@ public class Controller {
      * 
      * @return the path were output files of the programs are stored
      */
-    public String getProgramOutputPath() {
-        return this.PROGRAM_OUTPUT_PATH;
+    public static String getProgramOutputPath() {
+        return Controller.PROGRAM_OUTPUT_PATH;
     }
 
     /**
-     * 
+     * Creates a new {@code OptionFileParser} that reads out the option File or
+     * creates one if it not exists.
      */
     public void parseOptionFile() {
-        this.fileParser = new OptionFileParser(this.PROGRAM_OUTPUT_PATH, this.programFrame);
+        this.fileParser = new OptionFileParser(Controller.PROGRAM_OUTPUT_PATH, this.programFrame);
+    }
+
+    /**
+     * Return the {@code DFAExecution} for testing purposes
+     * 
+     * @return the DFAExecution
+     */
+    public DFAExecution<? extends LatticeElement> getDFAExecution() {
+        return this.dfaExecution;
     }
 
 }

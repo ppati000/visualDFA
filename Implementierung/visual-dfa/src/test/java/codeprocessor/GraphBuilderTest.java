@@ -5,25 +5,18 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Before;
 import org.junit.Test;
 
-import controller.Controller;
 import dfa.framework.SimpleBlockGraph;
 
-/**
- * @author Anika Nietzer Several Test for the class GraphBuilder
- *
- */
+@SuppressWarnings("javadoc")
 public class GraphBuilderTest {
-    
-    CodeProcessor codeProcessor1; //easy fragment
-    CodeProcessor codeProcessor2; //fragment with more cases
-    CodeProcessor codeProcessor3; //same name as fragment one but different code
 
-    /**
-     * 
-     */
+    CodeProcessor codeProcessor1; // easy fragment
+    CodeProcessor codeProcessor2; // fragment with more cases
+    CodeProcessor codeProcessor3; // same name as fragment one but different
+                                  // code
+
     @Before
-    public void before() {
-        Controller controller = new Controller();
+    public void setup() {
         //@formatter:off
         String code = "public class CodeFragment1 {"
                 +"// State-of-the-art, modern and highly scalable implementation of Hello World" 
@@ -36,7 +29,7 @@ public class GraphBuilderTest {
                 + "        }" 
                 + "    }}";
         //@formatter:on
-        codeProcessor1 = new CodeProcessor(code, controller.getProgramOutputPath());
+        codeProcessor1 = new CodeProcessor(code);
         //@formatter:off
         String code2 = 
                 " public class CodeFragment2 {"
@@ -54,7 +47,7 @@ public class GraphBuilderTest {
                 + "         }" 
                 + "    }}";
         //@formatter:on
-        codeProcessor2 = new CodeProcessor(code2, controller.getProgramOutputPath());
+        codeProcessor2 = new CodeProcessor(code2);
         //@formatter:off
         String code3 = 
                 " public class CodeFragment3 {"
@@ -76,14 +69,11 @@ public class GraphBuilderTest {
                 + "         }" 
                 + "    }}";
         //@formatter:on
-        codeProcessor3 = new CodeProcessor(code3, controller.getProgramOutputPath());
+        codeProcessor3 = new CodeProcessor(code3);
     }
 
-    /**
-     * Test for {@code GraphBuilder} with one case
-     */
     @Test
-    public void test01() {
+    public void buildGraphTwoCases() {
         GraphBuilder builder = new GraphBuilder(codeProcessor1.getPath(), codeProcessor1.getClassName());
         SimpleBlockGraph blockGraph = builder.buildGraph(builder.getMethods(new Filter()).get(1));
         assertEquals(4, blockGraph.size());
@@ -92,11 +82,8 @@ public class GraphBuilderTest {
         assertEquals(1, blockGraph.getBlocks().get(1).getSuccs().size());
     }
 
-    /**
-     * Test with some more cases
-     */
     @Test
-    public void test02() {
+    public void buildGraphFourCases() {
         GraphBuilder builder = new GraphBuilder(codeProcessor2.getPath(), codeProcessor2.getClassName());
         SimpleBlockGraph blockGraph = builder.buildGraph(builder.getMethods(new Filter()).get(1));
         assertEquals(7, blockGraph.size());
@@ -105,18 +92,15 @@ public class GraphBuilderTest {
         assertEquals(1, blockGraph.getBlocks().get(1).getSuccs().size());
     }
 
-    /**
-     * test with same class names
-     */
     @Test
-    public void test03() {
+    public void buildGraphTwice() {
         GraphBuilder builder = new GraphBuilder(codeProcessor2.getPath(), codeProcessor2.getClassName());
         SimpleBlockGraph blockGraph = builder.buildGraph(builder.getMethods(new Filter()).get(1));
         assertEquals(7, blockGraph.size());
         assertEquals(false, blockGraph.getBlocks().isEmpty());
         assertEquals(1, blockGraph.getBlocks().get(1).getPreds().size());
         assertEquals(1, blockGraph.getBlocks().get(1).getSuccs().size());
-        
+
         GraphBuilder builder2 = new GraphBuilder(codeProcessor3.getPath(), codeProcessor3.getClassName());
         SimpleBlockGraph blockGraph2 = builder2.buildGraph(builder2.getMethods(new Filter()).get(1));
         assertEquals(9, blockGraph2.size());
@@ -124,5 +108,5 @@ public class GraphBuilderTest {
         assertEquals(1, blockGraph2.getBlocks().get(1).getPreds().size());
         assertEquals(1, blockGraph2.getBlocks().get(1).getSuccs().size());
     }
-    
+
 }

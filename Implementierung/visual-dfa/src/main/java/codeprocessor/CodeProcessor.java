@@ -15,8 +15,10 @@ import javax.tools.ToolProvider;
 import controller.Controller;
 
 /**
- * @author Anika Nietzer A {@code CodeProcessor} represents a unit for compiling
- *         and processing java-sourcecode to java-bytecode.
+ * A {@code CodeProcessor} represents a unit for compiling and processing
+ * java-sourcecode to java-bytecode.
+ * 
+ * @author Anika Nietzer
  */
 public class CodeProcessor {
 
@@ -50,12 +52,14 @@ public class CodeProcessor {
      * 
      * @param originalCode
      *            the java-code fragment, that will be compiled
+     * @param programOutputPath
+     *            path where the created .class-Files should be saved
      */
-    public CodeProcessor(String originalCode, String programOutputPath) {
+    public CodeProcessor(String originalCode) {
         if (originalCode == null) {
             throw new IllegalArgumentException("String must not be null");
         }
-        this.pathName = programOutputPath;
+        this.pathName = Controller.getProgramOutputPath();
         File dir = new File(this.pathName);
         if (!dir.exists()) {
             dir.mkdir();

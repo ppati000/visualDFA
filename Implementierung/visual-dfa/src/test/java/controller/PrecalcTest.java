@@ -16,6 +16,7 @@ import dfa.framework.SimpleBlockGraph;
 import dfa.framework.Worklist;
 import dfa.framework.WorklistManager;
 
+@SuppressWarnings("javadoc")
 public class PrecalcTest {
 
     private DFAFactory<? extends LatticeElement> factory;
@@ -24,9 +25,6 @@ public class PrecalcTest {
     private DFAPrecalcController precalcController;
     private Controller controller;
 
-    /**
-     * 
-     */
     @Before
     public void setup() {
         this.controller = new Controller();
@@ -36,7 +34,7 @@ public class PrecalcTest {
                 + System.lineSeparator() + "    public void helloWorld(boolean print) {" + "        if (print) {"
                 + "            System.out.println(\"Hello World!\");" + "        } else {"
                 + "            System.out.println(\"Not Hello World!\");" + "        }" + "    }}";
-        CodeProcessor processor = new CodeProcessor(code, this.controller.getProgramOutputPath());
+        CodeProcessor processor = new CodeProcessor(code);
         GraphBuilder graphBuilder = new GraphBuilder(processor.getPath(), processor.getClassName());
         this.simpleBlockGraph = graphBuilder.buildGraph(graphBuilder.getMethods(new Filter()).get(1));
         WorklistManager manager = WorklistManager.getInstance();
@@ -50,36 +48,29 @@ public class PrecalcTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void test01() {
-        DFAPrecalculator precalculator = new DFAPrecalculator(null, this.worklist, this.simpleBlockGraph,
-                this.precalcController, this.controller);
+    public void factoryIsNull() {
+        new DFAPrecalculator(null, this.worklist, this.simpleBlockGraph, this.precalcController, this.controller);
     }
-    
+
     @Test(expected = IllegalArgumentException.class)
-    public void test02() {
-        DFAPrecalculator precalculator = new DFAPrecalculator(this.factory, null, this.simpleBlockGraph,
-                this.precalcController, this.controller);
+    public void worklistIsNull() {
+        new DFAPrecalculator(this.factory, null, this.simpleBlockGraph, this.precalcController, this.controller);
     }
-    
+
     @Test(expected = IllegalArgumentException.class)
-    public void test03() {
-        DFAPrecalculator precalculator = new DFAPrecalculator(this.factory, this.worklist, null,
-                this.precalcController, this.controller);
+    public void simpleBlockGraphIsNull() {
+        new DFAPrecalculator(this.factory, this.worklist, null, this.precalcController, this.controller);
     }
-    
+
     @Test(expected = IllegalArgumentException.class)
-    public void test04() {
-        DFAPrecalculator precalculator = new DFAPrecalculator(this.factory, this.worklist, this.simpleBlockGraph,
-                null, this.controller);
+    public void precalcControllerIsNull() {
+        new DFAPrecalculator(this.factory, this.worklist, this.simpleBlockGraph, null, this.controller);
     }
-    
+
     @Test(expected = IllegalArgumentException.class)
-    public void test05() {
-        DFAPrecalculator precalculator = new DFAPrecalculator(this.factory, this.worklist, this.simpleBlockGraph,
-                this.precalcController, null);
-        
-        
+    public void controllerIsNull() {
+        new DFAPrecalculator(this.factory, this.worklist, this.simpleBlockGraph, this.precalcController, null);
+
     }
-    
 
 }

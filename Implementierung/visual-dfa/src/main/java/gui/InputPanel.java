@@ -217,7 +217,7 @@ public class InputPanel extends JPanel {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            JFileChooser openChooser = new JFileChooser(ctrl.getProgramOutputPath());
+            JFileChooser openChooser = new JFileChooser(Controller.getProgramOutputPath());
 
             openChooser.setAcceptAllFileFilterUsed(false);
             openChooser.addChoosableFileFilter(new JavaFileFilter());
@@ -262,7 +262,7 @@ public class InputPanel extends JPanel {
         @Override
         public void actionPerformed(ActionEvent e) {
 
-            JFileChooser saveChooser = new JFileChooser(ctrl.getProgramOutputPath());
+            JFileChooser saveChooser = new JFileChooser(Controller.getProgramOutputPath());
 
             saveChooser.setAcceptAllFileFilterUsed(false);
             saveChooser.addChoosableFileFilter(new JavaFileFilter());

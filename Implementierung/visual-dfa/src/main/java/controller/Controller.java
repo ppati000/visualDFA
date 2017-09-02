@@ -67,7 +67,7 @@ public class Controller {
         // package structure does not match the folder structure
 
         try {
-            //TODO
+            // TODO
             String dirPrefix = System.getProperty("file.separator") + "src" + System.getProperty("file.separator")
                     + "test" + System.getProperty("file.separator") + "resources";
             this.analysisLoader = new StaticAnalysisLoader(CLASS_PATH + dirPrefix);
@@ -281,7 +281,6 @@ public class Controller {
         String analysisName = programFrame.getInputPanel().getAnalysis();
         String worklistName = programFrame.getInputPanel().getWorklist();
         String code = programFrame.getInputPanel().getCode();
-        boolean hasFilter = programFrame.getInputPanel().isFilterSelected();
 
         // Process code with instance of {@code CodeProcessor}
         CodeProcessor processor = null;
@@ -296,12 +295,7 @@ public class Controller {
 
         // build Graph with {@code GraphBuilder}
         GraphBuilder graphBuilder = new GraphBuilder(packageName, className);
-        Filter filter;
-        if (hasFilter) {
-            filter = new StandardFilter();
-        } else {
-            filter = new NoFilter();
-        }
+        Filter filter = new Filter();
         List<String> methodList = graphBuilder.getMethods(filter);
         MethodSelectionBox selectionBox = new MethodSelectionBox(programFrame, methodList);
         if (selectionBox.getOption() == Option.CANCEL_OPTION) {
@@ -314,7 +308,7 @@ public class Controller {
         DFAPrecalculator precalculator = null;
         try {
             Worklist worklist = this.worklistManager.getWorklist(worklistName, blockGraph);
-            //@SuppressWarnings("unchecked")
+            // @SuppressWarnings("unchecked")
             DFAFactory<? extends LatticeElement> dfaFactory = analysisLoader.getDFAFactory(analysisName);
             precalculator = new DFAPrecalculator(dfaFactory, worklist, blockGraph, this.precalcController, this);
         } catch (IllegalArgumentException e) {
@@ -402,11 +396,11 @@ public class Controller {
         } else if (this.fileParser.shouldShowBox()) {
             GenericBox closeBox = new GenericBox(this.programFrame, "Stop", ABORT_MESSAGE, "Yes", "No", null, true,
                     Option.NO_OPTION);
-            if (closeBox.getOption() == Option.NO_OPTION) {
-                return;
-            }
             if (!closeBox.showAgain()) {
                 this.fileParser.setShowBox(false);
+            }
+            if (closeBox.getOption() == Option.NO_OPTION) {
+                return;
             }
         }
         visibilityInput();

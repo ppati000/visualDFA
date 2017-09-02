@@ -8,7 +8,7 @@ import soot.SootMethod;
  * @author Anika Nietzer Abstract class, that represents a filter for methods.
  *
  */
-public abstract class Filter {
+public class Filter {
 
     /**
      * {@code Filter} for a given SootMethod, that decides whether the method
@@ -20,7 +20,7 @@ public abstract class Filter {
      *            method, that is tested
      * @return whether the method passes the filter or not
      */
-    public boolean filterTaint(SootMethod method) {
+    public boolean filter(SootMethod method) {
         String signature = method.getSubSignature();
         if (signature.startsWith("void __taint")) {
             method.addTag(TaintAnalysisTag.TAINT_TAG);
@@ -34,17 +34,4 @@ public abstract class Filter {
         }
         return true;
     }
-
-    /**
-     * Method for filtering a SootMethod. The full implementation is done by the
-     * classes {@code NoFilter} and {@code StandardFiltler} that extend this
-     * abstract class.
-     * 
-     * @param method
-     *            SootMethod that should be tested
-     * 
-     * @return if the method passes the filter or not
-     */
-    public abstract boolean filter(SootMethod method);
-
 }

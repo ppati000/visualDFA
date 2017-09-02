@@ -10,6 +10,8 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.border.EmptyBorder;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 /**
  * {@code DialogBox} for graph-exporting. User can set export settings and start or
@@ -103,12 +105,24 @@ public class GraphExportBox extends DialogBox {
         cb_BatchExport = new JCheckBox();
         compDecorator.decorate(cb_BatchExport);
         cb_BatchExport.setText("Batch export all graph states");
+        cb_BatchExport.addChangeListener(new ChangeListener() {
+            
+            @Override
+            public void stateChanged(ChangeEvent e) {
+                if (cb_BatchExport.isSelected()) {
+                    cb_LineStates.setEnabled(true);
+                } else {
+                    cb_LineStates.setEnabled(false);
+                }
+                
+            }
+        });
         GridBagConstraints gbc_cbBatch = GridBagConstraintFactory.getStandardGridBagConstraints(0, 2, 3, 1);
         contentPanel.add(cb_BatchExport, gbc_cbBatch);
 
         cb_LineStates = new JCheckBox();
         compDecorator.decorate(cb_LineStates);
-        ;
+        cb_LineStates.setEnabled(false);
         cb_LineStates.setText("Include line steps");
         GridBagConstraints gbc_cbLineStates = GridBagConstraintFactory.getStandardGridBagConstraints(0, 3, 3, 1);
         contentPanel.add(cb_LineStates, gbc_cbLineStates);

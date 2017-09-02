@@ -37,6 +37,8 @@ public class ConstantBitsJoin implements Join<ConstantBitsElement> {
             Iterator<? extends LocalMapElement<BitValueArray>> elementIt = elements.iterator();
 
             BitValueArray refVal = elementIt.next().getValue(local);
+            
+            // TODO refactor
             int length = refVal.getLength();
             BitValueArray top;
             BitValueArray bottom;
@@ -57,6 +59,7 @@ public class ConstantBitsJoin implements Join<ConstantBitsElement> {
             return refVal;
         }
 
+        // TODO refactor to remove parameters length, top, bottom
         protected BitValueArray performSingleJoin(BitValueArray refVal, BitValueArray currentVal, int length,
                 BitValueArray top, BitValueArray bottom) {
             if (currentVal.getLength() != length) {
@@ -64,50 +67,25 @@ public class ConstantBitsJoin implements Join<ConstantBitsElement> {
                 throw new IllegalStateException("Unable to join BitValueArrays of different size!");
             }
 
-            if (refVal.equals(top) || currentVal.equals(top)) {
-                // Second if one is TOP, if so, no need to check further
-                return top;
+            BitValue[] result = new BitValue[length];
+            for (int i = 0; i < length; i++) {
+                BitValue currentBit = currentVal.getBitValues()[i];
+                BitValue tmpBit = refVal.getBitValues()[i];
 
-            } else if (refVal.equals(bottom)) {
-                // Third if refVal is bottom, new refVal is currentVal since join(bottom, x) = x for all x
-                return currentVal;
-
-                // Fourth if currentVal is bottom, refVal remains untouched since join(bottom, x) = x for all x
-                // Also if refVal equals currentVal, refVal remains untouched, since nothing would change
-                // But if refVal does not equal currentVal and currentVal is not bottom, we have to compare them bit
-                // by bit
-            } else if (!refVal.equals(currentVal) && !currentVal.equals(bottom)) {
-                BitValue[] bitValues = new BitValue[length];
-                for (int i = 0; i < length; i++) {
-                    BitValue currentValBit = currentVal.getBitValues()[i];
-                    BitValue tmpBit = refVal.getBitValues()[i];
-
-                    if (currentValBit.equals(BitValue.TOP) || tmpBit.equals(BitValue.TOP)) {
-                        // If one of the two bits is TOP, the resulting bit is TOP
-                        bitValues[i] = BitValue.TOP;
-
-                    } else if (currentValBit.equals(BitValue.BOTTOM)) {
-                        // If one of the bits is BOTTOM, the resulting bit is whatever the other bit was
-                        bitValues[i] = tmpBit;
-                    } else if (refVal.getBitValues()[i].equals(BitValue.BOTTOM)) {
-                        // If one of the bits is BOTTOM, the resulting bit is whatever the other bit was
-                        bitValues[i] = currentValBit;
-
-                    } else if (currentValBit.equals(tmpBit)) {
-                        // If they are the same, we just take one of them
-                        bitValues[i] = currentValBit;
-
-                    } else {
-                        // If they are both neither bottom nor the same, the resulting bit is TOP
-                        bitValues[i] = BitValue.TOP;
-                    }
+                if (currentBit == BitValue.TOP || tmpBit == BitValue.TOP) {
+                    result[i] = BitValue.TOP;
+                } else if (currentBit == BitValue.BOTTOM) {
+                    result[i] = tmpBit;
+                } else if (tmpBit == BitValue.BOTTOM) {
+                    result[i] = currentBit;
+                } else if (currentBit == tmpBit) {
+                    result[i] = currentBit;
+                } else {
+                    result[i] = BitValue.TOP;
                 }
-                refVal = new BitValueArray(bitValues);
-                return refVal;
-            } else {
-                return currentVal;
             }
 
+            return new BitValueArray(result);
         }
     }
 }

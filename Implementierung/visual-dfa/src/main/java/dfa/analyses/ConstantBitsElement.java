@@ -1,5 +1,6 @@
 package dfa.analyses;
 
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Objects;
@@ -161,7 +162,7 @@ public class ConstantBitsElement extends LocalMapElement<BitValueArray> {
             int length;
             long val;
             if (c instanceof IntConstant) {
-                val = Long.valueOf(((IntConstant) c).value);
+                val = ((IntConstant) c).value;
                 length = 32;
             } else {
                 val = ((LongConstant) c).value;
@@ -169,7 +170,7 @@ public class ConstantBitsElement extends LocalMapElement<BitValueArray> {
             }
             BitValue[] values = new BitValue[length];
             for (int j = 0; j < length; j++) {
-                values[j] = booleanToBitValue((val & (1 << j)) != 0);
+                values[j] = booleanToBitValue((val & (1L << j)) != 0);
             }
             bitValues = values;
         }
@@ -339,9 +340,6 @@ public class ConstantBitsElement extends LocalMapElement<BitValueArray> {
          * @return if the constant represented by this {@code BitValueArray} is a power of two
          */
         public boolean isPowerOfTwo() {
-            if (!isConst()) {
-                return false;
-            }
             if (bitValues[bitValues.length - 1] != BitValue.ZERO) {
                 return false;
             }
@@ -354,7 +352,9 @@ public class ConstantBitsElement extends LocalMapElement<BitValueArray> {
                     return false;
                 case ONE:
                     foundOnes++;
+                    break;
                 case ZERO: // ignore
+                    break;
                 }
             }
             return (foundOnes == 1);
@@ -400,13 +400,13 @@ public class ConstantBitsElement extends LocalMapElement<BitValueArray> {
             if (!isConst()) {
                 return null;
             } else {
-                int result = 0;
+                long result = 0;
                 int length = bitValues.length;
-                for (int i = 0; i < length; i++) {
-                    result = (result << 1) + (bitValueToBoolean(bitValues[i]) ? 1 : 0);
+                for (int i = length - 1; i >= 0; i--) {
+                    result = (result << 1) | (bitValueToBoolean(bitValues[i]) ? 1 : 0);
                 }
                 if (length == 32) {
-                    return IntConstant.v(result);
+                    return IntConstant.v((int) result);
                 } else if (length == 64) {
                     return LongConstant.v(result);
                 } else {
@@ -445,7 +445,7 @@ public class ConstantBitsElement extends LocalMapElement<BitValueArray> {
             }
 
             BitValueArray val = (BitValueArray) o;
-            return getBitValues().equals(val.getBitValues());
+            return Arrays.equals(getBitValues(), val.getBitValues());
         }
 
         @Override
@@ -473,12 +473,16 @@ public class ConstantBitsElement extends LocalMapElement<BitValueArray> {
                 switch (bitValues[i]) {
                 case BOTTOM:
                     sb.append("  ").append(BOTTOM_SYMBOL);
+                    break;
                 case TOP:
                     sb.append("  ").append(TOP_SYMBOL);
+                    break;
                 case ONE:
                     sb.append("  1");
+                    break;
                 case ZERO:
                     sb.append("  0");
+                    break;
                 }
             }
             sb.deleteCharAt(0);

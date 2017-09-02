@@ -61,7 +61,6 @@ import soot.jimple.NopStmt;
 import soot.jimple.NullConstant;
 import soot.jimple.OrExpr;
 import soot.jimple.ParameterRef;
-import soot.jimple.Ref;
 import soot.jimple.RemExpr;
 import soot.jimple.RetStmt;
 import soot.jimple.ReturnStmt;
@@ -138,9 +137,6 @@ public class ConstantFoldingTransition implements Transition<ConstantFoldingElem
                 if (!ConstantFoldingElement.isLocalTypeAccepted(lValLocal.getType())) {
                     return;
                 }
-            } else if (!(stmt.getLeftOp() instanceof Ref)) {
-                assert false : "Something went horribly wrong!";
-                return;
             } else {
                 return; // ignore
             }
@@ -183,9 +179,6 @@ public class ConstantFoldingTransition implements Transition<ConstantFoldingElem
                 if (!ConstantFoldingElement.isLocalTypeAccepted(lValLocal.getType())) {
                     return;
                 }
-            } else if (!(stmt.getLeftOp() instanceof Ref)) {
-                assert false : "Something went horribly wrong!";
-                return;
             } else {
                 return; // ignore
             }

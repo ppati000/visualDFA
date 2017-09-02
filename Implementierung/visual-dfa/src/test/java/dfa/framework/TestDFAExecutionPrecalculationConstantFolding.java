@@ -8,6 +8,7 @@ import org.junit.Test;
 
 import codeprocessor.CodeProcessor;
 import codeprocessor.GraphBuilder;
+import controller.Controller;
 import dfa.TestMethod;
 import dfa.TestUtils;
 import dfa.ValueHelper;
@@ -29,15 +30,16 @@ public class TestDFAExecutionPrecalculationConstantFolding {
     
     @BeforeClass
     public static void setUp() {
+        Controller controller = new Controller();
         TestMethod tstMethodConstantFoldingSimple = getCodeSimple();
-        CodeProcessor cp = new CodeProcessor(tstMethodConstantFoldingSimple.method);
+        CodeProcessor cp = new CodeProcessor(tstMethodConstantFoldingSimple.method, controller.getProgramOutputPath());
         Assert.assertTrue(cp.wasSuccessful());
 
         GraphBuilder gb = new GraphBuilder(cp.getPath(), cp.getClassName());
         bgConstantFoldingSimple = gb.buildGraph(tstMethodConstantFoldingSimple.signature);
         
         TestMethod tstMethodConstantFoldingProgSpec = getCodeProductSpec();
-        cp = new CodeProcessor(tstMethodConstantFoldingProgSpec.method);
+        cp = new CodeProcessor(tstMethodConstantFoldingProgSpec.method, controller.getProgramOutputPath());
         Assert.assertTrue(cp.wasSuccessful());
 
         gb = new GraphBuilder(cp.getPath(), cp.getClassName());

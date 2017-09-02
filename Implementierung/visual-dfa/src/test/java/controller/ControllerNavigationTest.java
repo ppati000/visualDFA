@@ -2,6 +2,7 @@ package controller;
 
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -185,6 +186,7 @@ public class ControllerNavigationTest {
        assertEquals(dfaExecution.getTotalElementarySteps()-1, dfaExecution.getCurrentElementaryStep());
     }
     
+    @Ignore
     @Test
     public void test11() {
         int elementaryBefore = dfaExecution.getCurrentElementaryStep();

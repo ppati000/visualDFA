@@ -12,6 +12,8 @@ import javax.tools.StandardJavaFileManager;
 import javax.tools.StandardLocation;
 import javax.tools.ToolProvider;
 
+import controller.Controller;
+
 /**
  * @author Anika Nietzer A {@code CodeProcessor} represents a unit for compiling
  *         and processing java-sourcecode to java-bytecode.
@@ -49,13 +51,11 @@ public class CodeProcessor {
      * @param originalCode
      *            the java-code fragment, that will be compiled
      */
-    public CodeProcessor(String originalCode) {
+    public CodeProcessor(String originalCode, String programOutputPath) {
         if (originalCode == null) {
             throw new IllegalArgumentException("String must not be null");
         }
-
-        this.pathName = System.getProperty("user.home") + System.getProperty("file.separator") + "visualDfa"
-                + System.getProperty("file.separator");
+        this.pathName = programOutputPath;
         File dir = new File(this.pathName);
         if (!dir.exists()) {
             dir.mkdir();

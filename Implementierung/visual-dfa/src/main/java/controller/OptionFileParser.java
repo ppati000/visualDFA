@@ -24,7 +24,7 @@ public class OptionFileParser {
     private static final String NO_COMPILER_FOUND = "No Java compiler could be found in your selected directory. "
             + "Please set the path correctly as the program needs a functional java compiler for analysing code. "
             + "Example: C:\\Programme\\Java\\jdk1.7.0_76";
-    private static final String OPTION_FILE_NAME = "visualDfaOptions.txt";
+    private static final String OPTION_FILE_NAME = "Options.txt";
     private boolean showBox = true;
     private String compilerPath = "";
     private String programOutputPath;
@@ -123,7 +123,7 @@ public class OptionFileParser {
             return false;
         }
         String[] files = jreFile.list();
-        for (String name: files) {
+        for (String name : files) {
             if (name.startsWith("java")) {
                 return true;
             }
@@ -142,7 +142,7 @@ public class OptionFileParser {
         if (box.getOption() == Option.NO_OPTION) {
             System.exit(0);
         }
-        File selectedPath = modifyInput(this.programFrame.getCompilerPath());
+        File selectedPath = findJREFolder(this.programFrame.getCompilerPath());
         boolean isJREPath = validJREPath(selectedPath);
         if (isJREPath) {
             System.setProperty("java.home", selectedPath.getAbsolutePath());
@@ -154,7 +154,7 @@ public class OptionFileParser {
                 System.exit(0);
             }
 
-            selectedPath = modifyInput(this.programFrame.getCompilerPath());
+            selectedPath = findJREFolder(this.programFrame.getCompilerPath());
             isJREPath = validJREPath(selectedPath);
             if (isJREPath) {
                 System.setProperty("java.home", selectedPath.getAbsolutePath());
@@ -163,13 +163,10 @@ public class OptionFileParser {
         this.compilerPath = selectedPath.getAbsolutePath();
     }
 
-    private File modifyInput(File selectedPath) {
+    private File findJREFolder(File selectedPath) {
         File windowsPath = new File(selectedPath.getAbsolutePath() + System.getProperty("file.separator") + "jre");
-        System.out.println("windoes:" + windowsPath);
         File macPath = new File(selectedPath.getAbsolutePath() + System.getProperty("file.separator") + "Contents"
-                
                 + System.getProperty("file.separator") + "Home" + System.getProperty("file.separator") + "jre");
-        System.out.println("mac: " + macPath);
         if (windowsPath.exists()) {
             return windowsPath;
         } else if (macPath.exists()) {
@@ -182,7 +179,7 @@ public class OptionFileParser {
         File fileDirectory = new File(this.programOutputPath);
         this.optionFile = new File(fileDirectory, OPTION_FILE_NAME);
         FileWriter writer;
-        try { 
+        try {
             writer = new FileWriter(optionFile);
             writer.write("jdkpath=" + this.compilerPath + ";" + System.lineSeparator());
             writer.write("closebox=" + this.showBox + ";" + System.lineSeparator());
@@ -207,6 +204,5 @@ public class OptionFileParser {
         this.optionFile.delete();
         writeNewFile();
     }
-
 
 }

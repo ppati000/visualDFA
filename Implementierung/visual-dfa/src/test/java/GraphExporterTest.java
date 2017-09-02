@@ -1,5 +1,7 @@
 import codeprocessor.CodeProcessor;
 import codeprocessor.GraphBuilder;
+import controller.Controller;
+
 import com.mxgraph.view.mxGraph;
 
 import dfa.analyses.testanalyses.DummyElement;
@@ -111,8 +113,8 @@ public class GraphExporterTest {
                 "        return a*2; " +
                 "      } }";
 
-
-        CodeProcessor codeProcessor = new CodeProcessor(code);
+        Controller controller = new Controller();
+        CodeProcessor codeProcessor = new CodeProcessor(code, controller.getProgramOutputPath());
         GraphBuilder builder = new GraphBuilder(codeProcessor.getPath(), codeProcessor.getClassName());
         SimpleBlockGraph blockGraph = builder.buildGraph("int test(int)");
 

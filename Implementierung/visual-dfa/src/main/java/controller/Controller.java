@@ -1,5 +1,8 @@
 package controller;
 
+import java.io.File;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -30,17 +33,16 @@ import gui.visualgraph.GraphUIController;
  */
 public class Controller {
 
-    // private static final String PACKAGE_NAME = "dfa.analyses"; // no longer
-    // needed
-    private static final String CLASS_PATH = System.getProperty("user.dir");
     private static final String ABORT_PRECALC_MESSAGE = "Do you want to stop the precalculation? You can also show intermediate results if the analysis state allows this.";
     private static final String ABORT_MESSAGE = "This leads to a complete deletion of the graph and the calculation. Would you like to continue?";
     private static final String EXCEPTION_TITLE = "Exception caused by analysis calculation";
 
     private static final int WAIT_FOR_STOP = 500;
 
-    private static final String PROGRAM_OUTPUT_PATH = System.getProperty("user.home")
-            + System.getProperty("file.separator") + "visualDfa";
+    // path for release, load analyses dynamically
+    private static final String DYNAMIC_ANALYSES_PATH = findJarPath();
+
+    private final String PROGRAM_OUTPUT_PATH = findJarPath() + System.getProperty("file.separator") + "savedFiles";
 
     private OptionFileParser fileParser;
     private ProgramFrame programFrame;
@@ -53,6 +55,18 @@ public class Controller {
     private DFAPrecalcController precalcController;
     private boolean shouldContinue = false;
 
+    private static String findJarPath() {
+        String path = Controller.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+        String decodedPath = null;
+        try {
+            decodedPath = URLDecoder.decode(path, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        File sourceDirectory = (new File(decodedPath)).getParentFile().getParentFile().getParentFile();
+        return sourceDirectory.getAbsolutePath();
+    }
+
     public DFAExecution getDFAExecution() {
         return this.dfaExecution;
     }
@@ -64,27 +78,13 @@ public class Controller {
      */
     public Controller() {
 
-        // TODO @Anika the dirPrefix is only a temporary fix
-        // the analyses-classes can be put in .../anyDirectory/dfa/analyses and
-        // the argument to the
-        // AnalysisLoader-constructor must then be '.../anyDirectory' (the
-        // immediate parent of /dfa), otherwise the
-        // package structure does not match the folder structure
-
         try {
-            // TODO
-            String dirPrefix = System.getProperty("file.separator") + "src" + System.getProperty("file.separator")
-                    + "test" + System.getProperty("file.separator") + "resources";
-            this.analysisLoader = new StaticAnalysisLoader(CLASS_PATH + dirPrefix);
+            // TODO change to DYNAMIC_ANALYSES_PATH and DynamicAnalysisLoader;
+            this.analysisLoader = new StaticAnalysisLoader("");
         } catch (IllegalStateException e) {
             e.printStackTrace();
         }
-        Logger logger = Logger.getAnonymousLogger();
-        try {
-            this.analysisLoader.loadAnalyses(logger);
-        } catch (UnsupportedOperationException e) {
-            e.printStackTrace();
-        }
+        this.analysisLoader.loadAnalyses(Logger.getAnonymousLogger());
         this.worklistManager = WorklistManager.getInstance();
         this.visualGraphPanel = new VisualGraphPanel();
         this.graphUIController = new GraphUIController(visualGraphPanel);
@@ -244,7 +244,7 @@ public class Controller {
      * @return delay, the user has set
      */
     public int getDelay() {
-        return this.programFrame.getControlPanel().getDelaySliderPosition();
+        return (int) (this.programFrame.getControlPanel().getDelay() * 1000);
     }
 
     /**
@@ -288,7 +288,7 @@ public class Controller {
         String code = programFrame.getInputPanel().getCode();
 
         // Process code with instance of {@code CodeProcessor}
-        CodeProcessor processor = new CodeProcessor(code);
+        CodeProcessor processor = new CodeProcessor(code, this.PROGRAM_OUTPUT_PATH);
         if (!processor.wasSuccessful()) {
             new MessageBox(programFrame, "Compilation Error", processor.getErrorMessage());
             visibilityInput();
@@ -516,14 +516,14 @@ public class Controller {
      * @return the path were output files of the programs are stored
      */
     public String getProgramOutputPath() {
-        return Controller.PROGRAM_OUTPUT_PATH;
+        return this.PROGRAM_OUTPUT_PATH;
     }
 
     /**
      * 
      */
     public void parseOptionFile() {
-        this.fileParser = new OptionFileParser(Controller.PROGRAM_OUTPUT_PATH, this.programFrame);
+        this.fileParser = new OptionFileParser(this.PROGRAM_OUTPUT_PATH, this.programFrame);
     }
 
 }

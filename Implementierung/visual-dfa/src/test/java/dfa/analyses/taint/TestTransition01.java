@@ -6,11 +6,13 @@ import java.util.Map;
 import java.util.Set;
 
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 
 import codeprocessor.CodeProcessor;
 import codeprocessor.Filter;
 import codeprocessor.GraphBuilder;
+import controller.Controller;
 import dfa.TestMethod;
 import dfa.TestUtils;
 import dfa.analyses.TaintElement;
@@ -35,6 +37,7 @@ public class TestTransition01 {
     // private static final TaintElement.Value VAL_BOTTOM_V = new TaintElement.Value(TaintState.BOTTOM, true);
     // private static final TaintElement.Value VAL_CLEAN_V = new TaintElement.Value(TaintState.CLEAN, true);
     private static final TaintElement.Value VAL_TAINTED_V = new TaintElement.Value(TaintState.TAINTED, true);
+    private String programOutputPath;
 
     private static void addTags(SootClass c) {
         Filter filter = new Filter();
@@ -43,12 +46,18 @@ public class TestTransition01 {
             filter.filter(method);
         }
     }
+    
+    @Before
+    public void setup() {
+        Controller controller = new Controller();
+        this.programOutputPath = controller.getProgramOutputPath();
+    }
 
     @Test
     public void testParamsTainted() {
         // we need to do setup here, because soot acts weird otherwise
         TestMethod testMethod = getCodeParamsTainted();
-        CodeProcessor cp = new CodeProcessor(testMethod.method);
+        CodeProcessor cp = new CodeProcessor(testMethod.method, this.programOutputPath);
         Assert.assertTrue(cp.wasSuccessful());
 
         GraphBuilder gb = new GraphBuilder(cp.getPath(), cp.getClassName());
@@ -180,7 +189,7 @@ public class TestTransition01 {
     public void testConstantsClean() {
         // we need to do setup here, because soot acts weird
         TestMethod testMethod = getCodeConstantsClean();
-        CodeProcessor cp = new CodeProcessor(testMethod.method);
+        CodeProcessor cp = new CodeProcessor(testMethod.method, this.programOutputPath);
         Assert.assertTrue(cp.wasSuccessful());
 
         GraphBuilder gb = new GraphBuilder(cp.getPath(), cp.getClassName());
@@ -259,7 +268,7 @@ public class TestTransition01 {
     public void testCallClean() {
         // we need to do setup here, because soot acts weird
         TestMethod testMethod = getCodeCallClean();
-        CodeProcessor cp = new CodeProcessor(testMethod.method);
+        CodeProcessor cp = new CodeProcessor(testMethod.method, this.programOutputPath);
         Assert.assertTrue(cp.wasSuccessful());
 
         GraphBuilder gb = new GraphBuilder(cp.getPath(), cp.getClassName());
@@ -373,7 +382,7 @@ public class TestTransition01 {
     public void testCallTaint() {
         // we need to do setup here, because soot acts weird
         TestMethod testMethod = getCodeCallTaint();
-        CodeProcessor cp = new CodeProcessor(testMethod.method);
+        CodeProcessor cp = new CodeProcessor(testMethod.method, this.programOutputPath);
 
         Assert.assertTrue(cp.wasSuccessful());
 
@@ -508,7 +517,7 @@ public class TestTransition01 {
     public void testIf() {
         // we need to do setup here, because soot acts weird
         TestMethod testMethod = getCodeIf();
-        CodeProcessor cp = new CodeProcessor(testMethod.method);
+        CodeProcessor cp = new CodeProcessor(testMethod.method, this.programOutputPath);
 
         Assert.assertTrue(cp.wasSuccessful());
 
@@ -617,7 +626,7 @@ public class TestTransition01 {
     public void testSwitch() {
         // we need to do setup here, because soot acts weird
         TestMethod testMethod = getCodeSwitch();
-        CodeProcessor cp = new CodeProcessor(testMethod.method);
+        CodeProcessor cp = new CodeProcessor(testMethod.method, this.programOutputPath);
 
         Assert.assertTrue(cp.wasSuccessful());
 
@@ -752,7 +761,7 @@ public class TestTransition01 {
     public void testSimpleOpsTainted() {
         // we need to do setup here, because soot acts weird
         TestMethod testMethod = getCodeSimpleOpsTaint();
-        CodeProcessor cp = new CodeProcessor(testMethod.method);
+        CodeProcessor cp = new CodeProcessor(testMethod.method, this.programOutputPath);
 
         Assert.assertTrue(cp.wasSuccessful());
 
@@ -830,7 +839,7 @@ public class TestTransition01 {
     public void testSimpleOpsClean() {
         // we need to do setup here, because soot acts weird
         TestMethod testMethod = getCodeSimpleOpsClean();
-        CodeProcessor cp = new CodeProcessor(testMethod.method);
+        CodeProcessor cp = new CodeProcessor(testMethod.method, this.programOutputPath);
 
         Assert.assertTrue(cp.wasSuccessful());
 
@@ -909,7 +918,7 @@ public class TestTransition01 {
     public void testIntEq() {
         // we need to do setup here, because soot acts weird
         TestMethod testMethod = getCodeIntEq();
-        CodeProcessor cp = new CodeProcessor(testMethod.method);
+        CodeProcessor cp = new CodeProcessor(testMethod.method, this.programOutputPath);
 
         Assert.assertTrue(cp.wasSuccessful());
 
@@ -969,7 +978,7 @@ public class TestTransition01 {
     public void testFloatLess() {
         // we need to do setup here, because soot acts weird
         TestMethod testMethod = getCodeFloatLess();
-        CodeProcessor cp = new CodeProcessor(testMethod.method);
+        CodeProcessor cp = new CodeProcessor(testMethod.method, this.programOutputPath);
 
         Assert.assertTrue(cp.wasSuccessful());
 
@@ -1028,7 +1037,7 @@ public class TestTransition01 {
     public void testFloatGreater() {
         // we need to do setup here, because soot acts weird
         TestMethod testMethod = getCodeFloatGreater();
-        CodeProcessor cp = new CodeProcessor(testMethod.method);
+        CodeProcessor cp = new CodeProcessor(testMethod.method, this.programOutputPath);
 
         Assert.assertTrue(cp.wasSuccessful());
 
@@ -1089,7 +1098,7 @@ public class TestTransition01 {
     public void testFloatEq() {
         // we need to do setup here, because soot acts weird
         TestMethod testMethod = getCodeFloatEq();
-        CodeProcessor cp = new CodeProcessor(testMethod.method);
+        CodeProcessor cp = new CodeProcessor(testMethod.method, this.programOutputPath);
 
         Assert.assertTrue(cp.wasSuccessful());
 

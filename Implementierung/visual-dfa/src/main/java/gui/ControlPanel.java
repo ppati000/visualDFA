@@ -166,6 +166,7 @@ public class ControlPanel extends JPanel {
 
         delaySlider.setLabelTable(delaySliderLabelTable);
         delaySlider.setPaintLabels(true);
+        delaySlider.setValue(10);
         GridBagConstraints gbc_delaySlider = GridBagConstraintFactory.getStandardGridBagConstraints(7, 2, 2, 2);
         add(delaySlider, gbc_delaySlider);
 
@@ -325,16 +326,6 @@ public class ControlPanel extends JPanel {
             lblDelayInSeconds.setEnabled(false);
             break;
         }
-    }
-
-    /**
-     * Look up the current position of the {@code DelaySlider} and return it.
-     * 
-     * @return The position of the {@code DelaySlider}.
-     */
-    public int getDelaySliderPosition() {
-        return delaySlider.getValue();
-
     }
 
     /**

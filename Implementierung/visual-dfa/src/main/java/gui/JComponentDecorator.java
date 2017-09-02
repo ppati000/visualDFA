@@ -25,6 +25,7 @@ public class JComponentDecorator {
         comp.setBorder(new EmptyBorder(5, 5, 5, 5));
         comp.setForeground(Colors.WHITE_BACKGROUND.getColor());
         comp.setFont(new Font("Trebuchet MS", Font.BOLD, 16));
+        comp.setOpaque(true);
     }
 
 }

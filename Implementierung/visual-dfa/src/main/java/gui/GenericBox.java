@@ -15,7 +15,7 @@ import javax.swing.JTextArea;
 
 public class GenericBox extends DialogBox {
 
-    private static final String NEVER_SHOW_AGAIN = "Never show again";
+    private static final String NEVER_SHOW_AGAIN = "Don't show again";
     private Option option;
     private JTextArea messageArea;
     private String message;

@@ -286,7 +286,6 @@ public class Controller {
         String analysisName = programFrame.getInputPanel().getAnalysis();
         String worklistName = programFrame.getInputPanel().getWorklist();
         String code = programFrame.getInputPanel().getCode();
-        boolean hasFilter = programFrame.getInputPanel().isFilterSelected();
 
         // Process code with instance of {@code CodeProcessor}
         CodeProcessor processor = new CodeProcessor(code);
@@ -300,13 +299,7 @@ public class Controller {
 
         // build Graph with {@code GraphBuilder}
         GraphBuilder graphBuilder = new GraphBuilder(packageName, className);
-        Filter filter;
-        if (hasFilter) {
-            filter = new StandardFilter();
-        } else {
-            filter = new NoFilter();
-        }
-
+        Filter filter = new Filter();
         List<String> methodList = graphBuilder.getMethods(filter);
         if (methodSignature == null) {
             MethodSelectionBox selectionBox = new MethodSelectionBox(programFrame, methodList);
@@ -411,11 +404,11 @@ public class Controller {
         } else if (this.fileParser.shouldShowBox()) {
             GenericBox closeBox = new GenericBox(this.programFrame, "Stop", ABORT_MESSAGE, "Yes", "No", null, true,
                     Option.NO_OPTION);
-            if (closeBox.getOption() == Option.NO_OPTION) {
-                return;
-            }
             if (!closeBox.showAgain()) {
                 this.fileParser.setShowBox(false);
+            }
+            if (closeBox.getOption() == Option.NO_OPTION) {
+                return;
             }
         }
         visibilityInput();

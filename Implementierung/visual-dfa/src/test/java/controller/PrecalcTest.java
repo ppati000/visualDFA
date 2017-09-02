@@ -6,8 +6,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 import codeprocessor.CodeProcessor;
+import codeprocessor.Filter;
 import codeprocessor.GraphBuilder;
-import codeprocessor.NoFilter;
 import dfa.framework.AnalysisLoader;
 import dfa.framework.DFAFactory;
 import dfa.framework.DFAPrecalcController;
@@ -38,7 +38,7 @@ public class PrecalcTest {
                 + "            System.out.println(\"Not Hello World!\");" + "        }" + "    }}";
         CodeProcessor processor = new CodeProcessor(code);
         GraphBuilder graphBuilder = new GraphBuilder(processor.getPath(), processor.getClassName());
-        this.simpleBlockGraph = graphBuilder.buildGraph(graphBuilder.getMethods(new NoFilter()).get(1));
+        this.simpleBlockGraph = graphBuilder.buildGraph(graphBuilder.getMethods(new Filter()).get(1));
         WorklistManager manager = WorklistManager.getInstance();
         this.worklist = manager.getWorklist(worklist, this.simpleBlockGraph);
         this.precalcController = new DFAPrecalcController();

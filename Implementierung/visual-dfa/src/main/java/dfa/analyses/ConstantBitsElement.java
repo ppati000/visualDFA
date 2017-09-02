@@ -96,7 +96,7 @@ public class ConstantBitsElement extends LocalMapElement<BitValueArray> {
 
     @Override
     public LocalMapElement<BitValueArray> clone() {
-        TreeMap<JimpleLocal, BitValueArray> newMap = new TreeMap<JimpleLocal, BitValueArray>();
+        TreeMap<JimpleLocal, BitValueArray> newMap = new TreeMap<JimpleLocal, BitValueArray>(LocalMapElement.DEFAULT_COMPARATOR);
         for (JimpleLocal local : localMap.keySet()) {
             newMap.put(local, localMap.get(local));
         }
@@ -135,10 +135,6 @@ public class ConstantBitsElement extends LocalMapElement<BitValueArray> {
         public static final BitValueArray TOP = new BitValueArray(new BitValue[0]);
         public static final int INT_SIZE = 32;
         public static final int LONG_SIZE = 64;
-
-        // TODO use proper symbols (after testing)
-        private static final String BOTTOM_SYMBOL = /* "\u22A5" */ "B";
-        private static final String TOP_SYMBOL = /* "\u22A4" */ "T";
 
         /**
          * Creates a {@code BitValueArray} representing the given {@code ArithmeticConstant}.
@@ -190,9 +186,9 @@ public class ConstantBitsElement extends LocalMapElement<BitValueArray> {
          *        value for the array
          */
         public BitValueArray(int length, BitValue init) {
-            BitValue[] bottomArray = new BitValue[length];
+            this.bitValues = new BitValue[length];
             for (int i = 0; i < length; i++) {
-                bottomArray[i] = init;
+                this.bitValues[i] = init;
             }
         }
 
@@ -483,7 +479,7 @@ public class ConstantBitsElement extends LocalMapElement<BitValueArray> {
      * 
      *         All possible values a bit can have.
      */
-    enum BitValue {
+    public enum BitValue {
         /**
          * for bottom
          */

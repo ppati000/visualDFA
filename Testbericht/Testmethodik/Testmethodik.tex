@@ -1,0 +1,19 @@
+\part{Testmethodik}
+
+Zunächst wurden einzelne Klassen weitestgehend unabhängig voneinander in Unit-Tests getestet.
+Für Klassen, die viele Abhängigkeiten zu anderen komplexen Klassen hatten, wurde Mockito benutzt, um Mock-Objekte zu erzeugen, die statt der benötigten komplexen Objekte verwendet werden konnten.
+Die einzelnen Module wurden jeweils von den Personen getestet, die auch für deren Implementierung verantwortlich waren:
+
+\begin{tabular}{l*{6}{c}r}
+	Modul & Person(en) \\
+	\hline
+	\inlinecode{dfa.framework} & Nils, Sebastian \\
+	\inlinecode{dfa.analyses} & Nils, Sebastian \\
+	\inlinecode{controller} & Anika \\
+	\inlinecode{codeprocessor} & Anika \\
+	\inlinecode{gui} & Michael \\
+	\inlinecode{gui.visualgraph} & Patrick \\
+\end{tabular}
+
+\todo{Test-Szenarien aus Pflichtenheft}
+\todo{manuelle Tests}

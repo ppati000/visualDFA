@@ -1,1 +1,27 @@
 \part{Tools}
+Um effektiv zu Testen, wurden einige Tools eingesetzt. Dies sind zwar weitestgehend Standart-Tools für das Testen von Java-Code, dennoch werden diese hier kurz vorgestellt.
+
+\section{JUnit}
+JUnit ist ein Test-Framework für Java.
+Damit können Tests realisiert werden, die automatisch ausführbar sind.
+Die erwarteten Resultate können mittels Assertions festgelegt werden, die fehlschlagen, wenn die tatsächlichen Resultate von den Erwarteten abweichen.
+JUnit kann alle Tests einer bestimmten Klasse, eines Packages, oder alle vorhandenen Tests im Projekt ausführen und erstellt dann eine Übersicht über die erfolgreichen und fehlgeschlagenen Tests.
+Für fehlgeschlagene Tests wird präzise angezeigt, welche Assertion fehlgeschlagen ist und für auftretende Exceptions wird ein vollständiger Stacktrace ausgegeben.
+Dies ermöglicht komfortables Testen und relativ einfaches Debuggen.
+Außerdem lässt sich durch die automatischen Tests zuverlässig verhindern, dass einmal behobene Bugs wieder unbemerkt auftreten. 
+
+\section{Mockito}
+\todo{@Patrick}
+
+\section{EclEmma}
+EclEmma ist ein Eclipse-Plugin zum Messen der Code-Coverage.
+EclEmma basiert auf dem Code-Coverage-Tool JaCoCo, dem Nachfolger von EMMA.
+Mittels EclEmma lässt sich die Code-Coverage präzise und komfortabel messen:
+Die Coverage-Statistik wird nach Klassen und Packages aufgeschlüsselt dargestellt.
+Sehr hilfreich ist auch, dass getesteter Code je nach Coverage-Status eingefärbt wird: vollständig getestete Zeilen werden grün, teilweise getestete Zeilen gelb und nicht getestete Zeilen rot eingefärbt.
+Dies ermöglicht einen präzisen Überblick darüber, was genau getestet wurde.
+
+
+
+
+

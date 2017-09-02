@@ -1,1 +1,13 @@
 \part{Bugs}
+
+\section{dfa.framework}
+
+\begin{itemize}
+	\item Vorberechnung einer DFAExecution geriet in eine Endlosschleife, falls der CFG leere Blöcke enthielt.
+	Grund dafür war, dass ein leerer Block besonders behandelt wurde und in diesem Fall der Block für die nächste Iteration nicht aktualisiert wurde.
+	\item Vorberechnung einer DFAExecution betrachtete nicht alle Blöcke, wenn sich Ausgangszustände von Beginn an nicht änderten. Grund dafür war, dass Blöcke nur auf die Worklist gesetzt wurden, wenn sich der Ausgangszustand eines Vorgängers geändert hatte. 
+	\item Künstlicher Endblock im SimpleBlockGraph hatte keine Vorgänger. Grund dafür war, dass nach Erstellen des künstlichen Endblocks die vorherigen Endblöcke nicht als Vorgänger des neuen künstlichen Endblocks gesetzt wurden.
+\end{itemize}
+
+\section{dfa.analyses}
+

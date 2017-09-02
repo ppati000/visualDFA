@@ -1,3 +1,5 @@
+package gui.visualgraph;
+
 import codeprocessor.CodeProcessor;
 import codeprocessor.GraphBuilder;
 import com.mxgraph.swing.mxGraphComponent;
@@ -28,7 +30,7 @@ public class GraphUIControllerTest {
             "      } }";
 
     // Verifying the text of the UIBasicBlocks gives us confidence that the UILineBlocks were inserted correctly.
-    // Whether or not they were also *rendered* correctly is another story, tested in VisualGraphPanelTest.
+    // Whether or not they were also *rendered* correctly is another story, tested in gui.visualgraph.VisualGraphPanelTest.
     private final String startBlockOutput = "this := @this: shouldCreateGraphOnStartClass\n" +
             "print := @parameter0: boolean\n" +
             "if print == 0 goto $r0 = <java.lang.System: java.io.PrintStream out>";

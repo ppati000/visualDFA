@@ -1,3 +1,5 @@
+package gui.visualgraph;
+
 import gui.Colors;
 import gui.visualgraph.GraphExportProgressView;
 import org.junit.Before;

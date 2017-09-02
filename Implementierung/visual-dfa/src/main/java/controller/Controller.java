@@ -1,11 +1,5 @@
 package controller;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -16,14 +10,15 @@ import dfa.framework.DFAFactory;
 import dfa.framework.DFAPrecalcController;
 import dfa.framework.LatticeElement;
 import dfa.framework.SimpleBlockGraph;
+import dfa.framework.StaticAnalysisLoader;
 import dfa.framework.Worklist;
 import dfa.framework.WorklistManager;
 import gui.visualgraph.VisualGraphPanel;
 import gui.ControlPanelState;
+import gui.GenericBox;
 import gui.MessageBox;
 import gui.MethodSelectionBox;
 import gui.Option;
-import gui.OptionBox;
 import gui.ProgramFrame;
 import gui.visualgraph.GraphUIController;
 
@@ -35,18 +30,19 @@ import gui.visualgraph.GraphUIController;
  */
 public class Controller {
 
-    private static final String PACKAGE_NAME = "dfa.analyses";
+    // private static final String PACKAGE_NAME = "dfa.analyses"; // no longer
+    // needed
     private static final String CLASS_PATH = System.getProperty("user.dir");
-    private static final String ABORT_PRECALC_MESSAGE = "This will stop the calculation. Do you want to see intermediate results? "
-            + "Click \"cancel\" to continue with the calculation, click \"No\" to stop the analysis and click \"Yes\" to show the intermediate results.";
+    private static final String ABORT_PRECALC_MESSAGE = "Do you want to stop the precalculation? You can also show intermediate results if the analysis state allows this.";
     private static final String ABORT_MESSAGE = "This leads to a complete deletion of the graph and the calculation. Would you like to continue?";
     private static final String EXCEPTION_TITLE = "Exception caused by analysis calculation";
-    private static final String PATH_SELECTION = "Select the path to your \"jre\" folder which is located in the JDK(!) folder. If you set the path wrong, the program will not work."
-            + "Example: C:\\Programme\\Java\\jdk1.7.0_76\\jre";
-    private static final String NO_COMPILER_FOUND = "Please check the file YourHomeDirectory\\visualDfa\\jdkPath.txt and change its content to the path of "
-            + "your JRE folder inside your JDK(!)1.7 folder. "
-            + "For Example C:\\Program Files\\Java\\jdk1.7.0_76\\jre." + "Afterwards, please restart the program.";
+
     private static final int WAIT_FOR_STOP = 500;
+
+    private static final String PROGRAM_OUTPUT_PATH = System.getProperty("user.home")
+            + System.getProperty("file.separator") + "visualDfa";
+
+    private OptionFileParser fileParser;
     private ProgramFrame programFrame;
     private DFAExecution<? extends LatticeElement> dfaExecution;
     private GraphUIController graphUIController;
@@ -63,8 +59,18 @@ public class Controller {
      * and a {@code GraphUIController}.
      */
     public Controller() {
+        // TODO @Anika the dirPrefix is only a temporary fix
+        // the analyses-classes can be put in .../anyDirectory/dfa/analyses and
+        // the argument to the
+        // AnalysisLoader-constructor must then be '.../anyDirectory' (the
+        // immediate parent of /dfa), otherwise the
+        // package structure does not match the folder structure
+
         try {
-            this.analysisLoader = new AnalysisLoader(PACKAGE_NAME, CLASS_PATH);
+            //TODO
+            String dirPrefix = System.getProperty("file.separator") + "src" + System.getProperty("file.separator")
+                    + "test" + System.getProperty("file.separator") + "resources";
+            this.analysisLoader = new StaticAnalysisLoader(CLASS_PATH + dirPrefix);
         } catch (IllegalStateException e) {
             e.printStackTrace();
         }
@@ -77,65 +83,6 @@ public class Controller {
         this.worklistManager = WorklistManager.getInstance();
         this.visualGraphPanel = new VisualGraphPanel();
         this.graphUIController = new GraphUIController(visualGraphPanel);
-    }
-
-    /**
-     * Method that asks the user for the path to his or her JDK with a file
-     * chooser and saves the selection in a configuration file. If the
-     * configuration file already exists, the information is read from this file
-     * and the user is not asked.
-     */
-    public void pathSelection() {
-        String pathName = System.getProperty("user.home") + System.getProperty("file.separator") + "visualDfa";
-        File dir = new File(pathName.trim());
-        if (!dir.exists()) {
-            dir.mkdir();
-        }
-        String fileName = "jdkPath.txt";
-        String completePath = pathName + System.getProperty("file.separator") + fileName;
-        File jdkPath = new File(completePath.toString());
-        if (jdkPath.exists()) {
-            File sourceFile = new File(pathName + System.getProperty("file.separator") + fileName);
-            BufferedReader reader = null;
-            try {
-                reader = new BufferedReader(new FileReader(sourceFile));
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            }
-            String input;
-            String text = new String();
-            try {
-                while ((input = reader.readLine()) != null) {
-                    text += input;
-                }
-                reader.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            File dirJDK = new File(text.trim());
-            if (dirJDK.exists()) {
-                System.setProperty("java.home", text.trim());
-                return;
-            }
-        }
-
-        new MessageBox(this.programFrame, "JDK Path", PATH_SELECTION);
-        jdkPath = this.programFrame.getCompilerPath();
-        if (!jdkPath.exists()) {
-            new MessageBox(this.programFrame, "No Compiler found", NO_COMPILER_FOUND);
-            return;
-        }
-        System.setProperty("java.home", jdkPath.getAbsolutePath());
-        File iniFile = new File(dir, fileName);
-        FileWriter writer;
-        try {
-            writer = new FileWriter(iniFile);
-            writer.write(jdkPath.getAbsolutePath());
-            writer.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
     }
 
     /**
@@ -338,11 +285,7 @@ public class Controller {
 
         // Process code with instance of {@code CodeProcessor}
         CodeProcessor processor = null;
-        try {
-            processor = new CodeProcessor(code);
-        } catch (NullPointerException e) {
-            new MessageBox(this.programFrame, "No Compiler Found", NO_COMPILER_FOUND);
-        }
+        processor = new CodeProcessor(code);
         if (!processor.wasSuccessful()) {
             new MessageBox(programFrame, "Compilation Error", processor.getErrorMessage());
             visibilityInput();
@@ -371,7 +314,7 @@ public class Controller {
         DFAPrecalculator precalculator = null;
         try {
             Worklist worklist = this.worklistManager.getWorklist(worklistName, blockGraph);
-            @SuppressWarnings("unchecked")
+            //@SuppressWarnings("unchecked")
             DFAFactory<? extends LatticeElement> dfaFactory = analysisLoader.getDFAFactory(analysisName);
             precalculator = new DFAPrecalculator(dfaFactory, worklist, blockGraph, this.precalcController, this);
         } catch (IllegalArgumentException e) {
@@ -419,8 +362,9 @@ public class Controller {
     public void stopAnalysis() {
         if (precalcController.getPrecalcState() == DFAPrecalcController.PrecalcState.CALCULATING
                 || precalcController.getPrecalcState() == DFAPrecalcController.PrecalcState.PAUSED) {
-            OptionBox optionBox = new OptionBox(this.programFrame, "Stop Calculation", ABORT_PRECALC_MESSAGE);
-            if (optionBox.getOption() == Option.NO_OPTION) {
+            GenericBox closeBox = new GenericBox(this.programFrame, "Stop Calculation", ABORT_PRECALC_MESSAGE, "Yes",
+                    "No", "Intermediate Results", false, Option.NO_OPTION);
+            if (closeBox.getOption() == Option.NO_OPTION) {
                 if (!(precalcController.getPrecalcState() == DFAPrecalcController.PrecalcState.CALCULATING)) {
                     visibilityInput();
                     return;
@@ -437,7 +381,7 @@ public class Controller {
                     this.precalcThread.stop();
                 }
                 visibilityInput();
-            } else if ((optionBox.getOption() == Option.YES_OPTION)) {
+            } else if ((closeBox.getOption() == Option.YES_OPTION)) {
                 // shows an intermediate result if possible
                 if (!(precalcController.getPrecalcState() == DFAPrecalcController.PrecalcState.CALCULATING)) {
                     return;
@@ -455,16 +399,20 @@ public class Controller {
                     visibilityInput();
                 }
             }
-        } else {
-            OptionBox optionBox = new OptionBox(this.programFrame, "Stop", ABORT_MESSAGE);
-            if (optionBox.getOption() == Option.YES_OPTION) {
-                visibilityInput();
-                this.graphUIController.stop();
-                this.programFrame.getStatePanelOpen().reset();
-                this.dfaExecution = null;
+        } else if (this.fileParser.shouldShowBox()) {
+            GenericBox closeBox = new GenericBox(this.programFrame, "Stop", ABORT_MESSAGE, "Yes", "No", null, true,
+                    Option.NO_OPTION);
+            if (closeBox.getOption() == Option.NO_OPTION) {
+                return;
+            }
+            if (!closeBox.showAgain()) {
+                this.fileParser.setShowBox(false);
             }
         }
-
+        visibilityInput();
+        this.graphUIController.stop();
+        this.programFrame.getStatePanelOpen().reset();
+        this.dfaExecution = null;
     }
 
     protected void visibilityPrecalculating() {
@@ -519,6 +467,7 @@ public class Controller {
         this.programFrame = programFrame;
         this.visualGraphPanel.setParentFrame(this.programFrame);
         this.graphUIController.setStatePanel(this.programFrame.getStatePanelOpen());
+        visibilityInput();
     }
 
     /**
@@ -557,6 +506,22 @@ public class Controller {
             throw new IllegalStateException("visualGraphPanel must not be null");
         }
         return this.visualGraphPanel;
+    }
+
+    /**
+     * Returns the program output path.
+     * 
+     * @return the path were output files of the programs are stored
+     */
+    public String getProgramOutputPath() {
+        return Controller.PROGRAM_OUTPUT_PATH;
+    }
+
+    /**
+     * 
+     */
+    public void parseOptionFile() {
+        this.fileParser = new OptionFileParser(Controller.PROGRAM_OUTPUT_PATH, this.programFrame);
     }
 
 }

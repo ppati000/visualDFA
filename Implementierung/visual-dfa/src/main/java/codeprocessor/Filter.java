@@ -45,8 +45,6 @@ public abstract class Filter {
      * 
      * @return if the method passes the filter or not
      */
-    public boolean filter(SootMethod method) {
-        return false;
-    }
+    public abstract boolean filter(SootMethod method);
 
 }

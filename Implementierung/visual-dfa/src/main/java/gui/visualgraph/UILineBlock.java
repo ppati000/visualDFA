@@ -111,9 +111,7 @@ public class UILineBlock extends UIAbstractBlock {
                 public void mouseReleased(MouseEvent e) {
                     mxCell cell = (mxCell) graphComponent.getCellAt(e.getX(), e.getY());
                     if (cell != null && cell.equals(breakpointCell)) {
-                        hasBreakpoint = !hasBreakpoint;
-                        elementaryBlock.setBreakpoint(hasBreakpoint);
-                        render(null); // No analysisState needed; we only want to update the breakpoint cell.
+                        toggleBreakpoint();
                     }
                 }
             });
@@ -130,14 +128,61 @@ public class UILineBlock extends UIAbstractBlock {
         }
     }
 
+    /**
+     * Toggles this line's breakpoint on or off.
+     */
+    public void toggleBreakpoint() {
+        hasBreakpoint = !hasBreakpoint;
+        elementaryBlock.setBreakpoint(hasBreakpoint);
+        render(null); // No analysisState needed; we only want to update the breakpoint cell.
+    }
+
+    /**
+     * Returns true if this line has an active breakpoint, false if not.
+     *
+     * @return true iff lin has active breakpoint
+     */
+    public boolean hasBreakpoint() {
+        return hasBreakpoint;
+    }
+
+    /**
+     * Returns this line's breakpoint cell.
+     *
+     * @return breakpoint cell.
+     */
+    public mxCell getBreakpointCell() {
+        return breakpointCell;
+    }
+
+    /**
+     * Returns this line's text content (a single line {@code String}).
+     *
+     * @return text content
+     */
     @Override
     public String getText() {
         return elementaryBlock.getUnit().toString();
     }
 
+    /**
+     * Returns the parent block number.
+     *
+     * @return parent block number
+     */
     @Override
-    public int[] getBlockAndLineNumbers() {
-        return new int[] {parent.blockNumber, blockNumber};
+    public int getBlockNumber() {
+        return parent.blockNumber;
+    }
+
+    /**
+     * Returns this line's number.
+     *
+     * @return line number
+     */
+    @Override
+    public int getLineNumber() {
+        return blockNumber;
     }
 
     /**

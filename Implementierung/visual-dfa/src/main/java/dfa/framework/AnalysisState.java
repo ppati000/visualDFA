@@ -4,13 +4,14 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * @author Sebastian Rauch
- * 
- *         An {@code AnalysisState} represents the state of a dataflow analysis in one specific step. It holds the
- *         current {@code Worklist} and the current {@code BlockState} for each {@code AbstractBlock}.
+ * An {@code AnalysisState} represents the state of a dataflow analysis in one specific step. It holds the current
+ * {@code Worklist} and the current {@code BlockState} for each {@code AbstractBlock}.
  * 
  * @param <E>
  *        the type of {@code LatticeElement} used in this {@code AnalysisState}
+ * 
+ * @author Sebastian Rauch
+ * 
  */
 public class AnalysisState<E extends LatticeElement> {
 
@@ -234,6 +235,11 @@ public class AnalysisState<E extends LatticeElement> {
         this.colorMap = colorMap;
     }
 
+    /**
+     * Returns the {@code Map} that assigns {@code LogicalColor}s to {@code BasicBlock}s.
+     * 
+     * @return the {@code Map} that assigns {@code LogicalColor}s to {@code BasicBlock}s
+     */
     protected Map<BasicBlock, LogicalColor> getColorMap() {
         return colorMap;
     }

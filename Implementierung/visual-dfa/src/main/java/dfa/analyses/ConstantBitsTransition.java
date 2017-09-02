@@ -1,5 +1,8 @@
 package dfa.analyses;
 
+import java.util.Arrays;
+import java.util.Set;
+
 import dfa.analyses.ConstantBitsElement.BitValue;
 import dfa.analyses.ConstantBitsElement.BitValueArray;
 import dfa.framework.Transition;
@@ -377,6 +380,7 @@ public class ConstantBitsTransition implements Transition<ConstantBitsElement> {
                 switch (entry) {
                 case ONE:
                     numberOfOnes++;
+
                     break;
                 case TOP:
                     numberOfTops++;
@@ -412,6 +416,7 @@ public class ConstantBitsTransition implements Transition<ConstantBitsElement> {
             }
 
             return resValCarry;
+
         }
 
         @Override
@@ -459,13 +464,16 @@ public class ConstantBitsTransition implements Transition<ConstantBitsElement> {
                     }
 
                     // the actual addition bit by bit:
+
                     // first checking if one of the bits is TOP
                     BitValue[] opAndCarry = { op1Values[i], op2Values[i], carry };
                     BitValue[] checkTop = checkAddTop(opAndCarry);
 
+
                     if (checkTop[0] == BitValue.TOP) {
                         bitValues[i] = BitValue.TOP;
                         carry = checkTop[1];
+
 
                     } else {
                         // both bits and the carry are ONE or ZERO so we convert them to int and add them
@@ -516,6 +524,7 @@ public class ConstantBitsTransition implements Transition<ConstantBitsElement> {
                     numberOfAllTops++;
                     if (i > 0) {
                         numberOfSubTops++;
+
                     }
                     break;
                 case ZERO:
@@ -561,6 +570,7 @@ public class ConstantBitsTransition implements Transition<ConstantBitsElement> {
                 }
             }
             return resValCarry;
+
         }
 
         @Override
@@ -612,6 +622,7 @@ public class ConstantBitsTransition implements Transition<ConstantBitsElement> {
                     BitValue[] opAndcarry = { op1Values[i], op2Values[i], carry };
                     BitValue[] checkTop = checkSubTop(opAndcarry);
 
+
                     if (checkTop[0] == BitValue.TOP) {
                         bitValues[i] = BitValue.TOP;
                         carry = checkTop[1];
@@ -641,6 +652,7 @@ public class ConstantBitsTransition implements Transition<ConstantBitsElement> {
             int count = 0;
             for (BitValue bit : op.getBitValues()) {
                 if (bit == BitValue.TOP) {
+
                     count++;
                 }
             }
@@ -675,6 +687,7 @@ public class ConstantBitsTransition implements Transition<ConstantBitsElement> {
                 BitValue op1HighBit = op1.getBitValues()[l1 - 1];
                 BitValue op2HighBit = op2.getBitValues()[l2 - 1];
 
+
                 if (op1.isZero() || op2.isZero()) {
                     // If one of the factors is zero, the result of the multiplication is zero
                     result = new BitValueArray(length, BitValue.ZERO);
@@ -698,18 +711,21 @@ public class ConstantBitsTransition implements Transition<ConstantBitsElement> {
                     // make both the same length
                     for (int i = 0; i < length; i++) {
                         if (i >= l1) {
+
                             op1Values[i] = op1HighBit;
 
                         } else {
                             op1Values[i] = op1.getBitValues()[i];
                         }
                         if (i >= l2) {
+
                             op2Values[i] = op2HighBit;
 
                         } else {
                             op2Values[i] = op2.getBitValues()[i];
                         }
                     }
+
 
                     int numberOfSpecialChars1 = getNumberOfTOP(op1);
                     int numberOfSpecialChars2 = getNumberOfTOP(op2);
@@ -725,6 +741,7 @@ public class ConstantBitsTransition implements Transition<ConstantBitsElement> {
                                 BitValue[] op1ValuesPossibility = new BitValue[length];
                                 BitValue[] op2ValuesPossibility = new BitValue[length];
                                 for (int j = 0; j < length; j++) {
+
                                     if (op1Values[j] == BitValue.TOP) {
                                         op1ValuesPossibility[j] =
                                                 BitValueArray.booleanToBitValue((counter1 & ((long) 1 << j)) != 0);
@@ -745,6 +762,7 @@ public class ConstantBitsTransition implements Transition<ConstantBitsElement> {
                         BitValueArray refVal = possibilities[0];
                         BitValueArray top = BitValueArray.getTop(length);
                         BitValueArray bottom = BitValueArray.getBottom(length);
+
                         for (int j = 1; j < dimGes; j++) {
 
                             refVal = join.getJoinHelper().performSingleJoin(refVal, possibilities[j], length, top,
@@ -753,6 +771,7 @@ public class ConstantBitsTransition implements Transition<ConstantBitsElement> {
                         result = refVal;
 
                     } else {
+
                         // too many TOP bits so the last resort is counting zeros from the lowest and highest bit
                         int lowZeros = 0;
                         int highZeros = 0;
@@ -922,6 +941,7 @@ public class ConstantBitsTransition implements Transition<ConstantBitsElement> {
 
             long[] maxMinAbs = { resultMaxAbs, resultMinAbs };
             return maxMinAbs;
+
         }
 
         @Override
@@ -1618,6 +1638,7 @@ public class ConstantBitsTransition implements Transition<ConstantBitsElement> {
             return op;
             // TODO implement unsignedShiftRight
         }
+
 
         @Override
         public void caseShlExpr(ShlExpr expr) {

@@ -23,6 +23,7 @@ class RestrictedMxGraph extends mxGraph {
         mxConstants.DEFAULT_FONTSIZE = Styles.TEXT_SIZE;
         mxConstants.LINE_HEIGHT = Styles.LINE_HEIGHT;
 
+        setDropEnabled(false);
         setHtmlLabels(true); // With htmlLabels == false, text is not centered properly.
     }
 

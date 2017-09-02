@@ -1,9 +1,7 @@
 package dfa.analyses;
 
 import java.util.Comparator;
-import java.util.Iterator;
 import java.util.Map;
-import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -21,6 +19,11 @@ import soot.jimple.internal.JimpleLocal;
  *        the type of value
  */
 public abstract class LocalMapElement<V> implements LatticeElement, Cloneable {
+    
+    // TODO change to proper symbols after testing
+    public static final String BOTTOM_SYMBOL = "B"; //"\u22A5"
+    public static final String TOP_SYMBOL = "T";    //"\u22A4"
+
 
     protected static final LocalComparator DEFAULT_COMPARATOR = new LocalComparator();
 
@@ -33,6 +36,14 @@ public abstract class LocalMapElement<V> implements LatticeElement, Cloneable {
      *        a {@code Map} that maps a {@code JimpleLocal} to its corresponding value
      */
     public LocalMapElement(Map<JimpleLocal, V> localMap, Comparator<JimpleLocal> comparator) {
+        if (localMap == null) {
+            throw new IllegalArgumentException("localMap must not be null");
+        }
+        
+        if (comparator == null) {
+            throw new IllegalArgumentException("comparator must not be null");
+        }
+        
         this.localMap = new TreeMap<JimpleLocal, V>(comparator);
         this.localMap.putAll(localMap);
     }
@@ -93,26 +104,6 @@ public abstract class LocalMapElement<V> implements LatticeElement, Cloneable {
         return localMap;
     }
     
-    @Override
-    public String getStringRepresentation() {
-        StringBuilder sb = new StringBuilder();
-
-        Iterator<Map.Entry<JimpleLocal, V>> entryIt = localMap.entrySet().iterator();
-        Map.Entry<JimpleLocal, V> entry;
-        if (entryIt.hasNext()) {
-            entry = entryIt.next();
-            sb.append(entry.getKey().getName()).append(" = ").append(entry.getValue());
-        }
-
-        while (entryIt.hasNext()) {
-            entry = entryIt.next();
-            sb.append('\n');
-            sb.append(entry.getKey().getName()).append(" = ").append(entry.getValue());
-        }
-
-        return sb.toString();
-    }
-    
     /* force subclasses to override this themselves */
     @Override
     public abstract boolean equals(Object o);
@@ -121,6 +112,7 @@ public abstract class LocalMapElement<V> implements LatticeElement, Cloneable {
     @Override
     public abstract int hashCode();
     
+    @Override
     public abstract LocalMapElement<V> clone();
     
 }

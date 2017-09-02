@@ -16,8 +16,8 @@ import java.util.Map;
 /**
  * @author Patrick Petrovic
  *
- *         Main interface for interaction. Provides important methods to get data from DFAFramework and to build the
- *         visual graph. Additionally, it handles creation of VisualGraphPanel and graph export.
+ * Main interface for interaction. Provides important methods to get data from DFAFramework and to build the visual
+ * graph. Additionally, it handles creation of VisualGraphPanel and graph export.
  */
 public class GraphUIController {
     private VisualGraphPanel panel;
@@ -112,7 +112,7 @@ public class GraphUIController {
             }
         }
 
-        panel.renderGraph(dfa, true);
+        panel.renderGraph(dfa);
 
         for (UIAbstractBlock block : uiBlocks) {
             mxCellMap.put(block.getMxCell(), block);
@@ -125,12 +125,12 @@ public class GraphUIController {
                 ArrayList<mxCell> selectedCells = (ArrayList<mxCell>) mxEventObject.getProperty("removed");
 
 
-                    if (selectedCells != null && selectedCells.size() > 0) {
-                        mxCell selectedCell = selectedCells.get(0);
-                        panel.setSelectedBlock( mxCellMap.get(selectedCell));
+                if (selectedCells != null && selectedCells.size() > 0) {
+                    mxCell selectedCell = selectedCells.get(0);
+                    panel.setSelectedBlock(mxCellMap.get(selectedCell));
 
-                    } else {
-                        panel.setSelectedBlock( null);
+                } else {
+                    panel.setSelectedBlock(null);
 
                 }
 
@@ -158,8 +158,12 @@ public class GraphUIController {
             throw new IllegalStateException("Graph has not been built using start() yet.");
         }
 
-        panel.renderGraph(dfa, false);
-        updateStatePanel();
+        panel.renderGraph(dfa);
+
+        // If Jump to Action is enabled, the block selection will change, automatically triggering updateStatePanel().
+        if (!panel.isJumpToActionEnabled()) {
+            updateStatePanel();
+        }
     }
 
     /**
@@ -184,15 +188,16 @@ public class GraphUIController {
             String inStateString = inState == null ? "<not set>" : inState.getStringRepresentation();
             String outStateString = outState == null ? "<not set>" : outState.getStringRepresentation();
 
-            int[] blockAndLineNumbers = uiAbstractBlock.getBlockAndLineNumbers();
             String text = uiAbstractBlock.getText();
-            int blockNumber = blockAndLineNumbers[0];
-            int lineNumber = blockAndLineNumbers[1];
+            int blockNumber = uiAbstractBlock.getBlockNumber();
+
+            // Parent block selected? Then lineNumber == -1, but first code line for StatePanelOpen should be 0 as it shows the whole block.
+            int lineNumber = Math.max(uiAbstractBlock.getLineNumber(), 0);
 
             statePanel.setIn(inStateString);
             statePanel.setOut(outStateString);
             statePanel.setSelectedLine(text, blockNumber, lineNumber);
-        } else if (statePanel != null){
+        } else if (statePanel != null) {
             statePanel.reset();
         }
     }

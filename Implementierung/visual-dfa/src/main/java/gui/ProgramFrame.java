@@ -1,7 +1,8 @@
 package gui;
 
-import java.awt.BorderLayout;
+import java.awt.*;
 import java.io.File;
+import java.lang.reflect.Method;
 
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -27,8 +28,8 @@ public class ProgramFrame extends JFrame {
     private StatePanelClosed statePanelClosed;
     private VisualGraphPanel visualGraphPanel;
     private boolean isStatePanelOpen;
-
-    private Controller ctrl;
+    private static final Dimension MIN_SIZE = new Dimension(1200, 800);
+    private static final Rectangle STANDARD_BOUNDS = new Rectangle(0, 0, 1600, 800);
 
     /**
      * Creates a {@code JFrame} and its content. Sets theLayout of the
@@ -43,13 +44,11 @@ public class ProgramFrame extends JFrame {
      */
 
     public ProgramFrame(Controller ctrl) {
-
-        this.ctrl = ctrl;
-
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        // TODO constants for resolution
-        setBounds(0, 0, 1920, 1080);
-        // setMinimumSize(new Dimension(1920, 1080));
+        
+        setBounds(STANDARD_BOUNDS);
+        setExtendedState(getExtendedState() | Frame.MAXIMIZED_BOTH);
+        setMinimumSize(MIN_SIZE);
         contentPane = new JPanel();
 
         contentPane.setLayout(new BorderLayout(0, 0));
@@ -62,8 +61,8 @@ public class ProgramFrame extends JFrame {
         contentPane.add(centerPan, BorderLayout.CENTER);
         centerPan.setLayout(new BorderLayout(0, 0));
 
-        JPanel vgPan = ctrl.getVisualGraphPanel();
-        centerPan.add(vgPan, BorderLayout.CENTER);
+        visualGraphPanel = ctrl.getVisualGraphPanel();
+        centerPan.add(visualGraphPanel, BorderLayout.CENTER);
 
         controlPanel = new ControlPanel(ctrl);
         centerPan.add(controlPanel, BorderLayout.SOUTH);
@@ -75,6 +74,9 @@ public class ProgramFrame extends JFrame {
 
         statePanelClosed = new StatePanelClosed(this);
 
+        if (System.getProperty("os.name").toLowerCase().contains("mac") && getWindows().length != 0) {
+            enableMacOSFullscreen(getWindows()[0]);
+        }
     }
 
     /**
@@ -85,7 +87,7 @@ public class ProgramFrame extends JFrame {
      * @see StatePanelClosed
      */
     public void switchStatePanel() {
-        if (isStatePanelOpen == true) {
+        if (isStatePanelOpen) {
             remove(statePanelOpen);
             add(statePanelClosed, BorderLayout.EAST);
             isStatePanelOpen = false;
@@ -128,7 +130,7 @@ public class ProgramFrame extends JFrame {
     public StatePanelOpen getStatePanelOpen() {
         return statePanelOpen;
     }
-
+    
     /**
      * Opens a {@code JFileChooser}, so the user can set the path to his JDK.
      * 
@@ -143,5 +145,18 @@ public class ProgramFrame extends JFrame {
             returnVal = pathChooser.showOpenDialog(this);
         }
         return pathChooser.getSelectedFile();
+    }
+
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    private static void enableMacOSFullscreen(Window window) {
+        try {
+            Class util = Class.forName("com.apple.eawt.FullScreenUtilities");
+            Class params[] = new Class[]{Window.class, Boolean.TYPE};
+            Method method = util.getMethod("setWindowCanFullScreen", params);
+            method.invoke(util, window, true);
+        } catch (Exception ex) {
+            System.err.println("Could not enable macOS fullscreen capability. Fullscreen mode will be unavailable. \n"
+              + ex.getMessage());
+        }
     }
 }

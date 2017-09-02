@@ -325,6 +325,46 @@ public class ConstantBitsElement extends LocalMapElement<BitValueArray> {
             return true;
         }
 
+        public boolean isPowerOfTwo() {
+            if (!isConst()) {
+                return false;
+            }
+            int foundOnes = 0;
+            for (BitValue bit : bitValues) {
+                switch (bit) {
+                case TOP:
+                    return false;
+                case BOTTOM:
+                    return false;
+                case ONE:
+                    foundOnes++;
+                case ZERO: // ignore
+                }
+            }
+            return (foundOnes == 1);
+        }
+
+        public int getPositionOfOne() {
+            if (!isPowerOfTwo()) {
+                return -1;
+            }
+            for (int i = 0; i < getLength(); i++) {
+                if (bitValues[i] == BitValue.ONE) {
+                    return i;
+                }
+            }
+            return -1;
+        }
+
+        public boolean isZero() {
+            for (BitValue bit : bitValues) {
+                if (bit != BitValue.ZERO) {
+                    return false;
+                }
+            }
+            return true;
+        }
+
         /**
          * Returns if the constant represented by this {@code BitValueArray} is a power of two.
          * 

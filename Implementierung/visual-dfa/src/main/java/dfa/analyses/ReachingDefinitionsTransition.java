@@ -15,7 +15,6 @@ import soot.jimple.IfStmt;
 import soot.jimple.InvokeStmt;
 import soot.jimple.LookupSwitchStmt;
 import soot.jimple.NopStmt;
-import soot.jimple.Ref;
 import soot.jimple.RetStmt;
 import soot.jimple.ReturnStmt;
 import soot.jimple.ReturnVoidStmt;
@@ -46,8 +45,6 @@ public class ReachingDefinitionsTransition implements Transition<ReachingDefinit
      */
     static class Transitioner implements StmtSwitch {
 
-        private ReachingDefinitionsElement inputElement;
-
         private ReachingDefinitionsElement outputElement;
 
         /**
@@ -57,7 +54,6 @@ public class ReachingDefinitionsTransition implements Transition<ReachingDefinit
          *        the input-{@code ReachingDefinitionsElement}
          */
         public Transitioner(ReachingDefinitionsElement inputElement) {
-            this.inputElement = inputElement;
             outputElement = new ReachingDefinitionsElement(inputElement.getLocalMap());
         }
 
@@ -75,12 +71,8 @@ public class ReachingDefinitionsTransition implements Transition<ReachingDefinit
             JimpleLocal lValLocal;
             if (stmt.getLeftOp() instanceof JimpleLocal) {
                 lValLocal = (JimpleLocal) stmt.getLeftOp();
-            } else if (!(stmt.getLeftOp() instanceof Ref)) {
-                assert false : "Can't assign to a non local or reference!";
-                return;
             } else {
-                // ignore
-                return;
+                return;     // ignore
             }
 
             Value rVal = stmt.getRightOp();
@@ -91,7 +83,7 @@ public class ReachingDefinitionsTransition implements Transition<ReachingDefinit
 
         @Override
         public void caseBreakpointStmt(BreakpointStmt stmt) {
-            throw new UnsupportedStatementException("BreakpointStmt", stmt);
+            // ignore
         }
 
         @Override
@@ -111,12 +103,22 @@ public class ReachingDefinitionsTransition implements Transition<ReachingDefinit
 
         @Override
         public void caseIdentityStmt(IdentityStmt stmt) {
-            // TODO Auto-generated method stub
+            JimpleLocal lValLocal;
+            if (stmt.getLeftOp() instanceof JimpleLocal) {
+                lValLocal = (JimpleLocal) stmt.getLeftOp();
+            } else {
+                return;     // ignore
+            }
+
+            Value rVal = stmt.getRightOp();
+            Definition rhs = new Definition(rVal);
+
+            outputElement.setValue(lValLocal, rhs);
         }
 
         @Override
         public void caseIfStmt(IfStmt stmt) {
-            // TODO Auto-generated method stub
+            // ignore
         }
 
         @Override
@@ -126,7 +128,7 @@ public class ReachingDefinitionsTransition implements Transition<ReachingDefinit
 
         @Override
         public void caseLookupSwitchStmt(LookupSwitchStmt stmt) {
-            throw new UnsupportedStatementException("LookupSwitchStmt", stmt);
+            // ignore
         }
 
         @Override
@@ -151,7 +153,7 @@ public class ReachingDefinitionsTransition implements Transition<ReachingDefinit
 
         @Override
         public void caseTableSwitchStmt(TableSwitchStmt stmt) {
-            throw new UnsupportedStatementException("TableSwitchStmt", stmt);
+            // ignore
         }
 
         @Override

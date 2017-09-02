@@ -3,7 +3,14 @@ package dfa.analyses;
 import dfa.framework.Transition;
 import dfa.framework.UnsupportedStatementException;
 import dfa.framework.UnsupportedValueException;
+import soot.BooleanType;
+import soot.ByteType;
+import soot.CharType;
+import soot.IntType;
 import soot.Local;
+import soot.LongType;
+import soot.ShortType;
+import soot.Type;
 import soot.Unit;
 import soot.Value;
 import soot.jimple.AddExpr;
@@ -54,7 +61,6 @@ import soot.jimple.NopStmt;
 import soot.jimple.NullConstant;
 import soot.jimple.OrExpr;
 import soot.jimple.ParameterRef;
-import soot.jimple.Ref;
 import soot.jimple.RemExpr;
 import soot.jimple.RetStmt;
 import soot.jimple.ReturnStmt;
@@ -131,19 +137,14 @@ public class ConstantFoldingTransition implements Transition<ConstantFoldingElem
                 if (!ConstantFoldingElement.isLocalTypeAccepted(lValLocal.getType())) {
                     return;
                 }
-            } else if (!(stmt.getLeftOp() instanceof Ref)) {
-                assert false : "Something went horribly wrong!";
-                return;
             } else {
-                // ignore
-                return;
+                return;     // ignore
             }
 
             Value rVal = stmt.getRightOp();
             Evaluator valueSwitch = new Evaluator(inputElement);
             rVal.apply(valueSwitch);
             ConstantFoldingElement.Value rhs = valueSwitch.getResult();
-            
             outputElement.setValue(lValLocal, rhs);
         }
 
@@ -170,19 +171,14 @@ public class ConstantFoldingTransition implements Transition<ConstantFoldingElem
         @Override
         public void caseIdentityStmt(IdentityStmt stmt) {
             // this is only used for parameter initialization (so set to TOP)
-            
             JimpleLocal lValLocal;
             if (stmt.getLeftOp() instanceof JimpleLocal) {
                 lValLocal = (JimpleLocal) stmt.getLeftOp();
                 if (!ConstantFoldingElement.isLocalTypeAccepted(lValLocal.getType())) {
                     return;
                 }
-            } else if (!(stmt.getLeftOp() instanceof Ref)) {
-                assert false : "Something went horribly wrong!";
-                return;
             } else {
-                // ignore
-                return;
+                return;     // ignore
             }
             
             outputElement.setValue(lValLocal, ConstantFoldingElement.Value.getTop());
@@ -693,25 +689,34 @@ public class ConstantFoldingTransition implements Transition<ConstantFoldingElem
 
         @Override
         public void caseCmplExpr(CmplExpr expr) {
-            // TODO Auto-generated method stub
-
+            // ignore
         }
 
         @Override
         public void caseCmpgExpr(CmpgExpr expr) {
-            // TODO Auto-generated method stub
-
+            // ignore
         }
 
         @Override
         public void caseCmpExpr(CmpExpr expr) {
-            // TODO Auto-generated method stub
-
+            // ignore
         }
 
         @Override
         public void caseCastExpr(CastExpr expr) {
-            // TODO Auto-generated method stub
+            Value castOp = expr.getOp();
+            Evaluator castSwitch = new Evaluator(inputElement);
+            castOp.apply(castSwitch);
+            ConstantFoldingElement.Value val = castSwitch.getResult();
+            if (val.isConst()) {
+                CosntantRetriever constSwitch = new CosntantRetriever();
+                val.getConstant().apply(constSwitch);
+                long numericVal = constSwitch.value.longValue();
+                ArithmeticConstant res = castIntegerValue(numericVal, expr.getCastType());
+                result = new ConstantFoldingElement.Value(res);
+            } else {
+                result = val; // TOP and BOTTOM are unchanged
+            }
         }
 
         @Override
@@ -919,7 +924,26 @@ public class ConstantFoldingTransition implements Transition<ConstantFoldingElem
 
             return new Pair<ConstantFoldingElement.Value>(switch1.getResult(), switch2.getResult());
         }
-
+        
+        private ArithmeticConstant castIntegerValue(long value, Type castType) {
+            if (castType == LongType.v()) {
+                return LongConstant.v(value);
+            } else if (castType == IntType.v()) {
+                return IntConstant.v((int) value);
+            } else if (castType == ShortType.v()) {
+                return IntConstant.v((short) value);
+            } else if (castType == CharType.v()) {
+                return IntConstant.v((char) value);
+            } else if (castType == ByteType.v()) {
+                return IntConstant.v((byte) value);
+            } else if (castType == BooleanType.v()) {
+                int boolVal = value == 0 ? 0 : 1;
+                return IntConstant.v(boolVal);
+            }
+            
+            return null;
+        }
+        
     }
 
     /**

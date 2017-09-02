@@ -29,7 +29,7 @@ import java.util.List;
 /**
  * @author Patrick Petrovic
  *
- *         Panel used to display the visual graph.
+ * Panel used to display the visual graph.
  */
 public class VisualGraphPanel extends JPanel {
     private List<UIBasicBlock> basicBlocks;
@@ -40,7 +40,13 @@ public class VisualGraphPanel extends JPanel {
     private mxGraph graph;
     private Frame parentFrame = null;
     private Map<AbstractBlock, UIAbstractBlock> blockMap;
+    private GraphExporter graphExporter;
     private UIAbstractBlock selectedBlock;
+    private boolean hasRendered = false;
+    private boolean isExportInProgress = false;
+
+    private final String outputPath = System.getProperty("user.home") + File.separator + "visualDFA";
+    private final int fakeProgressBarMaxValue = 42;
 
     /**
      * Creates a new {@code VisualGraphPanel}.
@@ -48,7 +54,6 @@ public class VisualGraphPanel extends JPanel {
     public VisualGraphPanel() {
         this.basicBlocks = new ArrayList<>();
         this.edges = new ArrayList<>();
-        this.graph = new RestrictedMxGraph();
         this.blockMap = new HashMap<>();
         setLayout(new BorderLayout());
 
@@ -62,6 +67,7 @@ public class VisualGraphPanel extends JPanel {
 
         graphExport.setIcon(IconLoader.loadIcon("icons/share-symbol.png", 0.2));
         graphExport.setPreferredSize(new Dimension(130, 40));
+        graphExporter = new GraphExporter();
 
         JPanel buttonGroup = new JPanel();
         buttonGroup.setLayout(new FlowLayout(FlowLayout.RIGHT));
@@ -100,14 +106,12 @@ public class VisualGraphPanel extends JPanel {
     }
 
     /**
-     * Renders all previously inserted blocks and edges.
+     * Renders all previously inserted blocks and edges, and invokes the auto-layouter if first render.
      *
      * @param dfa
      *         the {@code DFAExecution} that should be used to render this graph
-     * @param isFirstRender
-     *         If {@code true}, the auto-layouter is called after inserting all parent blocks. Used on first render.
      */
-    public void renderGraph(final DFAExecution dfa, boolean isFirstRender) {
+    public void renderGraph(final DFAExecution dfa) {
         AnalysisState analysisState = dfa.getCurrentAnalysisState();
 
         graph.getModel().beginUpdate();
@@ -121,8 +125,9 @@ public class VisualGraphPanel extends JPanel {
         }
 
         // Apply layout before rendering child blocks, so that the layouter doesn't mess with them.
-        if (isFirstRender) {
+        if (!hasRendered) {
             autoLayoutAndShowGraph();
+            hasRendered = true;
 
             graphExport.addActionListener(new ActionListener() {
                 @Override
@@ -130,38 +135,62 @@ public class VisualGraphPanel extends JPanel {
                     GraphExportBox exportBox = new GraphExportBox(parentFrame);
 
                     if (exportBox.getOption() == Option.YES_OPTION) {
+                        graphExport.setEnabled(false);
+
                         float scale = exportBox.getQuality().ordinal() + 1;
-                        String outputPath = System.getProperty("user.home") + File.separator + "visualDFA";
+                        final long timestamp = new Date().getTime();
 
-                        try {
-                            List<BufferedImage> images;
+                        if (exportBox.isBatchExport()) {
+                            new GraphBatchExportThread(graphExporter, dfa, scale, exportBox.includeLineStates(), new GraphExportProgressView(outputPath) {
+                                private int index = 0;
 
-                            if (exportBox.isBatchExport()) {
-                                images = GraphExporter.batchExport(dfa, scale, exportBox.includeLineStates());
-                            } else {
-                                images = new ArrayList<>();
-                                BlockState state = selectedBlock == null ? null : dfa.getCurrentAnalysisState().getBlockState(selectedBlock.getDFABlock());
-
-                                images.add(GraphExporter.exportCurrentGraph(graph, scale, selectedBlock, state));
-                            }
-
-                            File outputDir = new File(outputPath);
-                            long timestamp = new Date().getTime();
-
-                            if (!new File(outputPath).exists()) {
-                                boolean result = outputDir.mkdir();
-                                if (!result) {
-                                    throw new IOException();
+                                @Override
+                                public void onImageExported(BufferedImage image) {
+                                    try {
+                                        saveImage(image, timestamp, index);
+                                        index++;
+                                    } catch (IOException ex) {
+                                        showExportErrorBox();
+                                    }
                                 }
-                            }
 
-                            for (int i = 0; i < images.size(); i++) {
-                                File outputFile = new File(outputPath + File.separator + "export_" + timestamp + "_" + i + ".png");
-                                ImageIO.write(images.get(i), "PNG", outputFile);
+                                @Override
+                                public void done() {
+                                    graphExport.setEnabled(true);
+                                    super.done();
+                                }
+                            }).start();
+                        } else {
+                            BlockState state = selectedBlock == null ? null : dfa.getCurrentAnalysisState().getBlockState(selectedBlock.getDFABlock());
+                            final GraphExportProgressView view = new GraphExportProgressView(outputPath);
+
+                            // Fake a progress bar to the user if no batch export, so it is not too fast.
+                            new Thread() {
+                                @Override
+                                public void run() {
+                                    view.setMaxStep(fakeProgressBarMaxValue);
+                                    try {
+                                        Thread.sleep(100);
+
+                                        for (int i = 0; i < fakeProgressBarMaxValue; i++) {
+                                            Thread.sleep(15);
+                                            view.setExportStep(i);
+                                        }
+
+                                        graphExport.setEnabled(true);
+                                    } catch (InterruptedException ex) {
+                                        // Ignored.
+                                    }
+
+                                    view.done();
+                                }
+                            }.start();
+
+                            try {
+                                saveImage(graphExporter.exportCurrentGraph(graph, scale, selectedBlock, state), timestamp, 0);
+                            } catch (IOException ex) {
+                                showExportErrorBox();
                             }
-                        } catch (IOException ex) {
-                            new MessageBox(parentFrame, "Graph Export Failed", "An error occured while saving your image(s). \n" +
-                                    "Please ensure " + outputPath + " is a writable directory.").setVisible(true);
                         }
                     }
                 }
@@ -200,6 +229,7 @@ public class VisualGraphPanel extends JPanel {
      */
     public void deleteGraph() {
         initialGraphState();
+        repaint();
     }
 
     /**
@@ -234,6 +264,15 @@ public class VisualGraphPanel extends JPanel {
      */
     public List<UIBasicBlock> getBasicBlocks() {
         return basicBlocks;
+    }
+
+    /**
+     * Returns a list of {@code UIEdge}s in the graph.
+     *
+     * @return list of {@code UIEdge}s
+     */
+    public List<UIEdge> getEdges() {
+        return edges;
     }
 
     /**
@@ -275,6 +314,15 @@ public class VisualGraphPanel extends JPanel {
     }
 
     /**
+     * Tells whether Jump to Action is enabled.
+     *
+     * @return true iff Jump to Action enabled
+     */
+    public boolean isJumpToActionEnabled() {
+        return jumpToAction.isSelected();
+    }
+
+    /**
      * Used by {@code GraphUIController} to set the panel's selected {@code UIAbstractBlock} for later use.
      *
      * @param block
@@ -293,6 +341,25 @@ public class VisualGraphPanel extends JPanel {
         return this.selectedBlock;
     }
 
+    private void saveImage(BufferedImage image, long timestamp, int index) throws IOException {
+        File outputDir = new File(outputPath);
+
+        if (!new File(outputPath).exists()) {
+            boolean result = outputDir.mkdir();
+            if (!result) {
+                throw new IOException();
+            }
+        }
+
+        File outputFile = new File(outputPath + File.separator + "export_" + timestamp + "_" + index + ".png");
+        ImageIO.write(image, "PNG", outputFile);
+    }
+
+    private void showExportErrorBox() {
+        new MessageBox(parentFrame, "Graph Export Failed", "An error occured while saving your image(s). \n" +
+                "Please ensure " + outputPath + " is a writable directory.");
+    }
+
     private void autoLayoutAndShowGraph() {
         new mxHierarchicalLayout(graph).execute(graph.getDefaultParent());
         graphComponent.setVisible(true);
@@ -306,6 +373,7 @@ public class VisualGraphPanel extends JPanel {
         basicBlocks = new ArrayList<>();
         edges = new ArrayList<>();
         graph = new RestrictedMxGraph();
+        hasRendered = false;
 
         if (graphComponent != null) {
             remove(graphComponent);
@@ -333,6 +401,9 @@ public class VisualGraphPanel extends JPanel {
         button.setBackground(Colors.LIGHT_TEXT.getColor());
         button.setForeground(Colors.DARK_TEXT.getColor());
         button.setBorder(new LineBorder(Colors.LIGHT_BACKGROUND.getColor(), 2, true));
+
+        // Remove default "Space Bar = click" behavior, so it doesn't interfere with keyboard shortcuts.
+        button.getInputMap().put(KeyStroke.getKeyStroke("SPACE"), "none");
 
         final ButtonModel startModel = button.getModel();
         startModel.addChangeListener(new ChangeListener() {

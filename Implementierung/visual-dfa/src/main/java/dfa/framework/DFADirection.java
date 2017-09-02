@@ -1,9 +1,9 @@
 package dfa.framework;
 
 /**
- * @author Sebastian Rauch 
+ * A {@code DFADirection} describes the direction of a data-flow-analysis.
  * 
- *         A {@code DFADirection} describes the direction of a data-flow-analysis.
+ * @author Sebastian Rauch
  */
 public enum DFADirection {
 

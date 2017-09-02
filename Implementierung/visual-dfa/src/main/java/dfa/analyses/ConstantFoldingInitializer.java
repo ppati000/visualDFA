@@ -44,7 +44,7 @@ public class ConstantFoldingInitializer implements Initializer<ConstantFoldingEl
         if (heads.size() < 1) {
             throw new IllegalStateException("no entry point found");
         } else if (heads.size() > 1) {
-            throw new IllegalStateException("multiply entry points found");
+            throw new IllegalStateException("multiple entry points found");
         }
 
         Map<JimpleLocal, ConstantFoldingElement.Value> initialBottomMap =

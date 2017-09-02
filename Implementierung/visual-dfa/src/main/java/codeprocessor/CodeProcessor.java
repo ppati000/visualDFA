@@ -25,7 +25,6 @@ public class CodeProcessor {
     private static final String DEFAULT_CLASS_NAME = "DefaultClass";
     private static final String DEFAULT_CLASS_SIGNATURE = "public class DefaultClass {";
     private static final String DEFAULT_METHOD_SIGNATURE = "public void defaultMethod() {";
-    private static final String PATH_SEPARATOR = System.getProperty("os.name").contains("windows") ? "\\" : "/";
     private static final String DEFAULT_TAINT_METHODS = "public static void __taint(Object o) {} "
             + "public static void __taint(boolean b){}" + "public static void __taint(int i){}"
             + "public static void __taint(double d){}" + "public static void __taint(char c){}"
@@ -36,7 +35,12 @@ public class CodeProcessor {
             + "public static void __clean(double d){}" + "public static void __clean(char c){}"
             + "public static void __clean(long l){}" + "public static void __clean(short s){}"
             + "public static void __clean(byte b){}" + "public static void __clean(float f){}";
-    private static final String DEFAULT_SENSITIVE_METHOD = "public static void __sensitive() {}";
+    private static final String DEFAULT_SENSITIVE_METHODS = "public static void __sensitive() {}"
+            + "public static void __sensitive(Object o) {}" + "public static void __sensitive(boolean b) {}"
+            + "public static void __sensitive(int i) {}" + "public static void __sensitive(double d) {}"
+            + "public static void __sensitive(char c) {}" + "public static void __sensitive(long l) {}"
+            + "public static void __sensitive(short s) {}" + "public static void __sensitive(byte b) {}"
+            + "public static void __sensitive(float f) {}";
 
     /**
      * Creates a {@code CodeProcessor} with the given code fragment and compiles
@@ -47,31 +51,35 @@ public class CodeProcessor {
      */
     public CodeProcessor(String originalCode) {
         if (originalCode == null) {
-            throw new IllegalStateException("String must not be null");
+            throw new IllegalArgumentException("String must not be null");
         }
 
-        this.pathName = System.getProperty("user.home") + PATH_SEPARATOR + "visualDfa" + PATH_SEPARATOR;
+        this.pathName = System.getProperty("user.home") + System.getProperty("file.separator") + "visualDfa"
+                + System.getProperty("file.separator");
         File dir = new File(this.pathName);
         if (!dir.exists()) {
             dir.mkdir();
         }
         String codeToCompile = preProcess(originalCode);
+        if (codeToCompile == "") {
+            throw new IllegalArgumentException("invalid identifiers");
+        } else {
+            codeToCompile = codeToCompile.trim();
+        }
 
         // tries to compile the user input
         DiagnosticCollector<JavaFileObject> diagnosticCollector = null;
         boolean containsClass = codeToCompile.contains(" class") || codeToCompile.startsWith("class ");
         if (containsClass) {
+            this.className = getClassNameOfCode(codeToCompile);
             String codeWrap = getTaintWrap(codeToCompile);
-            this.className = getClassNameOfCode(codeWrap);
             diagnosticCollector = compile(this.className, codeWrap);
         } else {
+            String codeWrap = getClassTaintWrap(codeToCompile);
+            this.className = DEFAULT_CLASS_NAME;
+            diagnosticCollector = compile(this.className, codeWrap);
             if (!this.success) {
-                String codeWrap = getClassTaintWrap(codeToCompile);
-                this.className = DEFAULT_CLASS_NAME;
-                diagnosticCollector = compile(this.className, codeWrap);
-            }
-            if (!this.success) {
-                String codeWrap = getMethodClassTaintWrap(codeToCompile);
+                codeWrap = getMethodClassTaintWrap(codeToCompile);
                 compile(this.className, codeWrap);
             }
         }
@@ -98,17 +106,20 @@ public class CodeProcessor {
         // delete package information
         if (code.startsWith("package")) {
             int i = 0;
-            while (!(code.charAt(i) == ';') && i < code.length()) {
+            while (!(code.charAt(i) == ';')) {
                 i++;
+                if (i >= code.length() - 1) {
+                    return "";
+                }
             }
-            code = code.substring(i);
+            code = code.substring(i + 1);
         }
         return code;
     }
 
     private String getTaintWrap(String code) {
         int endIndex = code.lastIndexOf("}");
-        code = code.substring(0, endIndex) + DEFAULT_TAINT_METHODS + DEFAULT_CLEAN_METHODS + DEFAULT_SENSITIVE_METHOD
+        code = code.substring(0, endIndex) + DEFAULT_TAINT_METHODS + DEFAULT_CLEAN_METHODS + DEFAULT_SENSITIVE_METHODS
                 + "}";
         return code;
     }
@@ -135,7 +146,7 @@ public class CodeProcessor {
                 break;
             }
         }
-        if (endOfClassName == (tryToFindName.length() - 1)) {
+        if (endOfClassName >= (tryToFindName.length() - 1)) {
             throw new IllegalStateException("no valid class name found");
         }
         String nameOfClass = tryToFindName.substring(0, endOfClassName).trim();
@@ -160,9 +171,6 @@ public class CodeProcessor {
         StringJavaFileObject javaFile = new StringJavaFileObject(name, codeFragment);
 
         JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
-        if (compiler == null) {
-            throw new NullPointerException();
-        }
         DiagnosticCollector<JavaFileObject> diagnosticsCollectorLocal = new DiagnosticCollector<JavaFileObject>();
         StandardJavaFileManager fileManager = compiler.getStandardFileManager(diagnosticsCollectorLocal, null, null);
         Iterable<? extends JavaFileObject> units = Arrays.asList(javaFile);

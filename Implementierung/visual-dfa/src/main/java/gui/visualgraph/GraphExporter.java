@@ -1,6 +1,8 @@
 package gui.visualgraph;
 
+import com.mxgraph.model.mxCell;
 import com.mxgraph.util.mxCellRenderer;
+import com.mxgraph.util.mxConstants;
 import com.mxgraph.view.mxGraph;
 import dfa.framework.BlockState;
 import dfa.framework.DFAExecution;
@@ -9,6 +11,7 @@ import gui.*;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.nio.Buffer;
 import java.util.ArrayList;
 
 /**
@@ -36,20 +39,33 @@ public class GraphExporter {
      *
      * @return a {@code BufferedImage} containing the graph and the selected block state
      */
-    public static BufferedImage exportCurrentGraph(mxGraph graph, double scale, UIAbstractBlock selectedBlock, BlockState state) {
-        BufferedImage graphImage = mxCellRenderer.createBufferedImage(graph, null, scale, null, true, null);
+    public BufferedImage exportCurrentGraph(mxGraph graph, double scale, UIAbstractBlock selectedBlock, BlockState state) {
+        BufferedImage graphImage;
 
         int stateImageWidth = (int) (STATE_AREA_WIDTH * scale);
         BufferedImage stateImage = null;
         if (selectedBlock != null && state != null) {
+            // Selection strokes are not rendered by createBufferedImage(), so we fake them using a border.
+            // First step: Get the current border color, so we can reset it after creating the BufferedImage.
+            mxCell currentCell = selectedBlock.getMxCell();
+            String originalStrokeColor = (String) graph.getCellStyle(currentCell).get(mxConstants.STYLE_STROKECOLOR);
+
+            // Second step: Add selection border, create BufferedImage, then reset border.
+            graph.setCellStyles(mxConstants.STYLE_STROKECOLOR, Styles.SELECTION_BORDER_COLOR, new Object[]{currentCell});
+            graph.setCellStyles(mxConstants.STYLE_STROKEWIDTH, String.valueOf(Styles.SELECTION_STROKE_WIDTH), new Object[]{selectedBlock.getMxCell()});
+            graphImage = mxCellRenderer.createBufferedImage(graph, null, scale, null, true, null);
+            graph.setCellStyles(mxConstants.STYLE_STROKECOLOR, originalStrokeColor == null ? mxConstants.NONE : originalStrokeColor, new Object[]{currentCell});
+            graph.setCellStyles(mxConstants.STYLE_STROKEWIDTH, String.valueOf(Styles.DEFAULT_STROKE_WIDTH), new Object[]{currentCell});
+
             LatticeElement inState = state.getInState();
             LatticeElement outState = state.getOutState();
             String in = inState == null ? "<not set>" : inState.getStringRepresentation();
             String out = outState == null ? "<not set>" : outState.getStringRepresentation();
 
-            int[] blockAndLineNumbers = selectedBlock.getBlockAndLineNumbers();
+            int blockNumber = selectedBlock.getBlockNumber();
+            int lineNumber = selectedBlock.getLineNumber();
 
-            stateImage  = new BufferedImage(stateImageWidth, graphImage.getHeight(), BufferedImage.TYPE_INT_ARGB);
+            stateImage = new BufferedImage(stateImageWidth, graphImage.getHeight(), BufferedImage.TYPE_INT_ARGB);
             Graphics2D gO = stateImage.createGraphics();
             gO.setFont(new Font(Font.MONOSPACED, Font.BOLD, (int) (FONT_SIZE * scale)));
             gO.setColor(Colors.DARK_TEXT.getColor());
@@ -59,8 +75,8 @@ public class GraphExporter {
             int lineHeight = (int) (LINE_HEIGHT * scale);
 
             int height = lineHeight;
-            String selectionString = "Selected Position: (" + blockAndLineNumbers[0];
-            selectionString += blockAndLineNumbers[1] == -1 ? ")" : ", " + blockAndLineNumbers[1] + ")";
+            String selectionString = "Selected Position: (" + blockNumber;
+            selectionString += lineNumber == -1 ? ")" : ", " + lineNumber + ")";
 
             gO.drawString(selectionString, 0, height);
 
@@ -79,6 +95,8 @@ public class GraphExporter {
                 height += lineHeight;
                 gO.drawString(s, 0, height);
             }
+        } else {
+            graphImage = mxCellRenderer.createBufferedImage(graph, null, scale, null, true, null);
         }
 
         BufferedImage result = new BufferedImage(graphImage.getWidth() + stateImageWidth + 2 * PADDING, graphImage.getHeight(), BufferedImage.TYPE_INT_ARGB);
@@ -92,56 +110,34 @@ public class GraphExporter {
         return result;
     }
 
-    public static ArrayList<BufferedImage> batchExport(DFAExecution dfa, double scale, boolean includeLineSteps) {
+    public void batchExportAsync(DFAExecution dfa, double scale, boolean includeLineSteps, GraphExportCallback callback) {
         dfa = dfa.clone();
 
-        StatePanelOpen statePanel = new StatePanelOpen(null);
-        statePanel.setSize(300, 1080);
         VisualGraphPanel panel = new VisualGraphPanel();
         panel.setJumpToAction(true);
 
         GraphUIController controller = new GraphUIController(panel);
-        controller.setStatePanel(statePanel);
         controller.start(dfa);
 
-        if (includeLineSteps) {
-            return performLineBatchExport(dfa, controller, panel, scale);
-        }
-
-        return performBlockBatchExport(dfa, controller, panel, scale);
-    }
-
-    private static ArrayList<BufferedImage> performBlockBatchExport(DFAExecution dfa, GraphUIController controller,
-                                                                    VisualGraphPanel panel, double scale) {
         ArrayList<BufferedImage> result = new ArrayList<>();
+        int totalSteps = includeLineSteps ? dfa.getTotalElementarySteps() : dfa.getTotalBlockSteps();
+        callback.setMaxStep(totalSteps + 1);
 
-        for (int blockStep = 0; blockStep < dfa.getTotalBlockSteps(); blockStep++) {
-            dfa.setCurrentBlockStep(blockStep);
+        for (int step = 0; step < totalSteps; step++) {
+            if (includeLineSteps) {
+                dfa.setCurrentElementaryStep(step);
+            } else {
+                dfa.setCurrentBlockStep(step);
+            }
             controller.refresh();
 
             UIAbstractBlock selectedBlock = panel.getSelectedBlock();
             BlockState state = selectedBlock == null ? null : dfa.getCurrentAnalysisState().getBlockState(selectedBlock.getDFABlock());
 
-            result.add(exportCurrentGraph(panel.getMxGraph(), scale, selectedBlock, state));
+            callback.onImageExported(exportCurrentGraph(panel.getMxGraph(), scale, selectedBlock, state));
+            callback.setExportStep(step);
         }
 
-        return result;
-    }
-
-    private static ArrayList<BufferedImage> performLineBatchExport(DFAExecution dfa, GraphUIController controller,
-                                                                   VisualGraphPanel panel, double scale) {
-        ArrayList<BufferedImage> result = new ArrayList<>();
-
-        for (int lineStep = 0; lineStep < dfa.getTotalElementarySteps(); lineStep++) {
-            dfa.setCurrentElementaryStep(lineStep);
-            controller.refresh();
-
-            UIAbstractBlock selectedBlock = panel.getSelectedBlock();
-            BlockState state = selectedBlock == null ? null : dfa.getCurrentAnalysisState().getBlockState(selectedBlock.getDFABlock());
-
-            result.add(exportCurrentGraph(panel.getMxGraph(), scale, selectedBlock, state));
-        }
-
-        return result;
+        callback.done();
     }
 }

@@ -12,8 +12,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
 /**
- * {@code DialogBox} for displaying messages, which leave options for the user. The
- * decision the user made can be obtained.
+ * {@code DialogBox} for displaying messages, which leave options for the user.
+ * The decision the user made can be obtained.
  * 
  * @author Michael
  *
@@ -26,8 +26,8 @@ public class OptionBox extends DialogBox {
     private String message;
 
     /**
-     * Display the {@code OptionBox}. Stop execution of this {@code Thread} until user closes
-     * the {@code Dialog}.
+     * Display the {@code OptionBox}. Stop execution of this {@code Thread}
+     * until user closes the {@code Dialog}.
      * 
      * @param owner
      *            the {@code Frame}, which owns the {@code OptionBox}
@@ -47,8 +47,8 @@ public class OptionBox extends DialogBox {
     }
 
     /**
-     * Display the {@code OptionBox}. Stop execution of this {@code Thread} until user closes
-     * the {@code Dialog}.
+     * Display the {@code OptionBox}. Stop execution of this {@code Thread}
+     * until user closes the {@code Dialog}.
      * 
      * @param owner
      *            the {@code Frame}, which owns the {@code OptionBox}
@@ -73,27 +73,32 @@ public class OptionBox extends DialogBox {
      */
     @Override
     protected void initContentPanel() {
+        
         contentPanel.setBackground(Colors.BACKGROUND.getColor());
-        contentPanel.setLayout(new BorderLayout());
+        
+        if (message != null) {
+            
+            contentPanel.setLayout(new BorderLayout());
 
-        messageArea = new JTextArea();
-        new JComponentDecorator().decorate(messageArea);
-        int i = message.length();
-        //This makes boxes with more text larger than boxes with fewer text
-        if ((i / 25) > 4) {
-            messageArea.setColumns(30);
-            messageArea.setRows(15);
-        } else {
-            messageArea.setColumns(25);
-            messageArea.setRows(4);
+            messageArea = new JTextArea();
+            new JComponentDecorator().decorate(messageArea);
+            int i = message.length();
+            // This makes boxes with more text larger than boxes with fewer text
+            if ((i / 25) > 4) {
+                messageArea.setColumns(30);
+                messageArea.setRows(15);
+            } else {
+                messageArea.setColumns(25);
+                messageArea.setRows(4);
+            }
+            messageArea.setEditable(false);
+            messageArea.setLineWrap(true);
+            messageArea.setWrapStyleWord(true);
+            messageArea.setText(message);
+            JScrollPane messagePane = new JScrollPane(messageArea);
+            messagePane.setBorder(null);
+            contentPanel.add(messagePane, BorderLayout.CENTER);
         }
-        messageArea.setEditable(false);
-        messageArea.setLineWrap(true);
-        messageArea.setWrapStyleWord(true);
-        messageArea.setText(message);
-        JScrollPane messagePane = new JScrollPane(messageArea);
-        messagePane.setBorder(null);
-        contentPanel.add(messagePane, BorderLayout.CENTER);
 
     }
 

@@ -26,19 +26,14 @@ public class TaintJoin implements Join<TaintElement> {
 
         @Override
         public Value doValueJoin(Set<TaintElement> elements, JimpleLocal local) {
-            if (elements.isEmpty()) {
-                throw new IllegalArgumentException("there must be at least one value to join");
-            }
-
             Iterator<? extends LocalMapElement<Value>> elementIt = elements.iterator();
             Value refVal = elementIt.next().getValue(local);
-            boolean refViolation = refVal.wasViolated();
-            Value result = new Value(null, refViolation);
+            Value result = new Value(refVal.getTaintState(), refVal.wasViolated());
             while (elementIt.hasNext()) {
                 Value currentVal = elementIt.next().getValue(local);
 
                 if (currentVal.wasViolated()) {
-                    refViolation = true;
+                    result.setViolated(true);                
                 }
 
                 switch (currentVal.getTaintState()) {
@@ -50,7 +45,7 @@ public class TaintJoin implements Join<TaintElement> {
                         result.setTaintState(TaintState.CLEAN);
                     }
                     break;
-                default: // ignore (also bottom)
+                default: // ignore bottom
                 }
 
             }

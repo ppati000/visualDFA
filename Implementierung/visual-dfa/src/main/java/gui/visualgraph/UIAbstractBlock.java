@@ -17,10 +17,33 @@ abstract class UIAbstractBlock extends VisualGraphElement {
      */
     abstract public AbstractBlock getDFABlock();
 
+    /**
+     * Returns the text content of this block.
+     *
+     * @return block text
+     */
     abstract public String getText();
 
-    abstract public int[] getBlockAndLineNumbers();
+    /**
+     * Returns the (parent) block number of this block.
+     *
+     * @return block number
+     */
+    abstract public int getBlockNumber();
 
+    /**
+     * Returns the line number of the block, if applicable, else -1.
+     *
+     * @return line number if applicable
+     */
+    abstract public int getLineNumber();
+
+    /**
+     * Sets this block's line or block number depending on subclass.
+     *
+     * @param blockNumber
+     *         block or line number
+     */
     public void setBlockNumber(int blockNumber) {
         this.blockNumber = blockNumber;
     }

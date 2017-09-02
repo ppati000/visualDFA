@@ -24,8 +24,33 @@ public class GenericBox extends DialogBox {
     private String cancelButtonText;
     private boolean hasNotShowCheckbox;
     private JCheckBox notShowCheckbox;
-    
 
+    /**
+     * Constructor for the {@code GenericBox}. Generates a dialog which has up
+     * to three buttons with associated options. If the name for a button is
+     * null, the button will not be shown.
+     * 
+     * @param owner
+     *            the {@code Frame}, which owns the {@code OptionBox}
+     * @param title
+     *            the title of the {@code OptionBox}
+     * @param yesButtonText
+     *            the text for the button associated with the {@code YES_OPTION}
+     *            . The button will not be shown if this is null.
+     * @param noButtonText
+     *            the text for the button associated with the {@code NO_OPTION}
+     *            . The button will not be shown if this is null.
+     * @param cancelButtonText
+     *            the text for the button associated with the
+     *            {@code CANCEL_OPTION} . The button will not be shown if this
+     *            is null.
+     * @param hasNotShowCheckbox
+     *            boolean which determines if the box has a checkbox, which asks
+     *            the user if he wants to see this box again
+     * @param stdOption
+     *            the {@code Option} which will be returned if the box is closed
+     *            via the close button
+     */
     public GenericBox(Frame owner, String title, String yesButtonText, String noButtonText, String cancelButtonText,
             boolean hasNotShowCheckbox, Option stdOption) {
         super(owner);
@@ -40,6 +65,34 @@ public class GenericBox extends DialogBox {
         setVisible(true);
     }
 
+    /**
+     * Constructor for the {@code GenericBox}. Generates a dialog which has up
+     * to three buttons with associated options. If the name for a button is
+     * null, the button will not be shown.
+     * 
+     * @param owner
+     *            the {@code Frame}, which owns the {@code OptionBox}
+     * @param title
+     *            the title of the {@code OptionBox}
+     * @param message
+     *            the message which will be displayed in the box
+     * @param yesButtonText
+     *            the text for the button associated with the {@code YES_OPTION}
+     *            . The button will not be shown if this is null.
+     * @param noButtonText
+     *            the text for the button associated with the {@code NO_OPTION}
+     *            . The button will not be shown if this is null.
+     * @param cancelButtonText
+     *            the text for the button associated with the
+     *            {@code CANCEL_OPTION} . The button will not be shown if this
+     *            is null.
+     * @param hasNotShowCheckbox
+     *            boolean which determines if the box has a checkbox, which asks
+     *            the user if he wants to see this box again
+     * @param stdOption
+     *            the {@code Option} which will be returned if the box is closed
+     *            via the close button
+     */
     public GenericBox(Frame owner, String title, String message, String yesButtonText, String noButtonText,
             String cancelButtonText, boolean hasNotShowCheckbox, Option stdOption) {
         super(owner);
@@ -64,8 +117,6 @@ public class GenericBox extends DialogBox {
         contentPanel.setLayout(new BorderLayout());
 
         if (message != null) {
-
-            
 
             messageArea = new JTextArea();
             new JComponentDecorator().decorate(messageArea);
@@ -94,6 +145,9 @@ public class GenericBox extends DialogBox {
 
     }
 
+    /**
+     * Set layout and content of the ContentPanel for the {@code OptionBox}.
+     */
     protected void initButtonPane() {
         buttonPane.setBackground(Colors.BACKGROUND.getColor());
         GridBagLayout gbl_Button = new GridBagLayout();
@@ -130,14 +184,18 @@ public class GenericBox extends DialogBox {
             buttonPane.add(btnCancel, gbc_btnCancel);
         }
     }
-    
+
+    /**
+     * Return if the user wants to see this dialog again.
+     * @return The value of the CheckBox
+     */
     public boolean showAgain() {
         if (hasNotShowCheckbox) {
             return !notShowCheckbox.isSelected();
         } else {
             return true;
         }
-        
+
     }
 
     /**

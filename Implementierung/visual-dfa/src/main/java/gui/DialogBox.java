@@ -39,8 +39,6 @@ public abstract class DialogBox extends JDialog {
      * @param owner
      *            the {@code Frame}, which is the owner of this
      *            {@code DialogBox}
-     * @param title
-     *            the title of this {@code DialogBox}
      * 
      * @see Frame
      *

@@ -104,7 +104,7 @@ public class ControlPanel extends JPanel {
         btnStopAnalysis = new JButton();
         jBuDecorator.decorateIconButton(btnStopAnalysis, "icons/rounded-white-square-shape.png", 0.3,
                 new StopListener(), null);
-        
+
         btnStopAnalysis.setHorizontalTextPosition(SwingConstants.CENTER);
         btnStopAnalysis.setVerticalTextPosition(SwingConstants.BOTTOM);
         GridBagConstraints gbc_btnStopAnalysis = GridBagConstraintFactory.getStandardGridBagConstraints(0, 1, 1, 3);
@@ -170,9 +170,12 @@ public class ControlPanel extends JPanel {
         add(delaySlider, gbc_delaySlider);
 
         setShortcuts();
-        
+
     }
 
+    /**
+     * Set the shortcuts for the buttons which control the Graph.
+     */
     private void setShortcuts() {
         Action keyAction = new AbstractAction() {
 
@@ -201,12 +204,14 @@ public class ControlPanel extends JPanel {
                 "PAUSE");
         btnPause.getActionMap().put("PAUSE", keyAction);
 
-        btnNextLine.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, 0, true), "NextLine");
+        btnNextLine.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
+                .put(KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, 0, true), "NextLine");
         btnNextLine.getActionMap().put("NextLine", keyAction);
-        
-        btnNextBlock.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, InputEvent.SHIFT_DOWN_MASK, true), "NextBlock");
+
+        btnNextBlock.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
+                .put(KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, InputEvent.SHIFT_DOWN_MASK, true), "NextBlock");
         btnNextBlock.getActionMap().put("NextBlock", keyAction);
-        
+
     }
 
     /**

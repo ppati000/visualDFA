@@ -303,6 +303,11 @@ public class InputPanel extends JPanel {
 
     }
     
+    /**
+     * A FileFilter which shows only .java files and folders.
+     * @author Michael
+     *
+     */
     private class JavaFileFilter extends FileFilter {
         @Override
         public String getDescription() {
@@ -334,6 +339,11 @@ public class InputPanel extends JPanel {
         }
     }
     
+    /**
+     * A FileFilter which shows every file type and folders.
+     * @author Michael
+     *
+     */
     private class AllFileFilter extends FileFilter {
 
         @Override

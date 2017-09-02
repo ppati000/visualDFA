@@ -33,7 +33,7 @@ public class TestReachingDefinitionsFactory {
     public void testGetAnalysis() {
         // we need to do setup here, because soot acts weird
         TestMethod testMethod = getSomeCode();
-        CodeProcessor cp = new CodeProcessor(testMethod.method, (new Controller()).getProgramOutputPath());
+        CodeProcessor cp = new CodeProcessor(testMethod.method);
 
         Assert.assertTrue(cp.wasSuccessful());
 

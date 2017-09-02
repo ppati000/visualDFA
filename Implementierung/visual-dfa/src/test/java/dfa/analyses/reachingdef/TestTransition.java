@@ -29,18 +29,11 @@ import soot.toolkits.graph.Block;
 public class TestTransition {
     
     private static TestUtils<Definition> tu = new TestUtils<Definition>();
-    private String programOutputPath;
-
-    @Before
-    public void setup() {
-        Controller controller = new Controller();
-        this.programOutputPath = controller.getProgramOutputPath();
-    }
-    
+   
     @Test
     public void testPrimitiveTypes() {
         TestMethod testMethodPrimitiveTypes = getCodePrimitiveTypes();
-        CodeProcessor cp = new CodeProcessor(testMethodPrimitiveTypes.method, this.programOutputPath);
+        CodeProcessor cp = new CodeProcessor(testMethodPrimitiveTypes.method);
         Assert.assertTrue(cp.wasSuccessful());
 
         GraphBuilder gb = new GraphBuilder(cp.getPath(), cp.getClassName());
@@ -104,7 +97,7 @@ public class TestTransition {
     @Test
     public void testRefTypes() {
         TestMethod testMethodRefTypes = getCodeRefTypes();
-        CodeProcessor cp = new CodeProcessor(testMethodRefTypes.method, this.programOutputPath);
+        CodeProcessor cp = new CodeProcessor(testMethodRefTypes.method);
         Assert.assertTrue(cp.wasSuccessful());
 
         GraphBuilder gb = new GraphBuilder(cp.getPath(), cp.getClassName());
@@ -172,7 +165,7 @@ public class TestTransition {
     @Test
     public void testSimpleStatements() {
         TestMethod testMethodSimpleStatements = getCodeSimpleStatements();
-        CodeProcessor cp = new CodeProcessor(testMethodSimpleStatements.method, this.programOutputPath);
+        CodeProcessor cp = new CodeProcessor(testMethodSimpleStatements.method);
         Assert.assertTrue(cp.wasSuccessful());
 
         GraphBuilder gb = new GraphBuilder(cp.getPath(), cp.getClassName());
@@ -232,7 +225,7 @@ public class TestTransition {
     @Test
     public void testCalls() {
         TestMethod testMethodCalls = getCodeCall();
-        CodeProcessor cp = new CodeProcessor(testMethodCalls.method, this.programOutputPath);
+        CodeProcessor cp = new CodeProcessor(testMethodCalls.method);
         Assert.assertTrue(cp.wasSuccessful());
 
         GraphBuilder gb = new GraphBuilder(cp.getPath(), cp.getClassName());
@@ -295,7 +288,7 @@ public class TestTransition {
     @Test
     public void testArithmeticStmts() {
         TestMethod testMethodArithmeticStmts = getCodeArithmeticStatements();
-        CodeProcessor cp = new CodeProcessor(testMethodArithmeticStmts.method, this.programOutputPath);
+        CodeProcessor cp = new CodeProcessor(testMethodArithmeticStmts.method);
         Assert.assertTrue(cp.wasSuccessful());
 
         GraphBuilder gb = new GraphBuilder(cp.getPath(), cp.getClassName());

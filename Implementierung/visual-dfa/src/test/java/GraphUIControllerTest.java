@@ -17,7 +17,6 @@ import org.mockito.InOrder;
 
 import java.util.List;
 
-@Ignore
 public class GraphUIControllerTest {
     private VisualGraphPanel panel;
     private GraphUIController controller;
@@ -47,8 +46,6 @@ public class GraphUIControllerTest {
 
     @Before
     public void createPanel() {
-        Controller ctrl = new Controller();
-        this.programOutputPath = ctrl.getProgramOutputPath();
         panel = new VisualGraphPanel();
         controller = new GraphUIController(panel);
     }
@@ -60,7 +57,7 @@ public class GraphUIControllerTest {
 
     @Test(expected = IllegalStateException.class)
     public void startShouldNotBePossibleTwice() {
-        CodeProcessor codeProcessor = new CodeProcessor("void emptyInside() {}", this.programOutputPath);
+        CodeProcessor codeProcessor = new CodeProcessor("void emptyInside() {}");
         GraphBuilder builder = new GraphBuilder(codeProcessor.getPath(), codeProcessor.getClassName());
         SimpleBlockGraph blockGraph = builder.buildGraph("void emptyInside()");
         DFAExecution<DummyElement> dfa = new DFAExecution<>(new DummyFactory(), new NaiveWorklist(), blockGraph, new DFAPrecalcController());
@@ -180,7 +177,7 @@ public class GraphUIControllerTest {
     }
 
     private DFAExecution buildDFA(String code) {
-        CodeProcessor codeProcessor = new CodeProcessor(code, this.programOutputPath);
+        CodeProcessor codeProcessor = new CodeProcessor(code);
         assertEquals("", codeProcessor.getErrorMessage());
         GraphBuilder builder = new GraphBuilder(codeProcessor.getPath(), codeProcessor.getClassName());
         SimpleBlockGraph blockGraph = builder.buildGraph("void helloWorld(boolean)");

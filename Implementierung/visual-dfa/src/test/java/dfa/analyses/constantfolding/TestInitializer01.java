@@ -28,16 +28,15 @@ public class TestInitializer01 {
 
     @BeforeClass
     public static void setUp() {
-        Controller controller = new Controller();
         TestMethod testMethodSupportedTypes = getCodeSupportedTypes();
-        CodeProcessor cp = new CodeProcessor(testMethodSupportedTypes.method, controller.getProgramOutputPath());
+        CodeProcessor cp = new CodeProcessor(testMethodSupportedTypes.method);
         Assert.assertTrue(cp.wasSuccessful());
 
         GraphBuilder gb = new GraphBuilder(cp.getPath(), cp.getClassName());
         bgSupportedTypes = gb.buildGraph(testMethodSupportedTypes.signature);
 
         TestMethod testMethodUnsupportedTypes = getCodeUnsupportedTypes();
-        cp = new CodeProcessor(testMethodUnsupportedTypes.method, controller.getProgramOutputPath());
+        cp = new CodeProcessor(testMethodUnsupportedTypes.method);
         Assert.assertTrue(cp.wasSuccessful());
 
         gb = new GraphBuilder(cp.getPath(), cp.getClassName());

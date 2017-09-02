@@ -12,8 +12,10 @@ import soot.SootMethod;
 import soot.options.Options;
 
 /**
- * @author Anika Nietzer A {@code GraphBuilder} represents a unit, that
- *         translates java-bytecode of one method to a {@code SimpleBlockGraph}.
+ * A {@code GraphBuilder} represents a unit, that translates java-bytecode of
+ * one method to a {@code SimpleBlockGraph}.
+ * 
+ * @author Anika Nietzer
  */
 public class GraphBuilder {
 

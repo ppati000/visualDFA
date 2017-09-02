@@ -1,11 +1,11 @@
 package controller;
 
 /**
+ * An {@code AutoplayDriver} represents a unit, that is responsible for the
+ * automatic performance of the animation of the analysis-steps in a different
+ * thread.
  * 
- * @author Anika Nietzer An {@code AutoplayDriver} represents a unit, that is
- *         responsible for the automatic performance of the animation of the
- *         analysis-steps in a different thread.
- *
+ * @author Anika Nietzer
  */
 public class AutoplayDriver implements Runnable {
 

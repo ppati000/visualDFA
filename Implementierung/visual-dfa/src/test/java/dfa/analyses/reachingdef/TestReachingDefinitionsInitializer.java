@@ -28,16 +28,15 @@ public class TestReachingDefinitionsInitializer {
     
     @BeforeClass
     public static void setUp() {
-        Controller controller = new Controller();
         TestMethod testMethodPrimitiveTypes = getCodePrimitiveTypes();
-        CodeProcessor cp = new CodeProcessor(testMethodPrimitiveTypes.method, controller.getProgramOutputPath());
+        CodeProcessor cp = new CodeProcessor(testMethodPrimitiveTypes.method);
         Assert.assertTrue(cp.wasSuccessful());
 
         GraphBuilder gb = new GraphBuilder(cp.getPath(), cp.getClassName());
         bgPrimitiveTypes = gb.buildGraph(testMethodPrimitiveTypes.signature);
         
         TestMethod testMethodRefTypes = getCodeRefTypes();
-        cp = new CodeProcessor(testMethodRefTypes.method, controller.getProgramOutputPath());
+        cp = new CodeProcessor(testMethodRefTypes.method);
         System.out.println(cp.getErrorMessage());
         Assert.assertTrue(cp.wasSuccessful());
 

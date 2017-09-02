@@ -1,26 +1,15 @@
 package controller;
 
-import org.junit.Before;
 import org.junit.Test;
-
 import gui.ProgramFrame;
-
 import static org.junit.Assert.*;
 
-/**
- * @author Anika
- *
- */
+@SuppressWarnings("javadoc")
 public class ProgramStartTest {
 
     Controller controller;
     ProgramFrame programFrame;
 
- 
-
-    /**
-     * 
-     */
     @Test
     public void test01() {
         this.controller = new Controller();
@@ -34,7 +23,6 @@ public class ProgramStartTest {
         assertEquals(true, this.controller.getAnalyses().contains("Constant-Bits"));
         assertEquals(true, this.controller.getAnalyses().contains("Reaching-Definitions"));
         assertEquals(true, this.controller.getAnalyses().contains("Taint-Analysis"));
-
     }
-    
+
 }

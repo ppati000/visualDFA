@@ -53,3 +53,11 @@ Da JUnit keine Callbacks für asynchrone Tests anbietet, musste eine Alternativl
 Für die entsprechenden Tests wurde also eine zweite Klasse implementiert, welche dasselbe Interface wie \inlinecode{GraphExportProgressView} implementiert und die Aufrufe seiner Callback-Methoden speichert.
 So kann im Test sichergestellt werden, dass die Callbacks richtig und in korrekter Anzahl aufgerufen wurden.
 In Kombination mit Locks ist es dadurch möglich, den asynchronen Batch-Export mit JUnit zu testen.
+
+\subsection{Platformabhängigkeit des JDK-Pfads}
+
+Da die \inlinecode{OptionFileParser}-Klasse nur dafür da ist, den platformabhängigen JDK-Pfad zu ermitteln, kann die korrekte Funktionsweise dieser Klasse leider nur mit einem Vergleich mit dem systemspezifischen Pfad erfolgen. Auch Tests, welche gezielt mit einem falschen Inhalt der Options.txt-Datei arbeiten oder die Variable Java-Home absichtlich falsch setzen, funktionieren nur systemspezifisch. Daher war es leider nicht möglich diese Tests für alle Systeme zu verallgemeinern. Nach Anpassung der Kontrollpfade in den entsprechenden JUnit-Testklassen funktionieren diese Tests jedoch zuverlässig. Ein manuelles Testen dieser Klasse war unter diesen Bedingungen sehr wichtig und wurde gewissenhaft durchgeführt.
+
+\subsection{Starke Abhängigkeit des Controllers von Benutzerentscheidungen}
+
+Da die \inlinecode{Controller}-Klasse an sehr vielen Stellen mit Dialogboxen arbeitet und das weitere Vorgehen sehr stark von der Benutzerauswahl abhängig ist, musste hier teilweise auf manuelles Testen zurückgegriffen werden. Alle Methoden, die es zuließen mit Testfällen abgedeckt zu werden, wie zum Beispiel das Anzeigen des nächsten Schritts, wurden mit diesen abgedeckt. Vor allem das Stoppen der Analyse, hängt jedoch von vielen verschiedenen Benutzerentscheidungen ab, weshalb hier mit manuellen Tests die verschiedenen Ablaufmöglichkeiten getestet wurden.

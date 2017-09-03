@@ -11,6 +11,16 @@
 
 \section{dfa.analyses}
 
+
+\section{gui}
+
+\begin{itemize}
+	\item Die Hintergrundfarbe von \inlinecode{JComponents} wurde auf MacOS nicht richtig angezeigt, da der Hintergrund dieser Komponenten auf MacOS standardmäßig durchsichtig ist. 
+	Da alle \inlinecode{JComponents} ihre Standardwerte für unser Programm über eine Art Decorator-Muster erhielten, konnte dies mit einer Zeile Code behoben werden.  
+	\item Um auf MacOS den Vollbildmodus zu aktivieren musste in Java Code hinzugefügt werden, sodass diese Funktion freigeschalten wird.
+\end{itemize}
+
+
 \section{gui.visualgraph}
 
 \subsection{Bugs}

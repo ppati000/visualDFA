@@ -385,12 +385,17 @@ public class VisualGraphPanel extends JPanel {
         graphComponent.getViewport().setBackground(new Color(251, 253, 255));
 
         graphComponent.addMouseWheelListener(new MouseWheelListener() {
+            // On macOS, scrolling is inverted by default, so we invert zooming too.
+            private final boolean isMac = true;
+
             @Override
             public void mouseWheelMoved(MouseWheelEvent e) {
-                if (e.getWheelRotation() > 0) {
-                    zoomIn();
-                } else if (e.getWheelRotation() < 0) {
-                    zoomOut();
+                if (e.getModifiers() == MouseWheelEvent.ALT_MASK) {
+                    if (e.getWheelRotation() > 0 ^ !isMac) { // XOR
+                        zoomIn();
+                    } else if (e.getWheelRotation() < 0 ^ !isMac) { // XOR
+                        zoomOut();
+                    }
                 }
             }
         });

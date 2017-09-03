@@ -31,6 +31,8 @@ public class TestConstantBitsTransition {
 
     private static SimpleBlockGraph bgAllConstant;
     private static SimpleBlockGraph bgHeuristic;
+    private static SimpleBlockGraph bgLastResort;
+    private static SimpleBlockGraph bgLastResortNegative;
 
     @BeforeClass
     public static void setUp() {
@@ -48,6 +50,22 @@ public class TestConstantBitsTransition {
 
         gb = new GraphBuilder(cp.getPath(), cp.getClassName());
         bgHeuristic = gb.buildGraph(testMethodHeuristic.signature);
+
+        TestMethod testMethodLastResort = getCodeLastResort();
+        cp = new CodeProcessor(testMethodLastResort.method);
+        tu.printInfo(cp.getErrorMessage());
+        Assert.assertTrue(cp.wasSuccessful());
+
+        gb = new GraphBuilder(cp.getPath(), cp.getClassName());
+        bgLastResort = gb.buildGraph(testMethodLastResort.signature);
+
+        TestMethod testMethodLastResortNegative = getCodeLastResortNegative();
+        cp = new CodeProcessor(testMethodLastResortNegative.method);
+        tu.printInfo(cp.getErrorMessage());
+        Assert.assertTrue(cp.wasSuccessful());
+
+        gb = new GraphBuilder(cp.getPath(), cp.getClassName());
+        bgLastResortNegative = gb.buildGraph(testMethodLastResortNegative.signature);
     }
 
     @Test
@@ -408,7 +426,7 @@ public class TestConstantBitsTransition {
 
     @Test
     public void testHeuristic() {
-        tu.setPrint(true);
+        tu.setPrint(false);
 
         tu.printInfo(bgHeuristic.getBlocks().size());
         Assert.assertEquals(4, bgHeuristic.getBlocks().size());
@@ -485,7 +503,7 @@ public class TestConstantBitsTransition {
         tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(0), "x", currentCbe);
         tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(0), "y", currentCbe);
         tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(0), "z", currentCbe);
-        
+
         ConstantBitsElement cbe04 = cbTransition.transition(cbe03, startUnits.get(3));
         currentCbe = cbe04;
         tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(1), "one", currentCbe);
@@ -509,7 +527,7 @@ public class TestConstantBitsTransition {
         tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(12), "x", currentCbe);
         tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(0), "y", currentCbe);
         tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(0), "z", currentCbe);
-        
+
         ConstantBitsElement cbe07 = cbTransition.transition(cbe05, rightUnits.get(0));
         currentCbe = cbe07;
         tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(1), "one", currentCbe);
@@ -517,13 +535,13 @@ public class TestConstantBitsTransition {
         tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(158), "x", currentCbe);
         tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(0), "y", currentCbe);
         tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(0), "z", currentCbe);
-        
+
         ConstantBitsJoin join = new ConstantBitsJoin();
-        
+
         ConstantBitsElement cbe08 = join(join, cbe06, cbe07);
         currentCbe = cbe08;
         BitValue[] expVal1 = new BitValue[BitValueArray.INT_SIZE];
-        for(int i = 0; i < BitValueArray.INT_SIZE; i++) {
+        for (int i = 0; i < BitValueArray.INT_SIZE; i++) {
             expVal1[i] = BitValue.ZERO;
         }
         expVal1[1] = BitValue.TOP;
@@ -537,7 +555,7 @@ public class TestConstantBitsTransition {
         tu.assertLocalValue(expArr1, "x", currentCbe);
         tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(0), "y", currentCbe);
         tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(0), "z", currentCbe);
-        
+
         ConstantBitsElement cbe09 = cbTransition.transition(cbe08, endUnits.get(0));
         currentCbe = cbe09;
         tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(1), "one", currentCbe);
@@ -545,9 +563,9 @@ public class TestConstantBitsTransition {
         tu.assertLocalValue(expArr1, "x", currentCbe);
         tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(26), "y", currentCbe);
         tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(0), "z", currentCbe);
-        
+
         BitValue[] expVal2 = new BitValue[BitValueArray.INT_SIZE];
-        for(int i = 0; i < BitValueArray.INT_SIZE; i++) {
+        for (int i = 0; i < BitValueArray.INT_SIZE; i++) {
             expVal2[i] = BitValue.ZERO;
         }
         expVal2[1] = BitValue.TOP;
@@ -564,7 +582,7 @@ public class TestConstantBitsTransition {
         tu.assertLocalValue(expArr1, "x", currentCbe);
         tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(26), "y", currentCbe);
         tu.assertLocalValue(expArr2, "z", currentCbe);
-        
+
         BitValue[] expVal3 = BitValueArray.getIntTop().getBitValues();
         expVal3[0] = BitValue.ZERO;
         expVal3[3] = BitValue.ZERO;
@@ -576,12 +594,12 @@ public class TestConstantBitsTransition {
         tu.assertLocalValue(expArr1, "x", currentCbe);
         tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(26), "y", currentCbe);
         tu.assertLocalValue(expArr3, "z", currentCbe);
-        
+
         BitValue[] expVal4 = new BitValue[BitValueArray.INT_SIZE];
-        for(int i = 0; i < BitValueArray.INT_SIZE; i++) {
+        for (int i = 0; i < BitValueArray.INT_SIZE; i++) {
             expVal4[i] = BitValue.ZERO;
         }
-        for(int j = 2; j < 13; j++) {
+        for (int j = 2; j < 13; j++) {
             expVal4[j] = BitValue.TOP;
         }
         expVal4[3] = BitValue.ONE;
@@ -594,26 +612,45 @@ public class TestConstantBitsTransition {
         tu.assertLocalValue(expArr1, "x", currentCbe);
         tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(26), "y", currentCbe);
         tu.assertLocalValue(expArr4, "z", currentCbe);
-        
+
         BitValue[] expVal5 = new BitValue[BitValueArray.INT_SIZE];
-        for(int i = 0; i < BitValueArray.INT_SIZE; i++) {
+        for (int i = 0; i < BitValueArray.INT_SIZE; i++) {
             expVal5[i] = BitValue.ZERO;
         }
-        
+
         expVal5[0] = BitValue.TOP;
         expVal5[1] = BitValue.TOP;
         expVal5[2] = BitValue.TOP;
         BitValueArray expArr5 = new BitValueArray(expVal5);
-        ConstantBitsElement cbe13 = cbTransition.transition(cbe12, endUnits.get(4));
+        ConstantBitsElement cbe13 = cbTransition.transition(cbe09, endUnits.get(4));
         currentCbe = cbe13;
         tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(1), "one", currentCbe);
         tu.assertLocalValue(BitValueArray.getIntTop(), "p", currentCbe);
         tu.assertLocalValue(expArr1, "x", currentCbe);
         tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(26), "y", currentCbe);
         tu.assertLocalValue(expArr5, "z", currentCbe);
+
+        BitValue[] expVal6 = new BitValue[BitValueArray.INT_SIZE];
+        for (int i = 0; i < BitValueArray.INT_SIZE; i++) {
+            expVal6[i] = BitValue.ZERO;
+        }
+
+        expVal6[1] = BitValue.TOP;
+        expVal6[2] = BitValue.TOP;
+        expVal6[3] = BitValue.TOP;
+        BitValueArray expArr6 = new BitValueArray(expVal6);
+        ConstantBitsElement cbe14 = cbTransition.transition(cbe09, endUnits.get(5));
+        currentCbe = cbe14;
+        tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(1), "one", currentCbe);
+        tu.assertLocalValue(BitValueArray.getIntTop(), "p", currentCbe);
+        tu.assertLocalValue(expArr1, "x", currentCbe);
+        tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(26), "y", currentCbe);
+        tu.assertLocalValue(expArr6, "z", currentCbe);
     }
 
     private static TestMethod getCodeHeuristic() {
+        // We want to genereate two ints that have less then TOP_TRESHOLD TOP bits combined to test the heuristic-parts
+        // of Mult, Div and Rem and the Bitwise Parts including TOP bits of Add and Sub
         String signature = "void test_Heuristic(int)";
         // @formatter:off
         String method = 
@@ -628,21 +665,547 @@ public class TestConstantBitsTransition {
                         + "int z = x + y;"                   // z = <0 T T T T 1 0 T 0 0 0 ...>       cbe10
                         + "z = x - y;"                       // z = <0 T T T T ...>                   cbe11
                         + "z = x * y;"                       // z = <0 0 T 1 T T T T T T T T T 0 ...> cbe12
-                        + "z = x / y;"
+                        + "z = x / y;"                       // z = <T T T 0 0 0 ...>                 cbe13
+                        + "z = x % y;"                       // z = <0 T T T 0 0 ...>                 cbe14
                 + "}";
         // @formatter:on
         return new TestMethod(signature, method);
     }
 
-    private ConstantBitsElement transitionThroughBlock(Block block, ConstantBitsElement in,
-            ConstantBitsTransition transition) {
-        List<Unit> units = tu.getUnitsFromBlock(block);
-        ConstantBitsElement currentElement = in;
-        for (Unit u : units) {
-            currentElement = transition.transition(currentElement, u);
-        }
+    @Test
+    public void testLastResort() {
+        tu.setPrint(true);
 
-        return currentElement;
+        tu.printInfo(bgLastResort.getBlocks().size());
+        Assert.assertEquals(4, bgLastResort.getBlocks().size());
+
+        Block startBlock = bgLastResort.getBlocks().get(0);
+        Block leftBlock = bgLastResort.getBlocks().get(1);
+        Block rightBlock = bgLastResort.getBlocks().get(2);
+        Block endBlock = bgLastResort.getBlocks().get(3);
+
+        tu.printInfo("---- this is the start block ---- ");
+        List<Unit> startUnits = tu.getUnitsFromBlock(startBlock);
+        tu.printInfo(tu.unitsToString(startUnits));
+
+        tu.printInfo("---- this is the left block ---- ");
+        List<Unit> leftUnits = tu.getUnitsFromBlock(leftBlock);
+        tu.printInfo(tu.unitsToString(leftUnits));
+
+        tu.printInfo("---- this is the right block ---- ");
+        List<Unit> rightUnits = tu.getUnitsFromBlock(rightBlock);
+        tu.printInfo(tu.unitsToString(rightUnits));
+
+        tu.printInfo("---- this is the end block ---- ");
+        List<Unit> endUnits = tu.getUnitsFromBlock(endBlock);
+        tu.printInfo(tu.unitsToString(endUnits));
+
+        ConstantBitsInitializer cbInit = new ConstantBitsInitializer(bgLastResort);
+        Map<Block, BlockState<ConstantBitsElement>> initMap = cbInit.getInitialStates();
+
+        ConstantBitsElement initInState = initMap.get(startBlock).getInState();
+        ConstantBitsElement initOutState = initMap.get(startBlock).getOutState();
+
+        tu.printInfo("\n" + "---- the initial in-state ----");
+        tu.printInfo(initInState.getStringRepresentation());
+
+        ConstantBitsElement currentCbe = initInState;
+        tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(0), "one", currentCbe);
+        tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(0), "p", currentCbe);
+        tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(0), "x", currentCbe);
+        tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(0), "y", currentCbe);
+        tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(0), "z", currentCbe);
+
+        tu.printInfo("\n" + "---- the initial out-state ----");
+        tu.printInfo(initOutState.getStringRepresentation());
+
+        currentCbe = initOutState;
+        tu.assertLocalValue(BitValueArray.getIntBottom(), "one", currentCbe);
+        tu.assertLocalValue(BitValueArray.getIntBottom(), "p", currentCbe);
+        tu.assertLocalValue(BitValueArray.getIntBottom(), "x", currentCbe);
+        tu.assertLocalValue(BitValueArray.getIntBottom(), "y", currentCbe);
+        tu.assertLocalValue(BitValueArray.getIntBottom(), "z", currentCbe);
+
+        ConstantBitsTransition cbTransition = new ConstantBitsTransition();
+
+        ConstantBitsElement cbe01 = cbTransition.transition(initInState, startUnits.get(0));
+        currentCbe = cbe01;
+        tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(0), "one", currentCbe);
+        tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(0), "p", currentCbe);
+        tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(0), "x", currentCbe);
+        tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(0), "y", currentCbe);
+        tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(0), "z", currentCbe);
+
+        ConstantBitsElement cbe02 = cbTransition.transition(cbe01, startUnits.get(1));
+        currentCbe = cbe02;
+        tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(0), "one", currentCbe);
+        tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(0), "p", currentCbe);
+        tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(0), "x", currentCbe);
+        tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(0), "y", currentCbe);
+        tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(0), "z", currentCbe);
+
+        ConstantBitsElement cbe03 = cbTransition.transition(cbe02, startUnits.get(2));
+        currentCbe = cbe03;
+        tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(1), "one", currentCbe);
+        tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(0), "p", currentCbe);
+        tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(0), "x", currentCbe);
+        tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(0), "y", currentCbe);
+        tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(0), "z", currentCbe);
+
+        ConstantBitsElement cbe04 = cbTransition.transition(cbe03, startUnits.get(3));
+        currentCbe = cbe04;
+        tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(1), "one", currentCbe);
+        tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(0), "p", currentCbe);
+        tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(0), "x", currentCbe);
+        tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(0), "y", currentCbe);
+        tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(0), "z", currentCbe);
+
+        ConstantBitsElement cbe05 = cbTransition.transition(cbe04, startUnits.get(4));
+        currentCbe = cbe05;
+        tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(1), "one", currentCbe);
+        tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(0), "p", currentCbe);
+        tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(0), "x", currentCbe);
+        tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(0), "y", currentCbe);
+        tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(0), "z", currentCbe);
+
+        ConstantBitsElement cbe06 = cbTransition.transition(cbe05, startUnits.get(5));
+        currentCbe = cbe06;
+        tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(1), "one", currentCbe);
+        tu.assertLocalValue(BitValueArray.getIntTop(), "p", currentCbe);
+        tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(0), "x", currentCbe);
+        tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(0), "y", currentCbe);
+        tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(0), "z", currentCbe);
+
+        ConstantBitsElement cbe07 = cbTransition.transition(cbe06, leftUnits.get(0));
+        currentCbe = cbe07;
+        tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(1), "one", currentCbe);
+        tu.assertLocalValue(BitValueArray.getIntTop(), "p", currentCbe);
+        tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(12), "x", currentCbe);
+        tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(0), "y", currentCbe);
+        tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(0), "z", currentCbe);
+
+        ConstantBitsElement cbe08 = cbTransition.transition(cbe07, leftUnits.get(1));
+        currentCbe = cbe08;
+        tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(1), "one", currentCbe);
+        tu.assertLocalValue(BitValueArray.getIntTop(), "p", currentCbe);
+        tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(12), "x", currentCbe);
+        tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(26), "y", currentCbe);
+        tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(0), "z", currentCbe);
+
+        ConstantBitsElement cbe09 = cbTransition.transition(cbe06, rightUnits.get(0));
+        currentCbe = cbe09;
+        tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(1), "one", currentCbe);
+        tu.assertLocalValue(BitValueArray.getIntTop(), "p", currentCbe);
+        tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(158), "x", currentCbe);
+        tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(0), "y", currentCbe);
+        tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(0), "z", currentCbe);
+
+        ConstantBitsElement cbe10 = cbTransition.transition(cbe09, rightUnits.get(1));
+        currentCbe = cbe10;
+        tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(1), "one", currentCbe);
+        tu.assertLocalValue(BitValueArray.getIntTop(), "p", currentCbe);
+        tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(158), "x", currentCbe);
+        tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(118), "y", currentCbe);
+        tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(0), "z", currentCbe);
+
+        ConstantBitsJoin join = new ConstantBitsJoin();
+
+        ConstantBitsElement cbe11 = join(join, cbe08, cbe10);
+        currentCbe = cbe11;
+
+        BitValue[] expVal1 = new BitValue[BitValueArray.INT_SIZE];
+        for (int i = 0; i < BitValueArray.INT_SIZE; i++) {
+            expVal1[i] = BitValue.ZERO;
+        }
+        expVal1[1] = BitValue.TOP;
+        expVal1[2] = BitValue.ONE;
+        expVal1[3] = BitValue.ONE;
+        expVal1[4] = BitValue.TOP;
+        expVal1[7] = BitValue.TOP;
+        BitValueArray expArr1 = new BitValueArray(expVal1);
+
+        BitValue[] expVal2 = new BitValue[BitValueArray.INT_SIZE];
+        for (int i = 0; i < BitValueArray.INT_SIZE; i++) {
+            expVal2[i] = BitValue.ZERO;
+        }
+        expVal2[1] = BitValue.ONE;
+        expVal2[2] = BitValue.TOP;
+        expVal2[3] = BitValue.TOP;
+        expVal2[4] = BitValue.ONE;
+        expVal2[5] = BitValue.TOP;
+        expVal2[6] = BitValue.TOP;
+        BitValueArray expArr2 = new BitValueArray(expVal2);
+        tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(1), "one", currentCbe);
+        tu.assertLocalValue(BitValueArray.getIntTop(), "p", currentCbe);
+        tu.assertLocalValue(expArr1, "x", currentCbe);
+        tu.assertLocalValue(expArr2, "y", currentCbe);
+        tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(0), "z", currentCbe);
+
+        BitValue[] expVal3 = new BitValue[BitValueArray.INT_SIZE];
+        for (int i = 0; i < BitValueArray.INT_SIZE; i++) {
+            expVal3[i] = BitValue.ZERO;
+        }
+        for (int j = 1; j < 9; j++) {
+            expVal3[j] = BitValue.TOP;
+        }
+        BitValueArray expArr3 = new BitValueArray(expVal3);
+        ConstantBitsElement cbe12 = cbTransition.transition(cbe11, endUnits.get(0));
+        currentCbe = cbe12;
+        tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(1), "one", currentCbe);
+        tu.assertLocalValue(BitValueArray.getIntTop(), "p", currentCbe);
+        tu.assertLocalValue(expArr1, "x", currentCbe);
+        tu.assertLocalValue(expArr2, "y", currentCbe);
+        tu.assertLocalValue(expArr3, "z", currentCbe);
+
+        BitValue[] expVal4 = new BitValue[BitValueArray.INT_SIZE];
+        for (int i = 0; i < BitValueArray.INT_SIZE; i++) {
+            expVal4[i] = BitValue.TOP;
+        }
+        expVal4[0] = BitValue.ZERO;
+        BitValueArray expArr4 = new BitValueArray(expVal4);
+        ConstantBitsElement cbe13 = cbTransition.transition(cbe11, endUnits.get(1));
+        currentCbe = cbe13;
+        tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(1), "one", currentCbe);
+        tu.assertLocalValue(BitValueArray.getIntTop(), "p", currentCbe);
+        tu.assertLocalValue(expArr1, "x", currentCbe);
+        tu.assertLocalValue(expArr2, "y", currentCbe);
+        tu.assertLocalValue(expArr4, "z", currentCbe);
+
+        BitValue[] expVal5 = new BitValue[BitValueArray.INT_SIZE];
+        for (int i = 0; i < BitValueArray.INT_SIZE; i++) {
+            expVal5[i] = BitValue.ZERO;
+        }
+        for (int j = 2; j < 15; j++) {
+            expVal5[j] = BitValue.TOP;
+        }
+        BitValueArray expArr5 = new BitValueArray(expVal5);
+        ConstantBitsElement cbe14 = cbTransition.transition(cbe11, endUnits.get(2));
+        currentCbe = cbe14;
+        tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(1), "one", currentCbe);
+        tu.assertLocalValue(BitValueArray.getIntTop(), "p", currentCbe);
+        tu.assertLocalValue(expArr1, "x", currentCbe);
+        tu.assertLocalValue(expArr2, "y", currentCbe);
+        tu.assertLocalValue(expArr5, "z", currentCbe);
+
+        BitValue[] expVal6 = new BitValue[BitValueArray.INT_SIZE];
+        for (int i = 0; i < BitValueArray.INT_SIZE; i++) {
+            expVal6[i] = BitValue.ZERO;
+        }
+        for (int j = 0; j < 4; j++) {
+            expVal6[j] = BitValue.TOP;
+        }
+        BitValueArray expArr6 = new BitValueArray(expVal6);
+        ConstantBitsElement cbe15 = cbTransition.transition(cbe11, endUnits.get(3));
+        currentCbe = cbe15;
+        tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(1), "one", currentCbe);
+        tu.assertLocalValue(BitValueArray.getIntTop(), "p", currentCbe);
+        tu.assertLocalValue(expArr1, "x", currentCbe);
+        tu.assertLocalValue(expArr2, "y", currentCbe);
+        tu.assertLocalValue(expArr6, "z", currentCbe);
+
+        BitValue[] expVal7 = new BitValue[BitValueArray.INT_SIZE];
+        for (int i = 0; i < BitValueArray.INT_SIZE; i++) {
+            expVal7[i] = BitValue.ZERO;
+        }
+        for (int j = 0; j < 7; j++) {
+            expVal7[j] = BitValue.TOP;
+        }
+        BitValueArray expArr7 = new BitValueArray(expVal7);
+        ConstantBitsElement cbe16 = cbTransition.transition(cbe11, endUnits.get(4));
+        currentCbe = cbe16;
+        tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(1), "one", currentCbe);
+        tu.assertLocalValue(BitValueArray.getIntTop(), "p", currentCbe);
+        tu.assertLocalValue(expArr1, "x", currentCbe);
+        tu.assertLocalValue(expArr2, "y", currentCbe);
+        tu.assertLocalValue(expArr7, "z", currentCbe);
+    }
+
+    private static TestMethod getCodeLastResort() {
+        // We want to genereate two ints that have more then TOP_TRESHOLD TOP bits combined to test the "Last
+        // Resort"-part of Mult, Div and Rem and again the Bitwise Parts including TOP bits of Add and Sub
+        String signature = "void test_LastResort(int)";
+        // @formatter:off
+        String method = 
+                "public void test_LastResort(int parameter) {"
+                        + "int one = 1;"      // to prevent Java from narrowing small constant ints to byte
+                        + "int x = 0 * one;"                 // x = 0                                            cbe04
+                        + "int y = 0 * one;"                 // y = 26;                                          cbe05
+                        + "int p = parameter;"               // p = IntTop                                       cbe06 assign param ref
+                        + "if(p > 0) {x = 12 * one;"         // x = 12;                                          cbe07
+                        + "y = 26 * one;}"                   // y = 26;                                          cbe08 
+                        + "else {x = 158 * one;"             // x = 158;                                         cbe09
+                        + "y = 118 * one;}"                  // y = 118;                                         cbe10
+                                                             // x = join([x_left, x_rigth], [y_left, y_right]);  cbe11
+                        + "int z = x + y;"                   // z = <0 T T T T T T T T 0 0 0 0 ...>              cbe12
+                        + "z = x - y;"                       // z = <0 T T T T T T T T T T T T ...>              cbe13
+                        + "z = x * y;"                       // z = <0 0 T T T T T T T T T T T T T 0 0 0 0 ...>  cbe14
+                        + "z = x / y;"                       // z = <T T T T 0 0 0 ...>                          cbe15
+                        + "z = x % y;"                       // z = <T T T T T T T 0 0 0 ...>                    cbe16
+                + "}";
+        // @formatter:on
+        return new TestMethod(signature, method);
+    }
+
+    @Test
+    public void testLastResortNegative() {
+        tu.setPrint(false);
+
+        tu.printInfo(bgLastResortNegative.getBlocks().size());
+        Assert.assertEquals(4, bgLastResortNegative.getBlocks().size());
+
+        Block startBlock = bgLastResortNegative.getBlocks().get(0);
+        Block leftBlock = bgLastResortNegative.getBlocks().get(1);
+        Block rightBlock = bgLastResortNegative.getBlocks().get(2);
+        Block endBlock = bgLastResortNegative.getBlocks().get(3);
+
+        tu.printInfo("---- this is the start block ---- ");
+        List<Unit> startUnits = tu.getUnitsFromBlock(startBlock);
+        tu.printInfo(tu.unitsToString(startUnits));
+
+        tu.printInfo("---- this is the left block ---- ");
+        List<Unit> leftUnits = tu.getUnitsFromBlock(leftBlock);
+        tu.printInfo(tu.unitsToString(leftUnits));
+
+        tu.printInfo("---- this is the right block ---- ");
+        List<Unit> rightUnits = tu.getUnitsFromBlock(rightBlock);
+        tu.printInfo(tu.unitsToString(rightUnits));
+
+        tu.printInfo("---- this is the end block ---- ");
+        List<Unit> endUnits = tu.getUnitsFromBlock(endBlock);
+        tu.printInfo(tu.unitsToString(endUnits));
+
+        ConstantBitsInitializer cbInit = new ConstantBitsInitializer(bgLastResortNegative);
+        Map<Block, BlockState<ConstantBitsElement>> initMap = cbInit.getInitialStates();
+
+        ConstantBitsElement initInState = initMap.get(startBlock).getInState();
+        ConstantBitsElement initOutState = initMap.get(startBlock).getOutState();
+
+        tu.printInfo("\n" + "---- the initial in-state ----");
+        tu.printInfo(initInState.getStringRepresentation());
+
+        ConstantBitsElement currentCbe = initInState;
+        tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(0), "one", currentCbe);
+        tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(0), "p", currentCbe);
+        tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(0), "x", currentCbe);
+        tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(0), "y", currentCbe);
+        tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(0), "z", currentCbe);
+
+        tu.printInfo("\n" + "---- the initial out-state ----");
+        tu.printInfo(initOutState.getStringRepresentation());
+
+        currentCbe = initOutState;
+        tu.assertLocalValue(BitValueArray.getIntBottom(), "one", currentCbe);
+        tu.assertLocalValue(BitValueArray.getIntBottom(), "p", currentCbe);
+        tu.assertLocalValue(BitValueArray.getIntBottom(), "x", currentCbe);
+        tu.assertLocalValue(BitValueArray.getIntBottom(), "y", currentCbe);
+        tu.assertLocalValue(BitValueArray.getIntBottom(), "z", currentCbe);
+
+        ConstantBitsTransition cbTransition = new ConstantBitsTransition();
+
+        ConstantBitsElement cbe01 = cbTransition.transition(initInState, startUnits.get(0));
+        currentCbe = cbe01;
+        tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(0), "one", currentCbe);
+        tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(0), "p", currentCbe);
+        tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(0), "x", currentCbe);
+        tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(0), "y", currentCbe);
+        tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(0), "z", currentCbe);
+
+        ConstantBitsElement cbe02 = cbTransition.transition(cbe01, startUnits.get(1));
+        currentCbe = cbe02;
+        tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(0), "one", currentCbe);
+        tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(0), "p", currentCbe);
+        tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(0), "x", currentCbe);
+        tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(0), "y", currentCbe);
+        tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(0), "z", currentCbe);
+
+        ConstantBitsElement cbe03 = cbTransition.transition(cbe02, startUnits.get(2));
+        currentCbe = cbe03;
+        tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(1), "one", currentCbe);
+        tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(0), "p", currentCbe);
+        tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(0), "x", currentCbe);
+        tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(0), "y", currentCbe);
+        tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(0), "z", currentCbe);
+
+        ConstantBitsElement cbe04 = cbTransition.transition(cbe03, startUnits.get(3));
+        currentCbe = cbe04;
+        tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(1), "one", currentCbe);
+        tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(0), "p", currentCbe);
+        tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(0), "x", currentCbe);
+        tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(0), "y", currentCbe);
+        tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(0), "z", currentCbe);
+
+        ConstantBitsElement cbe05 = cbTransition.transition(cbe04, startUnits.get(4));
+        currentCbe = cbe05;
+        tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(1), "one", currentCbe);
+        tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(0), "p", currentCbe);
+        tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(0), "x", currentCbe);
+        tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(0), "y", currentCbe);
+        tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(0), "z", currentCbe);
+
+        ConstantBitsElement cbe06 = cbTransition.transition(cbe05, startUnits.get(5));
+        currentCbe = cbe06;
+        tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(1), "one", currentCbe);
+        tu.assertLocalValue(BitValueArray.getIntTop(), "p", currentCbe);
+        tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(0), "x", currentCbe);
+        tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(0), "y", currentCbe);
+        tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(0), "z", currentCbe);
+
+        ConstantBitsElement cbe07 = cbTransition.transition(cbe06, leftUnits.get(0));
+        currentCbe = cbe07;
+        tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(1), "one", currentCbe);
+        tu.assertLocalValue(BitValueArray.getIntTop(), "p", currentCbe);
+        tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(-12), "x", currentCbe);
+        tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(0), "y", currentCbe);
+        tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(0), "z", currentCbe);
+
+        ConstantBitsElement cbe08 = cbTransition.transition(cbe07, leftUnits.get(1));
+        currentCbe = cbe08;
+        tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(1), "one", currentCbe);
+        tu.assertLocalValue(BitValueArray.getIntTop(), "p", currentCbe);
+        tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(-12), "x", currentCbe);
+        tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(26), "y", currentCbe);
+        tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(0), "z", currentCbe);
+
+        ConstantBitsElement cbe09 = cbTransition.transition(cbe06, rightUnits.get(0));
+        currentCbe = cbe09;
+        tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(1), "one", currentCbe);
+        tu.assertLocalValue(BitValueArray.getIntTop(), "p", currentCbe);
+        tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(-158), "x", currentCbe);
+        tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(0), "y", currentCbe);
+        tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(0), "z", currentCbe);
+
+        ConstantBitsElement cbe10 = cbTransition.transition(cbe09, rightUnits.get(1));
+        currentCbe = cbe10;
+        tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(1), "one", currentCbe);
+        tu.assertLocalValue(BitValueArray.getIntTop(), "p", currentCbe);
+        tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(-158), "x", currentCbe);
+        tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(118), "y", currentCbe);
+        tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(0), "z", currentCbe);
+
+        ConstantBitsJoin join = new ConstantBitsJoin();
+
+        ConstantBitsElement cbe11 = join(join, cbe08, cbe10);
+        currentCbe = cbe11;
+
+        BitValue[] expVal1 = new BitValue[BitValueArray.INT_SIZE];
+        for (int i = 0; i < BitValueArray.INT_SIZE; i++) {
+            expVal1[i] = BitValue.ONE;
+        }
+        expVal1[0] = BitValue.ZERO;
+        expVal1[1] = BitValue.TOP;
+        expVal1[2] = BitValue.TOP;
+        expVal1[3] = BitValue.ZERO;
+        expVal1[4] = BitValue.TOP;
+        expVal1[7] = BitValue.TOP;
+        BitValueArray expArr1 = new BitValueArray(expVal1);
+
+        BitValue[] expVal2 = new BitValue[BitValueArray.INT_SIZE];
+        for (int i = 0; i < BitValueArray.INT_SIZE; i++) {
+            expVal2[i] = BitValue.ZERO;
+        }
+        expVal2[1] = BitValue.ONE;
+        expVal2[2] = BitValue.TOP;
+        expVal2[3] = BitValue.TOP;
+        expVal2[4] = BitValue.ONE;
+        expVal2[5] = BitValue.TOP;
+        expVal2[6] = BitValue.TOP;
+        BitValueArray expArr2 = new BitValueArray(expVal2);
+        tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(1), "one", currentCbe);
+        tu.assertLocalValue(BitValueArray.getIntTop(), "p", currentCbe);
+        tu.assertLocalValue(expArr1, "x", currentCbe);
+        tu.assertLocalValue(expArr2, "y", currentCbe);
+        tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(0), "z", currentCbe);
+
+        BitValue[] expVal3 = new BitValue[BitValueArray.INT_SIZE];
+        for (int i = 0; i < BitValueArray.INT_SIZE; i++) {
+            expVal3[i] = BitValue.TOP;
+        }
+        expVal3[0] = BitValue.ZERO;
+        BitValueArray expArr3 = new BitValueArray(expVal3);
+        ConstantBitsElement cbe12 = cbTransition.transition(cbe11, endUnits.get(0));
+        currentCbe = cbe12;
+        tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(1), "one", currentCbe);
+        tu.assertLocalValue(BitValueArray.getIntTop(), "p", currentCbe);
+        tu.assertLocalValue(expArr1, "x", currentCbe);
+        tu.assertLocalValue(expArr2, "y", currentCbe);
+        tu.assertLocalValue(expArr3, "z", currentCbe);
+
+        BitValue[] expVal4 = new BitValue[BitValueArray.INT_SIZE];
+        expVal4[0] = BitValue.ZERO;
+        for (int i = 1; i < 9; i++) {
+            expVal4[i] = BitValue.TOP;
+        }
+        for (int j = 9; j < BitValueArray.INT_SIZE; j++) {
+            expVal4[j] = BitValue.ONE;
+        }
+        BitValueArray expArr4 = new BitValueArray(expVal4);
+        ConstantBitsElement cbe13 = cbTransition.transition(cbe11, endUnits.get(1));
+        currentCbe = cbe13;
+        tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(1), "one", currentCbe);
+        tu.assertLocalValue(BitValueArray.getIntTop(), "p", currentCbe);
+        tu.assertLocalValue(expArr1, "x", currentCbe);
+        tu.assertLocalValue(expArr2, "y", currentCbe);
+        tu.assertLocalValue(expArr4, "z", currentCbe);
+
+        BitValue[] expVal5 = new BitValue[BitValueArray.INT_SIZE];
+        expVal5[0] = BitValue.ZERO;
+        expVal5[1] = BitValue.ZERO;
+        for (int i = 2; i < 15; i++) {
+            expVal5[i] = BitValue.TOP;
+        }
+        for (int j = 15; j < BitValueArray.INT_SIZE; j++) {
+            expVal5[j] = BitValue.ONE;
+        }
+        BitValueArray expArr5 = new BitValueArray(expVal5);
+        ConstantBitsElement cbe14 = cbTransition.transition(cbe11, endUnits.get(2));
+        currentCbe = cbe14;
+        tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(1), "one", currentCbe);
+        tu.assertLocalValue(BitValueArray.getIntTop(), "p", currentCbe);
+        tu.assertLocalValue(expArr1, "x", currentCbe);
+        tu.assertLocalValue(expArr2, "y", currentCbe);
+        tu.assertLocalValue(expArr5, "z", currentCbe);
+
+        ConstantBitsElement cbe15 = cbTransition.transition(cbe11, endUnits.get(3));
+        currentCbe = cbe15;
+        tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(1), "one", currentCbe);
+        tu.assertLocalValue(BitValueArray.getIntTop(), "p", currentCbe);
+        tu.assertLocalValue(expArr1, "x", currentCbe);
+        tu.assertLocalValue(expArr2, "y", currentCbe);
+        tu.assertLocalValue(BitValueArray.getIntTop(), "z", currentCbe);
+
+        ConstantBitsElement cbe16 = cbTransition.transition(cbe11, endUnits.get(4));
+        currentCbe = cbe16;
+        tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(1), "one", currentCbe);
+        tu.assertLocalValue(BitValueArray.getIntTop(), "p", currentCbe);
+        tu.assertLocalValue(expArr1, "x", currentCbe);
+        tu.assertLocalValue(expArr2, "y", currentCbe);
+        tu.assertLocalValue(BitValueArray.getIntTop(), "z", currentCbe);
+    }
+
+    private static TestMethod getCodeLastResortNegative() {
+        // We want to genereate two ints that have more then TOP_TRESHOLD TOP bits combined to test the "Last
+        // Resort"-part of Mult, Div and Rem and again the Bitwise Parts including TOP bits of Add and Sub
+        String signature = "void test_LastResortNegative(int)";
+        // @formatter:off
+        String method = 
+                "public void test_LastResortNegative(int parameter) {"
+                        + "int one = 1;"      // to prevent Java from narrowing small constant ints to byte
+                        + "int x = 0 * one;"                 // x = 0                                            cbe04
+                        + "int y = 0 * one;"                 // y = 26;                                          cbe05
+                        + "int p = parameter;"               // p = IntTop                                       cbe06 assign param ref
+                        + "if(p > 0) {x = -12 * one;"        // x = -12;                                         cbe07
+                        + "y = 26 * one;}"                   // y = 26;                                          cbe08 
+                        + "else {x = -158 * one;"            // x = -158;                                        cbe09
+                        + "y = 118 * one;}"                  // y = 118;                                         cbe10
+                                                             // x = join([x_left, x_rigth], [y_left, y_right]);  cbe11
+                        + "int z = x + y;"                   // z = <0 T T T T T T T T T T T T ...>              cbe12
+                        + "z = x - y;"                       // z = <0 T T T T T T T T 1 1 1 1 ...>              cbe13
+                        + "z = x * y;"                       // z = <0 0 T T T T T T T T T T T T T 1 1 1 ...>    cbe14
+                        + "z = x / y;"                       // z = top;                                         cbe15
+                        + "z = x % y;"                       // z = top;                    cbe16
+                + "}";
+        // @formatter:on
+        return new TestMethod(signature, method);
     }
 
     private ConstantBitsElement join(ConstantBitsJoin join, ConstantBitsElement... toJoin) {

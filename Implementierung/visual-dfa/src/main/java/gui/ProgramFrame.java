@@ -81,11 +81,12 @@ public class ProgramFrame extends JFrame {
 
         statePanelClosed = new StatePanelClosed(this);
 
-        if (System.getProperty("os.name").toLowerCase().contains("mac") && getWindows().length != 0) {
-            enableMacOSFullscreen(getWindows()[0]);
-        }
+        Image icon = IconLoader.loadIcon("./icons/app-icon.png", 1).getImage();
+        setIconImage(icon);
 
-        setIconImage(IconLoader.loadIcon("./icons/app-icon.png", 1).getImage());
+        if (System.getProperty("os.name").toLowerCase().contains("mac") && getWindows().length != 0) {
+            enableMacOSFullscreenAndSetDockIcon(getWindows()[0], icon);
+        }
     }
 
     /**
@@ -157,14 +158,21 @@ public class ProgramFrame extends JFrame {
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
-    private static void enableMacOSFullscreen(Window window) {
+    private static void enableMacOSFullscreenAndSetDockIcon(Window window, Image icon) {
         try {
             Class util = Class.forName("com.apple.eawt.FullScreenUtilities");
             Class params[] = new Class[]{Window.class, Boolean.TYPE};
             Method method = util.getMethod("setWindowCanFullScreen", params);
             method.invoke(util, window, true);
+
+            Class application = Class.forName("com.apple.eawt.Application");
+            Object applicationObject = application.newInstance().getClass().getMethod("getApplication")
+                    .invoke(null);
+            applicationObject.getClass().getMethod("setDockIconImage", java.awt.Image.class)
+                    .invoke(applicationObject, icon);
         } catch (Exception ex) {
-            System.err.println("Could not enable macOS fullscreen capability. Fullscreen mode will be unavailable. \n"
+            ex.printStackTrace();
+            System.err.println("Failed to set macOS specific visual attributes. App icon or Fullscreen Mode may be unavailable.\n"
               + ex.getMessage());
         }
     }

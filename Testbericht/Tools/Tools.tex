@@ -1,17 +1,24 @@
 \part{Tools}
-Um effektiv zu Testen, wurden einige Tools eingesetzt. Dies sind zwar weitestgehend Standart-Tools für das Testen von Java-Code, dennoch werden diese hier kurz vorgestellt.
+In diesem Abschnitt wird zunächst aufgelistet, welche Tools zum Schreiben der Unit-Tests benutzt wurden.
+Anschließend werden einige Probleme, die im Rahmen der Unit-Tests auftraten, sowie deren Umgehung beschrieben.
 
 \section{JUnit}
 JUnit ist ein Test-Framework für Java.
 Damit können Tests realisiert werden, die automatisch ausführbar sind.
-Die erwarteten Resultate können mittels Assertions festgelegt werden, die fehlschlagen, wenn die tatsächlichen Resultate von den Erwarteten abweichen.
+Die erwarteten Resultate können mittels Assertions festgelegt werden, die fehlschlagen, wenn die tatsächlichen Resultate von den erwarteten abweichen.
 JUnit kann alle Tests einer bestimmten Klasse, eines Packages, oder alle vorhandenen Tests im Projekt ausführen und erstellt dann eine Übersicht über die erfolgreichen und fehlgeschlagenen Tests.
 Für fehlgeschlagene Tests wird präzise angezeigt, welche Assertion fehlgeschlagen ist und für auftretende Exceptions wird ein vollständiger Stacktrace ausgegeben.
 Dies ermöglicht komfortables Testen und relativ einfaches Debuggen.
-Außerdem lässt sich durch die automatischen Tests zuverlässig verhindern, dass einmal behobene Bugs wieder unbemerkt auftreten. 
+Außerdem lässt sich durch die automatischen Tests zuverlässig verhindern, dass einmal behobene Bugs wieder unbemerkt auftreten.
 
 \section{Mockito}
-\todo{@Patrick}
+In einigen Tests war es hilfreich, bestimmte Klassen durch Mocks zu ersetzen, um das Testen von Komponenten unabhängig zu ermöglichen.
+Dafür wurde die ähnlich wie JUnit weitläufig bekannte Library Mockito verwendet.
+
+Ein Einsatzgebiet von Mockito war der visuelle Graph.
+Hier war es insbesondere wünschenswert, die korrekte Anzeige von Blöcken und Zeilen testen zu können, ohne eine Abhängigkeit zum DFA-Framework vorauszusetzen.
+Dies wurde durch Erstellen von \inlinecode{BasicBlock}- und \inlinecode{ElementaryBlock}-Mocks erreicht.
+Die eigenständigen \inlinecode{VisualGraphPanel}-Tests ermöglichten, Logik zur Überprüfung der korrekten visuellen Darstellung aus den \inlinecode{GraphUIController}- Tests zu entfernen.
 
 \section{EclEmma}
 EclEmma ist ein Eclipse-Plugin zum Messen der Code-Coverage.
@@ -21,7 +28,28 @@ Die Coverage-Statistik wird nach Klassen und Packages aufgeschlüsselt dargestel
 Sehr hilfreich ist auch, dass getesteter Code je nach Coverage-Status eingefärbt wird: vollständig getestete Zeilen werden grün, teilweise getestete Zeilen gelb und nicht getestete Zeilen rot eingefärbt.
 Dies ermöglicht einen präzisen Überblick darüber, was genau getestet wurde.
 
+\newpage
+\section{Probleme}
 
+\subsection{Plattformabhängigkeit des Graph-Exports}
 
+Im Rahmen der Graph-Export-Tests wurden Referenzbilder hinterlegt, mit denen die in JUnit-Tests erstellten Export-Bilder verglichen werden.
+Nach erfolgreicher Ausführung dieser Tests in der Entwicklungsumgebung (macOS) wurde festgestellt, dass dieselben Tests auf dem Jenkins-Server (Ubuntu) fehlschlugen.
+Es stellte sich heraus, dass ein nichttriviales Problem vorlag, da auf unterschiedlichen Plattformen nicht exakt gleiche \inlinecode{BufferedImage}s generiert werden.
+Die Unterschiede sind zwar für den Nutzer irrelevant (leichte Farbunterschiede in einer geringen Anzahl von Pixeln), allerdings stellte dieses Verhalten eine Herausforderung für das automatisierte Testen dar.
 
+Die Möglichkeit der Einbindung plattformspezifischer Referenzbilder wurde ausgeschlossen, da absehbar war, dass das Verhalten sich auch in zukünftigen Versionen verschiedener Plattformen ändern könnte.
+Außerdem wurde die Anzahl an verschiedenen Kombinationen von Java- und Betriebssystemversionen als zu hoch eingestuft, um plattformspezifische Tests einzuführen.
 
+Um die Graph-Export-Tests nicht unbrauchbar zu machen, wurden diese so geändert, dass sie kleine Unterschiede in den exportierten Bildern erlauben.
+Dies wurde durch eine Maximalanzahl an Pixeln, die verschieden vom Referenzbild sein dürfen, und einen Delta-Wert, ab dem zwei Pixel als verschieden gelten, umgesetzt.
+Somit stellen die Tests trotzdem sicher, dass das Export-Bild annähernd dem gewünschten Ergebnis entspricht.
+
+\subsection{Test des asynchronen Batch-Graph-Exports}
+
+Der Batch-Export wurde grundlegend überarbeitet und läuft nun in einem eigenen Thread ab, welcher Callback-Methoden der Klasse \inlinecode{GraphExportProgressView} aufruft.
+Da JUnit keine Callbacks für asynchrone Tests anbietet, musste eine Alternativlösung gefunden werden, um diese Funktionalität zu testen.
+
+Für die entsprechenden Tests wurde also eine zweite Klasse implementiert, welche dasselbe Interface wie \inlinecode{GraphExportProgressView} implementiert und die Aufrufe seiner Callback-Methoden speichert.
+So kann im Test sichergestellt werden, dass die Callbacks richtig und in korrekter Anzahl aufgerufen wurden.
+In Kombination mit Locks ist es dadurch möglich, den asynchronen Batch-Export mit JUnit zu testen.

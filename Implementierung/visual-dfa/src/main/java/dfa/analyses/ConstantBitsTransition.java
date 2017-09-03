@@ -93,7 +93,7 @@ public class ConstantBitsTransition implements Transition<ConstantBitsElement> {
 
     private static final int TOP_TRESHOLD = 5;
 
-    private ConstantBitsJoin join;
+    private ConstantBitsJoin join = new ConstantBitsJoin();
 
     @Override
     public ConstantBitsElement transition(ConstantBitsElement element, Unit unit) {
@@ -499,7 +499,7 @@ public class ConstantBitsTransition implements Transition<ConstantBitsElement> {
             boolean subFromOne = (opAndCarry[0] == BitValue.ONE);
             boolean subFromTop = (opAndCarry[0] == BitValue.TOP);
 
-            // counting the ONEs and TOPs in op2Values[i] and carry as well as in all of opAndCarry
+            // counting the ONEs and TOPs in (op2Values[i] and carry) as well as in all of opAndCarry
             int numberOfAllOnes = 0;
             int numberOfAllTops = 0;
             int numberOfSubOnes = 0;
@@ -544,9 +544,12 @@ public class ConstantBitsTransition implements Transition<ConstantBitsElement> {
                 if (numberOfSubOnes == 2) {
                     // All 3 bits are ONE, or only the two sub-bits are one, so the carry is definitely ONE
                     resValCarry[1] = BitValue.ONE;
-                } else if (numberOfSubTops + numberOfSubOnes == 2) {
+                } else if (subFromOne && (numberOfSubOnes + numberOfSubTops == 2)) {
                     // Not all 3 bits are ONE, so the carry is not definitely ONE
                     // All 3 bits are either TOP or ONE, so the carry is TOP
+                    resValCarry[1] = BitValue.TOP;
+                } else if (subFromTop && (numberOfSubOnes + numberOfSubTops >= 1)) {
+                    //
                     resValCarry[1] = BitValue.TOP;
                 }
             } else {
@@ -724,33 +727,42 @@ public class ConstantBitsTransition implements Transition<ConstantBitsElement> {
                             for (long counter2 = 0; counter2 < dim2; counter2++) {
                                 BitValue[] op1ValuesPossibility = new BitValue[length];
                                 BitValue[] op2ValuesPossibility = new BitValue[length];
+                                int topCounter1 = 0;
+                                int topCounter2 = 0;
                                 for (int j = 0; j < length; j++) {
                                     if (op1Values[j] == BitValue.TOP) {
-                                        op1ValuesPossibility[j] =
-                                                BitValueArray.booleanToBitValue((counter1 & (1L << j)) != 0);
+                                        topCounter1++;
+                                        op1ValuesPossibility[j] = BitValueArray
+                                                .booleanToBitValue((counter1 & (1L << (topCounter1 - 1))) != 0);
                                     } else {
                                         op1ValuesPossibility[j] = op1Values[j];
                                     }
                                     if (op2Values[j] == BitValue.TOP) {
-                                        op2ValuesPossibility[j] =
-                                                BitValueArray.booleanToBitValue((counter2 & (1L << j)) != 0);
+                                        topCounter2++;
+                                        op2ValuesPossibility[j] = BitValueArray
+                                                .booleanToBitValue((counter2 & (1L << (topCounter2 - 1))) != 0);
                                     } else {
                                         op2ValuesPossibility[j] = op2Values[j];
                                     }
                                 }
                                 BitValueArray op1Possibility = new BitValueArray(op1ValuesPossibility);
                                 BitValueArray op2Possibility = new BitValueArray(op2ValuesPossibility);
-                                possibilities[(int) (counter1 * counter2)] =
+                                possibilities[(int) (counter1 * dim2 + counter2)] =
                                         new BitValueArray((ArithmeticConstant) op1Possibility.getConstant()
                                                 .multiply(op2Possibility.getConstant()));
+//                                System.out.println("one possibility is: \n");
+//                                System.out.println(new BitValueArray((ArithmeticConstant) op1Possibility.getConstant()
+//                                        .multiply(op2Possibility.getConstant())).toString() + "\n");
                             }
                         }
-                        // joining the possibilities
+//                        System.out.println("all possibilities are: \n");
+//                        for (BitValueArray pos : possibilities) {
+//                            System.out.println(pos.toString() + "\n");
+//                        }
                         BitValueArray refVal = possibilities[0];
                         BitValueArray top = BitValueArray.getTop(length);
                         BitValueArray bottom = BitValueArray.getBottom(length);
                         for (int j = 1; j < dimGes; j++) {
-
                             refVal = join.getJoinHelper().performSingleJoin(refVal, possibilities[j], length, top,
                                     bottom);
                         }
@@ -1092,22 +1104,26 @@ public class ConstantBitsTransition implements Transition<ConstantBitsElement> {
                             BitValue[] op1ValuesPossibility = new BitValue[length];
                             BitValue[] op2ValuesPossibility = new BitValue[length];
                             for (int j = 0; j < length; j++) {
+                                int topCounter1 = 0;
+                                int topCounter2 = 0;
                                 if (op1Values[j] == BitValue.TOP) {
-                                    op1ValuesPossibility[j] =
-                                            BitValueArray.booleanToBitValue((counter1 & (1L << j)) != 0);
+                                    topCounter1++;
+                                    op1ValuesPossibility[j] = BitValueArray
+                                            .booleanToBitValue((counter1 & (1L << (topCounter1 - 1))) != 0);
                                 } else {
                                     op1ValuesPossibility[j] = op1Values[j];
                                 }
                                 if (op2Values[j] == BitValue.TOP) {
-                                    op2ValuesPossibility[j] =
-                                            BitValueArray.booleanToBitValue((counter2 & (1L << j)) != 0);
+                                    topCounter2++;
+                                    op2ValuesPossibility[j] = BitValueArray
+                                            .booleanToBitValue((counter1 & (1L << (topCounter2 - 1))) != 0);
                                 } else {
                                     op2ValuesPossibility[j] = op2Values[j];
                                 }
                             }
                             BitValueArray op1Possibility = new BitValueArray(op1ValuesPossibility);
                             BitValueArray op2Possibility = new BitValueArray(op2ValuesPossibility);
-                            possibilities[(int) (counter1 * counter2)] =
+                            possibilities[(int) (counter1 * dim2 + counter2)] =
                                     new BitValueArray((ArithmeticConstant) op1Possibility.getConstant()
                                             .divide(op2Possibility.getConstant()));
                         }
@@ -1282,22 +1298,26 @@ public class ConstantBitsTransition implements Transition<ConstantBitsElement> {
                                 BitValue[] op1ValuesPossibility = new BitValue[length];
                                 BitValue[] op2ValuesPossibility = new BitValue[length];
                                 for (int j = 0; j < length; j++) {
+                                    int topCounter1 = 0;
+                                    int topCounter2 = 0;
                                     if (op1Values[j] == BitValue.TOP) {
-                                        op1ValuesPossibility[j] =
-                                                BitValueArray.booleanToBitValue((counter1 & (1L << j)) != 0);
+                                        topCounter1++;
+                                        op1ValuesPossibility[j] = BitValueArray
+                                                .booleanToBitValue((counter1 & (1L << (topCounter1 - 1))) != 0);
                                     } else {
                                         op1ValuesPossibility[j] = op1Values[j];
                                     }
                                     if (op2Values[j] == BitValue.TOP) {
-                                        op2ValuesPossibility[j] =
-                                                BitValueArray.booleanToBitValue((counter2 & (1L << j)) != 0);
+                                        topCounter2++;
+                                        op2ValuesPossibility[j] = BitValueArray
+                                                .booleanToBitValue((counter2 & (1L << (topCounter2 - 1))) != 0);
                                     } else {
                                         op2ValuesPossibility[j] = op2Values[j];
                                     }
                                 }
                                 BitValueArray op1Possibility = new BitValueArray(op1ValuesPossibility);
                                 BitValueArray op2Possibility = new BitValueArray(op2ValuesPossibility);
-                                possibilities[(int) (counter1 * counter2)] =
+                                possibilities[(int) (counter1 * dim2 + counter2)] =
                                         new BitValueArray((ArithmeticConstant) op1Possibility.getConstant()
                                                 .remainder(op2Possibility.getConstant()));
                             }

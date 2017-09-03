@@ -1,4 +1,4 @@
-\part{Bugs}
+\part{Bugs und Verbesserungen}
 
 \section{dfa.framework}
 
@@ -11,3 +11,34 @@
 
 \section{dfa.analyses}
 
+\section{gui.visualgraph}
+
+\subsection{Bugs}
+
+\begin{itemize}
+  \item Das Auswählen von Blöcken und Zeilen im Graphen war fehlerhaft, sodass falsche Blöcke und Zeilen ausgewählt wurden.
+        Grund dafür war eine Veränderung der Variable \inlinecode{LABEL_INSET} in JGraphX, welche den Text der Zeilen um die gesetzte Pixelanzahl einrücken sollte.
+        Ein JGraphX-Bug führte dabei aber auch zu beschriebener Nebenwirkung.
+        Dies wurde dadurch behoben, die Variable nicht mehr zu verändern und stattdessen die einzelnen Zeilen-\inlinecode{mxCell}s manuell einzurücken.
+  \item Der Text in den Zeilen war nicht korrekt vertikal zentriert.
+        Dieses Fehlverhalten trat ebenfalls wegen eines JGraphX-Bugs auf und wurde durch den Aufruf der Methode \inlinecode{mxGraph.setHtmlLabels(true)} verhindert.
+  \item In exportierten Bildern des Graphen wurde der aktuell ausgewählte Block nicht farblich markiert.
+        Dieses Problem wurde ebenfalls durch die entsprechende Implementierung in JGraphX verursacht.
+        Zur Umgehung wurde ein Workaround angewendet, der dem jeweils aktiven Block einen Border hinzufügt, den Graphen exportiert und anschließend den Border wieder zurücksetzt.
+        Dies bleibt für den Benutzer unbemerkt und stellt sicher, dass in den exportierten Bildern keine Information verloren geht.
+  \item Der Graph war weiterhin sichtbar, nachdem der Benutzer den Stop-Button betätigt hatte.
+        Dies war ein Rendering-Problem und wurde durch den Aufruf von \inlinecode{repaint()} behoben.
+\end{itemize}
+
+\subsection{Verbesserungen}
+\begin{itemize}
+  \item Die Methode \inlinecode{getBlockAndLineNumbers()} in der Klasse \inlinecode{UIAbstractBlock} sowie deren Subklassen wurde in zwei entsprechende Methoden aufgespaltet.
+  \item Die Methode \inlinecode{renderGraph()} in der Klasse VisualGraphPanel nimmt nun keinen \inlinecode{isFirstRender}-Parameter mehr entgegen, da der entsprechende Zustand nun intern verwaltet wird.
+  \item Einige platzintensive Code-Elemente wie \inlinecode{dynamicinvoke} und \inlinecode{goto}-Statements werden nun im Graphen abgekürzt, um den Text leichter lesbar zu machen.
+  \item Der Batch-Graph-Export benutzt nun einen eigenen Thread und bietet dem Benutzer eine Fortschrittsanzeige, welche sich mit jedem Schritt des Exports füllt.
+        Dabei wird dem Benutzer auch angezeigt, in welchen Pfad die Bilder exportiert werden.
+        Während des Exports kann der Benutzer das Programm normal weiterverwenden; die Fortschrittsanzeige bleibt dabei sichtbar.
+        
+        Nachdem diese Fortschrittsanzeige implementiert wurde, fiel im Rahmen genereller Tests auf, dass die Benutzerführung nun inkonsistent war, da beim Einzelexport keine Fortschrittsanzeige verwendet wurde.
+        Da ein Einzelexport zu schnell vonstattengeht, um einen tatsächlichen Fortschritt anzeigen zu können, wird hier nun eine Fortschrittsanzeige verwendet, die sich nicht auf den tatsächlichen Fortschritt bezieht und dem Benutzer lediglich Konsistenz mit dem Batch-Export bietet.
+\end{itemize}

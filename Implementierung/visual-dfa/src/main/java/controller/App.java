@@ -25,6 +25,7 @@ public final class App {
         EventQueue.invokeLater(new Runnable() {
             public void run() {
                 try {
+
                     programFrame.setVisible(true);
                 } catch (Exception e) {
                     e.printStackTrace();

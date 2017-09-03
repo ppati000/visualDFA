@@ -1,4 +1,4 @@
-import dfa.TestMethod;
+import dfaTests.TestMethod;
 
 public class TestCodeManySteps {
     

@@ -81,12 +81,13 @@ public class ProgramFrame extends JFrame {
 
         statePanelClosed = new StatePanelClosed(this);
 
-        Image icon = IconLoader.loadIcon("./icons/app-icon.png", 1).getImage();
+        Image icon = IconLoader.loadIcon("icons/app-icon.png", 1).getImage();
         setIconImage(icon);
 
         if (System.getProperty("os.name").toLowerCase().contains("mac") && getWindows().length != 0) {
             enableMacOSFullscreenAndSetDockIcon(getWindows()[0], icon);
         }
+
     }
 
     /**

@@ -1,6 +1,10 @@
 package dfa.analyses.testanalyses;
 
-import dfa.framework.*;
+import dfa.framework.DFADirection;
+import dfa.framework.DFAFactory;
+import dfa.framework.DataFlowAnalysis;
+import dfa.framework.SimpleBlockGraph;
+
 
 /**
  * @author Patrick Petrovic 

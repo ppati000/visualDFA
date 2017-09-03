@@ -1,15 +1,23 @@
 \part{Bugs und Verbesserungen}
 
 \section{dfa.framework}
+\subsection{Bugs}
 
 \begin{itemize}
-	\item Vorberechnung einer DFAExecution geriet in eine Endlosschleife, falls der CFG leere Blöcke enthielt.
+	\item Vorberechnung einer \inlinecode{DFAExecution} geriet in eine Endlosschleife, falls der CFG leere Blöcke enthielt.
 	Grund dafür war, dass ein leerer Block besonders behandelt wurde und in diesem Fall der Block für die nächste Iteration nicht aktualisiert wurde.
-	\item Vorberechnung einer DFAExecution betrachtete nicht alle Blöcke, wenn sich Ausgangszustände von Beginn an nicht änderten. Grund dafür war, dass Blöcke nur auf die Worklist gesetzt wurden, wenn sich der Ausgangszustand eines Vorgängers geändert hatte. 
-	\item Künstlicher Endblock im SimpleBlockGraph hatte keine Vorgänger. Grund dafür war, dass nach Erstellen des künstlichen Endblocks die vorherigen Endblöcke nicht als Vorgänger des neuen künstlichen Endblocks gesetzt wurden.
+	\item Vorberechnung einer \inlinecode{DFAExecution} betrachtete nicht alle Blöcke, wenn sich Ausgangszustände von Beginn an nicht änderten. Grund dafür war, dass Blöcke nur auf die \inlinecode{Worklist} gesetzt wurden, wenn sich der Ausgangszustand eines Vorgängers geändert hatte. 
+	\item Künstlicher Endblock im \inlinecode{SimpleBlockGraph} hatte keine Vorgänger. Grund dafür war, dass nach Erstellen des künstlichen Endblocks die vorherigen Endblöcke nicht als Vorgänger des neuen künstlichen Endblocks gesetzt wurden.
 \end{itemize}
 
 \section{dfa.analyses}
+\subsection{Bugs}
+
+\begin{itemize}
+	\item \inlinecode{Locals}, die aufgrund ihres Typs ignoriert werden sollten, gelangten im Laufe einer Analyse doch in die \inlinecode{ConstantFoldingElement}s und \inlinecode{ConstantBitsElement}s. Grund dafür war, dass bei Zuweisungen der Typ der Local nicht überprüft wurde. Dies wurde durch Einführung einer Methode \inlinecode{isLocalTypeAccepted}\inlinecode{(Type t):boolean} behoben.
+	\item Der \inlinecode{TaintJoin} lieferte auf einem einzelnen \inlinecode{TaintElement} immer \inlinecode{BOTTOM} zurück. Grund dafür war die falsche Initialisierung des Referenzelements, mit dem alle außer dem ersten Element verglichen wurden.
+	\item Casts führten zu Abstürzen bei der \inlinecode{ConstantFoldingTransition}. Grund dafür war, dass Casts versehentlich ignoriert wurden.
+\end{itemize}
 
 \section{gui.visualgraph}
 

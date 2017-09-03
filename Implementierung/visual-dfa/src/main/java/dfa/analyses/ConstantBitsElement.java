@@ -49,7 +49,7 @@ public class ConstantBitsElement extends LocalMapElement<BitValueArray> {
      *         if one of the {@code BitValueArray}s is not of the right size
      */
     public ConstantBitsElement(Map<JimpleLocal, BitValueArray> localMap) {
-        super();
+        super(localMap, LocalMapElement.DEFAULT_COMPARATOR);
         for (Map.Entry<JimpleLocal, BitValueArray> entry : localMap.entrySet()) {
             int l = entry.getValue().getLength();
             if (!(l == 32 || l == 64)) {
@@ -109,7 +109,8 @@ public class ConstantBitsElement extends LocalMapElement<BitValueArray> {
 
     @Override
     public LocalMapElement<BitValueArray> clone() {
-        TreeMap<JimpleLocal, BitValueArray> newMap = new TreeMap<JimpleLocal, BitValueArray>(LocalMapElement.DEFAULT_COMPARATOR);
+        TreeMap<JimpleLocal, BitValueArray> newMap =
+                new TreeMap<JimpleLocal, BitValueArray>(LocalMapElement.DEFAULT_COMPARATOR);
         for (JimpleLocal local : localMap.keySet()) {
             newMap.put(local, localMap.get(local));
         }

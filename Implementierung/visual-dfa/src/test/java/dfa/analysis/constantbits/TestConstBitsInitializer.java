@@ -48,7 +48,7 @@ public class TestConstBitsInitializer {
 
     @Test
     public void testSupportedTypes() {
-        tu.setPrint(true);
+        tu.setPrint(false);
 
         Assert.assertEquals(1, bgSupportedTypes.getBlocks().size());
 

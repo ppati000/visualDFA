@@ -8,7 +8,13 @@ import com.mxgraph.view.mxGraph;
 
 import dfa.analyses.testanalyses.DummyElement;
 import dfa.analyses.testanalyses.DummyFactory;
-import dfa.framework.*;
+import dfa.framework.AnalysisState;
+import dfa.framework.BasicBlock;
+import dfa.framework.DFAExecution;
+import dfa.framework.DFAPrecalcController;
+import dfa.framework.SimpleBlockGraph;
+import dfa.framework.WorklistManager;
+import dfa.frameworkTests.*;
 import gui.visualgraph.*;
 
 import static org.junit.Assert.*;

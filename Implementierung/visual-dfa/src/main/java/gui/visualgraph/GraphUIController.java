@@ -5,7 +5,15 @@ import com.mxgraph.util.mxEvent;
 import com.mxgraph.util.mxEventObject;
 import com.mxgraph.util.mxEventSource;
 import com.mxgraph.view.mxGraph;
-import dfa.framework.*;
+
+import dfa.framework.AbstractBlock;
+import dfa.framework.BasicBlock;
+import dfa.framework.BlockState;
+import dfa.framework.ControlFlowGraph;
+import dfa.framework.DFAExecution;
+import dfa.framework.ElementaryBlock;
+import dfa.framework.LatticeElement;
+
 import gui.StatePanelOpen;
 
 import java.util.ArrayList;

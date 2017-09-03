@@ -31,7 +31,7 @@ public class IconLoader {
      * @see ImageIcon
      */
     public static ImageIcon loadIcon(String path, double scale) {
-        // TODO throw or try catch
+
         URL url = ClassLoader.getSystemResource(path);
         if (url == null) {
             return null;
@@ -43,6 +43,7 @@ public class IconLoader {
             icon = new ImageIcon(img);
             return icon;
         }
+        
 
     }
 }

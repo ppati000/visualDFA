@@ -6,7 +6,9 @@ import java.net.URLDecoder;
 import java.util.List;
 import java.util.logging.Logger;
 
-import codeprocessor.*;
+import codeprocessor.CodeProcessor;
+import codeprocessor.Filter;
+import codeprocessor.GraphBuilder;
 import dfa.framework.AnalysisLoader;
 import dfa.framework.DFAExecution;
 import dfa.framework.DFAFactory;

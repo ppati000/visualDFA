@@ -7,7 +7,12 @@ import controller.Controller;
 import com.mxgraph.swing.mxGraphComponent;
 import dfa.analyses.testanalyses.DummyElement;
 import dfa.analyses.testanalyses.DummyFactory;
-import dfa.framework.*;
+import dfa.framework.BasicBlock;
+import dfa.framework.DFAExecution;
+import dfa.framework.DFAPrecalcController;
+import dfa.framework.NaiveWorklist;
+import dfa.framework.SimpleBlockGraph;
+
 import gui.StatePanelOpen;
 import gui.visualgraph.*;
 
@@ -143,7 +148,8 @@ public class GraphUIControllerTest {
         List<UIBasicBlock> newUIBasicBlocks = panel.getBasicBlocks();
         assertEquals(4, newUIBasicBlocks.size());
     }
-
+    
+    
     @Test
     public void shouldUpdateStatePanel() {
         StatePanelOpen mockPanel = mock(StatePanelOpen.class);

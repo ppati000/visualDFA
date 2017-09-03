@@ -1,7 +1,6 @@
 package dfa.analysis.constantbits;
 
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -23,18 +22,15 @@ import dfa.analyses.ConstantBitsJoin;
 import dfa.analyses.ConstantBitsTransition;
 import dfa.framework.BlockState;
 import dfa.framework.SimpleBlockGraph;
-import soot.Body;
-import soot.Local;
 import soot.Unit;
 import soot.toolkits.graph.Block;
-import soot.util.Chain;
 
 public class TestConstantBitsTransition {
 
     private static TestUtils<BitValueArray> tu = new TestUtils<BitValueArray>();
 
     private static SimpleBlockGraph bgAllConstant;
-    private static SimpleBlockGraph bgAdditionSubtraction;
+    private static SimpleBlockGraph bgHeuristic;
 
     @BeforeClass
     public static void setUp() {
@@ -45,12 +41,13 @@ public class TestConstantBitsTransition {
         GraphBuilder gb = new GraphBuilder(cp.getPath(), cp.getClassName());
         bgAllConstant = gb.buildGraph(testMethodAllConstant.signature);
 
-        TestMethod testMethodAdditionSubtraction = getCodeAdditionSubtraction();
-        cp = new CodeProcessor(testMethodAdditionSubtraction.method);
+        TestMethod testMethodHeuristic = getCodeHeuristic();
+        cp = new CodeProcessor(testMethodHeuristic.method);
+        // tu.printInfo(cp.getErrorMessage());
         Assert.assertTrue(cp.wasSuccessful());
 
         gb = new GraphBuilder(cp.getPath(), cp.getClassName());
-        bgAdditionSubtraction = gb.buildGraph(testMethodAdditionSubtraction.signature);
+        bgHeuristic = gb.buildGraph(testMethodHeuristic.signature);
     }
 
     @Test
@@ -410,16 +407,16 @@ public class TestConstantBitsTransition {
     }
 
     @Test
-    public void testAdditionSubtraction() {
+    public void testHeuristic() {
         tu.setPrint(true);
 
-        tu.printInfo(bgAdditionSubtraction.getBlocks().size());
-        Assert.assertEquals(4, bgAdditionSubtraction.getBlocks().size());
+        tu.printInfo(bgHeuristic.getBlocks().size());
+        Assert.assertEquals(4, bgHeuristic.getBlocks().size());
 
-        Block startBlock = bgAdditionSubtraction.getBlocks().get(0);
-        Block leftBlock = bgAdditionSubtraction.getBlocks().get(1);
-        Block rightBlock = bgAdditionSubtraction.getBlocks().get(2);
-        Block endBlock = bgAdditionSubtraction.getBlocks().get(3);
+        Block startBlock = bgHeuristic.getBlocks().get(0);
+        Block leftBlock = bgHeuristic.getBlocks().get(1);
+        Block rightBlock = bgHeuristic.getBlocks().get(2);
+        Block endBlock = bgHeuristic.getBlocks().get(3);
 
         tu.printInfo("---- this is the start block ---- ");
         List<Unit> startUnits = tu.getUnitsFromBlock(startBlock);
@@ -437,7 +434,7 @@ public class TestConstantBitsTransition {
         List<Unit> endUnits = tu.getUnitsFromBlock(endBlock);
         tu.printInfo(tu.unitsToString(endUnits));
 
-        ConstantBitsInitializer cbInit = new ConstantBitsInitializer(bgAdditionSubtraction);
+        ConstantBitsInitializer cbInit = new ConstantBitsInitializer(bgHeuristic);
         Map<Block, BlockState<ConstantBitsElement>> initMap = cbInit.getInitialStates();
 
         ConstantBitsElement initInState = initMap.get(startBlock).getInState();
@@ -567,20 +564,71 @@ public class TestConstantBitsTransition {
         tu.assertLocalValue(expArr1, "x", currentCbe);
         tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(26), "y", currentCbe);
         tu.assertLocalValue(expArr2, "z", currentCbe);
+        
+        BitValue[] expVal3 = BitValueArray.getIntTop().getBitValues();
+        expVal3[0] = BitValue.ZERO;
+        expVal3[3] = BitValue.ZERO;
+        BitValueArray expArr3 = new BitValueArray(expVal3);
+        ConstantBitsElement cbe11 = cbTransition.transition(cbe09, endUnits.get(2));
+        currentCbe = cbe11;
+        tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(1), "one", currentCbe);
+        tu.assertLocalValue(BitValueArray.getIntTop(), "p", currentCbe);
+        tu.assertLocalValue(expArr1, "x", currentCbe);
+        tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(26), "y", currentCbe);
+        tu.assertLocalValue(expArr3, "z", currentCbe);
+        
+        BitValue[] expVal4 = new BitValue[BitValueArray.INT_SIZE];
+        for(int i = 0; i < BitValueArray.INT_SIZE; i++) {
+            expVal4[i] = BitValue.ZERO;
+        }
+        for(int j = 2; j < 13; j++) {
+            expVal4[j] = BitValue.TOP;
+        }
+        expVal4[3] = BitValue.ONE;
+        BitValueArray expArr4 = new BitValueArray(expVal4);
+        // tu.printInfo(endUnits.get(3));
+        ConstantBitsElement cbe12 = cbTransition.transition(cbe09, endUnits.get(3));
+        currentCbe = cbe12;
+        tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(1), "one", currentCbe);
+        tu.assertLocalValue(BitValueArray.getIntTop(), "p", currentCbe);
+        tu.assertLocalValue(expArr1, "x", currentCbe);
+        tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(26), "y", currentCbe);
+        tu.assertLocalValue(expArr4, "z", currentCbe);
+        
+        BitValue[] expVal5 = new BitValue[BitValueArray.INT_SIZE];
+        for(int i = 0; i < BitValueArray.INT_SIZE; i++) {
+            expVal5[i] = BitValue.ZERO;
+        }
+        
+        expVal5[0] = BitValue.TOP;
+        expVal5[1] = BitValue.TOP;
+        expVal5[2] = BitValue.TOP;
+        BitValueArray expArr5 = new BitValueArray(expVal5);
+        ConstantBitsElement cbe13 = cbTransition.transition(cbe12, endUnits.get(4));
+        currentCbe = cbe13;
+        tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(1), "one", currentCbe);
+        tu.assertLocalValue(BitValueArray.getIntTop(), "p", currentCbe);
+        tu.assertLocalValue(expArr1, "x", currentCbe);
+        tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(26), "y", currentCbe);
+        // tu.assertLocalValue(expArr5, "z", currentCbe);
     }
 
-    private static TestMethod getCodeAdditionSubtraction() {
-        String signature = "void test_additionSubtraction(int)";
+    private static TestMethod getCodeHeuristic() {
+        String signature = "void test_Heuristic(int)";
         // @formatter:off
         String method = 
-                "public void test_additionSubtraction(int parameter) {"
+                "public void test_Heuristic(int parameter) {"
                         + "int one = 1;"      // to prevent Java from narrowing small constant ints to byte
                         + "int x = 0 * one;"                 // x = 0                               cbe04
                         + "int p = parameter;"               // p = IntTop                          cbe05 assign param ref
                         + "if(p > 0) {x = 12 * one;}"        // x = 4;                              cbe06 
                         + "else {x = 158 * one;}"            // x = 158;                            cbe07
                         + "int y = 26 * one;"                // y = 26;                             cbe08
-                        + "int z = x + y;"                   // z = <0 T 1 0 T 1 0 0 0 ...>         cbe09
+                                                             // x = join(x_left, x_rigth)           cbe09
+                        + "int z = x + y;"                   // z = <0 T T T T 1 0 T 0 0 0 ...>     cbe10
+                        + "z = x - y;"                       // z = <0 T T T T ...>                 cbe11
+                        + "z = x * y;"                       // z = 
+                        + "z = x / y;"
                 + "}";
         // @formatter:on
         return new TestMethod(signature, method);

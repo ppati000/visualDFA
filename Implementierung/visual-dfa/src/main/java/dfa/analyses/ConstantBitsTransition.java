@@ -714,12 +714,12 @@ public class ConstantBitsTransition implements Transition<ConstantBitsElement> {
                         }
                     }
 
-                    int numberOfSpecialChars1 = getNumberOfTOP(op1);
-                    int numberOfSpecialChars2 = getNumberOfTOP(op2);
-                    if (numberOfSpecialChars1 + numberOfSpecialChars2 <= TOP_TRESHOLD) {
+                    int numberOfTops1 = getNumberOfTOP(op1);
+                    int numberOfTops2 = getNumberOfTOP(op2);
+                    if (numberOfTops1 + numberOfTops2 <= TOP_TRESHOLD) {
                         // heuristic of multiplying each possibility:
-                        int dim1 = (1 << numberOfSpecialChars1);
-                        int dim2 = (1 << numberOfSpecialChars2);
+                        int dim1 = (1 << numberOfTops1);
+                        int dim2 = (1 << numberOfTops2);
                         int dimGes = dim1 * dim2;
                         BitValueArray[] possibilities = new BitValueArray[dimGes];
 
@@ -1091,21 +1091,22 @@ public class ConstantBitsTransition implements Transition<ConstantBitsElement> {
                     }
                 }
 
-                int numberOfTop1 = getNumberOfTOP(op1);
-                int numberOfTop2 = getNumberOfTOP(op2);
-                if (numberOfTop1 + numberOfTop2 <= TOP_TRESHOLD) {
+                int numberOfTops1 = getNumberOfTOP(op1);
+                int numberOfTops2 = getNumberOfTOP(op2);
+                if (numberOfTops1 + numberOfTops2 <= TOP_TRESHOLD) {
                     // heuristic of dividing each possibility:
-                    int dim1 = (1 << numberOfTop1);
-                    int dim2 = (1 << numberOfTop2);
+                    int dim1 = (1 << numberOfTops1);
+                    int dim2 = (1 << numberOfTops2);
                     int dimGes = dim1 * dim2;
                     BitValueArray[] possibilities = new BitValueArray[dimGes];
+
                     for (long counter1 = 0; counter1 < dim1; counter1++) {
                         for (long counter2 = 0; counter2 < dim2; counter2++) {
                             BitValue[] op1ValuesPossibility = new BitValue[length];
                             BitValue[] op2ValuesPossibility = new BitValue[length];
+                            int topCounter1 = 0;
+                            int topCounter2 = 0;
                             for (int j = 0; j < length; j++) {
-                                int topCounter1 = 0;
-                                int topCounter2 = 0;
                                 if (op1Values[j] == BitValue.TOP) {
                                     topCounter1++;
                                     op1ValuesPossibility[j] = BitValueArray
@@ -1116,7 +1117,7 @@ public class ConstantBitsTransition implements Transition<ConstantBitsElement> {
                                 if (op2Values[j] == BitValue.TOP) {
                                     topCounter2++;
                                     op2ValuesPossibility[j] = BitValueArray
-                                            .booleanToBitValue((counter1 & (1L << (topCounter2 - 1))) != 0);
+                                            .booleanToBitValue((counter2 & (1L << (topCounter2 - 1))) != 0);
                                 } else {
                                     op2ValuesPossibility[j] = op2Values[j];
                                 }
@@ -1285,21 +1286,22 @@ public class ConstantBitsTransition implements Transition<ConstantBitsElement> {
                         }
                     }
 
-                    int numberOfTop1 = getNumberOfTOP(op1);
-                    int numberOfTop2 = getNumberOfTOP(op2);
-                    if (numberOfTop1 + numberOfTop2 <= TOP_TRESHOLD) {
-                        // heuristic of calculating the remainder through each possibility:
-                        int dim1 = (1 << numberOfTop1);
-                        int dim2 = (1 << numberOfTop2);
+                    int numberOfTops1 = getNumberOfTOP(op1);
+                    int numberOfTops2 = getNumberOfTOP(op2);
+                    if (numberOfTops1 + numberOfTops2 <= TOP_TRESHOLD) {
+                        // heuristic of calculationg the remainder for each possibility:
+                        int dim1 = (1 << numberOfTops1);
+                        int dim2 = (1 << numberOfTops2);
                         int dimGes = dim1 * dim2;
                         BitValueArray[] possibilities = new BitValueArray[dimGes];
+
                         for (long counter1 = 0; counter1 < dim1; counter1++) {
                             for (long counter2 = 0; counter2 < dim2; counter2++) {
                                 BitValue[] op1ValuesPossibility = new BitValue[length];
                                 BitValue[] op2ValuesPossibility = new BitValue[length];
+                                int topCounter1 = 0;
+                                int topCounter2 = 0;
                                 for (int j = 0; j < length; j++) {
-                                    int topCounter1 = 0;
-                                    int topCounter2 = 0;
                                     if (op1Values[j] == BitValue.TOP) {
                                         topCounter1++;
                                         op1ValuesPossibility[j] = BitValueArray

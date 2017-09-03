@@ -610,7 +610,7 @@ public class TestConstantBitsTransition {
         tu.assertLocalValue(BitValueArray.getIntTop(), "p", currentCbe);
         tu.assertLocalValue(expArr1, "x", currentCbe);
         tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(26), "y", currentCbe);
-        // tu.assertLocalValue(expArr5, "z", currentCbe);
+        tu.assertLocalValue(expArr5, "z", currentCbe);
     }
 
     private static TestMethod getCodeHeuristic() {
@@ -619,15 +619,15 @@ public class TestConstantBitsTransition {
         String method = 
                 "public void test_Heuristic(int parameter) {"
                         + "int one = 1;"      // to prevent Java from narrowing small constant ints to byte
-                        + "int x = 0 * one;"                 // x = 0                               cbe04
-                        + "int p = parameter;"               // p = IntTop                          cbe05 assign param ref
-                        + "if(p > 0) {x = 12 * one;}"        // x = 4;                              cbe06 
-                        + "else {x = 158 * one;}"            // x = 158;                            cbe07
-                        + "int y = 26 * one;"                // y = 26;                             cbe08
-                                                             // x = join(x_left, x_rigth)           cbe09
-                        + "int z = x + y;"                   // z = <0 T T T T 1 0 T 0 0 0 ...>     cbe10
-                        + "z = x - y;"                       // z = <0 T T T T ...>                 cbe11
-                        + "z = x * y;"                       // z = 
+                        + "int x = 0 * one;"                 // x = 0                                 cbe04
+                        + "int p = parameter;"               // p = IntTop                            cbe05 assign param ref
+                        + "if(p > 0) {x = 12 * one;}"        // x = 4;                                cbe06 
+                        + "else {x = 158 * one;}"            // x = 158;                              cbe07
+                        + "int y = 26 * one;"                // y = 26;                               cbe08
+                                                             // x = join(x_left, x_rigth)             cbe09
+                        + "int z = x + y;"                   // z = <0 T T T T 1 0 T 0 0 0 ...>       cbe10
+                        + "z = x - y;"                       // z = <0 T T T T ...>                   cbe11
+                        + "z = x * y;"                       // z = <0 0 T 1 T T T T T T T T T 0 ...> cbe12
                         + "z = x / y;"
                 + "}";
         // @formatter:on

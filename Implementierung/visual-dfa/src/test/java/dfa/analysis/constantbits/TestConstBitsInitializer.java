@@ -23,7 +23,7 @@ import soot.jimple.LongConstant;
 import soot.toolkits.graph.Block;
 
 public class TestConstBitsInitializer {
-    
+
     private static TestUtils<BitValueArray> tu = new TestUtils<BitValueArray>();
 
     private static SimpleBlockGraph bgSupportedTypes;
@@ -45,9 +45,11 @@ public class TestConstBitsInitializer {
         gb = new GraphBuilder(cp.getPath(), cp.getClassName());
         bgUnsupportedTypes = gb.buildGraph(testMethodUnsupportedTypes.signature);
     }
-    
+
     @Test
     public void testSupportedTypes() {
+        tu.setPrint(true);
+
         Assert.assertEquals(1, bgSupportedTypes.getBlocks().size());
 
         Block onlyBlock = bgSupportedTypes.getBlocks().get(0);
@@ -57,7 +59,13 @@ public class TestConstBitsInitializer {
 
         ConstantBitsElement initInState = initMap.get(onlyBlock).getInState();
         ConstantBitsElement initOutState = initMap.get(onlyBlock).getOutState();
-        
+
+        tu.printInfo("\n" + "---- the initial in-state ----");
+        tu.printInfo(initInState.getStringRepresentation());
+
+        tu.printInfo("\n" + "---- the initial out-state ----");
+        tu.printInfo(initOutState.getStringRepresentation());
+
         tu.assertLocalValue(new BitValueArray(IntConstant.v(0)), "b", initInState);
         tu.assertLocalValue(new BitValueArray(IntConstant.v(0)), "by", initInState);
         tu.assertLocalValue(new BitValueArray(IntConstant.v(0)), "c", initInState);
@@ -72,7 +80,7 @@ public class TestConstBitsInitializer {
         tu.assertLocalValue(BitValueArray.getIntBottom(), "i", initOutState);
         tu.assertLocalValue(BitValueArray.getLongBottom(), "l", initOutState);
     }
-    
+
     public static TestMethod getCodeSupportedTypes() {
         String signature = "void test_supportedTypes()";
         // @formatter:off
@@ -88,7 +96,7 @@ public class TestConstBitsInitializer {
         // @formatter:on
         return new TestMethod(signature, method);
     }
-    
+
     @Test
     public void testUnsupportedTypes() {
         Assert.assertEquals(1, bgUnsupportedTypes.getBlocks().size());
@@ -104,7 +112,7 @@ public class TestConstBitsInitializer {
         Assert.assertTrue(initInState.getLocalMap().isEmpty());
         Assert.assertTrue(initOutState.getLocalMap().isEmpty());
     }
-    
+
     public static TestMethod getCodeUnsupportedTypes() {
         String signature = "void test_unsupportedTypes()";
         // @formatter:off

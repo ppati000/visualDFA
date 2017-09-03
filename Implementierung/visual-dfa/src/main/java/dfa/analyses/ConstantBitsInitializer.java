@@ -8,6 +8,7 @@ import java.util.TreeMap;
 import dfa.framework.BlockState;
 import dfa.framework.Initializer;
 import dfa.framework.SimpleBlockGraph;
+import javassist.compiler.ast.IntConst;
 import soot.BooleanType;
 import soot.ByteType;
 import soot.CharType;
@@ -17,6 +18,8 @@ import soot.LongType;
 import soot.PrimType;
 import soot.ShortType;
 import soot.Type;
+import soot.jimple.IntConstant;
+import soot.jimple.LongConstant;
 import soot.jimple.internal.JimpleLocal;
 import soot.toolkits.graph.Block;
 import soot.util.Chain;
@@ -56,11 +59,8 @@ public class ConstantBitsInitializer implements Initializer<ConstantBitsElement>
         Map<JimpleLocal, ConstantBitsElement.BitValueArray> initialHeadMap =
                 new TreeMap<>(LocalMapElement.DEFAULT_COMPARATOR);
 
-        ConstantBitsElement.BitValue[] nullIntArray = new ConstantBitsElement.BitValue[32];
-        ConstantBitsElement.BitValue[] nullLongArray = new ConstantBitsElement.BitValue[64];
-
-        ConstantBitsElement.BitValueArray nullInt = new ConstantBitsElement.BitValueArray(nullIntArray);
-        ConstantBitsElement.BitValueArray nullLong = new ConstantBitsElement.BitValueArray(nullLongArray);
+        ConstantBitsElement.BitValueArray zeroInt = new ConstantBitsElement.BitValueArray(IntConstant.v(0));
+        ConstantBitsElement.BitValueArray zeroLong = new ConstantBitsElement.BitValueArray(LongConstant.v(0));
 
         for (Local l : locals) {
             if (!(l instanceof JimpleLocal)) {
@@ -73,10 +73,10 @@ public class ConstantBitsInitializer implements Initializer<ConstantBitsElement>
             if (t instanceof BooleanType || t instanceof ByteType || t instanceof CharType || t instanceof ShortType
                     || t instanceof IntType) {
                 initialBottomMap.put((JimpleLocal) l, ConstantBitsElement.BitValueArray.getIntBottom());
-                initialHeadMap.put((JimpleLocal) l, nullInt);
+                initialHeadMap.put((JimpleLocal) l, zeroInt);
             } else if (t instanceof LongType) {
                 initialBottomMap.put((JimpleLocal) l, ConstantBitsElement.BitValueArray.getLongBottom());
-                initialHeadMap.put((JimpleLocal) l, nullLong);
+                initialHeadMap.put((JimpleLocal) l, zeroLong);
             }
         }
 

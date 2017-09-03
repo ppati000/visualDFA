@@ -66,7 +66,7 @@ public class Controller {
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
-        File sourceDirectory = (new File(decodedPath)).getParentFile().getParentFile().getParentFile();
+        File sourceDirectory = (new File(decodedPath)).getParentFile();
         return sourceDirectory.getAbsolutePath();
     }
 

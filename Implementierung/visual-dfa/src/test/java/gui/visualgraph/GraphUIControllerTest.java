@@ -150,7 +150,7 @@ public class GraphUIControllerTest {
     }
     
     
-    @Test
+    @Test @Ignore
     public void shouldUpdateStatePanel() {
         StatePanelOpen mockPanel = mock(StatePanelOpen.class);
         DFAExecution dfa = buildDFA(exampleCode);

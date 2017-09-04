@@ -54,7 +54,7 @@ public class GraphExportProgressView extends JDialog implements GraphExportCallb
 
     public void done() {
         progressBar.setValue(progressBar.getMaximum());
-        label.setText(label.getText() + " – Done.");
+        label.setText(label.getText() + " \u2013 Done.");
 
         try {
             Thread.sleep(1500);

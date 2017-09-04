@@ -43,7 +43,7 @@ public class VisualGraphPanel extends JPanel {
     private GraphExporter graphExporter;
     private UIAbstractBlock selectedBlock;
     private boolean hasRendered = false;
-    private boolean isExportInProgress = false;
+    private boolean hasAddedGraphExportListener = false;
 
     private final String outputPath = System.getProperty("user.home") + File.separator + "visualDFA";
     private final int fakeProgressBarMaxValue = 42;
@@ -129,72 +129,76 @@ public class VisualGraphPanel extends JPanel {
             autoLayoutAndShowGraph();
             hasRendered = true;
 
-            graphExport.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    GraphExportBox exportBox = new GraphExportBox(parentFrame);
+            if (!hasAddedGraphExportListener) {
+                graphExport.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        GraphExportBox exportBox = new GraphExportBox(parentFrame);
 
-                    if (exportBox.getOption() == Option.YES_OPTION) {
-                        graphExport.setEnabled(false);
+                        if (exportBox.getOption() == Option.YES_OPTION) {
+                            graphExport.setEnabled(false);
 
-                        float scale = exportBox.getQuality().ordinal() + 1;
-                        final long timestamp = new Date().getTime();
+                            float scale = exportBox.getQuality().ordinal() + 1;
+                            final long timestamp = new Date().getTime();
 
-                        if (exportBox.isBatchExport()) {
-                            new GraphBatchExportThread(graphExporter, dfa, scale, exportBox.includeLineStates(), new GraphExportProgressView(outputPath) {
-                                private int index = 0;
+                            if (exportBox.isBatchExport()) {
+                                new GraphBatchExportThread(graphExporter, dfa, scale, exportBox.includeLineStates(), new GraphExportProgressView(outputPath) {
+                                    private int index = 0;
 
-                                @Override
-                                public void onImageExported(BufferedImage image) {
-                                    try {
-                                        saveImage(image, timestamp, index);
-                                        index++;
-                                    } catch (IOException ex) {
-                                        showExportErrorBox();
+                                    @Override
+                                    public void onImageExported(BufferedImage image) {
+                                        try {
+                                            saveImage(image, timestamp, index);
+                                            index++;
+                                        } catch (IOException ex) {
+                                            showExportErrorBox();
+                                        }
                                     }
-                                }
 
-                                @Override
-                                public void done() {
-                                    graphExport.setEnabled(true);
-                                    super.done();
-                                }
-                            }).start();
-                        } else {
-                            BlockState state = selectedBlock == null ? null : dfa.getCurrentAnalysisState().getBlockState(selectedBlock.getDFABlock());
-                            final GraphExportProgressView view = new GraphExportProgressView(outputPath);
+                                    @Override
+                                    public void done() {
+                                        graphExport.setEnabled(true);
+                                        super.done();
+                                    }
+                                }).start();
+                            } else {
+                                BlockState state = selectedBlock == null ? null : dfa.getCurrentAnalysisState().getBlockState(selectedBlock.getDFABlock());
+                                final GraphExportProgressView view = new GraphExportProgressView(outputPath);
 
-                            // Fake a progress bar to the user if no batch export, so it is not too fast.
-                            new Thread() {
-                                @Override
-                                public void run() {
-                                    view.setMaxStep(fakeProgressBarMaxValue);
-                                    try {
-                                        Thread.sleep(100);
+                                // Fake a progress bar to the user if no batch export, so it is not too fast.
+                                new Thread() {
+                                    @Override
+                                    public void run() {
+                                        view.setMaxStep(fakeProgressBarMaxValue);
+                                        try {
+                                            Thread.sleep(100);
 
-                                        for (int i = 0; i < fakeProgressBarMaxValue; i++) {
-                                            Thread.sleep(15);
-                                            view.setExportStep(i);
+                                            for (int i = 0; i < fakeProgressBarMaxValue; i++) {
+                                                Thread.sleep(15);
+                                                view.setExportStep(i);
+                                            }
+
+                                            graphExport.setEnabled(true);
+                                        } catch (InterruptedException ex) {
+                                            // Ignored.
                                         }
 
-                                        graphExport.setEnabled(true);
-                                    } catch (InterruptedException ex) {
-                                        // Ignored.
+                                        view.done();
                                     }
+                                }.start();
 
-                                    view.done();
+                                try {
+                                    saveImage(graphExporter.exportCurrentGraph(graph, scale, selectedBlock, state), timestamp, 0);
+                                } catch (IOException ex) {
+                                    showExportErrorBox();
                                 }
-                            }.start();
-
-                            try {
-                                saveImage(graphExporter.exportCurrentGraph(graph, scale, selectedBlock, state), timestamp, 0);
-                            } catch (IOException ex) {
-                                showExportErrorBox();
                             }
                         }
                     }
-                }
-            });
+                });
+
+                hasAddedGraphExportListener = true;
+            }
         }
 
         for (UIBasicBlock block : basicBlocks) {

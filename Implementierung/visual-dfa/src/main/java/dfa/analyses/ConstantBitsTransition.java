@@ -1130,8 +1130,13 @@ public class ConstantBitsTransition implements Transition<ConstantBitsElement> {
 
                     if (op1HighBit == BitValue.TOP) {
                         // if op1HighBit is TOP we have to check both cases for 0 and 1 to get op1MinAbs and op1MaxAbs
-                        BitValue[] op1ONEValues = op1.getBitValues();
-                        BitValue[] op1ZEROValues = op1.getBitValues();
+                        BitValue[] op1Values = op1.getBitValues();
+                        BitValue[] op1ONEValues = new BitValue[l1];
+                        BitValue[] op1ZEROValues = new BitValue[l1];
+                        for (int i = 0; i < l1; i++) {
+                            op1ONEValues[i] = op1Values[i];
+                            op1ZEROValues[i] = op1Values[i];
+                        }
                         op1ONEValues[l1 - 1] = BitValue.ONE;
                         op1ZEROValues[l1 - 1] = BitValue.ZERO;
                         BitValue[] op1ONEMax = new BitValue[l1];
@@ -1205,6 +1210,7 @@ public class ConstantBitsTransition implements Transition<ConstantBitsElement> {
                     }
 
                     if (op1MinAbs >= op2Abs) {
+
                         // if op2 is a power of two, and abs(op2) =< abs(op1), op1 is simply shifted right
                         result = signedShiftRight(op1, shiftAmount);
                         return;
@@ -2120,10 +2126,10 @@ public class ConstantBitsTransition implements Transition<ConstantBitsElement> {
                     for (int i = 0; i < Math.min(length, opValues.length); i++) {
                         resultingBits[i] = opValues[i];
                     }
-                    for (int j = Math.min(length, opValues.length); j < length; j++) {
+                    for (int j = opValues.length; j < length; j++) {
                         resultingBits[j] = opValues[opValues.length - 1];
                     }
-                    result = new BitValueArray(opValues);
+                    result = new BitValueArray(resultingBits);
 
                 } else {
                     // if the length of op ant the length determined by the cast are the same, the result is just op

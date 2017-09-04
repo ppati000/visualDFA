@@ -28,7 +28,7 @@ public class ValueHelper {
         return new ConstantBitsElement.BitValueArray(IntConstant.v(i));
     }
 
-    public static ConstantBitsElement.BitValueArray getCbIntBitValueArray(long l) {
+    public static ConstantBitsElement.BitValueArray getCbLongBitValueArray(long l) {
         return new ConstantBitsElement.BitValueArray(LongConstant.v(l));
     }
 

@@ -229,12 +229,13 @@ public class InputPanel extends JPanel {
                 System.out.println(file.getAbsolutePath());
                 try {
                     BufferedReader in = new BufferedReader(new FileReader(file));
-                    String text = new String();
+                    
+                    StringBuilder sb = new StringBuilder();
                     String input;
                     while ((input = in.readLine()) != null) {
-                        text += input + System.getProperty("line.separator");
+                        sb.append(input + System.getProperty("line.separator"));
                     }
-                    codeField.setCode(text);
+                    codeField.setCode(sb.toString());
                     in.close();
                 } catch (FileNotFoundException e1) {
 

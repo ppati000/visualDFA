@@ -47,6 +47,7 @@ public class VisualGraphPanel extends JPanel {
 
     private final String outputPath = System.getProperty("user.home") + File.separator + "visualDFA";
     private final int fakeProgressBarMaxValue = 42;
+    private final int unitScrollAmount = 5;
 
     /**
      * Creates a new {@code VisualGraphPanel}.
@@ -403,6 +404,9 @@ public class VisualGraphPanel extends JPanel {
                 }
             }
         });
+
+        graphComponent.getVerticalScrollBar().setUnitIncrement(unitScrollAmount);
+        graphComponent.getHorizontalScrollBar().setUnitIncrement(unitScrollAmount);
     }
 
     private void decorateGraphButton(final AbstractButton button, final boolean highlightClickedOnly) {

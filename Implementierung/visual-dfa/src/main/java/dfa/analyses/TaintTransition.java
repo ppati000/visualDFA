@@ -6,6 +6,8 @@ import java.util.Set;
 import dfa.analyses.TaintElement.TaintState;
 import dfa.framework.TaintAnalysisTag;
 import dfa.framework.Transition;
+import dfa.framework.UnsupportedStatementException;
+import dfa.framework.UnsupportedValueException;
 import soot.Local;
 import soot.SootMethod;
 import soot.Unit;
@@ -274,7 +276,7 @@ public class TaintTransition implements Transition<TaintElement> {
 
         @Override
         public void caseThrowStmt(ThrowStmt stmt) {
-            // ignore
+            throw new UnsupportedStatementException("ThrowStmt", stmt);
         }
 
         @Override
@@ -538,7 +540,7 @@ public class TaintTransition implements Transition<TaintElement> {
 
         @Override
         public void caseCaughtExceptionRef(CaughtExceptionRef ref) {
-            result = new TaintElement.Value(TaintState.TAINTED, false);
+            throw new UnsupportedValueException("CaughtExceptionRef", ref);
         }
 
         @Override

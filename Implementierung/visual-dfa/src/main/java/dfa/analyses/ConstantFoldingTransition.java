@@ -198,7 +198,7 @@ public class ConstantFoldingTransition implements Transition<ConstantFoldingElem
 
         @Override
         public void caseLookupSwitchStmt(LookupSwitchStmt stmt) {
-            throw new UnsupportedStatementException("LookupSwitchStmt", stmt);
+            // ignore
         }
 
         @Override
@@ -223,7 +223,7 @@ public class ConstantFoldingTransition implements Transition<ConstantFoldingElem
 
         @Override
         public void caseTableSwitchStmt(TableSwitchStmt stmt) {
-            throw new UnsupportedStatementException("TableSwitchStmt", stmt);
+            // ignore
         }
 
         @Override

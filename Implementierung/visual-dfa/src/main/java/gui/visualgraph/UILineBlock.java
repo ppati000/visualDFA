@@ -89,9 +89,9 @@ public class UILineBlock extends UIAbstractBlock {
                     .replaceAll("\\sgoto\\s.*$", " goto") // Remove everything after "goto" to avoid confusion from text like 'goto (branch)'.
                     .replaceAll("^goto\\s.*$", "goto");
 
-            // Handle long labels: Use BLOCK_WIDTH - 20 for word wrap to leave some space for appending "…".
+            // Handle long labels: Use BLOCK_WIDTH - 20 for word wrap to leave some space for appending "...".
             String[] splitLabel = mxUtils.wordWrap(baseText, metrics, Styles.BLOCK_WIDTH - 20);
-            String label = splitLabel.length > 1 ? splitLabel[0] + "…" : splitLabel[0];
+            String label = splitLabel.length > 1 ? splitLabel[0] + "\u2026" : splitLabel[0];
 
             // < and & characters have to be escaped (they are reserved HTML symbols).
             String escapedHtmlLabel = label.replace("&", "&amp;").replace("<", "&lt;");

@@ -162,8 +162,8 @@ public class GraphUIControllerTest {
 
         InOrder inOrder = inOrder(mockPanel);
         inOrder.verify(mockPanel, times(1)).reset(); // Verify reset() was not called after the other methods.
-        inOrder.verify(mockPanel, times(1)).setIn("⊤");
-        inOrder.verify(mockPanel, times(1)).setOut("⊥");
+        inOrder.verify(mockPanel, times(1)).setIn("\u22a4");
+        inOrder.verify(mockPanel, times(1)).setOut("\u22a5");
         inOrder.verify(mockPanel, times(1)).setSelectedLine(startBlockOutput, 0, 0);
         verifyNoMoreInteractions(mockPanel);
         reset(mockPanel);

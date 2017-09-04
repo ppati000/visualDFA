@@ -255,6 +255,9 @@ public class Controller {
      *         otherwise
      */
     public boolean shouldContinue() {
+        if(this.dfaExecution == null) {
+            return false;
+        }
         if (this.dfaExecution.isAtBreakpoint()) {
             return false;
         } else {
@@ -364,6 +367,9 @@ public class Controller {
      */
     @SuppressWarnings("deprecation")
     public void stopAnalysis() {
+        if (precalcController == null) {
+            visibilityInput();
+        }
         if (precalcController.getPrecalcState() == DFAPrecalcController.PrecalcState.CALCULATING
                 || precalcController.getPrecalcState() == DFAPrecalcController.PrecalcState.PAUSED) {
             GenericBox closeBox = new GenericBox(this.programFrame, "Stop Calculation", ABORT_PRECALC_MESSAGE, "Yes",

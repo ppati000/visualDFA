@@ -44,8 +44,8 @@ public class Controller {
     // path for release, load analyses dynamically
     private static final String DYNAMIC_ANALYSES_PATH = findJarPath();
 
-    private static final String PROGRAM_OUTPUT_PATH = System.getProperty("user.home") + System.getProperty("file.separator")
-            + "visualDfa" + System.getProperty("file.separator");
+    private static final String PROGRAM_OUTPUT_PATH = System.getProperty("user.home")
+            + System.getProperty("file.separator") + "visualDfa" + System.getProperty("file.separator");
 
     private OptionFileParser fileParser;
     private ProgramFrame programFrame;
@@ -207,16 +207,29 @@ public class Controller {
         }
     }
 
+    private void searchBreakPosition() {
+        while (this.dfaExecution.getCurrentElementaryStep() < this.dfaExecution.getTotalElementarySteps() - 1) {
+            this.dfaExecution.nextElementaryStep();
+            if (this.dfaExecution.isAtBreakpoint()) {
+                return;
+            }
+        }
+        this.dfaExecution.nextElementaryStep();
+        return;
+    }
+
     /**
      * Creates a new {@code AutoplayDriver} to replay the different steps of the
      * analysis if a delay bigger than zero is selected or jumps to the last
      * step of the analysis if the chosen delay is zero.
      */
     public void play() {
-        if (getDelay() == 0
-                || this.dfaExecution.getTotalElementarySteps() - 1 == this.dfaExecution.getCurrentElementaryStep()) {
-            this.dfaExecution.setCurrentElementaryStep(this.dfaExecution.getTotalElementarySteps() - 1);
-            this.programFrame.getControlPanel().setSliderStep(this.dfaExecution.getTotalElementarySteps() - 1);
+        if (this.dfaExecution.getTotalElementarySteps() - 1 == this.dfaExecution.getCurrentElementaryStep()) {
+            return;
+        }
+        if (getDelay() == 0) {
+            searchBreakPosition();
+            this.programFrame.getControlPanel().setSliderStep(this.dfaExecution.getCurrentElementaryStep());
             this.graphUIController.refresh();
             return;
         }
@@ -255,10 +268,12 @@ public class Controller {
      *         otherwise
      */
     public boolean shouldContinue() {
-        if(this.dfaExecution == null) {
+        if (this.dfaExecution == null) {
+            visibilityInput();
             return false;
         }
         if (this.dfaExecution.isAtBreakpoint()) {
+            visibilityWorking();
             return false;
         } else {
             return this.shouldContinue;
@@ -307,6 +322,9 @@ public class Controller {
         GraphBuilder graphBuilder = new GraphBuilder(packageName, className);
         Filter filter = new Filter();
         List<String> methodList = graphBuilder.getMethods(filter);
+        if (methodList.size() == 1) {
+            methodSignature = methodList.get(0);
+        }
         if (methodSignature == null) {
             MethodSelectionBox selectionBox = new MethodSelectionBox(programFrame, methodList);
             if (selectionBox.getOption() == Option.CANCEL_OPTION) {
@@ -369,6 +387,7 @@ public class Controller {
     public void stopAnalysis() {
         if (precalcController == null) {
             visibilityInput();
+            return;
         }
         if (precalcController.getPrecalcState() == DFAPrecalcController.PrecalcState.CALCULATING
                 || precalcController.getPrecalcState() == DFAPrecalcController.PrecalcState.PAUSED) {
@@ -419,10 +438,10 @@ public class Controller {
                 return;
             }
         }
-        visibilityInput();
         this.graphUIController.stop();
         this.programFrame.getStatePanelOpen().reset();
         this.dfaExecution = null;
+        visibilityInput();
     }
 
     protected void visibilityPrecalculating() {

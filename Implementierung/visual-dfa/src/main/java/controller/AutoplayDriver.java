@@ -31,7 +31,7 @@ public class AutoplayDriver implements Runnable {
      * analysis.
      */
     public void run() {
-        // number of times you should wait 50ms long
+        // number of times you should wait 5ms long
         int delayTimes = this.controller.getDelay() / 5;
         lineIterator: while (this.controller.nextLine()) {
             for (int i = 0; i < delayTimes; i++) {
@@ -42,9 +42,9 @@ public class AutoplayDriver implements Runnable {
                         break lineIterator;
                     }
                 } catch (InterruptedException e) {
+                    e.printStackTrace();
                 }
             }
         }
-        this.controller.visibilityWorking();
     }
 }

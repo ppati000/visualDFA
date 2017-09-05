@@ -127,12 +127,6 @@ public class CodeProcessorTest {
         new CodeProcessor(codeFragment);
     }
 
-    @Test(expected = IllegalStateException.class)
-    public void invalidJavaSyntax3() {
-        String codeFragment = "class TestClass";
-        new CodeProcessor(codeFragment);
-    }
-
     @Test
     public void genericClass() {
         String codeFragment = "public class TestClass<String> {public void Method() {System.out.println(\"juhu\");}}";

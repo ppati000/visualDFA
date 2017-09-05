@@ -59,10 +59,10 @@ public class CodeProcessor {
         if (originalCode == null) {
             throw new IllegalArgumentException("String must not be null");
         }
-        this.pathName = Controller.getProgramOutputPath();
+        this.pathName = Controller.getProgramOutputPath() + System.getProperty("file.separator") + "classFiles";
         File dir = new File(this.pathName);
         if (!dir.exists()) {
-            dir.mkdir();
+            dir.mkdirs();
         }
         String codeToCompile = preProcess(originalCode);
         if (codeToCompile == "") {
@@ -76,6 +76,9 @@ public class CodeProcessor {
         boolean containsClass = codeToCompile.contains(" class") || codeToCompile.startsWith("class ");
         if (containsClass) {
             this.className = getClassNameOfCode(codeToCompile);
+            if (this.className == "" || this.className == null) {
+                return;
+            }
             String codeWrap = getTaintWrap(codeToCompile);
             diagnosticCollector = compile(this.className, codeWrap);
         } else {
@@ -155,7 +158,7 @@ public class CodeProcessor {
             }
         }
         if (endOfClassName >= (tryToFindName.length() - 1)) {
-            throw new IllegalStateException("no valid class name found");
+            return null;
         }
         String nameOfClass = tryToFindName.substring(0, endOfClassName).trim();
         return nameOfClass;

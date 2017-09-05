@@ -16,17 +16,16 @@ public class GraphExportProgressView extends JDialog implements GraphExportCallb
     public GraphExportProgressView(String path) {
         JLabelDecorator labelDecorator = new JLabelDecorator(new JComponentDecorator());
 
-        setSize(400, 100);
-        setMinimumSize(new Dimension(400, 100));
+        setSize(500, 100);
+        setMinimumSize(new Dimension(500, 100));
         setAlwaysOnTop(true);
 
         JPanel panel = new JPanel();
-        panel.setSize(400, 100);
+        panel.setSize(500, 100);
         panel.setBackground(Colors.BACKGROUND.getColor());
         panel.setLayout(new BorderLayout());
 
         progressBar = new JProgressBar();
-        progressBar.setSize(200, 5);
         label = new JLabel();
         labelDecorator.decorateLabel(label, "Exporting to " + path);
 

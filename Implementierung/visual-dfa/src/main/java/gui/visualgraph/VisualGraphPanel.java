@@ -4,6 +4,7 @@ import com.mxgraph.layout.hierarchical.mxHierarchicalLayout;
 import com.mxgraph.model.mxCell;
 import com.mxgraph.swing.mxGraphComponent;
 import com.mxgraph.view.mxGraph;
+import controller.Controller;
 import dfa.framework.AbstractBlock;
 import dfa.framework.BlockState;
 import dfa.framework.DFAExecution;
@@ -45,7 +46,7 @@ public class VisualGraphPanel extends JPanel {
     private boolean hasRendered = false;
     private boolean hasAddedGraphExportListener = false;
 
-    private final String outputPath = System.getProperty("user.home") + File.separator + "visualDFA";
+    private final String outputPath = Controller.getProgramOutputPath() + "graphExport";
     private final int fakeProgressBarMaxValue = 42;
     private final int unitScrollAmount = 5;
 

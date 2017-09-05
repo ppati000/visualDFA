@@ -209,6 +209,8 @@ public class AnalysisLoader {
             this.analysisNames.add(entry.getKey());
             this.analyses.put(entry.getKey(), entry.getValue());
         }
+        
+        Collections.sort(analysisNames);
     }
 
     private void getClassFiles(File dir, List<ClassInfoPack> candidates, String packagePrefix) {

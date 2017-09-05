@@ -14,7 +14,7 @@ import java.util.Map;
  * 
  */
 public class AnalysisState<E extends LatticeElement> {
-
+	
     private Map<AbstractBlock, BlockState<E>> stateMap;
 
     private Map<BasicBlock, LogicalColor> colorMap;
@@ -24,6 +24,8 @@ public class AnalysisState<E extends LatticeElement> {
     private BasicBlock currentBasicBlock;
 
     private int eBlockIndex;
+    
+    private DFADirection direction;
 
     /**
      * Construct a new {@code AnalysisState} from a given {@code Worklist}, a current {@code BasicBlock}, an index of an
@@ -42,12 +44,13 @@ public class AnalysisState<E extends LatticeElement> {
      *        a {@code Map} determining the {@code LogicalColor} of each {@code BasicBlock}
      */
     protected AnalysisState(Worklist worklist, BasicBlock currentBasicBlock, int eBlockIndex,
-            Map<AbstractBlock, BlockState<E>> stateMap, Map<BasicBlock, LogicalColor> colorMap) {
+            Map<AbstractBlock, BlockState<E>> stateMap, Map<BasicBlock, LogicalColor> colorMap, DFADirection direction) {
         setWorklist(worklist);
         setCurrentBasicBlock(currentBasicBlock);
         setCurrentElementaryBlockIndex(eBlockIndex);
         setStateMap(stateMap);
         setColorMap(colorMap);
+        this.direction = direction;
     }
 
     /**
@@ -61,9 +64,9 @@ public class AnalysisState<E extends LatticeElement> {
      * @param eBlockIndex
      *        the index of the current {@code ElementaryBlock}
      */
-    public AnalysisState(Worklist worklist, BasicBlock currentBasicBlock, int eBlockIndex) {
+    public AnalysisState(Worklist worklist, BasicBlock currentBasicBlock, int eBlockIndex, DFADirection direction) {
         this(worklist, currentBasicBlock, eBlockIndex, new HashMap<AbstractBlock, BlockState<E>>(),
-                new HashMap<BasicBlock, LogicalColor>());
+                new HashMap<BasicBlock, LogicalColor>(), direction);
     }
 
     /**
@@ -177,7 +180,19 @@ public class AnalysisState<E extends LatticeElement> {
 
         int eBlockIndex = getCurrentElementaryBlockIndex();
         if (0 <= eBlockIndex && eBlockIndex < currentBB.getElementaryBlockCount()) {
-            return currentBB.getElementaryBlock(getCurrentElementaryBlockIndex());
+        	int idx;
+        	switch (direction) {
+        	case FORWARD:
+        		idx = getCurrentElementaryBlockIndex();
+        		break;
+        	case BACKWARD:
+        		idx = currentBB.getElementaryBlockCount() - 1 - getCurrentElementaryBlockIndex();
+        		break;
+            default:
+                throw new IllegalStateException("unknown direction: " + direction);
+        	}
+        	
+            return currentBB.getElementaryBlock(idx);
         }
 
         return null;

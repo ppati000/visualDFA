@@ -78,8 +78,9 @@ public class Controller {
     public Controller() {
 
         try {
-            // TODO change to DYNAMIC_ANALYSES_PATH and DynamicAnalysisLoader;
-            this.analysisLoader = new StaticAnalysisLoader("");
+            this.analysisLoader = new StaticAnalysisLoader(DYNAMIC_ANALYSES_PATH);
+            // TODO note: use this line instead of the line above to load analyses dynamically
+            // this.analysisLoader = new AnalysisLoader(DYNAMIC_ANALYSES_PATH);
         } catch (IllegalStateException e) {
             e.printStackTrace();
         }

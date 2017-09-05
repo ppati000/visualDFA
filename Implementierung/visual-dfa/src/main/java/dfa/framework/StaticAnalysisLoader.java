@@ -9,6 +9,7 @@ import dfa.analyses.ConstantFoldingFactory;
 import dfa.analyses.ReachingDefinitionsFactory;
 import dfa.analyses.TaintFactory;
 import dfa.analyses.testanalyses.DummyFactory;
+import dfa.analyses.testanalyses.DummyFactoryBackwards;
 import dfa.analyses.testanalyses.SlowDummyFactory;
 
 /**
@@ -47,6 +48,9 @@ public class StaticAnalysisLoader extends AnalysisLoader {
 
         DummyFactory dummyFactory = new DummyFactory();
         factoryMap.put(dummyFactory.getName(), dummyFactory);
+        
+        DummyFactoryBackwards dummyFactoryBackwards = new DummyFactoryBackwards();
+        factoryMap.put(dummyFactoryBackwards.getName(), dummyFactoryBackwards);
 
         SlowDummyFactory slowDummyFactory = new SlowDummyFactory();
         factoryMap.put(slowDummyFactory.getName(), slowDummyFactory);

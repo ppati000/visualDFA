@@ -1,22 +1,17 @@
 package dfa.analyses.reachingdefTests;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import org.junit.Assert;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 import codeprocessor.CodeProcessor;
 import codeprocessor.GraphBuilder;
-import controller.Controller;
 import dfa.analyses.ReachingDefinitionsElement;
 import dfa.analyses.ReachingDefinitionsElement.Definition;
 import dfa.analyses.ReachingDefinitionsInitializer;
-import dfa.analyses.ReachingDefinitionsJoin;
 import dfa.analyses.ReachingDefinitionsTransition;
 import dfa.framework.BlockState;
 import dfa.framework.SimpleBlockGraph;

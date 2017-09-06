@@ -6,7 +6,6 @@ import org.junit.Test;
 
 import codeprocessor.CodeProcessor;
 import codeprocessor.GraphBuilder;
-import controller.Controller;
 import dfa.analyses.ReachingDefinitionsElement;
 import dfa.analyses.ReachingDefinitionsFactory;
 import dfa.framework.DFADirection;

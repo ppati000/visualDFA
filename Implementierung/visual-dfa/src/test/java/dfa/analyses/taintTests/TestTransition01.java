@@ -6,13 +6,11 @@ import java.util.Map;
 import java.util.Set;
 
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 
 import codeprocessor.CodeProcessor;
 import codeprocessor.Filter;
 import codeprocessor.GraphBuilder;
-import controller.Controller;
 import dfa.analyses.TaintElement;
 import dfa.analyses.TaintElement.TaintState;
 import dfa.analyses.TaintInitializer;

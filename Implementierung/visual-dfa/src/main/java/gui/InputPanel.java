@@ -268,8 +268,6 @@ public class InputPanel extends JPanel {
             saveChooser.setAcceptAllFileFilterUsed(false);
             saveChooser.addChoosableFileFilter(new JavaFileFilter());
 
-            saveChooser.addChoosableFileFilter(new AllFileFilter());
-
             int returnVal = saveChooser.showSaveDialog(btnSave);
             if (returnVal == JFileChooser.APPROVE_OPTION) {
                 File file = saveChooser.getSelectedFile();

@@ -20,9 +20,8 @@ import soot.jimple.internal.JimpleLocal;
  */
 public abstract class LocalMapElement<V> implements LatticeElement, Cloneable {
     
-    // TODO change to proper symbols after testing
-    public static final String BOTTOM_SYMBOL = "B"; //"\u22A5"
-    public static final String TOP_SYMBOL = "T";    //"\u22A4"
+    public static final String BOTTOM_SYMBOL = "\u22A5";
+    public static final String TOP_SYMBOL = "\u22A4";
 
 
     protected static final LocalComparator DEFAULT_COMPARATOR = new LocalComparator();

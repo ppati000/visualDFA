@@ -139,6 +139,12 @@ public class TaintTransition implements Transition<TaintElement> {
             rVal.apply(valueSwitch);
             TaintElement.Value rhs = valueSwitch.getResult();
 
+            
+            boolean violated = inputElement.getValue(lValLocal).wasViolated();
+            if (violated) {
+            	rhs.setViolated(true);
+            }
+            
             outputElement.setValue(lValLocal, rhs);
         }
 
@@ -583,14 +589,13 @@ public class TaintTransition implements Transition<TaintElement> {
             Pair<TaintElement.Value> opValues = calcOperands(expr);
             TaintElement.Value opVal1 = opValues.getFirst();
             TaintElement.Value opVal2 = opValues.getSecond();
-            boolean violated = opVal1.wasViolated() | opVal2.wasViolated();
 
             if (isTainted(opVal1) || isTainted(opVal2)) {
-                result = new TaintElement.Value(TaintState.TAINTED, violated);
+                result = new TaintElement.Value(TaintState.TAINTED, false);
             } else if (isBottom(opVal1) || isBottom(opVal2)) {
-                result = new TaintElement.Value(TaintState.BOTTOM, violated);
+                result = new TaintElement.Value(TaintState.BOTTOM, false);
             } else {
-                result = new TaintElement.Value(TaintState.CLEAN, violated);
+                result = new TaintElement.Value(TaintState.CLEAN, false);
             }
         }
 
@@ -600,7 +605,7 @@ public class TaintTransition implements Transition<TaintElement> {
             op.apply(eval);
 
             TaintElement.Value opVal = eval.getResult();
-            result = new TaintElement.Value(opVal.getTaintState(), opVal.wasViolated());
+            result = new TaintElement.Value(opVal.getTaintState(), false);
         }
 
         private Pair<TaintElement.Value> calcOperands(BinopExpr binOpExpr) {

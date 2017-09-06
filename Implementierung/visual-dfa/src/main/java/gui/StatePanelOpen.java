@@ -1,6 +1,7 @@
 package gui;
 
 import java.awt.BorderLayout;
+import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
@@ -91,6 +92,7 @@ public class StatePanelOpen extends JPanel {
         inputArea = new JTextArea();
         inputArea.setColumns(20);
         inputArea.setEditable(false);
+        inputArea.setFont(new Font(Font.MONOSPACED, Font.PLAIN, inputArea.getFont().getSize()));
         GridBagConstraints gbc_inputArea = GridBagConstraintFactory.getStandardGridBagConstraints(0, 3, 1, 1);
         JScrollPane inputPane = new JScrollPane(inputArea);
         statePanel.add(inputPane, gbc_inputArea);
@@ -103,6 +105,7 @@ public class StatePanelOpen extends JPanel {
         outputArea = new JTextArea();
         outputArea.setColumns(20);
         outputArea.setEditable(false);
+        outputArea.setFont(new Font(Font.MONOSPACED, Font.PLAIN, outputArea.getFont().getSize()));
         GridBagConstraints gbc_outputArea = GridBagConstraintFactory.getStandardGridBagConstraints(0, 5, 1, 1);
         JScrollPane outputPane = new JScrollPane(outputArea);
         statePanel.add(outputPane, gbc_outputArea);

@@ -6,7 +6,6 @@ import org.junit.Test;
 
 import codeprocessor.CodeProcessor;
 import codeprocessor.GraphBuilder;
-import controller.Controller;
 import dfa.analyses.TaintElement;
 import dfa.analyses.TaintFactory;
 import dfa.framework.DFADirection;

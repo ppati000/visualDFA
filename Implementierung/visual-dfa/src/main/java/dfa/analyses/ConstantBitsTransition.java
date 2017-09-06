@@ -2235,10 +2235,8 @@ public class ConstantBitsTransition implements Transition<ConstantBitsElement> {
 		        }
 
 		        possibilities[counter] = new BitValueArray(possibility);
-		        System.out.println(possibilities[counter]);	// TODO
 			}
 			
-			System.out.println();// TODO
 			return possibilities;
 		}
 

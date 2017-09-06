@@ -8,7 +8,6 @@ import org.junit.Test;
 
 import codeprocessor.CodeProcessor;
 import codeprocessor.GraphBuilder;
-import controller.Controller;
 import dfa.analyses.ReachingDefinitionsElement;
 import dfa.analyses.ReachingDefinitionsElement.Definition;
 import dfa.analyses.ReachingDefinitionsInitializer;
@@ -16,7 +15,6 @@ import dfa.framework.BlockState;
 import dfa.framework.SimpleBlockGraph;
 import dfaTests.TestMethod;
 import dfaTests.TestUtils;
-import dfaTests.ValueHelper;
 import soot.toolkits.graph.Block;
 
 public class TestReachingDefinitionsInitializer {

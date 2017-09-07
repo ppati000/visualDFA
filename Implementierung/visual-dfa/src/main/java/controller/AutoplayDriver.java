@@ -46,5 +46,8 @@ public class AutoplayDriver implements Runnable {
                 }
             }
         }
+        if (this.controller.shouldContinue()) {
+            this.controller.visibilityWorking();
+        }
     }
 }

@@ -19,7 +19,7 @@ import static gui.visualgraph.Styles.BREAKPOINT_SIZE;
 /**
  * @author Patrick Petrovic
  *
- *         Represents a child block (i.e. a clickable line of code) of a basic block in the visual graph.
+ * Represents a child block (i.e. a clickable line of code) of a basic block in the visual graph.
  */
 public class UILineBlock extends UIAbstractBlock {
     private final UIBasicBlock parent;
@@ -28,6 +28,7 @@ public class UILineBlock extends UIAbstractBlock {
     private boolean hasBreakpoint = false;
     private mxGraphComponent graphComponent;
     private ElementaryBlock elementaryBlock;
+    private boolean isCurrentBlock = false;
 
     private final int BREAKPOINT_SIZE_WITH_PADDINGS = 2 * BREAKPOINT_PADDING + BREAKPOINT_SIZE;
 
@@ -107,6 +108,7 @@ public class UILineBlock extends UIAbstractBlock {
             mxGeometry breakpointGeo = new mxGeometry(BREAKPOINT_PADDING, yValue + BREAKPOINT_PADDING, Styles.BREAKPOINT_SIZE, Styles.BREAKPOINT_SIZE);
             breakpointCell = new mxCell("", breakpointGeo, Styles.NO_BORDER);
             breakpointCell.setVertex(true);
+            graph.setCellStyles(mxConstants.STYLE_FILLCOLOR, Styles.TRANSPARENT_COLOR, new Object[]{breakpointCell});
             graph.addCell(breakpointCell, parent.getMxCell());
 
             // Add a listener for activation and deactivation of breakpoint cell.
@@ -119,16 +121,14 @@ public class UILineBlock extends UIAbstractBlock {
                     }
                 }
             });
-        } else if (analysisState != null && elementaryBlock.equals(analysisState.getCurrentElementaryBlock())) {
-            graph.setCellStyles(mxConstants.STYLE_FILLCOLOR, Styles.HIGHLIGHT_COLOR, new Object[]{cell});
         } else {
-            graph.setCellStyles(mxConstants.STYLE_FILLCOLOR, Styles.TRANSPARENT_COLOR, new Object[]{cell});
-        }
+            boolean isNowCurrentBlock = analysisState != null && elementaryBlock.equals(analysisState.getCurrentElementaryBlock());
+            String newStyle = isNowCurrentBlock ? Styles.HIGHLIGHT_COLOR : Styles.TRANSPARENT_COLOR;
 
-        if (hasBreakpoint) {
-            graph.setCellStyles(mxConstants.STYLE_FILLCOLOR, Styles.BREAKPOINT_COLOR, new Object[]{breakpointCell});
-        } else {
-            graph.setCellStyles(mxConstants.STYLE_FILLCOLOR, Styles.TRANSPARENT_COLOR, new Object[]{breakpointCell});
+            if (isCurrentBlock != isNowCurrentBlock) {
+                graph.setCellStyles(mxConstants.STYLE_FILLCOLOR, newStyle, new Object[]{cell});
+                isCurrentBlock = isNowCurrentBlock;
+            }
         }
     }
 
@@ -138,7 +138,9 @@ public class UILineBlock extends UIAbstractBlock {
     public void toggleBreakpoint() {
         hasBreakpoint = !hasBreakpoint;
         elementaryBlock.setBreakpoint(hasBreakpoint);
-        render(null); // No analysisState needed; we only want to update the breakpoint cell.
+
+        String newStyle = hasBreakpoint ? Styles.BREAKPOINT_COLOR : Styles.TRANSPARENT_COLOR;
+        graph.setCellStyles(mxConstants.STYLE_FILLCOLOR, newStyle, new Object[]{breakpointCell});
     }
 
     /**

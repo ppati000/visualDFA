@@ -7,6 +7,7 @@ import com.mxgraph.view.mxGraph;
 import dfa.framework.AnalysisState;
 import dfa.framework.BasicBlock;
 import dfa.framework.DFAExecution;
+import dfa.framework.LogicalColor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,6 +22,7 @@ public class UIBasicBlock extends UIAbstractBlock {
     private List<UILineBlock> lineBlocks;
     private BasicBlock dfaBasicBlock;
     private DFAExecution dfa;
+    private LogicalColor currentColor = null;
 
     /**
      * Creates and inserts a new {@code mxCell} into the {@code mxGraph}, or updates the {@code mxCell} if it already
@@ -37,25 +39,31 @@ public class UIBasicBlock extends UIAbstractBlock {
 
             graph.setCellStyles(mxConstants.STYLE_FILLCOLOR, Styles.INITIAL_COLOR, new Object[]{cell});
         } else {
-            String colorStyle;
-            switch (dfa.getCurrentAnalysisState().getColor(dfaBasicBlock)) {
-                case CURRENT:
-                    colorStyle = Styles.CURRENT_COLOR;
-                    break;
-                case NOT_VISITED:
-                    colorStyle = Styles.INITIAL_COLOR;
-                    break;
-                case ON_WORKLIST:
-                    colorStyle = Styles.ON_WORKLIST_COLOR;
-                    break;
-                case VISITED_NOT_ON_WORKLIST:
-                    colorStyle = Styles.VISITED_COLOR;
-                    break;
-                default:
-                    throw new IllegalStateException("Error: Unknown LogicalColor.");
-            }
+            LogicalColor newColor = dfa.getCurrentAnalysisState().getColor(dfaBasicBlock);
 
-            graph.setCellStyles(mxConstants.STYLE_FILLCOLOR, colorStyle, new Object[]{cell});
+            if (!newColor.equals(currentColor)) {
+                String colorStyle;
+
+                switch (dfa.getCurrentAnalysisState().getColor(dfaBasicBlock)) {
+                    case CURRENT:
+                        colorStyle = Styles.CURRENT_COLOR;
+                        break;
+                    case NOT_VISITED:
+                        colorStyle = Styles.INITIAL_COLOR;
+                        break;
+                    case ON_WORKLIST:
+                        colorStyle = Styles.ON_WORKLIST_COLOR;
+                        break;
+                    case VISITED_NOT_ON_WORKLIST:
+                        colorStyle = Styles.VISITED_COLOR;
+                        break;
+                    default:
+                        throw new IllegalStateException("Error: Unknown LogicalColor.");
+                }
+
+                graph.setCellStyles(mxConstants.STYLE_FILLCOLOR, colorStyle, new Object[]{cell});
+                currentColor = newColor;
+            }
         }
     }
 

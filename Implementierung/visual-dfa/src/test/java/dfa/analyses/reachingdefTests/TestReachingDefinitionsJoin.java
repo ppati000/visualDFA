@@ -7,8 +7,9 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import dfa.analyses.ReachingDefinitionsElement;
-import dfa.analyses.ReachingDefinitionsElement.Definition;
+import dfa.analyses.ReachingDefinitionsElement.DefinitionSet;
 import dfa.analyses.ReachingDefinitionsJoin;
+import dfaTests.ValueHelper;
 import soot.ByteType;
 import soot.IntType;
 import soot.RefType;
@@ -19,7 +20,7 @@ import soot.jimple.internal.JimpleLocal;
 
 public class TestReachingDefinitionsJoin {
     
-    @Test(expected = IllegalArgumentException.class)
+    @Test (expected = IllegalArgumentException.class)
     public void testJoinEmpty() {
         Set<ReachingDefinitionsElement> emptySet = new HashSet<>();
         ReachingDefinitionsJoin join = new ReachingDefinitionsJoin();
@@ -42,10 +43,10 @@ public class TestReachingDefinitionsJoin {
     @Test
     public void testJoinSingle02() {
         JimpleLocal x = new JimpleLocal("x", IntType.v());
-        Definition xDef = new Definition(IntConstant.v(12));
+        DefinitionSet xDef = new DefinitionSet(IntConstant.v(12));
         
         JimpleLocal s = new JimpleLocal("s", RefType.v());
-        Definition sDef = new Definition(StringConstant.v("text"));
+        DefinitionSet sDef = new DefinitionSet(StringConstant.v("text"));
         
         ReachingDefinitionsElement rde = new ReachingDefinitionsElement();
         rde.setValue(x, xDef);
@@ -62,20 +63,20 @@ public class TestReachingDefinitionsJoin {
     @Test
     public void testJoinMultiple01() {
         JimpleLocal x = new JimpleLocal("x", ByteType.v());
-        Definition xDef1 = new Definition(IntConstant.v(12));
-        Definition xDef2 = new Definition(IntConstant.v(12));
+        DefinitionSet xDef1 = new DefinitionSet(IntConstant.v(12));
+        DefinitionSet xDef2 = new DefinitionSet(IntConstant.v(12));
         
         JimpleLocal y = new JimpleLocal("y", ByteType.v());
-        Definition yDef1 = new Definition(IntConstant.v(-42));
-        Definition yDef2 = Definition.getBottom();
+        DefinitionSet yDef1 = new DefinitionSet(IntConstant.v(-42));
+        DefinitionSet yDef2 = DefinitionSet.getBottom();
         
         JimpleLocal s = new JimpleLocal("s", RefType.v());
-        Definition sDef1 = new Definition(StringConstant.v("text"));
-        Definition sDef2 = new Definition(StringConstant.v("test"));
+        DefinitionSet sDef1 = new DefinitionSet(StringConstant.v("text"));
+        DefinitionSet sDef2 = new DefinitionSet(StringConstant.v("test"));
         
         JimpleLocal t = new JimpleLocal("t", RefType.v());
-        Definition tDef1 = new Definition(StringConstant.v("same text"));
-        Definition tDef2 = new Definition(StringConstant.v("same text"));
+        DefinitionSet tDef1 = new DefinitionSet(StringConstant.v("same text"));
+        DefinitionSet tDef2 = new DefinitionSet(StringConstant.v("same text"));
 
         ReachingDefinitionsElement rde1 = new ReachingDefinitionsElement();
         rde1.setValue(x, xDef1);
@@ -98,27 +99,27 @@ public class TestReachingDefinitionsJoin {
 
         Assert.assertEquals(xDef1, joinResult.getValue(x));
         Assert.assertEquals(yDef1, joinResult.getValue(y));
-        Assert.assertEquals(Definition.getTop(), joinResult.getValue(s));
+        Assert.assertEquals(ValueHelper.getDefinitionSet("test", "text"), joinResult.getValue(s));
         Assert.assertEquals(tDef1, joinResult.getValue(t));
     }
     
     @Test
     public void testJoinMultiple02() {
         JimpleLocal a = new JimpleLocal("a", IntType.v());
-        Definition aDef1 = Definition.getTop();
-        Definition aDef2 = new Definition(IntConstant.v(1));
+        DefinitionSet aDef1 = DefinitionSet.getBottom();
+        DefinitionSet aDef2 = new DefinitionSet(IntConstant.v(1));
         
         JimpleLocal b = new JimpleLocal("b", RefType.v());
-        Definition bDef1 = Definition.getBottom();
-        Definition bDef2 = new Definition(StringConstant.v("abc"));
+        DefinitionSet bDef1 = DefinitionSet.getBottom();
+        DefinitionSet bDef2 = new DefinitionSet(StringConstant.v("abc"));
         
         JimpleLocal c = new JimpleLocal("c", IntType.v());
-        Definition cDef1 = new Definition(IntConstant.v(1));
-        Definition cDef2 = Definition.getTop();
+        DefinitionSet cDef1 = new DefinitionSet(IntConstant.v(1));
+        DefinitionSet cDef2 = new DefinitionSet(IntConstant.v(17));
         
         JimpleLocal d = new JimpleLocal("d", ByteType.v());
-        Definition dDef1 = new Definition(IntConstant.v(12));
-        Definition dDef2 = Definition.getBottom();
+        DefinitionSet dDef1 = new DefinitionSet(IntConstant.v(12));
+        DefinitionSet dDef2 = new DefinitionSet(IntConstant.v(12));;
 
         ReachingDefinitionsElement rde1 = new ReachingDefinitionsElement();
         rde1.setValue(a, aDef1);
@@ -139,9 +140,9 @@ public class TestReachingDefinitionsJoin {
         ReachingDefinitionsJoin join = new ReachingDefinitionsJoin();
         ReachingDefinitionsElement joinResult = join.join(toJoin);
         
-        Assert.assertEquals(Definition.getTop(), joinResult.getValue(a));
+        Assert.assertEquals(ValueHelper.getDefinitionSet("1"), joinResult.getValue(a));
         Assert.assertEquals(bDef2, joinResult.getValue(b));
-        Assert.assertEquals(Definition.getTop(), joinResult.getValue(c));
+        Assert.assertEquals(ValueHelper.getDefinitionSet("1", "17"), joinResult.getValue(c));
         Assert.assertEquals(dDef1, joinResult.getValue(d));
     }
 

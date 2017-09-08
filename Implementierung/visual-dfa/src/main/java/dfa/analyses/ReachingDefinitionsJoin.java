@@ -2,8 +2,10 @@ package dfa.analyses;
 
 import java.util.Iterator;
 import java.util.Set;
+import java.util.TreeSet;
 
-import dfa.analyses.ReachingDefinitionsElement.Definition;
+import dfa.analyses.ReachingDefinitionsElement.DefinitionSet;
+import dfa.analyses.ReachingDefinitionsElement.DefinitionType;
 import dfa.framework.Join;
 import soot.jimple.internal.JimpleLocal;
 
@@ -21,35 +23,27 @@ public class ReachingDefinitionsJoin implements Join<ReachingDefinitionsElement>
         return joinHelper.performJoin(elements);
     }
 
-    private static class JoinHelper extends LocalMapElementJoinHelper<Definition, ReachingDefinitionsElement> {
+    private static class JoinHelper extends LocalMapElementJoinHelper<DefinitionSet, ReachingDefinitionsElement> {
 
         @Override
-        public Definition doValueJoin(Set<ReachingDefinitionsElement> elements, JimpleLocal local) {
-            Iterator<? extends LocalMapElement<Definition>> elementIt = elements.iterator();
-            Definition refVal = elementIt.next().getValue(local);
+        public DefinitionSet doValueJoin(Set<ReachingDefinitionsElement> elements, JimpleLocal local) {
+        	
+        	
+            Iterator<? extends LocalMapElement<DefinitionSet>> elementIt = elements.iterator();
+            DefinitionSet refVal = elementIt.next().getValue(local);
 
-            if (refVal.equals(Definition.getTop())) {
-                return Definition.getTop();
-            }
-
-            Definition tmp = refVal;
+            Set<String> joinResult = new TreeSet<String>();
+            joinResult.addAll(refVal.getValues());
 
             while (elementIt.hasNext()) {
-                Definition currentVal = elementIt.next().getValue(local);
-                if (currentVal.equals(Definition.getTop())) {
-                    return Definition.getTop();
+                DefinitionSet currentVal = elementIt.next().getValue(local);
+                if (currentVal.getDefType() != DefinitionType.BOTTOM) {
+                	joinResult.addAll(currentVal.getValues());
+                } else {
                 }
-
-                if (currentVal.isActualDefinition()) {
-                    if (tmp.equals(Definition.getBottom())) {
-                        tmp = currentVal;
-                    } else if (!tmp.equals(currentVal)) {
-                        return Definition.getTop();
-                    }
-                }
-
             }
-            return tmp;
+            
+            return new DefinitionSet(joinResult);
         }
     }
 }

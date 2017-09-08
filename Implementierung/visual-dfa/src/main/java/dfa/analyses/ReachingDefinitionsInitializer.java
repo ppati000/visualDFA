@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-import dfa.analyses.ReachingDefinitionsElement.Definition;
+import dfa.analyses.ReachingDefinitionsElement.DefinitionSet;
 import dfa.framework.BlockState;
 import dfa.framework.Initializer;
 import dfa.framework.SimpleBlockGraph;
@@ -45,14 +45,14 @@ public class ReachingDefinitionsInitializer implements Initializer<ReachingDefin
 
         Chain<Local> locals = blockGraph.getBody().getLocals();
 
-        Map<JimpleLocal, ReachingDefinitionsElement.Definition> initialBottomMap =
+        Map<JimpleLocal, ReachingDefinitionsElement.DefinitionSet> initialBottomMap =
                 new TreeMap<>(LocalMapElement.DEFAULT_COMPARATOR);
 
         for (Local l : locals) {
             if (! (l instanceof JimpleLocal)) {
               throw new IllegalStateException("no jimple local");
             }
-            initialBottomMap.put((JimpleLocal) l, Definition.getBottom());
+            initialBottomMap.put((JimpleLocal) l, DefinitionSet.getBottom());
         }
 
         List<Block> blocks = blockGraph.getBlocks();

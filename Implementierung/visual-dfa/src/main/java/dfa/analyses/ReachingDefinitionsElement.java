@@ -4,8 +4,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
+import java.util.TreeSet;
 
-import dfa.analyses.ReachingDefinitionsElement.Definition;
+import dfa.analyses.ReachingDefinitionsElement.DefinitionSet;
 import dfa.framework.UnsupportedValueException;
 import soot.ArrayType;
 import soot.Local;
@@ -66,9 +68,9 @@ import soot.jimple.internal.JimpleLocal;
  *         A {@code ReachingDefinitionsElement} is a {@code LatticeElement} used by {@code ReachingDefinitionsAnalysis}.
  *
  */
-public class ReachingDefinitionsElement extends LocalMapElement<Definition> {
+public class ReachingDefinitionsElement extends LocalMapElement<DefinitionSet> {
 
-    public ReachingDefinitionsElement(Map<JimpleLocal, Definition> localMap) {
+    public ReachingDefinitionsElement(Map<JimpleLocal, DefinitionSet> localMap) {
         super(localMap, LocalMapElement.DEFAULT_COMPARATOR);
     }
 
@@ -95,7 +97,7 @@ public class ReachingDefinitionsElement extends LocalMapElement<Definition> {
     }
 
     @Override
-    public LocalMapElement<Definition> clone() {
+    public LocalMapElement<DefinitionSet> clone() {
         return new ReachingDefinitionsElement(getLocalMap());
     }
 
@@ -103,69 +105,65 @@ public class ReachingDefinitionsElement extends LocalMapElement<Definition> {
     public String getStringRepresentation() {
         StringBuilder sb = new StringBuilder();
 
-        Iterator<Map.Entry<JimpleLocal, Definition>> entryIt = localMap.entrySet().iterator();
-        Map.Entry<JimpleLocal, Definition> entry;
+        Iterator<Map.Entry<JimpleLocal, DefinitionSet>> entryIt = localMap.entrySet().iterator();
+        Map.Entry<JimpleLocal, DefinitionSet> entry;
         boolean firstOutput = false;
         while (entryIt.hasNext()) {
             entry = entryIt.next();
-            Definition def = entry.getValue();
+            DefinitionSet def = entry.getValue();
             if (def.isActualDefinition()) {
                 if (firstOutput) {
                     sb.append('\n');
                 }
                 sb.append(entry.getKey().getName());
-                sb.append(" = ");
+                sb.append(" = \n");
                 sb.append(def);
                 firstOutput = true;
+            } else {
             }
         }
 
         return sb.toString();
     }
+    
+    
 
     /**
      * @author Nils Jessen
      * 
      *         The "Value" of the Reaching Definition Analysis
      */
-    public static class Definition {
-        private static final Definition BOTTOM = new Definition(DefinitionType.BOTTOM);
-        private static final Definition TOP = new Definition(DefinitionType.TOP);
+    public static class DefinitionSet {
+        private static final DefinitionSet BOTTOM = new DefinitionSet(new TreeSet<String>());
 
-        private Value val = null;
+        private Set<String> values;
         private DefinitionType type;
 
-        public Definition(DefinitionType type) {
-            if (type == null) {
-                throw new IllegalArgumentException("type must not be null");
-            }
-            
-            if (type == DefinitionType.DEFINITION) {
-                throw new IllegalArgumentException("DEFINITION is not a valid type");
-            }
-            
-            this.type = type;
-        }
-
-        public Definition(Value val) {
+        public DefinitionSet(Value val) {
             if (val == null) {
                 throw new IllegalArgumentException("val must not be null");
             }
             
-            this.val = val;
+            this.values = new TreeSet<>();
+            
+            StringRepresentation valueSwitch = new StringRepresentation(val);
+            val.apply(valueSwitch);
+            values.add(valueSwitch.getResult());
+            
             this.type = DefinitionType.DEFINITION;
         }
-
-        public Value getValue() {
-            return val;
+        
+        public DefinitionSet(Set<String> values) {
+        	this.values = new TreeSet<String>(values);
+        	this.type = this.values.isEmpty() ? DefinitionType.BOTTOM : DefinitionType.DEFINITION;
         }
 
-        public static Definition getBottom() {
+        public Set<String> getValues() {
+            return values;
+        }
+
+        public static DefinitionSet getBottom() {
             return BOTTOM;
-        }
-
-        public static Definition getTop() {
-            return TOP;
         }
 
         public boolean isActualDefinition() {
@@ -178,31 +176,27 @@ public class ReachingDefinitionsElement extends LocalMapElement<Definition> {
 
         @Override
         public String toString() {
-            if (isActualDefinition()) {
-                StringRepresentation valueSwitch = new StringRepresentation(this);
-                val.apply(valueSwitch);
-                return valueSwitch.getResult();
-            } else {
-                return "";
-            }
+        	StringBuilder sb = new StringBuilder();
+        	Iterator<String> it = getValues().iterator();
+        	if (it.hasNext()) {
+        		sb.append(it.next());
+        	}
+        	
+        	while (it.hasNext()) {
+        		sb.append('\n').append(it.next());
+        	}
+        	
+        	return sb.toString();
         }
         
         @Override
         public boolean equals(Object o) {
-            if (! (o instanceof Definition)) {
+            if (! (o instanceof DefinitionSet)) {
                 return false;
             }
             
-            Definition def = (Definition) o;
-            if (getDefType() != def.getDefType()) {
-                return false;
-            }
-            
-            if (getDefType() == DefinitionType.DEFINITION) {
-                return getValue().equals(def.getValue());
-            } 
-            
-            return true;
+          DefinitionSet defSet = (DefinitionSet) o;
+          return this.getValues().equals(defSet.getValues());
         }
         
         
@@ -215,7 +209,7 @@ public class ReachingDefinitionsElement extends LocalMapElement<Definition> {
      */
     static class StringRepresentation implements JimpleValueSwitch {
 
-        private Definition inputDefinition;
+    	private Value value;
 
         private String result;
 
@@ -225,8 +219,8 @@ public class ReachingDefinitionsElement extends LocalMapElement<Definition> {
          * @param inputDefinition
          *        the input for this {@code StringRepresentaton}, on which the evaluation is based on
          */
-        public StringRepresentation(Definition inputDefinition) {
-            this.inputDefinition = inputDefinition;
+        public StringRepresentation(Value val) {
+            this.value = val;
         }
 
         /**
@@ -268,7 +262,6 @@ public class ReachingDefinitionsElement extends LocalMapElement<Definition> {
         @Override
         public void caseMethodHandle(MethodHandle c) {
             result = c.toString();
-            // TODO What does MethodHandle.toString() do?
         }
 
         @Override
@@ -291,9 +284,9 @@ public class ReachingDefinitionsElement extends LocalMapElement<Definition> {
             Value op1 = expr.getOp1();
             Value op2 = expr.getOp2();
 
-            StringRepresentation valueSwitch1 = new StringRepresentation(inputDefinition);
+            StringRepresentation valueSwitch1 = new StringRepresentation(value);
             op1.apply(valueSwitch1);
-            StringRepresentation valueSwitch2 = new StringRepresentation(inputDefinition);
+            StringRepresentation valueSwitch2 = new StringRepresentation(value);
             op2.apply(valueSwitch2);
 
             String[] stringPair = { valueSwitch1.getResult(), valueSwitch2.getResult() };
@@ -333,7 +326,7 @@ public class ReachingDefinitionsElement extends LocalMapElement<Definition> {
         @Override
         public void caseNegExpr(NegExpr expr) {
             Value op = expr.getOp();
-            StringRepresentation valueSwitch = new StringRepresentation(inputDefinition);
+            StringRepresentation valueSwitch = new StringRepresentation(value);
             op.apply(valueSwitch);
             result = "(-1) * " + valueSwitch.getResult();
         }
@@ -394,7 +387,7 @@ public class ReachingDefinitionsElement extends LocalMapElement<Definition> {
 
         @Override
         public void caseCastExpr(CastExpr expr) {
-            StringRepresentation valueSwitch = new StringRepresentation(inputDefinition);
+            StringRepresentation valueSwitch = new StringRepresentation(value);
             Value op = expr.getOp();
             op.apply(valueSwitch);
             Type type = expr.getCastType();
@@ -440,7 +433,7 @@ public class ReachingDefinitionsElement extends LocalMapElement<Definition> {
         @Override
         public void caseInstanceOfExpr(InstanceOfExpr expr) {
             Value op = expr.getOp();
-            StringRepresentation valueSwitch = new StringRepresentation(inputDefinition);
+            StringRepresentation valueSwitch = new StringRepresentation(value);
             op.apply(valueSwitch);
             result = valueSwitch.getResult() + " instanceof " + expr.getCheckType();
         }
@@ -454,7 +447,6 @@ public class ReachingDefinitionsElement extends LocalMapElement<Definition> {
 
         @Override
         public void caseDynamicInvokeExpr(DynamicInvokeExpr expr) {
-            // TODO is this correct?
             String methodName = expr.getMethod().getName();
             List<Value> args = expr.getArgs();
             staticInvokeExpr(methodName, args);
@@ -462,7 +454,7 @@ public class ReachingDefinitionsElement extends LocalMapElement<Definition> {
 
         @Override
         public void caseLengthExpr(LengthExpr expr) {
-            StringRepresentation valueSwitch = new StringRepresentation(inputDefinition);
+            StringRepresentation valueSwitch = new StringRepresentation(value);
             Value op = expr.getOp();
             op.apply(valueSwitch);
             result = "arraylength(" + valueSwitch.getResult() + ")";
@@ -470,7 +462,7 @@ public class ReachingDefinitionsElement extends LocalMapElement<Definition> {
 
         @Override
         public void caseNewArrayExpr(NewArrayExpr expr) {
-            StringRepresentation valueSwitch = new StringRepresentation(inputDefinition);
+            StringRepresentation valueSwitch = new StringRepresentation(value);
             Value size = expr.getSize();
             size.apply(valueSwitch);
             result = "new " + expr.getBaseType().toString() + "[" + valueSwitch.getResult() + "]";
@@ -493,7 +485,7 @@ public class ReachingDefinitionsElement extends LocalMapElement<Definition> {
             sb.append("new " + type.toString());
             int sizeCount = expr.getSizeCount();
             for (int i = 0; i < sizeCount; i++) {
-                StringRepresentation valueSwitch = new StringRepresentation(inputDefinition);
+                StringRepresentation valueSwitch = new StringRepresentation(value);
                 Value size = expr.getSize(i);
                 size.apply(valueSwitch);
                 sb.append("[" + valueSwitch.getResult() + "]");
@@ -526,11 +518,11 @@ public class ReachingDefinitionsElement extends LocalMapElement<Definition> {
 
         @Override
         public void caseArrayRef(ArrayRef ref) {
-            StringRepresentation valueSwitch = new StringRepresentation(inputDefinition);
+            StringRepresentation valueSwitch = new StringRepresentation(value);
             Value op = ref.getBase();
             op.apply(valueSwitch);
             String base = valueSwitch.getResult();
-            valueSwitch = new StringRepresentation(inputDefinition);
+            valueSwitch = new StringRepresentation(value);
             Value idx = ref.getIndex();
             idx.apply(valueSwitch);
             String index = valueSwitch.getResult();
@@ -544,7 +536,7 @@ public class ReachingDefinitionsElement extends LocalMapElement<Definition> {
 
         @Override
         public void caseInstanceFieldRef(InstanceFieldRef ref) {
-            StringRepresentation valueSwitch = new StringRepresentation(inputDefinition);
+            StringRepresentation valueSwitch = new StringRepresentation(value);
             Value op = ref.getBase();
             op.apply(valueSwitch);
             result = valueSwitch.getResult();
@@ -592,7 +584,7 @@ public class ReachingDefinitionsElement extends LocalMapElement<Definition> {
             StringBuilder sb = new StringBuilder(objectName);
             sb.append(".");
             sb.append(methodName + "(");
-            StringRepresentation valueSwitch = new StringRepresentation(inputDefinition);
+            StringRepresentation valueSwitch = new StringRepresentation(value);
             String prefix = "";
             for (Value v : args) {
                 v.apply(valueSwitch);
@@ -606,7 +598,7 @@ public class ReachingDefinitionsElement extends LocalMapElement<Definition> {
         private void staticInvokeExpr(String methodName, List<Value> args) {
             StringBuilder sb = new StringBuilder();
             sb.append(methodName + "(");
-            StringRepresentation valueSwitch = new StringRepresentation(inputDefinition);
+            StringRepresentation valueSwitch = new StringRepresentation(value);
             String prefix = "";
             for (Value v : args) {
                 v.apply(valueSwitch);
@@ -629,11 +621,6 @@ public class ReachingDefinitionsElement extends LocalMapElement<Definition> {
          * for bottom
          */
         BOTTOM,
-
-        /**
-         * for top
-         */
-        TOP,
 
         /**
          * for actual defintions

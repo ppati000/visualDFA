@@ -1,6 +1,6 @@
 package dfa.analyses;
 
-import dfa.analyses.ReachingDefinitionsElement.Definition;
+import dfa.analyses.ReachingDefinitionsElement.DefinitionSet;
 import dfa.framework.Transition;
 import dfa.framework.UnsupportedStatementException;
 import soot.Unit;
@@ -76,7 +76,7 @@ public class ReachingDefinitionsTransition implements Transition<ReachingDefinit
             }
 
             Value rVal = stmt.getRightOp();
-            Definition rhs = new Definition(rVal);
+            DefinitionSet rhs = new DefinitionSet(rVal);
 
             outputElement.setValue(lValLocal, rhs);
         }
@@ -111,7 +111,7 @@ public class ReachingDefinitionsTransition implements Transition<ReachingDefinit
             }
 
             Value rVal = stmt.getRightOp();
-            Definition rhs = new Definition(rVal);
+            DefinitionSet rhs = new DefinitionSet(rVal);
 
             outputElement.setValue(lValLocal, rhs);
         }

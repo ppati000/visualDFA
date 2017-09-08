@@ -9,7 +9,7 @@ import org.junit.Test;
 import codeprocessor.CodeProcessor;
 import codeprocessor.GraphBuilder;
 import dfa.analyses.ReachingDefinitionsElement;
-import dfa.analyses.ReachingDefinitionsElement.Definition;
+import dfa.analyses.ReachingDefinitionsElement.DefinitionSet;
 import dfa.analyses.ReachingDefinitionsInitializer;
 import dfa.framework.BlockState;
 import dfa.framework.SimpleBlockGraph;
@@ -19,7 +19,7 @@ import soot.toolkits.graph.Block;
 
 public class TestReachingDefinitionsInitializer {
     
-    private static TestUtils<ReachingDefinitionsElement.Definition> tu = new TestUtils<ReachingDefinitionsElement.Definition>();
+    private static TestUtils<ReachingDefinitionsElement.DefinitionSet> tu = new TestUtils<ReachingDefinitionsElement.DefinitionSet>();
     
     private static SimpleBlockGraph bgPrimitiveTypes;
     private static SimpleBlockGraph bgRefTypes;
@@ -54,7 +54,7 @@ public class TestReachingDefinitionsInitializer {
         ReachingDefinitionsElement initInState = initMap.get(onlyBlock).getInState();
         ReachingDefinitionsElement initOutState = initMap.get(onlyBlock).getOutState();
         
-        Definition bottom = ReachingDefinitionsElement.Definition.getBottom();
+        DefinitionSet bottom = ReachingDefinitionsElement.DefinitionSet.getBottom();
         tu.assertLocalValue(bottom, "b", initInState);
         tu.assertLocalValue(bottom, "by", initInState);
         tu.assertLocalValue(bottom, "c", initInState);
@@ -98,7 +98,7 @@ public class TestReachingDefinitionsInitializer {
         ReachingDefinitionsElement initInState = initMap.get(onlyBlock).getInState();
         ReachingDefinitionsElement initOutState = initMap.get(onlyBlock).getOutState();
         
-        Definition bottom = ReachingDefinitionsElement.Definition.getBottom();
+        DefinitionSet bottom = ReachingDefinitionsElement.DefinitionSet.getBottom();
         tu.assertLocalValue(bottom, "f", initInState);
         tu.assertLocalValue(bottom, "d", initInState);
         tu.assertLocalValue(bottom, "s", initInState);

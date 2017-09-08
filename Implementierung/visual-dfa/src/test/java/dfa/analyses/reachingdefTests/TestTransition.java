@@ -10,7 +10,7 @@ import org.junit.Test;
 import codeprocessor.CodeProcessor;
 import codeprocessor.GraphBuilder;
 import dfa.analyses.ReachingDefinitionsElement;
-import dfa.analyses.ReachingDefinitionsElement.Definition;
+import dfa.analyses.ReachingDefinitionsElement.DefinitionSet;
 import dfa.analyses.ReachingDefinitionsInitializer;
 import dfa.analyses.ReachingDefinitionsTransition;
 import dfa.framework.BlockState;
@@ -23,7 +23,7 @@ import soot.toolkits.graph.Block;
 
 public class TestTransition {
     
-    private static TestUtils<Definition> tu = new TestUtils<Definition>();
+    private static TestUtils<DefinitionSet> tu = new TestUtils<DefinitionSet>();
    
     @Test
     public void testPrimitiveTypes() {
@@ -55,8 +55,8 @@ public class TestTransition {
         Assert.assertEquals(localsIn, localsOut);
         
         for (JimpleLocal l : localsIn) {
-            Assert.assertEquals(Definition.getBottom(), initInState.getValue(l));
-            Assert.assertEquals(Definition.getBottom(), initOutState.getValue(l));
+            Assert.assertEquals(DefinitionSet.getBottom(), initInState.getValue(l));
+            Assert.assertEquals(DefinitionSet.getBottom(), initOutState.getValue(l));
         }
         
         ReachingDefinitionsTransition transition = new ReachingDefinitionsTransition();
@@ -67,7 +67,7 @@ public class TestTransition {
             Assert.assertTrue(result.getValue(l).isActualDefinition());
         }
         
-        String expected = "b = 1\nby = 123\nc = 99\nd = 3.14159265\nf = 66.77\ni = 459853\nl = 55\ns = -4766\nthis = this";
+        String expected = "b = \n1\nby = \n123\nc = \n99\nd = \n3.14159265\nf = \n66.77\ni = \n459853\nl = \n55\ns = \n-4766\nthis = \nthis";
         Assert.assertEquals(expected, result.getStringRepresentation());
     }
     
@@ -119,8 +119,8 @@ public class TestTransition {
         Assert.assertEquals(localsIn, localsOut);
         
         for (JimpleLocal l : localsIn) {
-            Assert.assertEquals(Definition.getBottom(), initInState.getValue(l));
-            Assert.assertEquals(Definition.getBottom(), initOutState.getValue(l));
+            Assert.assertEquals(DefinitionSet.getBottom(), initInState.getValue(l));
+            Assert.assertEquals(DefinitionSet.getBottom(), initOutState.getValue(l));
         }
         
         ReachingDefinitionsTransition transition = new ReachingDefinitionsTransition();
@@ -188,8 +188,8 @@ public class TestTransition {
         Assert.assertEquals(localsIn, localsOut);
 
         for (JimpleLocal l : localsIn) {
-            Assert.assertEquals(Definition.getBottom(), initInState.getValue(l));
-            Assert.assertEquals(Definition.getBottom(), initOutState.getValue(l));
+            Assert.assertEquals(DefinitionSet.getBottom(), initInState.getValue(l));
+            Assert.assertEquals(DefinitionSet.getBottom(), initOutState.getValue(l));
         }
         
         ReachingDefinitionsTransition transition = new ReachingDefinitionsTransition();
@@ -248,8 +248,8 @@ public class TestTransition {
         Assert.assertEquals(localsIn, localsOut);
         
         for (JimpleLocal l : localsIn) {
-            Assert.assertEquals(Definition.getBottom(), initInState.getValue(l));
-            Assert.assertEquals(Definition.getBottom(), initOutState.getValue(l));
+            Assert.assertEquals(DefinitionSet.getBottom(), initInState.getValue(l));
+            Assert.assertEquals(DefinitionSet.getBottom(), initOutState.getValue(l));
         }
         
         ReachingDefinitionsTransition transition = new ReachingDefinitionsTransition();
@@ -311,8 +311,8 @@ public class TestTransition {
         Assert.assertEquals(localsIn, localsOut);
         
         for (JimpleLocal l : localsIn) {
-            Assert.assertEquals(Definition.getBottom(), initInState.getValue(l));
-            Assert.assertEquals(Definition.getBottom(), initOutState.getValue(l));
+            Assert.assertEquals(DefinitionSet.getBottom(), initInState.getValue(l));
+            Assert.assertEquals(DefinitionSet.getBottom(), initOutState.getValue(l));
         }
         
         ReachingDefinitionsTransition transition = new ReachingDefinitionsTransition();

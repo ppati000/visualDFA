@@ -1,0 +1,325 @@
+\documentclass[parskip=full,11pt]{scrartcl}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[german]{babel}
+
+\usepackage[yyyymmdd]{datetime} % must be after babel
+\renewcommand{\dateseparator}{-} % ISO8601 date format
+\usepackage{hyperref}
+\usepackage{listings}
+\usepackage{textcomp}
+
+\usepackage{float}
+\usepackage{enumitem}
+\renewcommand{\familydefault}{\sfdefault}
+\usepackage{graphicx}
+\usepackage{placeins}
+
+\usepackage{lmodern}
+\usepackage{courier}
+
+\usepackage{enumitem}
+\setitemize{itemsep=-8pt}
+\usepackage{csquotes}
+
+
+\usepackage{todonotes} % for todo notes - usage \todo{note}
+
+\usepackage{linegoal,listings}
+\newsavebox{\mylisting}
+\makeatletter
+\newcommand{\lstInline}[2][,]{%
+	\begingroup%
+	\lstset{#1}% Set any keys locally
+	\begin{lrbox}{\mylisting}\lstinline!#2!\end{lrbox}% Store listing in \mylisting
+	\setlength{\@tempdima}{\linegoal}% Space left on line.
+	\ifdim\wd\mylisting>\@tempdima\hfill\\\fi% Insert line break
+	\lstinline!#2!% Reset listing
+	\endgroup%
+}
+\makeatother
+\setlength{\parindent}{0pt}% Just for this example
+
+\lstset{basicstyle=\footnotesize\ttfamily,breaklines=true}
+\lstset{framextopmargin=50pt,frame=bottomline,showstringspaces=false,upquote=true,tabsize=4, numbers=left}
+
+
+\RedeclareSectionCommand[style=section,indent=0pt,font=\usekomafont{partnumber}]{part}
+\renewcommand*{\partformat}{\thepart\enskip}
+
+\RedeclareSectionCommand[beforeskip=0pt ,afterskip=0pt]{subparagraph}
+
+\usepackage[bottom = 3 cm, top = 3 cm]{geometry}
+
+\newcommand{\class}[1]{\subsubsection*{\lstinline[basicstyle=\ttfamily\large]{#1}}}
+
+% command for an attribute
+\newcommand{\attr}[4]{\lstinline{[#3]} \textbf{\lstinline{#1 : #2}} \newline #4}
+
+% command for a method
+\newcommand{\method}[5]{\lstinline{[#4]} \textbf{\lstinline{#1(#3) : #2}} \newline #5}
+
+% command for a constructor
+\newcommand{\ctor}[4]{\lstinline{[#3]} \textbf{\lstinline{#1(#2)}} \newline #4}
+
+\newcommand{\inlinecode}[1]{\lstInline[breaklines=true]{#1}}
+
+% make the bullet symbol in lists a circle for level 2
+\renewcommand{\labelitemii}{$\circ$}
+
+% for double quotation marks in listings
+\newcommand{\qq}[1]{``#1``}
+
+\graphicspath{ {images/} }
+
+
+\begin{document}
+	\title{A quick guide to the implementation of analyses}
+	\date{}
+	
+	\maketitle
+	
+	\section{The API}
+	The package relevant for implementing analyses is \inlinecode{dfa.framework}. 
+	The important classes and interfaces are:
+	
+	\subsection*{LatticeElement}
+	A \inlinecode{LatticeElement} represents an in- or out-state of any basic block at any given time.
+	How the \inlinecode{LatticeElement} for any particular analysis looks like, entirely depends on the analysis.
+	The only method a \inlinecode{LatticeElement} must provide is \inlinecode{String getStringRepresentation()}.
+	This is used to create the text in the state-panel (for in- and out-states) on the right in the GUI.
+	
+	Although \inlinecode{getStringRepresentation()} is the only method that is mandatory to implement for a \inlinecode{LatticeElement}, great care should be taken when implementing \inlinecode{boolean} \inlinecode{equals(Object o)}. 
+	Since this method is used by the \inlinecode{DFAExecution} to determine, whether two \inlinecode{LatticeElements} are equal, incorrect implementation can easily lead to infinite loops during the precalculation of a \inlinecode{DFAExecution}.
+	This is due to the fact that basic blocks are added to the worklist, whenever the out-state of one of its predecessors changes (according to \inlinecode{equals}).
+	
+	\subsection*{\inlinecode{DFAFactory<E extends LatticeElement>}}
+	A \inlinecode{DFAFactory} is used to create analyses.
+	Its name is determined by \inlinecode{getName()}, this is the name shown in the analyses selection box in the GUI.
+	It also determines the direction (\inlinecode{DFADirection}, either forward or backward) of the analyses created from this \inlinecode{DFAFactory}.
+	Finally a \inlinecode{DFAFactory} can create instances of \inlinecode{DataFlowAnalysis} from a \inlinecode{SimpleBlockGraph} with \inlinecode{DataFlowAnalysis<E>} \inlinecode{getAnalysis(SimpleBlockGraph blockGraph)}.
+	
+	\subsection*{\inlinecode{DataFlowAnalysis<E extends LatticeElement>}}
+	This abstract class just combines the three interfaces \inlinecode{Initializer}, \inlinecode{Join} and \inlinecode{Transition}, each of which provides only one method:
+	\begin{itemize}
+		\item \inlinecode{Map<Block, BlockState<E>> getInitialStates()}: \\
+		This determines the initial state for each \inlinecode{soot.toolkits.graph.Block}.
+		For many analyses all blocks except the start block will be initialized with some default state.
+		The in-state of the start block will sometimes require special initialization.
+		E. g. for constant-folding in the initial in-state of the start block the values of all locals are set to 0.
+		\item \inlinecode{E join(Set<E>)}: \\
+		This method is used to join several \inlinecode{LatticeElement}s into one, whenever the control flow requires it.
+		The join entirely depends on the particular \inlinecode{LatticeElement} and thus on the analysis.
+		But for most analyses the join-operation is rather straightforward.
+		\item \inlinecode{E transition(E element, Unit unit)}
+		This method decides how a \inlinecode{soot.Unit} transforms a \inlinecode{LatticeElement}.
+		Usually the most effort goes into the implementation of \inlinecode{transition} because there are a lot of different \inlinecode{Unit}s that have to be handled individually.
+		If you are not familiar with Soot, this can be a bit scary at first.
+		In addition to looking at the API-documentation of soot you will probably want to take a look at the source code of an existing analysis.
+		A good point to start would probably be \inlinecode{ConstantFoldingTransition} since it is a functioning analysis and is still reasonably straightforward.
+	\end{itemize}
+
+	One last tip that may be helpful: when you encounter a \inlinecode{Unit} you don't want to handle, you can simply throw a subclass of \inlinecode{DFAException} (e. g. \inlinecode{UnsupportedStatementException}).
+	In that case the precalculation of a \inlinecode{DFAExecution} will be aborted in an orderly fashion and an error message is shown in the GUI.
+	But this also means, you can't analyze any code that produces those \inlinecode{Unit}s.
+	There may also be cases, where you can safely ignore a particular \inlinecode{Unit}.
+	For examples on this see the code of \inlinecode{ConstantFoldingTransition}.
+
+	\subsection*{\inlinecode{CompositeDataFlowAnalysis<E extends LatticeElement>}}
+	This is just a subclass of \inlinecode{DataFlowAnalysis} which takes one \inlinecode{Initializer}, one \inlinecode{Join} and one \inlinecode{Transition} in its constructor and delegates the calls \inlinecode{getInitialStates(...)}, \inlinecode{join(...)} and \inlinecode{transition(...)} to the given objects.
+	So there are two ways of implementing a new analysis: You can extends \inlinecode{DataFlowAnalysis} and overwrite the three methods or you can implement three classes each of which implements one of the three interfaces and then just create a \inlinecode{CompositeDataFlowAnalysis} from them.
+	Which one you choose is up to you, it doesn't really make a difference.
+	We prefer the second approach since it naturally structures the analysis into several classes.
+	If you chose to just implement the three methods in one class you will probably end up with a rather lengthy class.
+
+	\clearpage
+
+	\section{A minimal example}
+	Previously the interfaces needed to implement a new analysis were introduced.
+	Now a minimal example on how to implement an analysis is given.
+	This example is not a useful analysis by any means.
+	It only shows which methods must be implemented and how it could be done.
+	For an example of a real analysis you could look at \inlinecode{ConstantFoldingAnalysis} (with all the classes used by it, especially \inlinecode{ConstantFoldingTransition}).
+	
+	\subsection*{\inlinecode{DFAFactory}}
+	\begin{lstlisting}
+package dfa.analyses.testanalyses;
+
+import dfa.framework.DFADirection;
+import dfa.framework.DFAFactory;
+import dfa.framework.DataFlowAnalysis;
+import dfa.framework.SimpleBlockGraph;
+
+public class DummyFactory extends DFAFactory<DummyElement> {
+
+	@Override
+	public String getName() {
+		// the name shown in the analysis selction
+		return "Dummy Analysis"; 
+	}
+
+	@Override
+	public DFADirection getDirection() {
+		// let's make it a forwrad analysis
+		return DFADirection.FORWARD;
+	}
+
+	@Override
+	public DataFlowAnalysis<DummyElement> getAnalysis(SimpleBlockGraph blockGraph) {
+		return new DummyAnalysis(blockGraph);
+	}
+}
+
+	\end{lstlisting}
+	
+	\subsection*{\inlinecode{[Composite-]DataFlowAnalysis}}
+	\begin{lstlisting}
+package dfa.analyses.testanalyses;
+
+import dfa.framework.CompositeDataFlowAnalysis;
+import dfa.framework.SimpleBlockGraph;
+
+public class DummyAnalysis extends CompositeDataFlowAnalysis<DummyElement> {
+	public DummyAnalysis(SimpleBlockGraph blockGraph) {
+		// since we extend a CompositeDataFlowAnalysis we use 
+		// its constructor and are done
+		super(new DummyJoin(), new DummyTransition(), new DummyInitializer(blockGraph));
+	}
+}
+	\end{lstlisting}
+	
+	\clearpage
+	
+	\subsection*{\inlinecode{LatticeElement}}
+	\begin{lstlisting}
+package dfa.analyses.testanalyses;
+
+import dfa.framework.LatticeElement;
+
+public class DummyElement implements LatticeElement {
+	public final ValueType type;
+
+	public DummyElement(ValueType type) {
+		this.type = type;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (!(o instanceof DummyElement)) {
+			return false;
+		}
+
+		DummyElement e = (DummyElement) o;
+		
+		// we make sure, that the same types are 
+		// treated as equal DummyElements
+		return e.type == this.type;
+	}
+
+	@Override
+	public String getStringRepresentation() {
+		// here we craft the string representation of an element, this will be shown in the GUI
+		switch (type) {
+		case BOTTOM:
+			return "B";
+		case TOP:
+			return "T";
+		case SOMETHING:
+			return "?";
+		default:
+			throw new IllegalStateException();
+		}
+	}
+
+	enum ValueType {
+		BOTTOM, TOP, SOMETHING
+	}
+}
+	\end{lstlisting}
+	
+\clearpage
+	
+	\subsection*{\inlinecode{Initializer}}
+	\begin{lstlisting}
+package dfa.analyses.testanalyses;
+
+import dfa.framework.BlockState;
+import dfa.framework.Initializer;
+import dfa.framework.SimpleBlockGraph;
+import soot.toolkits.graph.Block;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+public class DummyInitializer implements Initializer<DummyElement> {
+	private SimpleBlockGraph blockGraph;
+	
+	public DummyInitializer(SimpleBlockGraph blockGraph) {
+		this.blockGraph = blockGraph;
+	}
+	
+	// this method will be used by the DFAExecution to initialize
+	// the in- and out-states of all blocks
+	@Override
+	public Map<Block, BlockState<DummyElement>> getInitialStates() {
+		List<Block> blocks = blockGraph.getBlocks();
+	
+		BlockState<DummyElement> defaultState = new BlockState<>(new DummyElement(DummyElement.ValueType.TOP), new DummyElement(DummyElement.ValueType.BOTTOM));
+	
+		Map<Block, BlockState<DummyElement>> initialMap = new HashMap<>();
+	
+		// each block simply gets the same initial in- and out-state
+		for (Block b : blocks) {
+			initialMap.put(b, defaultState);
+		}
+
+		return initialMap;
+	}
+}
+	\end{lstlisting}
+	
+	\clearpage
+	
+	\subsection*{\inlinecode{Join}}
+	\begin{lstlisting}
+package dfa.analyses.testanalyses;
+
+import dfa.framework.Join;
+
+import java.util.Set;
+
+public class DummyJoin implements Join<DummyElement> {
+
+	// this method will be called whenever the (one ore more) 
+	// predecessors of one block need to be joined
+	@Override
+	public DummyElement join(Set<DummyElement> elements) {
+		// a trivial join, for real analyses you will have to do a little more work
+		return new DummyElement(DummyElement.ValueType.SOMETHING);
+	}
+}
+	\end{lstlisting}	
+
+	\subsection*{\inlinecode{Transition}}
+	\begin{lstlisting}
+package dfa.analyses.testanalyses;
+
+import dfa.framework.Transition;
+import soot.Unit;
+
+public class DummyTransition implements Transition<DummyElement> {
+
+	// this method will be called to transition one state to another 
+	// over the given Unit
+	@Override
+	public DummyElement transition(DummyElement element, Unit unit) {
+		// a trivial transition, for real analyses you will usually have to do
+		// quite some work here (and at least respect the parameter unit)
+		return new DummyElement(DummyElement.ValueType.SOMETHING);
+	}
+}
+	\end{lstlisting}	
+
+\end{document}

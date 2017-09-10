@@ -116,13 +116,14 @@ public class ReachingDefinitionsElement extends LocalMapElement<DefinitionSet> {
                     sb.append('\n');
                 }
                 sb.append(entry.getKey().getName());
-                sb.append(" = \n");
+                sb.append(" = {\n");
                 sb.append(def);
+                sb.append("\n}");
                 firstOutput = true;
-            } else {
-            }
+            } 
         }
-
+        
+        sb.append("\n");
         return sb.toString();
     }
 
@@ -177,11 +178,12 @@ public class ReachingDefinitionsElement extends LocalMapElement<DefinitionSet> {
             StringBuilder sb = new StringBuilder();
             Iterator<String> it = getValues().iterator();
             if (it.hasNext()) {
+                sb.append("  ");
                 sb.append(it.next());
             }
 
             while (it.hasNext()) {
-                sb.append('\n').append(it.next());
+                sb.append('\n').append("  ").append(it.next());
             }
 
             return sb.toString();

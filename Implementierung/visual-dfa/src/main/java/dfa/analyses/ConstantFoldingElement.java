@@ -26,11 +26,11 @@ import soot.jimple.internal.JimpleLocal;
 public class ConstantFoldingElement extends LocalMapElement<Value> {
 
     /**
-     * Determines whether a certain type of Local is accepted (can be contained in) a {@code ConstantFoldingElement}.
+     * Determines whether a certain type of local is accepted (can be contained in) a {@code ConstantFoldingElement}.
      * 
-     * @param local
-     *        the {@code JimpleLocal} in question
-     * @return {@code true} if the given {@code JimpleLocal} is accepted, {@code false} otherwise
+     * @param type
+     *        the {@code Type} in question
+     * @return {@code true} if the given {@code Type} is accepted, {@code false} otherwise
      */
     public static boolean isLocalTypeAccepted(Type type) {
         return type instanceof BooleanType || type instanceof ByteType || type instanceof CharType

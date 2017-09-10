@@ -52,8 +52,6 @@ public class CodeProcessor {
      * 
      * @param originalCode
      *            the java-code fragment, that will be compiled
-     * @param programOutputPath
-     *            path where the created .class-Files should be saved
      */
     public CodeProcessor(String originalCode) {
         if (originalCode == null) {

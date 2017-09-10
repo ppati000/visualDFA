@@ -115,7 +115,7 @@ public class TestReachingDefinitionsElement {
         DefinitionSet sDef = new DefinitionSet(StringConstant.v("some \"string\""));
         rde.setValue(s, sDef);
         
-        String expected = "a = \n12\nb = \n127\ns = \nsome \"string\"";
+        String expected = "a = {\n  12\n}\nb = {\n  127\n}\ns = {\n  some \"string\"\n}\n";
         Assert.assertEquals(expected, rde.getStringRepresentation());
     }
 

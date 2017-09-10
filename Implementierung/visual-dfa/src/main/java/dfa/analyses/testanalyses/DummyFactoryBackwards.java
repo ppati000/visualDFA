@@ -6,7 +6,7 @@ import dfa.framework.DataFlowAnalysis;
 import dfa.framework.SimpleBlockGraph;
 
 /**
- * Dummy analysis for tests.
+ * A factory for backwards dummy analyses.
  * 
  * @author Sebastian Rauch
  *

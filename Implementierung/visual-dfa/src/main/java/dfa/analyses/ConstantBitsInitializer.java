@@ -24,9 +24,9 @@ import soot.toolkits.graph.Block;
 import soot.util.Chain;
 
 /**
- * @author Nils Jessen
+ * A {@code ConstantBitsInitializer} performs the initialization for a {@code ConstantBitsAnalysis}.
  * 
- *         A {@code ConstantBitsInitializer} performs the initialization for a {@code ConstantBitsAnalysis}.
+ * @author Nils Jessen
  */
 public class ConstantBitsInitializer implements Initializer<ConstantBitsElement> {
 

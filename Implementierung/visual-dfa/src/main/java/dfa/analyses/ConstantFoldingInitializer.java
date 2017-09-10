@@ -24,10 +24,10 @@ import soot.toolkits.graph.Block;
 import soot.util.Chain;
 
 /**
+ * A {@code ConstantFoldingInitializer} performs the initialization for a {@code ConstantFoldingAnalysis}.
+ * 
  * @author Nils Jessen
  * @author Sebastian Rauch
- * 
- *         A {@code ConstantFoldingInitializer} performs the initialization for a {@code ConstantFoldingAnalysis}.
  */
 public class ConstantFoldingInitializer implements Initializer<ConstantFoldingElement> {
 

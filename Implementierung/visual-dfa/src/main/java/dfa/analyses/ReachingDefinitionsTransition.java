@@ -24,9 +24,9 @@ import soot.jimple.ThrowStmt;
 import soot.jimple.internal.JimpleLocal;
 
 /**
- * @author Nils Jessen
+ * A {@code ReachingDefinitionsTransition} performs the transition for a {@code ReachingDefinitionsAnalysis}.
  * 
- *         A {@code ReachingDefinitionsTransition} performs the transition for a {@code ReachingDefinitionsAnalysis}.
+ * @author Nils Jessen
  */
 public class ReachingDefinitionsTransition implements Transition<ReachingDefinitionsElement> {
 
@@ -72,7 +72,7 @@ public class ReachingDefinitionsTransition implements Transition<ReachingDefinit
             if (stmt.getLeftOp() instanceof JimpleLocal) {
                 lValLocal = (JimpleLocal) stmt.getLeftOp();
             } else {
-                return;     // ignore
+                return; // ignore
             }
 
             Value rVal = stmt.getRightOp();
@@ -107,7 +107,7 @@ public class ReachingDefinitionsTransition implements Transition<ReachingDefinit
             if (stmt.getLeftOp() instanceof JimpleLocal) {
                 lValLocal = (JimpleLocal) stmt.getLeftOp();
             } else {
-                return;     // ignore
+                return; // ignore
             }
 
             Value rVal = stmt.getRightOp();

@@ -4,9 +4,9 @@ import dfa.framework.CompositeDataFlowAnalysis;
 import dfa.framework.SimpleBlockGraph;
 
 /**
- * @author Nils Jessen
+ * A {@code ConstantBitsAnalysis} is a {@code DataFlowAnalysis} that performs constant-bits.
  * 
- *         A {@code ConstantBitsAnalysis} is a {@code DataFlowAnalysis} that performs constant-bits.
+ * @author Nils Jessen
  */
 public class ConstantBitsAnalysis extends CompositeDataFlowAnalysis<ConstantBitsElement> {
 

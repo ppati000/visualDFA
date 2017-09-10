@@ -6,10 +6,9 @@ import dfa.framework.DataFlowAnalysis;
 import dfa.framework.SimpleBlockGraph;
 
 /**
- * @author Sebastian Rauch
+ * A {@code TaintFactory} creates {@code TaintAnalysis}-Instances from {@code SimpleBlockGraph}.
  * 
- *         A {@code TaintFactory} creates {@code TaintAnalysis}-Instances from {@code SimpleBlockGraph}.
- *
+ * @author Sebastian Rauch
  */
 public class TaintFactory extends DFAFactory<TaintElement> {
 

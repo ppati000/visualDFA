@@ -20,10 +20,9 @@ import soot.jimple.LongConstant;
 import soot.jimple.internal.JimpleLocal;
 
 /**
- * @author Nils Jessen
+ * A {@code ConstantBitsElement} is a {@code LatticeElement} used by {@code ConstantBitsAnalysis}.
  * 
- *         A {@code ConstantBitsElement} is a {@code LatticeElement} used by {@code ConstantBitsAnalysis}.
- *
+ * @author Nils Jessen
  */
 public class ConstantBitsElement extends LocalMapElement<BitValueArray> {
 
@@ -117,7 +116,6 @@ public class ConstantBitsElement extends LocalMapElement<BitValueArray> {
         return new ConstantBitsElement(newMap);
     }
 
-    // TODO at the moment: String representation has lowest bit in the left
     @Override
     public String getStringRepresentation() {
         StringBuilder sb = new StringBuilder();

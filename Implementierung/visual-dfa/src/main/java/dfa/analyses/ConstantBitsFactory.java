@@ -5,11 +5,10 @@ import dfa.framework.DFAFactory;
 import dfa.framework.DataFlowAnalysis;
 import dfa.framework.SimpleBlockGraph;
 
-/** 
- * @author Nils Jessen
+/**
+ * A {@code ConstantBitsAnalysis} creates {@code ConstantBitsAnalysis}-Instances from {@code SimpleBlockGraph}.
  * 
- *         A {@code ConstantBitsAnalysis} creates {@code ConstantBitsAnalysis}-Instances from {@code SimpleBlockGraph}.
- *
+ * @author Nils Jessen
  */
 public class ConstantBitsFactory extends DFAFactory<ConstantBitsElement> {
 

@@ -15,10 +15,9 @@ import soot.toolkits.graph.Block;
 import soot.util.Chain;
 
 /**
- * @author Nils Jessen
+ * A {@code ReachingDefinitionsInitializer} performs the initialization for a {@code ReachingDefinitionsAnalysis}.
  * 
- *         A {@code ReachingDefinitionsInitializer} performs the initialization for a
- *         {@code ReachingDefinitionsAnalysis}.
+ * @author Nils Jessen
  */
 public class ReachingDefinitionsInitializer implements Initializer<ReachingDefinitionsElement> {
 
@@ -49,8 +48,8 @@ public class ReachingDefinitionsInitializer implements Initializer<ReachingDefin
                 new TreeMap<>(LocalMapElement.DEFAULT_COMPARATOR);
 
         for (Local l : locals) {
-            if (! (l instanceof JimpleLocal)) {
-              throw new IllegalStateException("no jimple local");
+            if (!(l instanceof JimpleLocal)) {
+                throw new IllegalStateException("no jimple local");
             }
             initialBottomMap.put((JimpleLocal) l, DefinitionSet.getBottom());
         }
@@ -65,7 +64,7 @@ public class ReachingDefinitionsInitializer implements Initializer<ReachingDefin
                 new HashMap<Block, BlockState<ReachingDefinitionsElement>>();
 
         for (Block b : blocks) {
-                initialMap.put(b, defaultState);
+            initialMap.put(b, defaultState);
         }
 
         return initialMap;

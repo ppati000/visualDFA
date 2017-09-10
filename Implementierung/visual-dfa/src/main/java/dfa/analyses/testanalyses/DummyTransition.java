@@ -4,9 +4,9 @@ import dfa.framework.Transition;
 import soot.Unit;
 
 /**
+ * A {@code DummyTransition} performs the transition for a {@code DummyAnalysis}.
+ * 
  * @author Patrick Petrovic
- *
- *         A {@code DummyTransition} performs the transition for a {@code DummyAnalysis}.
  */
 public class DummyTransition implements Transition<DummyElement> {
     @Override

@@ -6,12 +6,10 @@ import dfa.framework.DataFlowAnalysis;
 import dfa.framework.SimpleBlockGraph;
 
 /**
+ * A {@code ConstantFoldingAnalysis} creates {@code ConstantFoldingAnalysis}-Instances from {@code SimpleBlockGraph}.
+ *
  * @author Nils Jessen
  * @author Sebastian Rauch
- * 
- *         A {@code ConstantFoldingAnalysis} creates {@code ConstantFoldingAnalysis}-Instances from
- *         {@code SimpleBlockGraph}.
- *
  */
 public class ConstantFoldingFactory extends DFAFactory<ConstantFoldingElement> {
 

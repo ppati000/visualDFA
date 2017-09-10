@@ -6,11 +6,10 @@ import dfa.framework.DataFlowAnalysis;
 import dfa.framework.SimpleBlockGraph;
 
 /**
- * @author Nils Jessen
- * 
- *         A {@code ReachingDefinitionsFactory} creates {@code ReachingDefinitionsAnalysis}-Instances from a
- *         {@code SimpleBlockGraph}.
+ * A {@code ReachingDefinitionsFactory} creates {@code ReachingDefinitionsAnalysis}-Instances from a
+ * {@code SimpleBlockGraph}.
  *
+ * @author Nils Jessen
  */
 public class ReachingDefinitionsFactory extends DFAFactory<ReachingDefinitionsElement> {
 

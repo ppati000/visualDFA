@@ -10,9 +10,9 @@ import dfa.framework.Join;
 import soot.jimple.internal.JimpleLocal;
 
 /**
- * @author Nils Jessen
+ * A {@code ReachingDefinitionsJoin} performs the join for a {@code ReachingDefinitionsAnalysis}.
  * 
- *         A {@code ReachingDefinitionsJoin} performs the join for a {@code ReachingDefinitionsAnalysis}.
+ * @author Nils Jessen
  */
 public class ReachingDefinitionsJoin implements Join<ReachingDefinitionsElement> {
 
@@ -27,8 +27,7 @@ public class ReachingDefinitionsJoin implements Join<ReachingDefinitionsElement>
 
         @Override
         public DefinitionSet doValueJoin(Set<ReachingDefinitionsElement> elements, JimpleLocal local) {
-        	
-        	
+
             Iterator<? extends LocalMapElement<DefinitionSet>> elementIt = elements.iterator();
             DefinitionSet refVal = elementIt.next().getValue(local);
 
@@ -38,11 +37,11 @@ public class ReachingDefinitionsJoin implements Join<ReachingDefinitionsElement>
             while (elementIt.hasNext()) {
                 DefinitionSet currentVal = elementIt.next().getValue(local);
                 if (currentVal.getDefType() != DefinitionType.BOTTOM) {
-                	joinResult.addAll(currentVal.getValues());
+                    joinResult.addAll(currentVal.getValues());
                 } else {
                 }
             }
-            
+
             return new DefinitionSet(joinResult);
         }
     }

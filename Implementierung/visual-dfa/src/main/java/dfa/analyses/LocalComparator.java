@@ -5,10 +5,10 @@ import java.util.Comparator;
 import soot.jimple.internal.JimpleLocal;
 
 /**
- * @author Nils Jessen 
- * @author Sebastian Rauch
+ * A {@code Comparator} that compares {@code JimpleLocal}s by their name ({@code getName()}).
  * 
- *         A {@code Comparator} that compares {@code JimpleLocal}s by their name ({@code getName()}).
+ * @author Nils Jessen
+ * @author Sebastian Rauch
  */
 public class LocalComparator implements Comparator<JimpleLocal> {
 

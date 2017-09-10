@@ -9,9 +9,9 @@ import dfa.framework.Join;
 import soot.jimple.internal.JimpleLocal;
 
 /**
- * @author Nils Jessen
+ * A {@code ConstantBitsJoin} performs the join for a {@code ConstantBitsAnalysis}.
  * 
- *         A {@code ConstantBitsJoin} performs the join for a {@code ConstantBitsAnalysis}.
+ * @author Nils Jessen
  */
 public class ConstantBitsJoin implements Join<ConstantBitsElement> {
 
@@ -37,31 +37,16 @@ public class ConstantBitsJoin implements Join<ConstantBitsElement> {
             Iterator<? extends LocalMapElement<BitValueArray>> elementIt = elements.iterator();
 
             BitValueArray refVal = elementIt.next().getValue(local);
-            
-            // TODO refactor
-            int length = refVal.getLength();
-            BitValueArray top;
-            BitValueArray bottom;
-            if (length == BitValueArray.INT_SIZE) {
-                top = BitValueArray.getIntTop();
-                bottom = BitValueArray.getIntBottom();
-            } else if (length == BitValueArray.LONG_SIZE) {
-                top = BitValueArray.getLongTop();
-                bottom = BitValueArray.getLongBottom();
-            } else {
-                throw new IllegalStateException("BitValueArrays must be of size INT_SIZE or LONG_SIZE");
-            }
 
             while (elementIt.hasNext()) {
                 BitValueArray currentVal = elementIt.next().getValue(local);
-                refVal = performSingleJoin(refVal, currentVal, length, top, bottom);
+                refVal = performSingleJoin(refVal, currentVal);
             }
             return refVal;
         }
 
-        // TODO refactor to remove parameters length, top, bottom
-        protected BitValueArray performSingleJoin(BitValueArray refVal, BitValueArray currentVal, int length,
-                BitValueArray top, BitValueArray bottom) {
+        protected BitValueArray performSingleJoin(BitValueArray refVal, BitValueArray currentVal) {
+            int length = refVal.getLength();
             if (currentVal.getLength() != length) {
                 // First check if BitValueArrays to be joined are of same size
                 throw new IllegalStateException("Unable to join BitValueArrays of different size!");

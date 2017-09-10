@@ -4,9 +4,9 @@ import dfa.framework.CompositeDataFlowAnalysis;
 import dfa.framework.SimpleBlockGraph;
 
 /**
- * @author Nils Jessen
+ * A {@code ReachingDefinitionsAnalysis} is a {@code DataFlowAnalysis} that performs reaching-definitions.
  * 
- *         A {@code ReachingDefinitionsAnalysis} is a {@code DataFlowAnalysis} that performs reaching-definitions.
+ * @author Nils Jessen
  */
 public class ReachingDefinitionsAnalysis extends CompositeDataFlowAnalysis<ReachingDefinitionsElement> {
 

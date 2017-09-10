@@ -63,10 +63,10 @@ import soot.jimple.XorExpr;
 import soot.jimple.internal.JimpleLocal;
 
 /**
+ * A {@code ReachingDefinitionsElement} is a {@code LatticeElement} used by {@code ReachingDefinitionsAnalysis}.
+ *
  * @author Nils Jessen
  * 
- *         A {@code ReachingDefinitionsElement} is a {@code LatticeElement} used by {@code ReachingDefinitionsAnalysis}.
- *
  */
 public class ReachingDefinitionsElement extends LocalMapElement<DefinitionSet> {
 
@@ -125,8 +125,6 @@ public class ReachingDefinitionsElement extends LocalMapElement<DefinitionSet> {
 
         return sb.toString();
     }
-    
-    
 
     /**
      * @author Nils Jessen
@@ -143,19 +141,19 @@ public class ReachingDefinitionsElement extends LocalMapElement<DefinitionSet> {
             if (val == null) {
                 throw new IllegalArgumentException("val must not be null");
             }
-            
+
             this.values = new TreeSet<>();
-            
+
             StringRepresentation valueSwitch = new StringRepresentation(val);
             val.apply(valueSwitch);
             values.add(valueSwitch.getResult());
-            
+
             this.type = DefinitionType.DEFINITION;
         }
-        
+
         public DefinitionSet(Set<String> values) {
-        	this.values = new TreeSet<String>(values);
-        	this.type = this.values.isEmpty() ? DefinitionType.BOTTOM : DefinitionType.DEFINITION;
+            this.values = new TreeSet<String>(values);
+            this.type = this.values.isEmpty() ? DefinitionType.BOTTOM : DefinitionType.DEFINITION;
         }
 
         public Set<String> getValues() {
@@ -169,37 +167,36 @@ public class ReachingDefinitionsElement extends LocalMapElement<DefinitionSet> {
         public boolean isActualDefinition() {
             return this.type == DefinitionType.DEFINITION;
         }
-        
+
         public DefinitionType getDefType() {
             return this.type;
         }
 
         @Override
         public String toString() {
-        	StringBuilder sb = new StringBuilder();
-        	Iterator<String> it = getValues().iterator();
-        	if (it.hasNext()) {
-        		sb.append(it.next());
-        	}
-        	
-        	while (it.hasNext()) {
-        		sb.append('\n').append(it.next());
-        	}
-        	
-        	return sb.toString();
+            StringBuilder sb = new StringBuilder();
+            Iterator<String> it = getValues().iterator();
+            if (it.hasNext()) {
+                sb.append(it.next());
+            }
+
+            while (it.hasNext()) {
+                sb.append('\n').append(it.next());
+            }
+
+            return sb.toString();
         }
-        
+
         @Override
         public boolean equals(Object o) {
-            if (! (o instanceof DefinitionSet)) {
+            if (!(o instanceof DefinitionSet)) {
                 return false;
             }
-            
-          DefinitionSet defSet = (DefinitionSet) o;
-          return this.getValues().equals(defSet.getValues());
+
+            DefinitionSet defSet = (DefinitionSet) o;
+            return this.getValues().equals(defSet.getValues());
         }
-        
-        
+
     }
 
     /**
@@ -209,7 +206,7 @@ public class ReachingDefinitionsElement extends LocalMapElement<DefinitionSet> {
      */
     static class StringRepresentation implements JimpleValueSwitch {
 
-    	private Value value;
+        private Value value;
 
         private String result;
 
@@ -480,7 +477,7 @@ public class ReachingDefinitionsElement extends LocalMapElement<DefinitionSet> {
             while (arrayType.numDimensions > 1) {
                 arrayType = (ArrayType) arrayType.getElementType();
             }
-            
+
             Type type = arrayType.getElementType();
             sb.append("new " + type.toString());
             int sizeCount = expr.getSizeCount();
@@ -571,9 +568,9 @@ public class ReachingDefinitionsElement extends LocalMapElement<DefinitionSet> {
         public void defaultCase(Object arg0) {
             assert false : "No soot Value - You fucked up!";
         }
-        
+
         /**
-         * Combines the cases of all different dynamic invoke expressions 
+         * Combines the cases of all different dynamic invoke expressions
          * 
          * @param methodName
          *        the name of the method to be invoked
@@ -594,7 +591,7 @@ public class ReachingDefinitionsElement extends LocalMapElement<DefinitionSet> {
             sb.append(")");
             result = sb.toString();
         }
-        
+
         private void staticInvokeExpr(String methodName, List<Value> args) {
             StringBuilder sb = new StringBuilder();
             sb.append(methodName + "(");
@@ -608,7 +605,7 @@ public class ReachingDefinitionsElement extends LocalMapElement<DefinitionSet> {
             sb.append(")");
             result = sb.toString();
         }
-        
+
     }
 
     /**

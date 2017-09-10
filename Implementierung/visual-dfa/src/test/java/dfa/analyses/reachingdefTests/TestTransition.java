@@ -67,7 +67,7 @@ public class TestTransition {
             Assert.assertTrue(result.getValue(l).isActualDefinition());
         }
         
-        String expected = "b = \n1\nby = \n123\nc = \n99\nd = \n3.14159265\nf = \n66.77\ni = \n459853\nl = \n55\ns = \n-4766\nthis = \nthis";
+        String expected = "b = {\n  1\n}\nby = {\n  123\n}\nc = {\n  99\n}\nd = {\n  3.14159265\n}\nf = {\n  66.77\n}\ni = {\n  459853\n}\nl = {\n  55\n}\ns = {\n  -4766\n}\nthis = {\n  this\n}\n";
         Assert.assertEquals(expected, result.getStringRepresentation());
     }
     

@@ -34,10 +34,10 @@ public class TestConstantBitsTransition {
     private static SimpleBlockGraph bgLastResort;
     private static SimpleBlockGraph bgLastResortNegative;
     private static SimpleBlockGraph bgPowerOfTwo;
+    private static SimpleBlockGraph bgDivideByOne;
     private static SimpleBlockGraph bgBitOps;
     private static SimpleBlockGraph bgShifts;
     private static SimpleBlockGraph bgUshr;
-
 
     @BeforeClass
     public static void setUp() {
@@ -75,21 +75,28 @@ public class TestConstantBitsTransition {
 
         gb = new GraphBuilder(cp.getPath(), cp.getClassName());
         bgPowerOfTwo = gb.buildGraph(testMethodPowerOfTwo.signature);
-        
+
+        TestMethod testMethodDivideByOne = getCodeDivideByOne();
+        cp = new CodeProcessor(testMethodDivideByOne.method);
+        Assert.assertTrue(cp.wasSuccessful());
+
+        gb = new GraphBuilder(cp.getPath(), cp.getClassName());
+        bgDivideByOne = gb.buildGraph(testMethodDivideByOne.signature);
+
         TestMethod testMethodBitOps = getCodeBitOps();
         cp = new CodeProcessor(testMethodBitOps.method);
         Assert.assertTrue(cp.wasSuccessful());
 
         gb = new GraphBuilder(cp.getPath(), cp.getClassName());
         bgBitOps = gb.buildGraph(testMethodBitOps.signature);
-        
+
         TestMethod testMethodShifts = getCodeSignedShifts();
         cp = new CodeProcessor(testMethodShifts.method);
         Assert.assertTrue(cp.wasSuccessful());
 
         gb = new GraphBuilder(cp.getPath(), cp.getClassName());
         bgShifts = gb.buildGraph(testMethodShifts.signature);
-        
+
         TestMethod testMethodUshr = getCodeUnsignedShiftRight();
         cp = new CodeProcessor(testMethodUshr.method);
         Assert.assertTrue(cp.wasSuccessful());
@@ -1698,6 +1705,16 @@ public class TestConstantBitsTransition {
         tu.assertLocalValue(expArr2, "y", currentCbe);
         tu.assertLocalValue(expArr4, "z", currentCbe);
 
+        ConstantBitsElement cbe17 = cbTransition.transition(cbe16, endUnits.get(1));
+        currentCbe = cbe17;
+        tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(8), "a", currentCbe);
+        tu.assertLocalValue(expArr3, "b", currentCbe);
+        tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(1), "one", currentCbe);
+        tu.assertLocalValue(BitValueArray.getIntTop(), "p", currentCbe);
+        tu.assertLocalValue(expArr1, "x", currentCbe);
+        tu.assertLocalValue(expArr2, "y", currentCbe);
+        tu.assertLocalValue(expArr4, "z", currentCbe);
+
         BitValue[] expVal5 = new BitValue[BitValueArray.INT_SIZE];
         for (int i = 0; i < BitValueArray.INT_SIZE; i++) {
             expVal5[i] = BitValue.ZERO;
@@ -1706,8 +1723,8 @@ public class TestConstantBitsTransition {
         expVal5[2] = BitValue.ONE;
         expVal5[3] = BitValue.TOP;
         BitValueArray expArr5 = new BitValueArray(expVal5);
-        ConstantBitsElement cbe17 = cbTransition.transition(cbe15, endUnits.get(1));
-        currentCbe = cbe17;
+        ConstantBitsElement cbe18 = cbTransition.transition(cbe17, endUnits.get(2));
+        currentCbe = cbe18;
         tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(8), "a", currentCbe);
         tu.assertLocalValue(expArr3, "b", currentCbe);
         tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(1), "one", currentCbe);
@@ -1716,8 +1733,8 @@ public class TestConstantBitsTransition {
         tu.assertLocalValue(expArr2, "y", currentCbe);
         tu.assertLocalValue(expArr5, "z", currentCbe);
 
-        ConstantBitsElement cbe18 = cbTransition.transition(cbe15, endUnits.get(2));
-        currentCbe = cbe18;
+        ConstantBitsElement cbe19 = cbTransition.transition(cbe18, endUnits.get(3));
+        currentCbe = cbe19;
         tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(8), "a", currentCbe);
         tu.assertLocalValue(expArr3, "b", currentCbe);
         tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(1), "one", currentCbe);
@@ -1726,8 +1743,8 @@ public class TestConstantBitsTransition {
         tu.assertLocalValue(expArr2, "y", currentCbe);
         tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(0), "z", currentCbe);
 
-        ConstantBitsElement cbe19 = cbTransition.transition(cbe18, endUnits.get(3));
-        currentCbe = cbe19;
+        ConstantBitsElement cbe20 = cbTransition.transition(cbe19, endUnits.get(4));
+        currentCbe = cbe20;
         tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(8), "a", currentCbe);
         tu.assertLocalValue(expArr3, "b", currentCbe);
         tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(1), "one", currentCbe);
@@ -1743,8 +1760,8 @@ public class TestConstantBitsTransition {
         expVal6[1] = BitValue.TOP;
         expVal6[2] = BitValue.ONE;
         BitValueArray expArr6 = new BitValueArray(expVal6);
-        ConstantBitsElement cbe20 = cbTransition.transition(cbe19, endUnits.get(4));
-        currentCbe = cbe20;
+        ConstantBitsElement cbe21 = cbTransition.transition(cbe20, endUnits.get(5));
+        currentCbe = cbe21;
         tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(8), "a", currentCbe);
         tu.assertLocalValue(expArr3, "b", currentCbe);
         tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(1), "one", currentCbe);
@@ -1752,6 +1769,16 @@ public class TestConstantBitsTransition {
         tu.assertLocalValue(expArr1, "x", currentCbe);
         tu.assertLocalValue(expArr2, "y", currentCbe);
         tu.assertLocalValue(expArr6, "z", currentCbe);
+
+        ConstantBitsElement cbe22 = cbTransition.transition(cbe21, endUnits.get(6));
+        currentCbe = cbe22;
+        tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(8), "a", currentCbe);
+        tu.assertLocalValue(expArr3, "b", currentCbe);
+        tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(1), "one", currentCbe);
+        tu.assertLocalValue(BitValueArray.getIntTop(), "p", currentCbe);
+        tu.assertLocalValue(expArr1, "x", currentCbe);
+        tu.assertLocalValue(expArr2, "y", currentCbe);
+        tu.assertLocalValue(expArr2, "z", currentCbe);
     }
 
     private static TestMethod getCodePowerOfTwo() {
@@ -1773,23 +1800,119 @@ public class TestConstantBitsTransition {
                         + "b = -5 * one;}"                   // b = -5                                                              cbe14
                                                              // x = join([x_left, x_rigth], [y_left, y_right], [b_left, b_right]);  cbe15
                         + "int z = x / a;"                   // z = <1 0 T T 0 T T T ...>                                           cbe16
-                        + "z = y / a;"                       // z = <0 1 1 T 0 0 0 0 ...>                                           cbe17
-                        + "z = b / a;"                       // z = 0;                                                              cbe18
-                        + "z = y % z;"                       // z = top;                                                            cbe19
-                        + "z = y % a;"                       // <0 T 1 0 0 0 0 ...>                                                 cbe20
+                        + "z = z / one;"                     // z = <1 0 T T 0 T T T ...>                                           cbe17
+                        + "z = y / a;"                       // z = <0 1 1 T 0 0 0 0 ...>                                           cbe18
+                        + "z = b / a;"                       // z = 0;                                                              cbe19
+                        + "z = y % z;"                       // z = top;                                                            cbe20
+                        + "z = y % a;"                       // z = <0 T 1 0 0 0 0 ...>                                             cbe21
+                        + "z = y / one;"                     // z = y;                                                              cbe22
                 + "}";
         // @formatter:on
         return new TestMethod(signature, method);
     }
-    
-    
+
+    @Test
+    public void testDivideByOne() {
+        tu.setPrint(true);
+
+        Assert.assertEquals(1, bgDivideByOne.getBlocks().size());
+
+        Block onlyBlock = bgDivideByOne.getBlocks().get(0);
+
+        tu.printInfo("---- this is the only block ---- ");
+        List<Unit> startUnits = tu.getUnitsFromBlock(onlyBlock);
+        tu.printInfo(tu.unitsToString(startUnits));
+
+        ConstantBitsInitializer cbInit = new ConstantBitsInitializer(bgDivideByOne);
+        Map<Block, BlockState<ConstantBitsElement>> initMap = cbInit.getInitialStates();
+
+        ConstantBitsElement initInState = initMap.get(onlyBlock).getInState();
+        ConstantBitsElement initOutState = initMap.get(onlyBlock).getOutState();
+
+        tu.printInfo("\n" + "---- the initial in-state ----");
+        tu.printInfo(initInState.getStringRepresentation());
+
+        ConstantBitsElement currentCbe = initInState;
+        tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(0), "one", currentCbe);
+        tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(0), "r", currentCbe);
+        tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(0), "x", currentCbe);
+        tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(0), "x#2", currentCbe);
+
+        tu.printInfo("\n" + "---- the initial out-state ----");
+        tu.printInfo(initOutState.getStringRepresentation());
+
+        currentCbe = initOutState;
+        tu.assertLocalValue(BitValueArray.getIntBottom(), "one", currentCbe);
+        tu.assertLocalValue(BitValueArray.getIntBottom(), "r", currentCbe);
+        tu.assertLocalValue(BitValueArray.getIntBottom(), "x", currentCbe);
+        tu.assertLocalValue(BitValueArray.getIntBottom(), "x#2", currentCbe);
+
+        ConstantBitsTransition cbTransition = new ConstantBitsTransition();
+
+        ConstantBitsElement cbe01 = cbTransition.transition(initInState, startUnits.get(0));
+        currentCbe = cbe01;
+        tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(0), "one", currentCbe);
+        tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(0), "r", currentCbe);
+        tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(0), "x", currentCbe);
+        tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(0), "x#2", currentCbe);
+
+        ConstantBitsElement cbe02 = cbTransition.transition(cbe01, startUnits.get(1));
+        currentCbe = cbe02;
+        tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(0), "one", currentCbe);
+        tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(0), "r", currentCbe);
+        tu.assertLocalValue(BitValueArray.getIntTop(), "x", currentCbe);
+        tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(0), "x#2", currentCbe);
+
+        ConstantBitsElement cbe03 = cbTransition.transition(cbe02, startUnits.get(2));
+        currentCbe = cbe03;
+        tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(1), "one", currentCbe);
+        tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(0), "r", currentCbe);
+        tu.assertLocalValue(BitValueArray.getIntTop(), "x", currentCbe);
+        tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(0), "x#2", currentCbe);
+
+        BitValue[] expVal1 = new BitValue[BitValueArray.INT_SIZE];
+        for (int i = 0; i < BitValueArray.INT_SIZE; i++) {
+            expVal1[i] = BitValue.TOP;
+        }
+        for (int j = 8; j < 16; j++) {
+            expVal1[j] = BitValue.ZERO;
+        }
+        BitValueArray expArr1 = new BitValueArray(expVal1);
+        ConstantBitsElement cbe04 = cbTransition.transition(cbe03, startUnits.get(3));
+        currentCbe = cbe04;
+        tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(1), "one", currentCbe);
+        tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(0), "r", currentCbe);
+        tu.assertLocalValue(BitValueArray.getIntTop(), "x", currentCbe);
+        tu.assertLocalValue(expArr1, "x#2", currentCbe);
+
+        ConstantBitsElement cbe05 = cbTransition.transition(cbe04, startUnits.get(4));
+        currentCbe = cbe05;
+        tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(1), "one", currentCbe);
+        tu.assertLocalValue(expArr1, "r", currentCbe);
+        tu.assertLocalValue(BitValueArray.getIntTop(), "x", currentCbe);
+        tu.assertLocalValue(expArr1, "x#2", currentCbe);
+    }
+
+    private static TestMethod getCodeDivideByOne() {
+        String signature = "void test_DivideByOne(int)";
+        // @formatter:off
+        String method = 
+                "public void test_DivideByOne(int x) {"
+                        + "int one = 1;"      // to prevent Java from narrowing small constant ints to byte
+                        + "x &= 0xffff00ff;"   // x#2 = <TTTT TTTT TTTT TTTT 0000 0000 TTTT TTTT>    cbe04
+                        + "int r = x / one;"  // r = <TTTT TTTT TTTT TTTT 0000 0000 TTTT TTTT>      cbe05
+                + "}";
+        // @formatter:on
+        return new TestMethod(signature, method);
+    }
+
     @Test
     public void testBitOps() {
         tu.setPrint(false);
 
         tu.printInfo(bgBitOps.getBlocks().size());
         Assert.assertEquals(4, bgBitOps.getBlocks().size());
-        
+
         Block startBlock = bgBitOps.getBlocks().get(0);
         Block leftBlock = bgBitOps.getBlocks().get(1);
         Block rightBlock = bgBitOps.getBlocks().get(2);
@@ -1810,7 +1933,7 @@ public class TestConstantBitsTransition {
         tu.printInfo("---- this is the end block ---- ");
         List<Unit> endUnits = tu.getUnitsFromBlock(endBlock);
         tu.printInfo(tu.unitsToString(endUnits));
-        
+
         ConstantBitsInitializer cbInit = new ConstantBitsInitializer(bgBitOps);
         Map<Block, BlockState<ConstantBitsElement>> initMap = cbInit.getInitialStates();
 
@@ -1828,7 +1951,6 @@ public class TestConstantBitsTransition {
         tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(0), "y", currentCbe);
         tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(0), "n", currentCbe);
 
-        
         tu.printInfo("\n" + "---- the initial out-state ----");
         tu.printInfo(initOutState.getStringRepresentation());
 
@@ -1841,7 +1963,7 @@ public class TestConstantBitsTransition {
         tu.assertLocalValue(BitValueArray.getIntBottom(), "n", currentCbe);
 
         ConstantBitsTransition transition = new ConstantBitsTransition();
-        
+
         ConstantBitsElement cbeStartOut = transitionThroughBlock(startBlock, initInState, transition);
         currentCbe = cbeStartOut;
         tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(27), "a", currentCbe);
@@ -1868,44 +1990,44 @@ public class TestConstantBitsTransition {
         tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(69), "x", currentCbe);
         tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(57), "y", currentCbe);
         tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(0), "n", currentCbe);
-        
+
         ConstantBitsJoin join = new ConstantBitsJoin();
         ConstantBitsElement cbeJoinResult = join(join, cbeLeftBranchOut, cbeRightBranchOut);
-        
+
         BitValueArray expectedX = ValueHelper.getCbIntBitValueArray(1);
         expectedX.getBitValues()[1] = BitValue.TOP;
         expectedX.getBitValues()[2] = BitValue.TOP;
         expectedX.getBitValues()[3] = BitValue.TOP;
         expectedX.getBitValues()[4] = BitValue.TOP;
         expectedX.getBitValues()[6] = BitValue.TOP;
-        
+
         BitValueArray expectedY = ValueHelper.getCbIntBitValueArray(25);
         expectedY.getBitValues()[1] = BitValue.TOP;
         expectedY.getBitValues()[5] = BitValue.TOP;
-        
+
         ConstantBitsElement cbe01 = transition.transition(cbeJoinResult, endUnits.get(0));
         currentCbe = cbe01;
-        
+
         BitValueArray expected = ValueHelper.getCbIntBitValueArray(23);
         expected.getBitValues()[3] = BitValue.TOP;
         expected.getBitValues()[6] = BitValue.TOP;
-        
+
         tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(27), "a", currentCbe);
         tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(69), "b", currentCbe);
         tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(57), "c", currentCbe);
         tu.assertLocalValue(expectedX, "x", currentCbe);
         tu.assertLocalValue(expectedY, "y", currentCbe);
         tu.assertLocalValue(expected, "n", currentCbe);
-        
+
         ConstantBitsElement cbe02 = transition.transition(cbe01, endUnits.get(1));
         currentCbe = cbe02;
-        
+
         expected = ValueHelper.getCbIntBitValueArray(25);
         expected.getBitValues()[1] = BitValue.TOP;
         expected.getBitValues()[2] = BitValue.TOP;
         expected.getBitValues()[5] = BitValue.TOP;
         expected.getBitValues()[6] = BitValue.TOP;
-        
+
         tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(27), "a", currentCbe);
         tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(69), "b", currentCbe);
         tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(57), "c", currentCbe);
@@ -1915,21 +2037,21 @@ public class TestConstantBitsTransition {
 
         ConstantBitsElement cbe03 = transition.transition(cbe02, endUnits.get(2));
         currentCbe = cbe03;
-        
+
         expected = ValueHelper.getCbIntBitValueArray(1);
         expected.getBitValues()[2] = BitValue.TOP;
         expected.getBitValues()[3] = BitValue.TOP;
-        
+
         tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(27), "a", currentCbe);
         tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(69), "b", currentCbe);
         tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(57), "c", currentCbe);
         tu.assertLocalValue(expectedX, "x", currentCbe);
         tu.assertLocalValue(expectedY, "y", currentCbe);
         tu.assertLocalValue(expected, "n", currentCbe);
-        
+
         ConstantBitsElement cbe04 = transition.transition(cbe03, endUnits.get(3));
         currentCbe = cbe04;
-        
+
         expected = ValueHelper.getCbIntBitValueArray(1);
         expected.getBitValues()[1] = BitValue.TOP;
         expected.getBitValues()[3] = BitValue.TOP;
@@ -1941,27 +2063,27 @@ public class TestConstantBitsTransition {
         tu.assertLocalValue(expectedX, "x", currentCbe);
         tu.assertLocalValue(expectedY, "y", currentCbe);
         tu.assertLocalValue(expected, "n", currentCbe);
-        
+
         ConstantBitsElement cbe05 = transition.transition(cbe04, endUnits.get(4));
         currentCbe = cbe05;
-        
+
         expected = ValueHelper.getCbIntBitValueArray(32);
         expected.getBitValues()[1] = BitValue.TOP;
         expected.getBitValues()[2] = BitValue.TOP;
         expected.getBitValues()[3] = BitValue.TOP;
         expected.getBitValues()[4] = BitValue.TOP;
         expected.getBitValues()[6] = BitValue.TOP;
-        
+
         tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(27), "a", currentCbe);
         tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(69), "b", currentCbe);
         tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(57), "c", currentCbe);
         tu.assertLocalValue(expectedX, "x", currentCbe);
         tu.assertLocalValue(expectedY, "y", currentCbe);
         tu.assertLocalValue(expected, "n", currentCbe);
-        
+
         ConstantBitsElement cbe06 = transition.transition(cbe05, endUnits.get(5));
         currentCbe = cbe06;
-        
+
         expected = ValueHelper.getCbIntBitValueArray(0);
         expected.getBitValues()[1] = BitValue.TOP;
         expected.getBitValues()[2] = BitValue.TOP;
@@ -1969,7 +2091,7 @@ public class TestConstantBitsTransition {
         expected.getBitValues()[4] = BitValue.TOP;
         expected.getBitValues()[5] = BitValue.TOP;
         expected.getBitValues()[6] = BitValue.TOP;
-        
+
         tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(27), "a", currentCbe);
         tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(69), "b", currentCbe);
         tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(57), "c", currentCbe);
@@ -1977,7 +2099,7 @@ public class TestConstantBitsTransition {
         tu.assertLocalValue(expectedY, "y", currentCbe);
         tu.assertLocalValue(expected, "n", currentCbe);
     }
-    
+
     private static TestMethod getCodeBitOps() {
         String signature = "void test_bitOps(int)";
         // @formatter:off
@@ -2008,14 +2130,14 @@ public class TestConstantBitsTransition {
         // @formatter:on
         return new TestMethod(signature, method);
     }
-    
+
     @Test
     public void testSignedShifts() {
         tu.setPrint(false);
 
         tu.printInfo(bgShifts.getBlocks().size());
         Assert.assertEquals(4, bgShifts.getBlocks().size());
-        
+
         Block startBlock = bgShifts.getBlocks().get(0);
         Block leftBlock = bgShifts.getBlocks().get(1);
         Block rightBlock = bgShifts.getBlocks().get(2);
@@ -2036,7 +2158,7 @@ public class TestConstantBitsTransition {
         tu.printInfo("---- this is the end block ---- ");
         List<Unit> endUnits = tu.getUnitsFromBlock(endBlock);
         tu.printInfo(tu.unitsToString(endUnits));
-        
+
         ConstantBitsInitializer cbInit = new ConstantBitsInitializer(bgShifts);
         Map<Block, BlockState<ConstantBitsElement>> initMap = cbInit.getInitialStates();
 
@@ -2054,7 +2176,6 @@ public class TestConstantBitsTransition {
         tu.assertLocalValue(ValueHelper.getCbLongBitValueArray(0), "y", currentCbe);
         tu.assertLocalValue(ValueHelper.getCbLongBitValueArray(0), "n", currentCbe);
 
-        
         tu.printInfo("\n" + "---- the initial out-state ----");
         tu.printInfo(initOutState.getStringRepresentation());
 
@@ -2067,7 +2188,7 @@ public class TestConstantBitsTransition {
         tu.assertLocalValue(BitValueArray.getLongBottom(), "n", currentCbe);
 
         ConstantBitsTransition transition = new ConstantBitsTransition();
-        
+
         ConstantBitsElement cbeStartOut = transitionThroughBlock(startBlock, initInState, transition);
         currentCbe = cbeStartOut;
         tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(6), "a", currentCbe);
@@ -2076,9 +2197,9 @@ public class TestConstantBitsTransition {
         tu.assertLocalValue(ValueHelper.getCbLongBitValueArray(0), "x", currentCbe);
         tu.assertLocalValue(ValueHelper.getCbLongBitValueArray(0), "y", currentCbe);
         tu.assertLocalValue(ValueHelper.getCbLongBitValueArray(0), "n", currentCbe);
-        
+
         tu.printInfo(currentCbe.getStringRepresentation());
-        
+
         ConstantBitsElement cbeLeftBranchOut = transitionThroughBlock(leftBlock, cbeStartOut, transition);
         currentCbe = cbeLeftBranchOut;
         tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(6), "a", currentCbe);
@@ -2096,16 +2217,15 @@ public class TestConstantBitsTransition {
         tu.assertLocalValue(ValueHelper.getCbLongBitValueArray(35), "x", currentCbe);
         tu.assertLocalValue(ValueHelper.getCbLongBitValueArray(235), "y", currentCbe);
         tu.assertLocalValue(ValueHelper.getCbLongBitValueArray(0), "n", currentCbe);
-        
-        
+
         ConstantBitsJoin join = new ConstantBitsJoin();
         ConstantBitsElement cbeJoinResult = join(join, cbeLeftBranchOut, cbeRightBranchOut);
-        
+
         BitValueArray expectedX = ValueHelper.getCbLongBitValueArray(2);
         expectedX.getBitValues()[0] = BitValue.TOP;
         expectedX.getBitValues()[2] = BitValue.TOP;
         expectedX.getBitValues()[5] = BitValue.TOP;
-        
+
         BitValueArray expectedY = ValueHelper.getCbLongBitValueArray(2);
         expectedY.getBitValues()[0] = BitValue.TOP;
         expectedY.getBitValues()[2] = BitValue.TOP;
@@ -2121,20 +2241,20 @@ public class TestConstantBitsTransition {
         tu.assertLocalValue(expectedX, "x", currentCbe);
         tu.assertLocalValue(expectedY, "y", currentCbe);
         tu.assertLocalValue(ValueHelper.getCbLongBitValueArray(0), "n", currentCbe);
-        
+
         ConstantBitsElement cbe01 = transition.transition(cbeJoinResult, endUnits.get(0));
         ConstantBitsElement cbe02 = transition.transition(cbe01, endUnits.get(1));
         currentCbe = cbe02;
-        
+
         BitValueArray expectedN = ValueHelper.getCbLongBitValueArray(0);
         for (int i = 2; i <= 14; ++i) {
-        	expectedN.getBitValues()[i] = BitValue.TOP;
+            expectedN.getBitValues()[i] = BitValue.TOP;
         }
-        
+
         for (int i = 34; i <= 46; ++i) {
-        	expectedN.getBitValues()[i] = BitValue.TOP;
+            expectedN.getBitValues()[i] = BitValue.TOP;
         }
-        
+
         currentCbe = cbe02;
         tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(6), "a", currentCbe);
         tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(35), "b", currentCbe);
@@ -2142,49 +2262,49 @@ public class TestConstantBitsTransition {
         tu.assertLocalValue(expectedX, "x", currentCbe);
         tu.assertLocalValue(expectedY, "y", currentCbe);
         tu.assertLocalValue(expectedN, "n", currentCbe);
-        
+
         ConstantBitsElement cbe03 = transition.transition(cbe02, endUnits.get(2));
         ConstantBitsElement cbe04 = transition.transition(cbe03, endUnits.get(3));
         currentCbe = cbe04;
-        
+
         expectedN = ValueHelper.getCbLongBitValueArray(0);
         for (int i = 0; i < 64; ++i) {
-        	if (i >= 2 && i <= 17) {
-        		expectedN.getBitValues()[i] = BitValue.TOP;
-        	} else if (i >= 34 && i <= 49) {
-        		expectedN.getBitValues()[i] = BitValue.TOP;
-        	} else if (i == 19 || i == 20 || i == 51 || i == 52) {
-        		expectedN.getBitValues()[i] = BitValue.TOP;
-        	}
+            if (i >= 2 && i <= 17) {
+                expectedN.getBitValues()[i] = BitValue.TOP;
+            } else if (i >= 34 && i <= 49) {
+                expectedN.getBitValues()[i] = BitValue.TOP;
+            } else if (i == 19 || i == 20 || i == 51 || i == 52) {
+                expectedN.getBitValues()[i] = BitValue.TOP;
+            }
         }
-        
+
         tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(6), "a", currentCbe);
         tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(35), "b", currentCbe);
         tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(235), "c", currentCbe);
         tu.assertLocalValue(expectedX, "x", currentCbe);
         tu.assertLocalValue(expectedY, "y", currentCbe);
         tu.assertLocalValue(expectedN, "n", currentCbe);
-        
+
         ConstantBitsElement cbe05 = transition.transition(cbe04, endUnits.get(4));
         ConstantBitsElement cbe06 = transition.transition(cbe05, endUnits.get(5));
         currentCbe = cbe06;
-        
+
         expectedN = ValueHelper.getCbLongBitValueArray(0);
         for (int i = 0; i <= 5; ++i) {
-        	expectedN.getBitValues()[i] = BitValue.TOP;
+            expectedN.getBitValues()[i] = BitValue.TOP;
         }
-        
+
         tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(6), "a", currentCbe);
         tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(35), "b", currentCbe);
         tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(235), "c", currentCbe);
         tu.assertLocalValue(expectedX, "x", currentCbe);
         tu.assertLocalValue(expectedY, "y", currentCbe);
         tu.assertLocalValue(expectedN, "n", currentCbe);
-        
+
         ConstantBitsElement cbe07 = transition.transition(cbe06, endUnits.get(6));
         ConstantBitsElement cbe08 = transition.transition(cbe07, endUnits.get(7));
         currentCbe = cbe08;
-        
+
         expectedN = ValueHelper.getCbLongBitValueArray(0);
         expectedN.getBitValues()[0] = BitValue.TOP;
         expectedN.getBitValues()[2] = BitValue.TOP;
@@ -2196,11 +2316,10 @@ public class TestConstantBitsTransition {
         tu.assertLocalValue(expectedX, "x", currentCbe);
         tu.assertLocalValue(expectedY, "y", currentCbe);
         tu.assertLocalValue(expectedN, "n", currentCbe);
-        
+
         tu.printInfo(currentCbe.getStringRepresentation());
     }
-    
-    
+
     private static TestMethod getCodeSignedShifts() {
         String signature = "void test_signedShifts(int)";
         // @formatter:off
@@ -2228,14 +2347,14 @@ public class TestConstantBitsTransition {
         // @formatter:on
         return new TestMethod(signature, method);
     }
-    
+
     @Test
     public void testUnsignedShiftRight() {
         tu.setPrint(false);
 
         tu.printInfo(bgUshr.getBlocks().size());
         Assert.assertEquals(4, bgUshr.getBlocks().size());
-        
+
         Block startBlock = bgUshr.getBlocks().get(0);
         Block leftBlock = bgUshr.getBlocks().get(1);
         Block rightBlock = bgUshr.getBlocks().get(2);
@@ -2256,7 +2375,7 @@ public class TestConstantBitsTransition {
         tu.printInfo("---- this is the end block ---- ");
         List<Unit> endUnits = tu.getUnitsFromBlock(endBlock);
         tu.printInfo(tu.unitsToString(endUnits));
-        
+
         ConstantBitsInitializer cbInit = new ConstantBitsInitializer(bgUshr);
         Map<Block, BlockState<ConstantBitsElement>> initMap = cbInit.getInitialStates();
 
@@ -2273,7 +2392,7 @@ public class TestConstantBitsTransition {
         tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(0), "x", currentCbe);
         tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(0), "y", currentCbe);
         tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(0), "n", currentCbe);
-        
+
         tu.printInfo("\n" + "---- the initial out-state ----");
         tu.printInfo(initOutState.getStringRepresentation());
 
@@ -2284,9 +2403,9 @@ public class TestConstantBitsTransition {
         tu.assertLocalValue(BitValueArray.getIntBottom(), "x", currentCbe);
         tu.assertLocalValue(BitValueArray.getIntBottom(), "y", currentCbe);
         tu.assertLocalValue(BitValueArray.getIntBottom(), "n", currentCbe);
-        
+
         ConstantBitsTransition transition = new ConstantBitsTransition();
-        
+
         ConstantBitsElement cbeStartOut = transitionThroughBlock(startBlock, initInState, transition);
         currentCbe = cbeStartOut;
         tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(-2), "a", currentCbe);
@@ -2295,9 +2414,9 @@ public class TestConstantBitsTransition {
         tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(0), "x", currentCbe);
         tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(0), "y", currentCbe);
         tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(0), "n", currentCbe);
-        
+
         tu.printInfo(currentCbe.getStringRepresentation());
-        
+
         ConstantBitsElement cbeLeftBranchOut = transitionThroughBlock(leftBlock, cbeStartOut, transition);
         currentCbe = cbeLeftBranchOut;
         tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(-2), "a", currentCbe);
@@ -2315,19 +2434,19 @@ public class TestConstantBitsTransition {
         tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(-5), "x", currentCbe);
         tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(39), "y", currentCbe);
         tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(0), "n", currentCbe);
-        
+
         ConstantBitsJoin join = new ConstantBitsJoin();
         ConstantBitsElement cbeJoinResult = join(join, cbeLeftBranchOut, cbeRightBranchOut);
-        
+
         BitValueArray xArr = new BitValueArray(32, BitValue.ONE);
         xArr.getBitValues()[0] = BitValue.TOP;
         xArr.getBitValues()[2] = BitValue.TOP;
-        
+
         BitValueArray yArr = new BitValueArray(32, BitValue.TOP);
         yArr.getBitValues()[1] = BitValue.ONE;
         yArr.getBitValues()[2] = BitValue.ONE;
         yArr.getBitValues()[5] = BitValue.ONE;
-        
+
         currentCbe = cbeJoinResult;
         tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(-2), "a", currentCbe);
         tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(-5), "b", currentCbe);
@@ -2335,25 +2454,25 @@ public class TestConstantBitsTransition {
         tu.assertLocalValue(xArr, "x", currentCbe);
         tu.assertLocalValue(yArr, "y", currentCbe);
         tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(0), "n", currentCbe);
-        
+
         ConstantBitsElement cbe01 = transition.transition(cbeJoinResult, endUnits.get(0));
         currentCbe = cbe01;
-        
+
         BitValueArray expectedN = ValueHelper.getCbIntBitValueArray(0);
         for (int i = 0; i <= 5; ++i) {
-        	expectedN.getBitValues()[i] = BitValue.TOP;
+            expectedN.getBitValues()[i] = BitValue.TOP;
         }
-        
+
         tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(-2), "a", currentCbe);
         tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(-5), "b", currentCbe);
         tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(39), "c", currentCbe);
         tu.assertLocalValue(xArr, "x", currentCbe);
         tu.assertLocalValue(yArr, "y", currentCbe);
         tu.assertLocalValue(expectedN, "n", currentCbe);
-        
+
         ConstantBitsElement cbe02 = transition.transition(cbe01, endUnits.get(1));
         currentCbe = cbe02;
-        
+
         expectedN = new BitValueArray(32, BitValue.TOP);
         expectedN.getBitValues()[0] = BitValue.ONE;
         expectedN.getBitValues()[26] = BitValue.ZERO;
@@ -2362,18 +2481,17 @@ public class TestConstantBitsTransition {
         expectedN.getBitValues()[29] = BitValue.ZERO;
         expectedN.getBitValues()[30] = BitValue.ZERO;
         expectedN.getBitValues()[31] = BitValue.ZERO;
-        
+
         tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(-2), "a", currentCbe);
         tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(-5), "b", currentCbe);
         tu.assertLocalValue(ValueHelper.getCbIntBitValueArray(39), "c", currentCbe);
         tu.assertLocalValue(xArr, "x", currentCbe);
         tu.assertLocalValue(yArr, "y", currentCbe);
         tu.assertLocalValue(expectedN, "n", currentCbe);
-        
+
         tu.printInfo(currentCbe.getStringRepresentation());
     }
-    
-    
+
     private static TestMethod getCodeUnsignedShiftRight() {
         String signature = "void test_unsignedShiftRight(int)";
         // @formatter:off
@@ -2399,8 +2517,9 @@ public class TestConstantBitsTransition {
         // @formatter:on
         return new TestMethod(signature, method);
     }
-    
-    private ConstantBitsElement transitionThroughBlock(Block block, ConstantBitsElement in, ConstantBitsTransition transition) {
+
+    private ConstantBitsElement transitionThroughBlock(Block block, ConstantBitsElement in,
+            ConstantBitsTransition transition) {
         List<Unit> units = tu.getUnitsFromBlock(block);
         ConstantBitsElement currentElement = in;
         for (Unit u : units) {

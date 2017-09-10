@@ -648,8 +648,7 @@ public class ConstantBitsTransition implements Transition<ConstantBitsElement> {
             }
             return count;
         }
-        
-        
+
         private static int getNumberOfTOP(BitValue[] opValues, int maxPos) {
             int count = 0;
             int m = Math.min(opValues.length, maxPos);
@@ -1135,9 +1134,14 @@ public class ConstantBitsTransition implements Transition<ConstantBitsElement> {
                     // if op2 is a power of two, and abs(op2) <= abs(op1), op1 is simply shifted right
                     // if op2Abs <= op1MaxAbs, the result is zero
                     int shiftAmount = op2.getPositionOfOne();
-                    int op2Abs = (int) Math.pow(2, shiftAmount);
+                    int op2Abs = (1 << shiftAmount);
                     long op1MinAbs;
                     long op1MaxAbs;
+
+                    if (op2Abs == 1) {
+                        result = op1;
+                        return;
+                    }
 
                     if (op1HighBit == BitValue.TOP) {
                         // if op1HighBit is TOP we have to check both cases for 0 and 1 to get op1MinAbs and op1MaxAbs
@@ -1825,7 +1829,7 @@ public class ConstantBitsTransition implements Transition<ConstantBitsElement> {
 
             commutativeBitwiseOperation(op1, op2, BitOperation.XOR);
         }
-        
+
         /**
          * Shifts the bits of {@code op} by {@code shiftAmount} left.
          * 
@@ -1855,7 +1859,8 @@ public class ConstantBitsTransition implements Transition<ConstantBitsElement> {
          *        the {@code BitValueArray} which is to be signed-shifted right
          * @param shiftAmount
          *        the amount of which to signed-shift the bits of {@code op} right
-         * @param signed whether the sign should be respected or not
+         * @param signed
+         *        whether the sign should be respected or not
          * @return the bits of {@code op} signed-shifted right by {@code shiftAmount}
          */
         private BitValueArray shiftRight(BitValueArray op, int shiftAmount, boolean signed) {
@@ -1925,12 +1930,12 @@ public class ConstantBitsTransition implements Transition<ConstantBitsElement> {
                 BitValue[] op2Values = op2.getBitValues();
                 int numberOfTOPs = getNumberOfTOP(op2Values, cutLength);
                 int dim = (1 << numberOfTOPs);
-                
+
                 BitValueArray[] op2Possibilities = getPossibilities(op2Values, numberOfTOPs);
-            	for (int counter = 0; counter < dim; ++counter) {
+                for (int counter = 0; counter < dim; ++counter) {
                     int shiftAmount = getShiftAmount(op2Possibilities[counter].getBitValues(), cutLength);
                     op2Possibilities[counter] = shiftLeft(op1, shiftAmount);
-            	}
+                }
 
                 // joining the possibilities
                 BitValueArray refVal = op2Possibilities[0];
@@ -1943,7 +1948,7 @@ public class ConstantBitsTransition implements Transition<ConstantBitsElement> {
                 result = refVal;
             }
         }
-        
+
         @Override
         public void caseShrExpr(ShrExpr expr) {
             ValuePair operandValues = calcOperands(expr);
@@ -1968,12 +1973,12 @@ public class ConstantBitsTransition implements Transition<ConstantBitsElement> {
                 BitValue[] op2Values = op2.getBitValues();
                 int numberOfTOPs = getNumberOfTOP(op2Values, cutLength);
                 int dim = (1 << numberOfTOPs);
-                
+
                 BitValueArray[] op2Possibilities = getPossibilities(op2Values, numberOfTOPs);
-            	for (int counter = 0; counter < dim; ++counter) {
+                for (int counter = 0; counter < dim; ++counter) {
                     int shiftAmount = getShiftAmount(op2Possibilities[counter].getBitValues(), cutLength);
                     op2Possibilities[counter] = shiftRight(op1, shiftAmount, true);
-            	}
+                }
 
                 // joining the possibilities
                 BitValueArray refVal = op2Possibilities[0];
@@ -1986,7 +1991,7 @@ public class ConstantBitsTransition implements Transition<ConstantBitsElement> {
                 result = refVal;
             }
         }
-        
+
         @Override
         public void caseUshrExpr(UshrExpr expr) {
             ValuePair operandValues = calcOperands(expr);
@@ -2012,12 +2017,12 @@ public class ConstantBitsTransition implements Transition<ConstantBitsElement> {
                 BitValue[] op2Values = op2.getBitValues();
                 int numberOfTOPs = getNumberOfTOP(op2Values, cutLength);
                 int dim = (1 << numberOfTOPs);
-                
+
                 BitValueArray[] op2Possibilities = getPossibilities(op2Values, numberOfTOPs);
-            	for (int counter = 0; counter < dim; ++counter) {
+                for (int counter = 0; counter < dim; ++counter) {
                     int shiftAmount = getShiftAmount(op2Possibilities[counter].getBitValues(), cutLength);
                     op2Possibilities[counter] = shiftRight(op1, shiftAmount, false);
-            	}
+                }
 
                 // joining the possibilities
                 BitValueArray refVal = op2Possibilities[0];
@@ -2030,7 +2035,7 @@ public class ConstantBitsTransition implements Transition<ConstantBitsElement> {
                 result = refVal;
             }
         }
-        
+
         @Override
         public void caseCmplExpr(CmplExpr expr) {
             // ignore
@@ -2218,27 +2223,27 @@ public class ConstantBitsTransition implements Transition<ConstantBitsElement> {
         public void defaultCase(Object arg0) {
             assert false : "No soot Value - You fucked up!";
         }
-        
-		BitValueArray[] getPossibilities(BitValue[] input, int numTops) {
-			int dim = 1 << numTops;
-			int length = input.length;
-			BitValueArray[] possibilities = new BitValueArray[dim];
-			for (int counter = 0; counter < dim; ++counter) {
-		        BitValue[] possibility = new BitValue[length];
-		        for (int j = 0, topCnt = 0; j < length; j++) {
-		            if (input[j] == BitValue.TOP && topCnt < numTops) {
-		                possibility[j] = BitValueArray.booleanToBitValue((counter & (1L << topCnt)) != 0);
-		                ++topCnt;
-		            } else {
-		                possibility[j] = input[j];
-		            }
-		        }
 
-		        possibilities[counter] = new BitValueArray(possibility);
-			}
-			
-			return possibilities;
-		}
+        BitValueArray[] getPossibilities(BitValue[] input, int numTops) {
+            int dim = 1 << numTops;
+            int length = input.length;
+            BitValueArray[] possibilities = new BitValueArray[dim];
+            for (int counter = 0; counter < dim; ++counter) {
+                BitValue[] possibility = new BitValue[length];
+                for (int j = 0, topCnt = 0; j < length; j++) {
+                    if (input[j] == BitValue.TOP && topCnt < numTops) {
+                        possibility[j] = BitValueArray.booleanToBitValue((counter & (1L << topCnt)) != 0);
+                        ++topCnt;
+                    } else {
+                        possibility[j] = input[j];
+                    }
+                }
+
+                possibilities[counter] = new BitValueArray(possibility);
+            }
+
+            return possibilities;
+        }
 
         private ValuePair calcOperands(BinopExpr binOpExpr) {
             Value op1 = binOpExpr.getOp1();

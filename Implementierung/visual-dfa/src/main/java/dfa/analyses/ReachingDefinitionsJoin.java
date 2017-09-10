@@ -10,40 +10,40 @@ import dfa.framework.Join;
 import soot.jimple.internal.JimpleLocal;
 
 /**
- * @author Nils Jessen
+ * A {@code ReachingDefinitionsJoin} performs the join for a
+ * {@code ReachingDefinitionsAnalysis}. 
  * 
- *         A {@code ReachingDefinitionsJoin} performs the join for a {@code ReachingDefinitionsAnalysis}.
+ * @author Nils Jessen
  */
 public class ReachingDefinitionsJoin implements Join<ReachingDefinitionsElement> {
 
-    private JoinHelper joinHelper = new JoinHelper();
+	private JoinHelper joinHelper = new JoinHelper();
 
-    @Override
-    public ReachingDefinitionsElement join(Set<ReachingDefinitionsElement> elements) {
-        return joinHelper.performJoin(elements);
-    }
+	@Override
+	public ReachingDefinitionsElement join(Set<ReachingDefinitionsElement> elements) {
+		return joinHelper.performJoin(elements);
+	}
 
-    private static class JoinHelper extends LocalMapElementJoinHelper<DefinitionSet, ReachingDefinitionsElement> {
+	private static class JoinHelper extends LocalMapElementJoinHelper<DefinitionSet, ReachingDefinitionsElement> {
 
-        @Override
-        public DefinitionSet doValueJoin(Set<ReachingDefinitionsElement> elements, JimpleLocal local) {
-        	
-        	
-            Iterator<? extends LocalMapElement<DefinitionSet>> elementIt = elements.iterator();
-            DefinitionSet refVal = elementIt.next().getValue(local);
+		@Override
+		public DefinitionSet doValueJoin(Set<ReachingDefinitionsElement> elements, JimpleLocal local) {
 
-            Set<String> joinResult = new TreeSet<String>();
-            joinResult.addAll(refVal.getValues());
+			Iterator<? extends LocalMapElement<DefinitionSet>> elementIt = elements.iterator();
+			DefinitionSet refVal = elementIt.next().getValue(local);
 
-            while (elementIt.hasNext()) {
-                DefinitionSet currentVal = elementIt.next().getValue(local);
-                if (currentVal.getDefType() != DefinitionType.BOTTOM) {
-                	joinResult.addAll(currentVal.getValues());
-                } else {
-                }
-            }
-            
-            return new DefinitionSet(joinResult);
-        }
-    }
+			Set<String> joinResult = new TreeSet<String>();
+			joinResult.addAll(refVal.getValues());
+
+			while (elementIt.hasNext()) {
+				DefinitionSet currentVal = elementIt.next().getValue(local);
+				if (currentVal.getDefType() != DefinitionType.BOTTOM) {
+					joinResult.addAll(currentVal.getValues());
+				} else {
+				}
+			}
+
+			return new DefinitionSet(joinResult);
+		}
+	}
 }

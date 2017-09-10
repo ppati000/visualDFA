@@ -7,7 +7,7 @@ import java.util.Map.Entry;
 
 import soot.jimple.internal.JimpleLocal;
 
-public abstract class LocalMapElementJoinHelper<V, E extends LocalMapElement<V>> {
+public abstract class LocalMapElementJoinHelper<V, E extends LocalMapElement<V>> { 
 
     public E performJoin(Set<E> elements) {
         if (elements.isEmpty()) {

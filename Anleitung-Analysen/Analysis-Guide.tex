@@ -321,5 +321,16 @@ public class DummyTransition implements Transition<DummyElement> {
 	}
 }
 	\end{lstlisting}	
+	
+	\clearpage 
+	
+	\section{Deployment}
+	Once you have written your own analysis, you surely want to use it.
+	In order to do so you only need to put the class-files of your analysis into the right directory and upon the next start of the program it will be loaded.
+	Let's assume you implemented your analysis in the package \inlinecode{dfa.analyses.myanalysis} (the package should be a subpackage of \inlinecode{dfa.analyses}), then you simply need to put the class-files into \inlinecode{root/dfa/analyses/myanalysis}, where \inlinecode{root} is the directory where the runnable jar of the main program resides.
+	
+	Note that you can also replace existing analyses like that.
+	If you for example decide to write a more precise constant-bits-analysis, you can simply remove all the class-files of the old one and put in your new class-files.
+	
 
 \end{document}

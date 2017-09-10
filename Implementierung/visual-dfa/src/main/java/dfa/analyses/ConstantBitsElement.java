@@ -29,9 +29,9 @@ public class ConstantBitsElement extends LocalMapElement<BitValueArray> {
     /**
      * Determines whether a certain type of Local is accepted (can be contained in) a {@code ConstantBitsElement}.
      * 
-     * @param local
-     *        the {@code JimpleLocal} in question
-     * @return {@code true} if the given {@code JimpleLocal} is accepted, {@code false} otherwise
+     * @param type
+     *        the {@code Type} in question
+     * @return {@code true} if the given {@code Type} is accepted, {@code false} otherwise
      */
     public static boolean isLocalTypeAccepted(Type type) {
         return type instanceof BooleanType || type instanceof ByteType || type instanceof CharType

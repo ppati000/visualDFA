@@ -1,5 +1,10 @@
 package gui.visualgraph;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import com.mxgraph.model.mxCell;
 import com.mxgraph.util.mxEvent;
 import com.mxgraph.util.mxEventObject;
@@ -13,24 +18,18 @@ import dfa.framework.ControlFlowGraph;
 import dfa.framework.DFAExecution;
 import dfa.framework.ElementaryBlock;
 import dfa.framework.LatticeElement;
-
 import gui.StatePanelOpen;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 /**
- * @author Patrick Petrovic
- *
  * Main interface for interaction. Provides important methods to get data from DFAFramework and to build the visual
  * graph. Additionally, it handles creation of VisualGraphPanel and graph export.
+ * 
+ * @author Patrick Petrovic
  */
 public class GraphUIController {
     private VisualGraphPanel panel;
     private mxGraph graph;
-    private DFAExecution dfa;
+    private DFAExecution<? extends LatticeElement> dfa;
     private StatePanelOpen statePanel = null;
     private final Map<AbstractBlock, UIAbstractBlock> mappedAbstractBlocks = new HashMap<>();
 
@@ -38,7 +37,7 @@ public class GraphUIController {
      * Creates a new {@code GraphUIController}.
      *
      * @param panel
-     *         the {@code VisualGraphPanel} this controller should operate on
+     *        the {@code VisualGraphPanel} this controller should operate on
      */
     public GraphUIController(VisualGraphPanel panel) {
         this.panel = panel;
@@ -50,9 +49,9 @@ public class GraphUIController {
      * corresponding visual graph.
      *
      * @param dfa
-     *         the {@code DFAExecution} of the current data-flow analysis
+     *        the {@code DFAExecution} of the current data-flow analysis
      */
-    public void start(final DFAExecution dfa) {
+    public void start(final DFAExecution<? extends LatticeElement> dfa) {
         if (this.dfa != null) {
             throw new IllegalStateException("Visual graph was already built.");
         }
@@ -79,7 +78,8 @@ public class GraphUIController {
 
                 // The first UILineBlock is a special case: it has no predecessor.
                 ElementaryBlock firstElementaryBlock = elementaryBlocks.get(0);
-                UILineBlock firstLineBlock = new UILineBlock(firstElementaryBlock, panel.getGraphComponent(), graph, basicBlock);
+                UILineBlock firstLineBlock =
+                        new UILineBlock(firstElementaryBlock, panel.getGraphComponent(), graph, basicBlock);
 
                 lineBlocks.add(firstLineBlock);
                 uiBlocks.add(firstLineBlock);
@@ -89,7 +89,8 @@ public class GraphUIController {
 
                 for (int n = 1; n < elementaryBlocks.size(); n++) {
                     ElementaryBlock currentElementaryBlock = elementaryBlocks.get(n);
-                    UILineBlock newLineBlock = new UILineBlock(currentElementaryBlock, panel.getGraphComponent(), graph, basicBlock, lineBlocks.get(n - 1));
+                    UILineBlock newLineBlock = new UILineBlock(currentElementaryBlock, panel.getGraphComponent(), graph,
+                            basicBlock, lineBlocks.get(n - 1));
 
                     lineBlocks.add(newLineBlock);
                     uiBlocks.add(newLineBlock);
@@ -130,8 +131,8 @@ public class GraphUIController {
             @Override
             public void invoke(Object o, mxEventObject mxEventObject) {
                 // Weird API: "removed" cells are actually the newly selected cells.
+                @SuppressWarnings("unchecked")
                 ArrayList<mxCell> selectedCells = (ArrayList<mxCell>) mxEventObject.getProperty("removed");
-
 
                 if (selectedCells != null && selectedCells.size() > 0) {
                     mxCell selectedCell = selectedCells.get(0);
@@ -151,7 +152,7 @@ public class GraphUIController {
      * Sets the {@code StatePanelOpen} to show the results in. If {@code null}, no results will be shown.
      *
      * @param statePanel
-     *         the state panel
+     *        the state panel
      */
     public void setStatePanel(StatePanelOpen statePanel) {
         this.statePanel = statePanel;
@@ -190,7 +191,8 @@ public class GraphUIController {
             AbstractBlock selectedAbstractBlock = selectedBlock.getDFABlock();
             UIAbstractBlock uiAbstractBlock = mappedAbstractBlocks.get(selectedAbstractBlock);
 
-            BlockState currentState = dfa.getCurrentAnalysisState().getBlockState(selectedAbstractBlock);
+            BlockState<? extends LatticeElement> currentState =
+                    dfa.getCurrentAnalysisState().getBlockState(selectedAbstractBlock);
             LatticeElement inState = currentState.getInState();
             LatticeElement outState = currentState.getOutState();
             String inStateString = inState == null ? "<not set>" : inState.getStringRepresentation();
@@ -199,7 +201,8 @@ public class GraphUIController {
             String text = uiAbstractBlock.getText();
             int blockNumber = uiAbstractBlock.getBlockNumber();
 
-            // Parent block selected? Then lineNumber == -1, but first code line for StatePanelOpen should be 0 as it shows the whole block.
+            // Parent block selected? Then lineNumber == -1, but first code line for StatePanelOpen should be 0 as it
+            // shows the whole block.
             int lineNumber = Math.max(uiAbstractBlock.getLineNumber(), 0);
 
             statePanel.setIn(inStateString);

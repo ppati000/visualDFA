@@ -36,6 +36,8 @@ import javax.swing.JFileChooser;
  */
 public class InputPanel extends JPanel {
 
+    private static final long serialVersionUID = 1L;
+    
     private Controller ctrl;
     private CodeField codeField;
 

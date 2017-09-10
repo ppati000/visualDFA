@@ -1,18 +1,19 @@
 package gui.visualgraph;
 
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
+
 import com.mxgraph.model.mxCell;
 import com.mxgraph.util.mxCellRenderer;
 import com.mxgraph.util.mxConstants;
 import com.mxgraph.view.mxGraph;
+
 import dfa.framework.BlockState;
 import dfa.framework.DFAExecution;
 import dfa.framework.LatticeElement;
-import gui.*;
-
-import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.nio.Buffer;
-import java.util.ArrayList;
+import gui.Colors;
 
 /**
  * Responsible for exporting the graph to {@code BufferedImage}.
@@ -39,7 +40,7 @@ public class GraphExporter {
      *
      * @return a {@code BufferedImage} containing the graph and the selected block state
      */
-    public BufferedImage exportCurrentGraph(mxGraph graph, double scale, UIAbstractBlock selectedBlock, BlockState state) {
+    public BufferedImage exportCurrentGraph(mxGraph graph, double scale, UIAbstractBlock selectedBlock, BlockState<? extends LatticeElement> state) {
         BufferedImage graphImage;
 
         int stateImageWidth = (int) (STATE_AREA_WIDTH * scale);
@@ -110,7 +111,7 @@ public class GraphExporter {
         return result;
     }
 
-    public void batchExportAsync(DFAExecution dfa, double scale, boolean includeLineSteps, GraphExportCallback callback) {
+    public void batchExportAsync(DFAExecution<? extends LatticeElement> dfa, double scale, boolean includeLineSteps, GraphExportCallback callback) {
         dfa = dfa.clone();
 
         VisualGraphPanel panel = new VisualGraphPanel();
@@ -119,7 +120,6 @@ public class GraphExporter {
         GraphUIController controller = new GraphUIController(panel);
         controller.start(dfa);
 
-        ArrayList<BufferedImage> result = new ArrayList<>();
         int totalSteps = includeLineSteps ? dfa.getTotalElementarySteps() : dfa.getTotalBlockSteps();
         callback.setMaxStep(totalSteps + 1);
 
@@ -132,7 +132,7 @@ public class GraphExporter {
             controller.refresh();
 
             UIAbstractBlock selectedBlock = panel.getSelectedBlock();
-            BlockState state = selectedBlock == null ? null : dfa.getCurrentAnalysisState().getBlockState(selectedBlock.getDFABlock());
+            BlockState<? extends LatticeElement> state = selectedBlock == null ? null : dfa.getCurrentAnalysisState().getBlockState(selectedBlock.getDFABlock());
 
             callback.onImageExported(exportCurrentGraph(panel.getMxGraph(), scale, selectedBlock, state));
             callback.setExportStep(step);

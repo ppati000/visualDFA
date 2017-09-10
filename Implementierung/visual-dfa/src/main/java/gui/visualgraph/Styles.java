@@ -3,9 +3,9 @@ package gui.visualgraph;
 import com.mxgraph.util.mxConstants;
 
 /**
+ * Helper class containing style constants for {@code mxGraph}.
+ * 
  * @author Patrick Petrovic
- *
- *         Helper class containing style constants for {@code mxGraph}.
  */
 public class Styles {
     public final static int BLOCK_WIDTH = 275;

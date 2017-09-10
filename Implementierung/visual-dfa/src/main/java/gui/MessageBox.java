@@ -1,6 +1,5 @@
 package gui;
 
-import java.awt.BorderLayout;
 import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -21,6 +20,8 @@ import javax.swing.JTextArea;
 
 public class MessageBox extends DialogBox {
 
+    private static final long serialVersionUID = 1L;
+    
     private JTextArea messageArea;
     private String message;
 

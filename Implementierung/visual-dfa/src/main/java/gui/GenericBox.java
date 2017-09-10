@@ -6,7 +6,6 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -15,6 +14,8 @@ import javax.swing.JTextArea;
 
 public class GenericBox extends DialogBox {
 
+    private static final long serialVersionUID = 1L;
+    
     private static final String NEVER_SHOW_AGAIN = "Don't show again";
     private Option option;
     private JTextArea messageArea;

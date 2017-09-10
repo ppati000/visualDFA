@@ -17,9 +17,9 @@ import static gui.visualgraph.Styles.BREAKPOINT_PADDING;
 import static gui.visualgraph.Styles.BREAKPOINT_SIZE;
 
 /**
- * @author Patrick Petrovic
- *
  * Represents a child block (i.e. a clickable line of code) of a basic block in the visual graph.
+ * 
+ * @author Patrick Petrovic
  */
 public class UILineBlock extends UIAbstractBlock {
     private final UIBasicBlock parent;
@@ -36,17 +36,18 @@ public class UILineBlock extends UIAbstractBlock {
      * Creates a new {@code LineBlock}.
      *
      * @param elementaryBlock
-     *         the corresponding {@code dfa.framework.ElementaryBlock} (used to set color and text)
+     *        the corresponding {@code dfa.framework.ElementaryBlock} (used to set color and text)
      * @param graphComponent
-     *         the {@code mxGraphComponent} of the current graph
+     *        the {@code mxGraphComponent} of the current graph
      * @param graph
-     *         the {@code mxGraph} this block will be inserted into
+     *        the {@code mxGraph} this block will be inserted into
      * @param parent
-     *         the {@code UIBasicBlock} this {@code LineBlock} will be inserted into
+     *        the {@code UIBasicBlock} this {@code LineBlock} will be inserted into
      * @param previous
-     *         the {@code UILineBlock} which will be rendered directly above this one
+     *        the {@code UILineBlock} which will be rendered directly above this one
      */
-    public UILineBlock(ElementaryBlock elementaryBlock, mxGraphComponent graphComponent, mxGraph graph, UIBasicBlock parent, UILineBlock previous) {
+    public UILineBlock(ElementaryBlock elementaryBlock, mxGraphComponent graphComponent, mxGraph graph,
+            UIBasicBlock parent, UILineBlock previous) {
         this.previous = previous;
         this.parent = parent;
         this.elementaryBlock = elementaryBlock;
@@ -59,35 +60,40 @@ public class UILineBlock extends UIAbstractBlock {
      * argument set to {@code null}.
      *
      * @param elementaryBlock
-     *         the corresponding {@code dfa.framework.ElementaryBlock} (used to set color and text)
+     *        the corresponding {@code dfa.framework.ElementaryBlock} (used to set color and text)
      * @param graphComponent
-     *         the {@code mxGraphComponent} of the current graph
+     *        the {@code mxGraphComponent} of the current graph
      * @param graph
-     *         the {@code mxGraph} this block will be inserted into
+     *        the {@code mxGraph} this block will be inserted into
      * @param parent
-     *         the {@code UIBasicBlock} this {@code LineBlock} will be inserted into
+     *        the {@code UIBasicBlock} this {@code LineBlock} will be inserted into
      */
-    public UILineBlock(ElementaryBlock elementaryBlock, mxGraphComponent graphComponent, mxGraph graph, UIBasicBlock parent) {
+    public UILineBlock(ElementaryBlock elementaryBlock, mxGraphComponent graphComponent, mxGraph graph,
+            UIBasicBlock parent) {
         this(elementaryBlock, graphComponent, graph, parent, null);
     }
-
 
     /**
      * Inserts this {@code LineBlock} into its parent in {@code mxGraph} or updates it if already inserted.
      */
     @Override
-    public void render(final AnalysisState analysisState) { // TODO: Add AnalysisState parameter.
+    public void render(@SuppressWarnings("rawtypes") final AnalysisState analysisState) { // TODO: Add AnalysisState
+                                                                                          // parameter.
         if (cell == null) {
             // Place the LineBlock below the previous one, if applicable.
-            double yValue = previous == null ? Styles.LINE_HEIGHT : previous.getMxCell().getGeometry().getY() + Styles.LINE_HEIGHT;
-            mxGeometry geo = new mxGeometry(BREAKPOINT_SIZE_WITH_PADDINGS, yValue, Styles.BLOCK_WIDTH - BREAKPOINT_SIZE_WITH_PADDINGS, Styles.LINE_HEIGHT);
+            double yValue = previous == null ? Styles.LINE_HEIGHT
+                    : previous.getMxCell().getGeometry().getY() + Styles.LINE_HEIGHT;
+            mxGeometry geo = new mxGeometry(BREAKPOINT_SIZE_WITH_PADDINGS, yValue,
+                    Styles.BLOCK_WIDTH - BREAKPOINT_SIZE_WITH_PADDINGS, Styles.LINE_HEIGHT);
             geo.setRelative(false);
 
-            FontMetrics metrics = graphComponent.getFontMetrics(new Font(Font.MONOSPACED, Font.PLAIN, Styles.TEXT_SIZE));
+            FontMetrics metrics =
+                    graphComponent.getFontMetrics(new Font(Font.MONOSPACED, Font.PLAIN, Styles.TEXT_SIZE));
             String baseText = elementaryBlock.getUnit().toString()
                     .replaceAll("^(static|virtual|special|interface|dynamic)invoke\\s", "invoke ")
                     .replaceAll("\\s(static|virtual|special|interface|dynamic)invoke\\s", " invoke ")
-                    .replaceAll("\\sgoto\\s.*$", " goto") // Remove everything after "goto" to avoid confusion from text like 'goto (branch)'.
+                    .replaceAll("\\sgoto\\s.*$", " goto") // Remove everything after "goto" to avoid confusion from text
+                                                          // like 'goto (branch)'.
                     .replaceAll("^goto\\s.*$", "goto");
 
             // Handle long labels: Use BLOCK_WIDTH - 20 for word wrap to leave some space for appending "...".
@@ -99,16 +105,17 @@ public class UILineBlock extends UIAbstractBlock {
             String formattedHtmlLabel = "<span style=\"font-family:monospace;\">" + escapedHtmlLabel + "</span>";
 
             cell = new mxCell(formattedHtmlLabel, geo, Styles.NO_BORDER + Styles.TEXT_ALIGN_LEFT + Styles.TEXT_COLOR);
-            graph.setCellStyles(mxConstants.STYLE_FILLCOLOR, Styles.TRANSPARENT_COLOR, new Object[]{cell});
-            graph.setCellStyles(mxConstants.STYLE_VERTICAL_ALIGN, mxConstants.ALIGN_MIDDLE, new Object[]{cell});
+            graph.setCellStyles(mxConstants.STYLE_FILLCOLOR, Styles.TRANSPARENT_COLOR, new Object[] { cell });
+            graph.setCellStyles(mxConstants.STYLE_VERTICAL_ALIGN, mxConstants.ALIGN_MIDDLE, new Object[] { cell });
 
             cell.setVertex(true);
             graph.addCell(cell, parent.getMxCell());
 
-            mxGeometry breakpointGeo = new mxGeometry(BREAKPOINT_PADDING, yValue + BREAKPOINT_PADDING, Styles.BREAKPOINT_SIZE, Styles.BREAKPOINT_SIZE);
+            mxGeometry breakpointGeo = new mxGeometry(BREAKPOINT_PADDING, yValue + BREAKPOINT_PADDING,
+                    Styles.BREAKPOINT_SIZE, Styles.BREAKPOINT_SIZE);
             breakpointCell = new mxCell("", breakpointGeo, Styles.NO_BORDER);
             breakpointCell.setVertex(true);
-            graph.setCellStyles(mxConstants.STYLE_FILLCOLOR, Styles.TRANSPARENT_COLOR, new Object[]{breakpointCell});
+            graph.setCellStyles(mxConstants.STYLE_FILLCOLOR, Styles.TRANSPARENT_COLOR, new Object[] { breakpointCell });
             graph.addCell(breakpointCell, parent.getMxCell());
 
             // Add a listener for activation and deactivation of breakpoint cell.
@@ -122,11 +129,12 @@ public class UILineBlock extends UIAbstractBlock {
                 }
             });
         } else {
-            boolean isNowCurrentBlock = analysisState != null && elementaryBlock.equals(analysisState.getCurrentElementaryBlock());
+            boolean isNowCurrentBlock =
+                    analysisState != null && elementaryBlock.equals(analysisState.getCurrentElementaryBlock());
             String newStyle = isNowCurrentBlock ? Styles.HIGHLIGHT_COLOR : Styles.TRANSPARENT_COLOR;
 
             if (isCurrentBlock != isNowCurrentBlock) {
-                graph.setCellStyles(mxConstants.STYLE_FILLCOLOR, newStyle, new Object[]{cell});
+                graph.setCellStyles(mxConstants.STYLE_FILLCOLOR, newStyle, new Object[] { cell });
                 isCurrentBlock = isNowCurrentBlock;
             }
         }
@@ -140,7 +148,7 @@ public class UILineBlock extends UIAbstractBlock {
         elementaryBlock.setBreakpoint(hasBreakpoint);
 
         String newStyle = hasBreakpoint ? Styles.BREAKPOINT_COLOR : Styles.TRANSPARENT_COLOR;
-        graph.setCellStyles(mxConstants.STYLE_FILLCOLOR, newStyle, new Object[]{breakpointCell});
+        graph.setCellStyles(mxConstants.STYLE_FILLCOLOR, newStyle, new Object[] { breakpointCell });
     }
 
     /**

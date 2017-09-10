@@ -7,21 +7,22 @@ import com.mxgraph.view.mxGraph;
 import dfa.framework.AnalysisState;
 import dfa.framework.BasicBlock;
 import dfa.framework.DFAExecution;
+import dfa.framework.LatticeElement;
 import dfa.framework.LogicalColor;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * This class represents a basic block in the visual graph.
+ * 
  * @author Patrick Petrovic
- *
- *         This class represents a basic block in the visual graph.
  */
 public class UIBasicBlock extends UIAbstractBlock {
 
     private List<UILineBlock> lineBlocks;
     private BasicBlock dfaBasicBlock;
-    private DFAExecution dfa;
+    private DFAExecution<? extends LatticeElement> dfa;
     private LogicalColor currentColor = null;
 
     /**
@@ -29,15 +30,15 @@ public class UIBasicBlock extends UIAbstractBlock {
      * exists. Additionally, calls {@code render()} on every {@code LineBlock} this {@code BasicBlock} consists of.
      *
      * @param analysisState
-     *         the current {@code AnalysisState} that should be used to render this block
+     *        the current {@code AnalysisState} that should be used to render this block
      */
     @Override
-    public void render(AnalysisState analysisState) {
+    public void render(@SuppressWarnings("rawtypes") AnalysisState analysisState) {
         if (cell == null) {
             cell = (mxCell) graph.insertVertex(graph.getDefaultParent(), null, "", 10, 10, Styles.BLOCK_WIDTH,
                     (lineBlocks.size() + 1) * Styles.LINE_HEIGHT, "");
 
-            graph.setCellStyles(mxConstants.STYLE_FILLCOLOR, Styles.INITIAL_COLOR, new Object[]{cell});
+            graph.setCellStyles(mxConstants.STYLE_FILLCOLOR, Styles.INITIAL_COLOR, new Object[] { cell });
         } else {
             LogicalColor newColor = dfa.getCurrentAnalysisState().getColor(dfaBasicBlock);
 
@@ -45,23 +46,23 @@ public class UIBasicBlock extends UIAbstractBlock {
                 String colorStyle;
 
                 switch (dfa.getCurrentAnalysisState().getColor(dfaBasicBlock)) {
-                    case CURRENT:
-                        colorStyle = Styles.CURRENT_COLOR;
-                        break;
-                    case NOT_VISITED:
-                        colorStyle = Styles.INITIAL_COLOR;
-                        break;
-                    case ON_WORKLIST:
-                        colorStyle = Styles.ON_WORKLIST_COLOR;
-                        break;
-                    case VISITED_NOT_ON_WORKLIST:
-                        colorStyle = Styles.VISITED_COLOR;
-                        break;
-                    default:
-                        throw new IllegalStateException("Error: Unknown LogicalColor.");
+                case CURRENT:
+                    colorStyle = Styles.CURRENT_COLOR;
+                    break;
+                case NOT_VISITED:
+                    colorStyle = Styles.INITIAL_COLOR;
+                    break;
+                case ON_WORKLIST:
+                    colorStyle = Styles.ON_WORKLIST_COLOR;
+                    break;
+                case VISITED_NOT_ON_WORKLIST:
+                    colorStyle = Styles.VISITED_COLOR;
+                    break;
+                default:
+                    throw new IllegalStateException("Error: Unknown LogicalColor.");
                 }
 
-                graph.setCellStyles(mxConstants.STYLE_FILLCOLOR, colorStyle, new Object[]{cell});
+                graph.setCellStyles(mxConstants.STYLE_FILLCOLOR, colorStyle, new Object[] { cell });
                 currentColor = newColor;
             }
         }
@@ -73,9 +74,9 @@ public class UIBasicBlock extends UIAbstractBlock {
      * are rendered (otherwise the layouter would change children which is not wanted)
      *
      * @param analysisState
-     *         the state that should be used to render the children
+     *        the state that should be used to render the children
      */
-    public void renderChildren(AnalysisState analysisState) {
+    public void renderChildren(AnalysisState<? extends LatticeElement> analysisState) {
         if (lineBlocks.size() > 0) {
             mxGeometry topBarGeometry = new mxGeometry(0, Styles.LINE_HEIGHT, Styles.BLOCK_WIDTH, 0);
             topBarGeometry.setRelative(false);
@@ -93,7 +94,7 @@ public class UIBasicBlock extends UIAbstractBlock {
      * Inserts a given line block into this basic block, below existing {@code LineBlock} if applicable.
      *
      * @param block
-     *         the {@code LineBlock} to insert
+     *        the {@code LineBlock} to insert
      */
     public void insertLineBlock(UILineBlock block) {
         this.lineBlocks.add(block);
@@ -103,13 +104,13 @@ public class UIBasicBlock extends UIAbstractBlock {
      * Constructs a new basic block which will operate on the given {@code mxGraph}.
      *
      * @param graph
-     *         the current {@code mxGraph}
+     *        the current {@code mxGraph}
      * @param dfaBasicBlock
-     *         the corresponding {@code dfa.framework.BasicBlock}
+     *        the corresponding {@code dfa.framework.BasicBlock}
      * @param dfa
-     *         the current {@code DFAExecution}
+     *        the current {@code DFAExecution}
      */
-    public UIBasicBlock(mxGraph graph, BasicBlock dfaBasicBlock, DFAExecution dfa) {
+    public UIBasicBlock(mxGraph graph, BasicBlock dfaBasicBlock, DFAExecution<? extends LatticeElement> dfa) {
         this.graph = graph;
         this.dfa = dfa;
         this.dfaBasicBlock = dfaBasicBlock;

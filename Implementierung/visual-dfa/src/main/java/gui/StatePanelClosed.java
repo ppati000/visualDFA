@@ -18,6 +18,8 @@ import javax.swing.JPanel;
 
 public class StatePanelClosed extends JPanel {
 
+    private static final long serialVersionUID = 1L;
+    
     private ProgramFrame frame;
     private JButton openButton;
 

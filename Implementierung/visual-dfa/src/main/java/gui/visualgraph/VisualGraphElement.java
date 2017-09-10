@@ -3,11 +3,12 @@ package gui.visualgraph;
 import com.mxgraph.model.mxCell;
 import com.mxgraph.view.mxGraph;
 import dfa.framework.AnalysisState;
+import dfa.framework.LatticeElement;
 
 /**
+ * Represents a block or an edge in {@code mxGraph}.
+ * 
  * @author Patrick Petrovic
- *
- *         Represents a block or an edge in {@code mxGraph}.
  */
 abstract class VisualGraphElement {
     protected mxCell cell;
@@ -17,9 +18,9 @@ abstract class VisualGraphElement {
      * Inserts the element into {@code mxGraph} or updates it if it was already inserted.
      *
      * @param analysisState
-     *         the {@code AnalysisState} that should be used to render this {@code VisualGraphElement}.
+     *        the {@code AnalysisState} that should be used to render this {@code VisualGraphElement}.
      */
-    public abstract void render(AnalysisState analysisState);
+    public abstract void render(AnalysisState<? extends LatticeElement> analysisState);
 
     /**
      * Returns this element's {@code mxCell}

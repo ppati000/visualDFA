@@ -21,6 +21,8 @@ import javax.swing.event.DocumentListener;
  */
 public class CodeField extends JScrollPane {
 
+    private static final long serialVersionUID = 1L;
+    
     private JPanel contentPanel;
     private JTextArea lineArea;
     private JTextArea codeArea;

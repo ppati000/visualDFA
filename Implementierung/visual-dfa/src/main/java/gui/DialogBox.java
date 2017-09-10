@@ -2,15 +2,11 @@ package gui;
 
 import java.awt.BorderLayout;
 import java.awt.Dialog;
-import java.awt.Dimension;
-import java.awt.EventQueue;
 import java.awt.Frame;
 
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JRootPane;
-import javax.swing.border.BevelBorder;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
@@ -27,6 +23,8 @@ import javax.swing.border.LineBorder;
 
 public abstract class DialogBox extends JDialog {
 
+    private static final long serialVersionUID = 1L;
+    
     private final JPanel borderPanel = new JPanel();
     protected final JPanel contentPanel = new JPanel();
     protected final JPanel buttonPane = new JPanel();

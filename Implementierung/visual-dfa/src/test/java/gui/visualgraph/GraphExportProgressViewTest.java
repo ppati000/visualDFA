@@ -59,7 +59,7 @@ public class GraphExportProgressViewTest {
 
         assertEquals(10, viewProgressBar.getValue());
         assertEquals(10, viewProgressBar.getMaximum());
-        assertEquals("Exporting to " + testPath + " â€“ Done.", viewLabel.getText());
+        assertEquals("Exporting to " + testPath + " – Done.", viewLabel.getText());
 
         Thread.sleep(1500);
 

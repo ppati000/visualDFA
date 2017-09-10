@@ -1,20 +1,19 @@
 package controllerTests;
 
 
-import org.junit.runners.MethodSorters;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
-import controller.Controller;
-import controller.OptionFileParser;
-
-
-import static org.junit.Assert.*;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import controller.Controller;
+import controller.OptionFileParser;
 import gui.ProgramFrame;
 
 @SuppressWarnings("javadoc")

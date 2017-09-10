@@ -12,13 +12,12 @@ import org.junit.Test;
 
 import codeprocessor.CodeProcessor;
 import codeprocessor.GraphBuilder;
-import controller.Controller;
 import dfa.analyses.ConstantFoldingElement;
 import dfa.analyses.ConstantFoldingElement.Value;
-import dfa.analysesTests.LocalAliasMap;
 import dfa.analyses.ConstantFoldingInitializer;
 import dfa.analyses.ConstantFoldingJoin;
 import dfa.analyses.ConstantFoldingTransition;
+import dfa.analysesTests.LocalAliasMap;
 import dfa.framework.BlockState;
 import dfa.framework.SimpleBlockGraph;
 import dfaTests.TestMethod;

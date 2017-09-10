@@ -1,22 +1,11 @@
 package gui.visualgraph;
 
-import com.mxgraph.layout.hierarchical.mxHierarchicalLayout;
-import com.mxgraph.model.mxCell;
-import com.mxgraph.swing.mxGraphComponent;
-import com.mxgraph.view.mxGraph;
-import controller.Controller;
-import dfa.framework.AbstractBlock;
-import dfa.framework.BlockState;
-import dfa.framework.DFAExecution;
-import gui.*;
-import dfa.framework.AnalysisState;
-
-import javax.imageio.ImageIO;
-import javax.swing.*;
-import javax.swing.border.LineBorder;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.ComponentOrientation;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseWheelEvent;
@@ -24,15 +13,48 @@ import java.awt.event.MouseWheelListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import javax.imageio.ImageIO;
+import javax.swing.AbstractButton;
+import javax.swing.ButtonModel;
+import javax.swing.JButton;
+import javax.swing.JPanel;
+import javax.swing.JToggleButton;
+import javax.swing.KeyStroke;
+import javax.swing.border.LineBorder;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+
+import com.mxgraph.layout.hierarchical.mxHierarchicalLayout;
+import com.mxgraph.model.mxCell;
+import com.mxgraph.swing.mxGraphComponent;
+import com.mxgraph.view.mxGraph;
+
+import controller.Controller;
+import dfa.framework.AbstractBlock;
+import dfa.framework.AnalysisState;
+import dfa.framework.BlockState;
+import dfa.framework.DFAExecution;
+import dfa.framework.LatticeElement;
+import gui.Colors;
+import gui.GraphExportBox;
+import gui.IconLoader;
+import gui.MessageBox;
+import gui.Option;
 
 /**
- * @author Patrick Petrovic
- *
  * Panel used to display the visual graph.
+ * 
+ * @author Patrick Petrovic
  */
 public class VisualGraphPanel extends JPanel {
+    private static final long serialVersionUID = 1L;
+
     private List<UIBasicBlock> basicBlocks;
     private List<UIEdge> edges;
     private mxGraphComponent graphComponent;
@@ -87,7 +109,7 @@ public class VisualGraphPanel extends JPanel {
      * Inserts a given {@code UIBasicBlock} which will be rendered when {@code renderGraph()} is called.
      *
      * @param block
-     *         the block to be added
+     *        the block to be added
      */
     public void insertBasicBlock(UIBasicBlock block) {
         basicBlocks.add(block);
@@ -101,7 +123,7 @@ public class VisualGraphPanel extends JPanel {
      * Inserts a given {@code UIEdge} which will be rendered when {@code renderGraph()} is called.
      *
      * @param edge
-     *         the edge to be added
+     *        the edge to be added
      */
     public void insertEdge(UIEdge edge) {
         edges.add(edge);
@@ -111,10 +133,10 @@ public class VisualGraphPanel extends JPanel {
      * Renders all previously inserted blocks and edges, and invokes the auto-layouter if first render.
      *
      * @param dfa
-     *         the {@code DFAExecution} that should be used to render this graph
+     *        the {@code DFAExecution} that should be used to render this graph
      */
-    public void renderGraph(final DFAExecution dfa) {
-        AnalysisState analysisState = dfa.getCurrentAnalysisState();
+    public void renderGraph(final DFAExecution<? extends LatticeElement> dfa) {
+        AnalysisState<? extends LatticeElement> analysisState = dfa.getCurrentAnalysisState();
 
         graph.getModel().beginUpdate();
 
@@ -144,27 +166,31 @@ public class VisualGraphPanel extends JPanel {
                             final long timestamp = new Date().getTime();
 
                             if (exportBox.isBatchExport()) {
-                                new GraphBatchExportThread(graphExporter, dfa, scale, exportBox.includeLineStates(), new GraphExportProgressView(outputPath) {
-                                    private int index = 0;
+                                new GraphBatchExportThread(graphExporter, dfa, scale, exportBox.includeLineStates(),
+                                        new GraphExportProgressView(outputPath) {
+                                            private static final long serialVersionUID = 1L;
+                                            
+                                            private int index = 0;
 
-                                    @Override
-                                    public void onImageExported(BufferedImage image) {
-                                        try {
-                                            saveImage(image, timestamp, index);
-                                            index++;
-                                        } catch (IOException ex) {
-                                            showExportErrorBox();
-                                        }
-                                    }
+                                            @Override
+                                            public void onImageExported(BufferedImage image) {
+                                                try {
+                                                    saveImage(image, timestamp, index);
+                                                    index++;
+                                                } catch (IOException ex) {
+                                                    showExportErrorBox();
+                                                }
+                                            }
 
-                                    @Override
-                                    public void done() {
-                                        graphExport.setEnabled(true);
-                                        super.done();
-                                    }
-                                }).start();
+                                            @Override
+                                            public void done() {
+                                                graphExport.setEnabled(true);
+                                                super.done();
+                                            }
+                                        }).start();
                             } else {
-                                BlockState state = selectedBlock == null ? null : dfa.getCurrentAnalysisState().getBlockState(selectedBlock.getDFABlock());
+                                BlockState<? extends LatticeElement> state = selectedBlock == null ? null
+                                        : dfa.getCurrentAnalysisState().getBlockState(selectedBlock.getDFABlock());
                                 final GraphExportProgressView view = new GraphExportProgressView(outputPath);
 
                                 // Fake a progress bar to the user if no batch export, so it is not too fast.
@@ -190,7 +216,8 @@ public class VisualGraphPanel extends JPanel {
                                 }.start();
 
                                 try {
-                                    saveImage(graphExporter.exportCurrentGraph(graph, scale, selectedBlock, state), timestamp, 0);
+                                    saveImage(graphExporter.exportCurrentGraph(graph, scale, selectedBlock, state),
+                                            timestamp, 0);
                                 } catch (IOException ex) {
                                     showExportErrorBox();
                                 }
@@ -211,7 +238,7 @@ public class VisualGraphPanel extends JPanel {
 
         if (jumpToAction.isSelected() && blockMap != null) {
             graphComponent.getGraph().clearSelection();
-            AnalysisState currentState = dfa.getCurrentAnalysisState();
+            AnalysisState<? extends LatticeElement> currentState = dfa.getCurrentAnalysisState();
             AbstractBlock currentBlock;
 
             if (currentState.getCurrentElementaryBlockIndex() == -1) {
@@ -256,7 +283,7 @@ public class VisualGraphPanel extends JPanel {
      * Sets the {@code VisualGraphPanel}'s activation state
      *
      * @param activated
-     *         Iff {@code true}, user interaction is allowed.
+     *        Iff {@code true}, user interaction is allowed.
      */
     public void setActivated(boolean activated) {
         jumpToAction.setEnabled(activated);
@@ -303,7 +330,7 @@ public class VisualGraphPanel extends JPanel {
      * Sets the parent frame (used for modals)
      *
      * @param frame
-     *         the parent frame
+     *        the parent frame
      */
     public void setParentFrame(Frame frame) {
         this.parentFrame = frame;
@@ -313,7 +340,7 @@ public class VisualGraphPanel extends JPanel {
      * Enables or disables Jump to Action
      *
      * @param enabled
-     *         if it should be enabled or disabled
+     *        if it should be enabled or disabled
      */
     public void setJumpToAction(boolean enabled) {
         jumpToAction.setSelected(enabled);
@@ -332,7 +359,7 @@ public class VisualGraphPanel extends JPanel {
      * Used by {@code GraphUIController} to set the panel's selected {@code UIAbstractBlock} for later use.
      *
      * @param block
-     *         the block that was determined as the current one by the {@code GraphUIController}.
+     *        the block that was determined as the current one by the {@code GraphUIController}.
      */
     public void setSelectedBlock(UIAbstractBlock block) {
         this.selectedBlock = block;
@@ -362,8 +389,8 @@ public class VisualGraphPanel extends JPanel {
     }
 
     private void showExportErrorBox() {
-        new MessageBox(parentFrame, "Graph Export Failed", "An error occured while saving your image(s). \n" +
-                "Please ensure " + outputPath + " is a writable directory.");
+        new MessageBox(parentFrame, "Graph Export Failed", "An error occured while saving your image(s). \n"
+                + "Please ensure " + outputPath + " is a writable directory.");
     }
 
     private void autoLayoutAndShowGraph() {

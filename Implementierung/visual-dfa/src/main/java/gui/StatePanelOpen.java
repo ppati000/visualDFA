@@ -25,6 +25,8 @@ import javax.swing.border.LineBorder;
  */
 public class StatePanelOpen extends JPanel {
 
+    private static final long serialVersionUID = 1L;
+    
     private ProgramFrame frame;
     private JButton btnClose;
     private JLabel lblTitle;

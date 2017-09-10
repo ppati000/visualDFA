@@ -2,12 +2,13 @@ package gui.visualgraph;
 
 import com.mxgraph.model.mxCell;
 import com.mxgraph.view.mxGraph;
+
 import dfa.framework.AnalysisState;
 
 /**
+ * Represents an edge in the visual graph.
+ * 
  * @author Patrick Petrovic
- *
- *         Represents an edge in the visual graph.
  */
 public class UIEdge extends VisualGraphElement {
 
@@ -17,11 +18,11 @@ public class UIEdge extends VisualGraphElement {
      * Creates a new edge between two given {@code BasicBlock}s.
      *
      * @param graph
-     *         the graph this edge will operate on
+     *        the graph this edge will operate on
      * @param from
-     *         the BasicBlock this edge will originate from
+     *        the BasicBlock this edge will originate from
      * @param to
-     *         the BasicBlock to which this edge will lead
+     *        the BasicBlock to which this edge will lead
      */
     public UIEdge(mxGraph graph, UIBasicBlock from, UIBasicBlock to) {
         this.graph = graph;
@@ -33,10 +34,10 @@ public class UIEdge extends VisualGraphElement {
      * Inserts edge into {@code mxGraph}, if it wasn't already inserted.
      *
      * @param analysisState
-     *         the analysisState that should be used to render this edge (reserved for future uses)
+     *        the analysisState that should be used to render this edge (reserved for future uses)
      */
     @Override
-    public void render(AnalysisState analysisState) {
+    public void render(@SuppressWarnings("rawtypes") AnalysisState analysisState) {
         if (cell == null) {
             cell = (mxCell) graph.insertEdge(graph.getDefaultParent(), null, null, from.getMxCell(), to.getMxCell());
         }

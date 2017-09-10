@@ -77,9 +77,8 @@ public class TestConstantBitsElement {
         String zValStr = " B  T  T  T  T  T  T  T  T  T  T  T  T  T  T  T  T  T  T  T  T  T  T  T  T  T  T  T  T  T  T  T  T  T  T  T  T  T  T  T  T  T  T  T  T  T  T  T  T  T  T  T  T  T  T  T  T  T  T  T  T  T  T  T";
         // @formatter:on
         
-        String expected = header + "\nx =\n" + xValStr + "\ny =\n" + yValStr + "\nz =\n" + zValStr;
-
-//        Assert.assertEquals(expected, cbe.getStringRepresentation());
+         String expected = header + "\nx =\n" + xValStr + "\ny =\n" + yValStr + "\nz =\n" + zValStr;
+         Assert.assertEquals(expected, cbe.getStringRepresentation());
     }
     
     @Test

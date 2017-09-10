@@ -38,6 +38,8 @@ import javax.swing.border.CompoundBorder;
  */
 public class ControlPanel extends JPanel {
 
+    private static final long serialVersionUID = 1L;
+
     private Controller ctrl;
 
     private JButton btnStopAnalysis;
@@ -182,6 +184,8 @@ public class ControlPanel extends JPanel {
 
     private void setShortcuts() {
         Action keyAction = new AbstractAction() {
+
+            private static final long serialVersionUID = 1L;
 
             @Override
             public void actionPerformed(ActionEvent e) {

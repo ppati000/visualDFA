@@ -1,7 +1,6 @@
 package gui.visualgraph;
 
 import java.awt.image.BufferedImage;
-import java.util.List;
 
 public interface GraphExportCallback {
     void setMaxStep(int step);

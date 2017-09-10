@@ -119,17 +119,30 @@ public class ConstantBitsElement extends LocalMapElement<BitValueArray> {
     @Override
     public String getStringRepresentation() {
         StringBuilder sb = new StringBuilder();
-
-        // add column numbers
-        sb.append(
-                "00 01 02 03 04 05 06 07 08 09 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63");
+        
+        // @formatter:off
+        String header32 = "00 01 02 03 04 05 06 07 08 09 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31";
+        String header64 = "00 01 02 03 04 05 06 07 08 09 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63";
+        // @formatter:off
 
         Iterator<Map.Entry<JimpleLocal, BitValueArray>> entryIt = localMap.entrySet().iterator();
         Map.Entry<JimpleLocal, BitValueArray> entry;
+        boolean longHeader = false;
         while (entryIt.hasNext()) {
             entry = entryIt.next();
+            
+            if (entry.getValue().getLength() > 32) {
+                longHeader = true;
+            }
+            
             sb.append('\n');
             sb.append(entry.getKey().getName()).append(" =").append('\n').append(entry.getValue());
+        }
+        
+        if (longHeader) {
+            sb.insert(0, header64);
+        } else {
+            sb.insert(0, header32);
         }
 
         return sb.toString();

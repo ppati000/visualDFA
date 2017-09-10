@@ -28,6 +28,8 @@ import javax.swing.border.EmptyBorder;
  */
 public class MethodSelectionBox extends DialogBox {
 
+    private static final long serialVersionUID = 1L;
+    
     private List<String> methods;
     private String selectedMethod;
     private final String METHODBOX_TITLE = "Select Method";

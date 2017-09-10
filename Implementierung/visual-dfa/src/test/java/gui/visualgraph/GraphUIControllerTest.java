@@ -1,33 +1,38 @@
 package gui.visualgraph;
 
-import codeprocessor.CodeProcessor;
-import codeprocessor.GraphBuilder;
-import controller.Controller;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.mockito.Mockito.inOrder;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+
+import java.util.List;
+
+import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.Test;
+import org.mockito.InOrder;
 
 import com.mxgraph.swing.mxGraphComponent;
+
+import codeprocessor.CodeProcessor;
+import codeprocessor.GraphBuilder;
 import dfa.analyses.testanalyses.DummyElement;
 import dfa.analyses.testanalyses.DummyFactory;
 import dfa.framework.BasicBlock;
 import dfa.framework.DFAExecution;
 import dfa.framework.DFAPrecalcController;
+import dfa.framework.LatticeElement;
 import dfa.framework.NaiveWorklist;
 import dfa.framework.SimpleBlockGraph;
-
 import gui.StatePanelOpen;
-import gui.visualgraph.*;
-
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
-
-import org.junit.*;
-import org.mockito.InOrder;
-
-import java.util.List;
 
 public class GraphUIControllerTest {
     private VisualGraphPanel panel;
     private GraphUIController controller;
-    private String programOutputPath;
 
     private final String exampleCode = "public class shouldCreateGraphOnStartClass { public void helloWorld(boolean print) {" +
             "          if (print) {" +
@@ -75,7 +80,7 @@ public class GraphUIControllerTest {
 
     @Test
     public void shouldBuildGraphOnStartAndUpdateOnRefresh() {
-        DFAExecution dfa = buildDFA(exampleCode);
+        DFAExecution<? extends LatticeElement> dfa = buildDFA(exampleCode);
         List<BasicBlock> dfaBasicBlocks = dfa.getCFG().getBasicBlocks();
 
         controller.start(dfa);
@@ -153,7 +158,7 @@ public class GraphUIControllerTest {
     @Test @Ignore
     public void shouldUpdateStatePanel() {
         StatePanelOpen mockPanel = mock(StatePanelOpen.class);
-        DFAExecution dfa = buildDFA(exampleCode);
+        DFAExecution<? extends LatticeElement> dfa = buildDFA(exampleCode);
 
         controller.setStatePanel(mockPanel);
         panel.setJumpToAction(true);
@@ -184,7 +189,7 @@ public class GraphUIControllerTest {
         reset(mockPanel);
     }
 
-    private DFAExecution buildDFA(String code) {
+    private DFAExecution<? extends LatticeElement> buildDFA(String code) {
         CodeProcessor codeProcessor = new CodeProcessor(code);
         assertEquals("", codeProcessor.getErrorMessage());
         GraphBuilder builder = new GraphBuilder(codeProcessor.getPath(), codeProcessor.getClassName());

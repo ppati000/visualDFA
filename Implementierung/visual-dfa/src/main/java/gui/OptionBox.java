@@ -21,6 +21,8 @@ import javax.swing.JTextArea;
  */
 public class OptionBox extends DialogBox {
 
+    private static final long serialVersionUID = 1L;
+    
     private Option option;
     private JTextArea messageArea;
     private String message;

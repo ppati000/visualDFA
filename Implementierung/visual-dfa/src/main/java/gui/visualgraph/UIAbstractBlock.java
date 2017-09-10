@@ -3,9 +3,9 @@ package gui.visualgraph;
 import dfa.framework.AbstractBlock;
 
 /**
+ * Represents a parent ({@code BasicBlock}) or child block ({@code LineBlock}) in the visual graph.
+ * 
  * @author Patrick Petrovic
- *
- *         Represents a parent ({@code BasicBlock}) or child block ({@code LineBlock}) in the visual graph.
  */
 abstract class UIAbstractBlock extends VisualGraphElement {
     protected int blockNumber = -1;
@@ -42,7 +42,7 @@ abstract class UIAbstractBlock extends VisualGraphElement {
      * Sets this block's line or block number depending on subclass.
      *
      * @param blockNumber
-     *         block or line number
+     *        block or line number
      */
     public void setBlockNumber(int blockNumber) {
         this.blockNumber = blockNumber;

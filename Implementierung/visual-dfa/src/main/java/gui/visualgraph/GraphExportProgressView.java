@@ -1,15 +1,22 @@
 package gui.visualgraph;
 
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.image.BufferedImage;
+
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JProgressBar;
+
 import gui.Colors;
 import gui.JComponentDecorator;
 import gui.JLabelDecorator;
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.util.List;
-
 public class GraphExportProgressView extends JDialog implements GraphExportCallback {
+
+    private static final long serialVersionUID = 1L;
+    
     private JProgressBar progressBar;
     private JLabel label;
 

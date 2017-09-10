@@ -23,6 +23,8 @@ import javax.swing.event.ChangeListener;
  */
 public class GraphExportBox extends DialogBox {
 
+    private static final long serialVersionUID = 1L;
+    
     private Quality quality;
     private Option option;
     private final String GRAPHEXPORT_TITLE = "Export Graph as PNG";

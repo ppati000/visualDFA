@@ -1,43 +1,43 @@
 package gui.visualgraph;
 
-import codeprocessor.CodeProcessor;
-import codeprocessor.GraphBuilder;
-import controller.Controller;
-
-import com.mxgraph.view.mxGraph;
-
-import dfa.analyses.testanalyses.DummyElement;
-import dfa.analyses.testanalyses.DummyFactory;
-import dfa.framework.AnalysisState;
-import dfa.framework.BasicBlock;
-import dfa.framework.DFAExecution;
-import dfa.framework.DFAPrecalcController;
-import dfa.framework.SimpleBlockGraph;
-import dfa.framework.WorklistManager;
-import dfa.frameworkTests.*;
-import gui.visualgraph.*;
-
-import static org.junit.Assert.*;
-
-import org.junit.*;
-
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
-import javax.imageio.ImageIO;
-import javax.swing.*;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+
+import javax.imageio.ImageIO;
+import javax.swing.JPanel;
+
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+
+import com.mxgraph.view.mxGraph;
+
+import codeprocessor.CodeProcessor;
+import codeprocessor.GraphBuilder;
+import dfa.analyses.testanalyses.DummyElement;
+import dfa.analyses.testanalyses.DummyFactory;
+import dfa.framework.BasicBlock;
+import dfa.framework.DFAExecution;
+import dfa.framework.DFAPrecalcController;
+import dfa.framework.LatticeElement;
+import dfa.framework.SimpleBlockGraph;
+import dfa.framework.WorklistManager;
 
 public class GraphExporterTest {
     private VisualGraphPanel panel;
     private JPanel fakeStatePanel;
-    private AnalysisState analysisStateMock = mock(AnalysisState.class);
-    private DFAExecution dfa = mock(DFAExecution.class);
+    @SuppressWarnings("unchecked")
+    private DFAExecution<? extends LatticeElement> dfa = mock(DFAExecution.class);
     private BasicBlock basicBlock = mock(BasicBlock.class);
     private mxGraph graph;
     private final Object lock = new Object();

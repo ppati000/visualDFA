@@ -1,21 +1,21 @@
 package gui.visualgraph;
 
-import com.mxgraph.model.mxCell;
-import com.mxgraph.swing.mxGraphComponent;
-import com.mxgraph.view.mxGraph;
-import dfa.framework.AnalysisState;
-import dfa.framework.BasicBlock;
-import dfa.framework.DFAExecution;
-import dfa.framework.ElementaryBlock;
-import gui.visualgraph.*;
-
-import static org.junit.Assert.*;
-import org.junit.*;
-import soot.Unit;
-
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 
 import java.util.Arrays;
+
+import org.junit.Before;
+import org.junit.Test;
+
+import com.mxgraph.model.mxCell;
+import com.mxgraph.view.mxGraph;
+
+import dfa.framework.BasicBlock;
+import dfa.framework.DFAExecution;
+import dfa.framework.ElementaryBlock;
+import dfa.framework.LatticeElement;
+import soot.Unit;
 
 public class VisualGraphPanelTest {
     private final double DELTA = 0.001;
@@ -24,9 +24,9 @@ public class VisualGraphPanelTest {
     private mxGraph graph;
 
     private ElementaryBlock mockBlock = new ElementaryBlock(mock(Unit.class));
-    private AnalysisState mockState = mock(AnalysisState.class);
     private BasicBlock mockBasicBlock = mock(BasicBlock.class);
-    private DFAExecution dfa = mock(DFAExecution.class);
+    @SuppressWarnings("unchecked")
+    private DFAExecution<? extends LatticeElement> dfa = mock(DFAExecution.class);
 
     @Before
     public void createPanel() {

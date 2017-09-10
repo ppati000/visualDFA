@@ -9,9 +9,9 @@ import gui.Colors;
 import java.awt.*;
 
 /**
+ * A subclass of {@code mxGraph} with specific attributes set.
+ * 
  * @author Patrick Petrovic
- *
- *         A subclass of {@code mxGraph} with specific attributes set.
  */
 class RestrictedMxGraph extends mxGraph {
     public RestrictedMxGraph() {

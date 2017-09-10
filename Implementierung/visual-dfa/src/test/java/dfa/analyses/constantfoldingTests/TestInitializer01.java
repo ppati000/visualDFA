@@ -8,7 +8,6 @@ import org.junit.Test;
 
 import codeprocessor.CodeProcessor;
 import codeprocessor.GraphBuilder;
-import controller.Controller;
 import dfa.analyses.ConstantFoldingElement;
 import dfa.analyses.ConstantFoldingInitializer;
 import dfa.framework.BlockState;

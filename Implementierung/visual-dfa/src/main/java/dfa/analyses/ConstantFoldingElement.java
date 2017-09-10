@@ -18,14 +18,13 @@ import soot.jimple.LongConstant;
 import soot.jimple.internal.JimpleLocal;
 
 /**
+ * A {@code ConstantFoldingElement} is a {@code LatticeElement} used by {@code ConstantFoldingAnalysis}.
+ *
  * @author Nils Jessen
  * @author Sebastian Rauch
- * 
- *         A {@code ConstantFoldingElement} is a {@code LatticeElement} used by {@code ConstantFoldingAnalysis}.
- *
  */
 public class ConstantFoldingElement extends LocalMapElement<Value> {
-    
+
     /**
      * Determines whether a certain type of Local is accepted (can be contained in) a {@code ConstantFoldingElement}.
      * 
@@ -197,7 +196,7 @@ public class ConstantFoldingElement extends LocalMapElement<Value> {
             case CONST:
                 return constToString(getConstant());
             default:
-                return "";  // ignore
+                return ""; // ignore
             }
         }
 
@@ -212,7 +211,7 @@ public class ConstantFoldingElement extends LocalMapElement<Value> {
         }
 
     }
-    
+
     @Override
     public ConstantFoldingElement clone() {
         return new ConstantFoldingElement(getLocalMap());

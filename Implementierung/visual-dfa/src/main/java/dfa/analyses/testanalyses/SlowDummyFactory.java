@@ -5,6 +5,11 @@ import dfa.framework.DFAFactory;
 import dfa.framework.DataFlowAnalysis;
 import dfa.framework.SimpleBlockGraph;
 
+/**
+ * Dummy factory for slow analyses.
+ * 
+ * @author Sebastian Rauch
+ */
 public class SlowDummyFactory extends DFAFactory<DummyElement>{
     
     private int waitTime = 500;

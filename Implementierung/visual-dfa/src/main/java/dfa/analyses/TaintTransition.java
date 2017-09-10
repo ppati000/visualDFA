@@ -81,10 +81,9 @@ import soot.jimple.XorExpr;
 import soot.jimple.internal.JimpleLocal;
 
 /**
+ * A {@code TaintTransition} performs the transition for a {@code TaintAnalysis}.
+ * 
  * @author Sebastian Rauch
- *
- *         A {@code TaintTransition} performs the transition for a {@code TaintAnalysis}.
- *
  */
 public class TaintTransition implements Transition<TaintElement> {
 

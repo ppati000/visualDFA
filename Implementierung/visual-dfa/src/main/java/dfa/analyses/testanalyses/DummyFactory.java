@@ -5,11 +5,10 @@ import dfa.framework.DFAFactory;
 import dfa.framework.DataFlowAnalysis;
 import dfa.framework.SimpleBlockGraph;
 
-
 /**
- * @author Patrick Petrovic 
- *
- *         Dummy analysis for tests.
+ * Dummy factory for tests.
+ * 
+ * @author Patrick Petrovic
  */
 public class DummyFactory extends DFAFactory<DummyElement> {
 

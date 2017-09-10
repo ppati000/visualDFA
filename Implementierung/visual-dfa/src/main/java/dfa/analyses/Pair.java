@@ -1,12 +1,11 @@
 package dfa.analyses;
 
 /**
- * 
+ * A pair of values.
+ *
+ * @param <V>
+ *        the type of the values
  * @author Sebastian Rauch
- *
- *  A pair of values.
- *
- * @param <V> the type of the values
  */
 public class Pair<V> {
 
@@ -25,5 +24,5 @@ public class Pair<V> {
     public V getSecond() {
         return val2;
     }
-    
+
 }

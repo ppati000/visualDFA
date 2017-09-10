@@ -4,9 +4,9 @@ import dfa.framework.CompositeDataFlowAnalysis;
 import dfa.framework.SimpleBlockGraph;
 
 /**
+ * A dummy analysis that takes a long time for transitions.
+ * 
  * @author Sebastian Rauch
- *
- *         A dummy analysis that takes a long time for transitions.
  */
 public class SlowDummyAnalysis extends CompositeDataFlowAnalysis<DummyElement> {
 

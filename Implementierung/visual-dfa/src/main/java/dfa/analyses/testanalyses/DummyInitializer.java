@@ -10,9 +10,9 @@ import java.util.List;
 import java.util.Map;
 
 /**
+ * A {@code DummyTransition} performs the initialization for a {@code DummyAnalysis}.
+ * 
  * @author Patrick Petrovic
- *
- *         A {@code DummyTransition} performs the initialization for a {@code DummyAnalysis}.
  */
 public class DummyInitializer implements Initializer<DummyElement> {
 
@@ -22,7 +22,7 @@ public class DummyInitializer implements Initializer<DummyElement> {
      * Creates a {@code DummyInitializer} for the given {@code SimpleBlockGraph}.
      *
      * @param blockGraph
-     *         the {@code SimpleBlockGraph} the analysis to initialize is executed on
+     *        the {@code SimpleBlockGraph} the analysis to initialize is executed on
      */
     public DummyInitializer(SimpleBlockGraph blockGraph) {
         this.blockGraph = blockGraph;
@@ -32,7 +32,8 @@ public class DummyInitializer implements Initializer<DummyElement> {
     public Map<Block, BlockState<DummyElement>> getInitialStates() {
         List<Block> blocks = blockGraph.getBlocks();
 
-        BlockState<DummyElement> defaultState = new BlockState<>(new DummyElement(DummyElement.ValueType.TOP), new DummyElement(DummyElement.ValueType.BOTTOM));
+        BlockState<DummyElement> defaultState = new BlockState<>(new DummyElement(DummyElement.ValueType.TOP),
+                new DummyElement(DummyElement.ValueType.BOTTOM));
 
         Map<Block, BlockState<DummyElement>> initialMap = new HashMap<>();
 

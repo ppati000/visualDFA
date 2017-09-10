@@ -84,9 +84,9 @@ import soot.jimple.XorExpr;
 import soot.jimple.internal.JimpleLocal;
 
 /**
- * @author Nils Jessen
+ * A {@code ConstantBitsTransition} performs the transition for a {@code ConstantBitsAnalysis}.
  * 
- *         A {@code ConstantBitsTransition} performs the transition for a {@code ConstantBitsAnalysis}.
+ * @author Nils Jessen
  */
 public class ConstantBitsTransition implements Transition<ConstantBitsElement> {
 
@@ -905,11 +905,8 @@ public class ConstantBitsTransition implements Transition<ConstantBitsElement> {
                             }
                         }
                         BitValueArray refVal = possibilities[0];
-                        BitValueArray top = BitValueArray.getTop(length);
-                        BitValueArray bottom = BitValueArray.getBottom(length);
                         for (int j = 1; j < dimGes; j++) {
-                            refVal = join.getJoinHelper().performSingleJoin(refVal, possibilities[j], length, top,
-                                    bottom);
+                            refVal = join.getJoinHelper().performSingleJoin(refVal, possibilities[j]);
                         }
                         result = refVal;
 
@@ -1299,10 +1296,8 @@ public class ConstantBitsTransition implements Transition<ConstantBitsElement> {
                     }
                     // joining the possibilities
                     BitValueArray refVal = possibilities[0];
-                    BitValueArray top = BitValueArray.getTop(length);
-                    BitValueArray bottom = BitValueArray.getBottom(length);
                     for (int j = 1; j < dimGes; j++) {
-                        refVal = join.getJoinHelper().performSingleJoin(refVal, possibilities[j], length, top, bottom);
+                        refVal = join.getJoinHelper().performSingleJoin(refVal, possibilities[j]);
                     }
                     result = refVal;
 
@@ -1501,11 +1496,8 @@ public class ConstantBitsTransition implements Transition<ConstantBitsElement> {
                         }
                         // joining the possibilities
                         BitValueArray refVal = possibilities[0];
-                        BitValueArray top = BitValueArray.getTop(length);
-                        BitValueArray bottom = BitValueArray.getBottom(length);
                         for (int j = 1; j < dimGes; j++) {
-                            refVal = join.getJoinHelper().performSingleJoin(refVal, possibilities[j], length, top,
-                                    bottom);
+                            refVal = join.getJoinHelper().performSingleJoin(refVal, possibilities[j]);
                         }
                         result = refVal;
 
@@ -1925,7 +1917,6 @@ public class ConstantBitsTransition implements Transition<ConstantBitsElement> {
             } else {
                 // no special case applies and we have TOP bits in op2
 
-                int op1Length = op1.getLength();
                 int cutLength = (op1.getLength() == 32) ? 5 : 6;
                 BitValue[] op2Values = op2.getBitValues();
                 int numberOfTOPs = getNumberOfTOP(op2Values, cutLength);
@@ -1939,11 +1930,8 @@ public class ConstantBitsTransition implements Transition<ConstantBitsElement> {
 
                 // joining the possibilities
                 BitValueArray refVal = op2Possibilities[0];
-                BitValueArray top = BitValueArray.getTop(op1Length);
-                BitValueArray bottom = BitValueArray.getBottom(op1Length);
                 for (int j = 1; j < dim; j++) {
-                    refVal = join.getJoinHelper().performSingleJoin(refVal, op2Possibilities[j], op1Length, top,
-                            bottom);
+                    refVal = join.getJoinHelper().performSingleJoin(refVal, op2Possibilities[j]);
                 }
                 result = refVal;
             }
@@ -1968,7 +1956,6 @@ public class ConstantBitsTransition implements Transition<ConstantBitsElement> {
                 result = shiftRight(op1, shiftAmount, true);
             } else {
                 // no special case applies and we have TOP bits in op2
-                int op1Length = op1.getLength();
                 int cutLength = (op1.getLength() == 32) ? 5 : 6;
                 BitValue[] op2Values = op2.getBitValues();
                 int numberOfTOPs = getNumberOfTOP(op2Values, cutLength);
@@ -1982,11 +1969,8 @@ public class ConstantBitsTransition implements Transition<ConstantBitsElement> {
 
                 // joining the possibilities
                 BitValueArray refVal = op2Possibilities[0];
-                BitValueArray top = BitValueArray.getTop(op1Length);
-                BitValueArray bottom = BitValueArray.getBottom(op1Length);
                 for (int j = 1; j < dim; j++) {
-                    refVal = join.getJoinHelper().performSingleJoin(refVal, op2Possibilities[j], op1Length, top,
-                            bottom);
+                    refVal = join.getJoinHelper().performSingleJoin(refVal, op2Possibilities[j]);
                 }
                 result = refVal;
             }
@@ -2012,7 +1996,6 @@ public class ConstantBitsTransition implements Transition<ConstantBitsElement> {
 
             } else {
                 // no special case applies and we have TOP bits in op2
-                int op1Length = op1.getLength();
                 int cutLength = (op1.getLength() == 32) ? 5 : 6;
                 BitValue[] op2Values = op2.getBitValues();
                 int numberOfTOPs = getNumberOfTOP(op2Values, cutLength);
@@ -2026,11 +2009,8 @@ public class ConstantBitsTransition implements Transition<ConstantBitsElement> {
 
                 // joining the possibilities
                 BitValueArray refVal = op2Possibilities[0];
-                BitValueArray top = BitValueArray.getTop(op1Length);
-                BitValueArray bottom = BitValueArray.getBottom(op1Length);
                 for (int j = 1; j < dim; j++) {
-                    refVal = join.getJoinHelper().performSingleJoin(refVal, op2Possibilities[j], op1Length, top,
-                            bottom);
+                    refVal = join.getJoinHelper().performSingleJoin(refVal, op2Possibilities[j]);
                 }
                 result = refVal;
             }

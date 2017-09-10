@@ -8,10 +8,10 @@ import dfa.framework.Join;
 import soot.jimple.internal.JimpleLocal;
 
 /**
+ * A {@code ConstantFoldingJoin} performs the join for a {@code ConstantFoldingAnalysis}.
+ * 
  * @author Nils Jessen
  * @author Sebastian Rauch
- * 
- *         A {@code ConstantFoldingJoin} performs the join for a {@code ConstantFoldingAnalysis}.
  */
 public class ConstantFoldingJoin implements Join<ConstantFoldingElement> {
 

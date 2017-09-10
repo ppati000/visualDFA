@@ -3,9 +3,9 @@ package dfa.analyses.testanalyses;
 import dfa.framework.LatticeElement;
 
 /**
+ * A dummy element for {@code DummyAnalysis} which can be either TOP, BOTTOM or SOMETHING.
+ * 
  * @author Patrick Petrovic
- *
- *         A dummy element for {@code DummyAnalysis} which can be either TOP, BOTTOM or SOMETHING.
  */
 public class DummyElement implements LatticeElement {
 
@@ -31,14 +31,14 @@ public class DummyElement implements LatticeElement {
     @Override
     public String getStringRepresentation() {
         switch (type) {
-            case BOTTOM:
-                return "\u22A5";
-            case TOP:
-                return "\u22A4";
-            case SOMETHING:
-                return "something";
-            default:
-                throw new IllegalStateException();
+        case BOTTOM:
+            return "\u22A5";
+        case TOP:
+            return "\u22A4";
+        case SOMETHING:
+            return "something";
+        default:
+            throw new IllegalStateException();
         }
     }
 

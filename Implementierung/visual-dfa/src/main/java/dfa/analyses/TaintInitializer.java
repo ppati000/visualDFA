@@ -17,9 +17,9 @@ import soot.toolkits.graph.Block;
 import soot.util.Chain;
 
 /**
- * @author Sebastian Rauch
+ * A {@code TaintInitializer} performs the initialization for a {@code TaintAnalysis}.
  * 
- *         A {@code TaintInitializer} performs the initialization for a {@code TaintAnalysis}.
+ * @author Sebastian Rauch
  */
 public class TaintInitializer implements Initializer<TaintElement> {
 

@@ -7,8 +7,25 @@ import java.util.Map.Entry;
 
 import soot.jimple.internal.JimpleLocal;
 
+/**
+ * A {@code LocalMapElementJoinHelper} helps performing joins when provided with a method to join single values.
+ *
+ * @param <V>
+ *        the type of values
+ * @param <E>
+ *        the type of {@code LocalMapElement}
+ * 
+ * @author Sebastian Rauch
+ */
 public abstract class LocalMapElementJoinHelper<V, E extends LocalMapElement<V>> {
 
+    /**
+     * Performs a join operation on {@code elements}.
+     * 
+     * @param elements
+     *        the elements to join
+     * @return the result of the join
+     */
     public E performJoin(Set<E> elements) {
         if (elements.isEmpty()) {
             throw new IllegalArgumentException("there must be at least one element to join");

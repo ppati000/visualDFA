@@ -5,9 +5,9 @@ import dfa.framework.Join;
 import java.util.Set;
 
 /**
+ * A {@code DummyJoin} performs the join for a {@code DummyAnalysis}.
+ * 
  * @author Patrick Petrovic
- *
- *         A {@code DummyJoin} performs the join for a {@code DummyAnalysis}.
  */
 public class DummyJoin implements Join<DummyElement> {
 

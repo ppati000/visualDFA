@@ -9,26 +9,25 @@ import dfa.framework.LatticeElement;
 import soot.jimple.internal.JimpleLocal;
 
 /**
- * @author Nils Jessen
- * @author Sebastian Rauch
- * 
- *         A {@code LocalMapElement} is a {@code LatticeElement} that maps each {@code JimpleLocal} to a value of type
- *         {@code V}.
+ * A {@code LocalMapElement} is a {@code LatticeElement} that maps each {@code JimpleLocal} to a value of type
+ * {@code V}.
  *
  * @param <V>
  *        the type of value
+ *
+ * @author Nils Jessen
+ * @author Sebastian Rauch
  */
 public abstract class LocalMapElement<V> implements LatticeElement, Cloneable {
-    
-	// note: the proper symbols for TOP and BOTTOM cause problems in some fonts
-    public static final String BOTTOM_SYMBOL = "B"; //"\u22A5";
-    public static final String TOP_SYMBOL = "T"; //"\u22A4";
 
+    // note: the proper symbols for TOP and BOTTOM cause problems in some fonts
+    public static final String BOTTOM_SYMBOL = "B"; // "\u22A5";
+    public static final String TOP_SYMBOL = "T"; // "\u22A4";
 
     protected static final LocalComparator DEFAULT_COMPARATOR = new LocalComparator();
 
     protected SortedMap<JimpleLocal, V> localMap;
-    
+
     /**
      * Creates a {@code LocalMapElement} with the given mapping and local-{@code Comparator}.
      * 
@@ -39,15 +38,14 @@ public abstract class LocalMapElement<V> implements LatticeElement, Cloneable {
         if (localMap == null) {
             throw new IllegalArgumentException("localMap must not be null");
         }
-        
+
         if (comparator == null) {
             throw new IllegalArgumentException("comparator must not be null");
         }
-        
+
         this.localMap = new TreeMap<JimpleLocal, V>(comparator);
         this.localMap.putAll(localMap);
     }
-    
 
     /**
      * Creates a {@code LocalMapElement} with an empty mapping.
@@ -55,7 +53,7 @@ public abstract class LocalMapElement<V> implements LatticeElement, Cloneable {
     public LocalMapElement() {
         this(new TreeMap<JimpleLocal, V>(), DEFAULT_COMPARATOR);
     }
-    
+
     /**
      * Sets the value mapped to the given {@code JimpleLocal}.
      * 
@@ -78,7 +76,7 @@ public abstract class LocalMapElement<V> implements LatticeElement, Cloneable {
 
         localMap.put(local, val);
     }
-    
+
     /**
      * Returns the value mapped to the given {@code JimpleLocal}.
      * 
@@ -93,7 +91,6 @@ public abstract class LocalMapElement<V> implements LatticeElement, Cloneable {
     public V getValue(JimpleLocal local) {
         return localMap.get(local);
     }
-    
 
     /**
      * Returns a {@code Map} that maps a {@code JimpleLocal} to its corresponding value.
@@ -103,16 +100,16 @@ public abstract class LocalMapElement<V> implements LatticeElement, Cloneable {
     public Map<JimpleLocal, V> getLocalMap() {
         return localMap;
     }
-    
+
     /* force subclasses to override this themselves */
     @Override
     public abstract boolean equals(Object o);
-    
+
     /* force subclasses to override this themselves (to make sure the equals-hashCode-contract is fulfilled) */
     @Override
     public abstract int hashCode();
-    
+
     @Override
     public abstract LocalMapElement<V> clone();
-    
+
 }

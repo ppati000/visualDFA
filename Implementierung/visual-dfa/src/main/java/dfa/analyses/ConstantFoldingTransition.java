@@ -82,10 +82,10 @@ import soot.jimple.XorExpr;
 import soot.jimple.internal.JimpleLocal;
 
 /**
+ * A {@code ConstantFoldingTransition} performs the transition for a {@code ConstantFoldingAnalysis}.
+ * 
  * @author Nils Jessen
  * @author Sebastian Rauch
- * 
- *         A {@code ConstantFoldingTransition} performs the transition for a {@code ConstantFoldingAnalysis}.
  */
 public class ConstantFoldingTransition implements Transition<ConstantFoldingElement> {
 

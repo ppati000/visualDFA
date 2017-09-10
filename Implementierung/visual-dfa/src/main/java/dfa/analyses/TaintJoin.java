@@ -9,9 +9,9 @@ import dfa.framework.Join;
 import soot.jimple.internal.JimpleLocal;
 
 /**
- * @author Sebastian Rauch
+ * A {@code TaintJoin} performs the join for a {@code TaintAnalysis}.
  * 
- *         A {@code TaintJoin} performs the join for a {@code TaintAnalysis}.
+ * @author Sebastian Rauch
  */
 public class TaintJoin implements Join<TaintElement> {
 
@@ -33,7 +33,7 @@ public class TaintJoin implements Join<TaintElement> {
                 Value currentVal = elementIt.next().getValue(local);
 
                 if (currentVal.wasViolated()) {
-                    result.setViolated(true);                
+                    result.setViolated(true);
                 }
 
                 switch (currentVal.getTaintState()) {

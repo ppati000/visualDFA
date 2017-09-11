@@ -62,7 +62,6 @@ public class CodeField extends JScrollPane {
 
         setViewportView(contentPanel);
 
-        setPreferredSize(new Dimension(1, Integer.MAX_VALUE));
         
     }
 

@@ -72,6 +72,7 @@ public class StatePanelOpen extends JPanel {
         JPanel statePanel = new JPanel();
         GridBagLayout gbl_StatePanel = new GridBagLayout();
         gbl_StatePanel.rowWeights = new double[] { 0.1, 0.5, 0.1, 0.5, 0.1, 0.5 };
+        gbl_StatePanel.columnWeights = new double[] {1, 1};
         statePanel.setLayout(gbl_StatePanel);
         statePanel.setBackground(Colors.BACKGROUND.getColor());
         statePanel.setBorder(
@@ -92,7 +93,6 @@ public class StatePanelOpen extends JPanel {
         statePanel.add(lblInput, gbc_lblInput);
 
         inputArea = new JTextArea();
-        inputArea.setColumns(20);
         inputArea.setEditable(false);
         inputArea.setFont(new Font(Font.MONOSPACED, Font.PLAIN, inputArea.getFont().getSize()));
         GridBagConstraints gbc_inputArea = GridBagConstraintFactory.getStandardGridBagConstraints(0, 3, 1, 1);
@@ -105,7 +105,6 @@ public class StatePanelOpen extends JPanel {
         statePanel.add(lblOutput, gbc_lblOutput);
 
         outputArea = new JTextArea();
-        outputArea.setColumns(20);
         outputArea.setEditable(false);
         outputArea.setFont(new Font(Font.MONOSPACED, Font.PLAIN, outputArea.getFont().getSize()));
         GridBagConstraints gbc_outputArea = GridBagConstraintFactory.getStandardGridBagConstraints(0, 5, 1, 1);

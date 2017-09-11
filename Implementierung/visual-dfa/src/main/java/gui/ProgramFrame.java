@@ -28,6 +28,7 @@ public class ProgramFrame extends JFrame {
     private StatePanelOpen statePanelOpen;
     private StatePanelClosed statePanelClosed;
     private VisualGraphPanel visualGraphPanel;
+    private JSplitPane stateSplit;
     private boolean isStatePanelOpen;
     private static final Dimension MIN_SIZE = new Dimension(1200, 800);
     private static final Rectangle STANDARD_BOUNDS = new Rectangle(0, 0, 1600, 800);
@@ -46,9 +47,9 @@ public class ProgramFrame extends JFrame {
 
     public ProgramFrame(Controller ctrl) {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        
+
         setTitle("Data-Flow Analysis");
-        
+
         setBounds(STANDARD_BOUNDS);
         setExtendedState(getExtendedState() | Frame.MAXIMIZED_BOTH);
         setMinimumSize(MIN_SIZE);
@@ -60,14 +61,16 @@ public class ProgramFrame extends JFrame {
         inputPanel = new InputPanel(ctrl);
 
         JPanel centerPan = new JPanel();
-        contentPane.add(centerPan, BorderLayout.CENTER);
         centerPan.setLayout(new BorderLayout(0, 0));
-        
-        JSplitPane inputGraphSplit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,  inputPanel, centerPan);
+
+        JPanel leftPan = new JPanel();
+        leftPan.setLayout(new BorderLayout(0, 0));
+
+        JSplitPane inputGraphSplit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, inputPanel, centerPan);
         inputGraphSplit.setDividerSize(5);
         inputGraphSplit.setDividerLocation(375);
-        contentPane.add(inputGraphSplit, BorderLayout.CENTER);
-        
+        leftPan.add(inputGraphSplit, BorderLayout.CENTER);
+
         visualGraphPanel = ctrl.getVisualGraphPanel();
         centerPan.add(visualGraphPanel, BorderLayout.CENTER);
 
@@ -75,7 +78,11 @@ public class ProgramFrame extends JFrame {
         centerPan.add(controlPanel, BorderLayout.SOUTH);
 
         statePanelOpen = new StatePanelOpen(this);
-        contentPane.add(statePanelOpen, BorderLayout.EAST);
+
+        stateSplit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, leftPan, statePanelOpen);
+        stateSplit.setDividerSize(5);
+        stateSplit.setDividerLocation(Integer.MAX_VALUE);
+        contentPane.add(stateSplit, BorderLayout.CENTER);
 
         isStatePanelOpen = true;
 
@@ -99,12 +106,16 @@ public class ProgramFrame extends JFrame {
      */
     public void switchStatePanel() {
         if (isStatePanelOpen) {
-            remove(statePanelOpen);
-            add(statePanelClosed, BorderLayout.EAST);
+            stateSplit.remove(statePanelOpen);
+            stateSplit.add(statePanelClosed, JSplitPane.RIGHT);
+            stateSplit.setDividerLocation(0.99);
+            stateSplit.setEnabled(false);
             isStatePanelOpen = false;
         } else {
-            remove(statePanelClosed);
-            add(statePanelOpen, BorderLayout.EAST);
+            stateSplit.remove(statePanelClosed);
+            stateSplit.add(statePanelOpen, JSplitPane.RIGHT);
+            stateSplit.setDividerLocation(stateSplit.getLastDividerLocation());
+            stateSplit.setEnabled(true);
             isStatePanelOpen = true;
         }
 
@@ -141,7 +152,7 @@ public class ProgramFrame extends JFrame {
     public StatePanelOpen getStatePanelOpen() {
         return statePanelOpen;
     }
-    
+
     /**
      * Opens a {@code JFileChooser}, so the user can set the path to his JDK.
      * 
@@ -158,23 +169,23 @@ public class ProgramFrame extends JFrame {
         return pathChooser.getSelectedFile();
     }
 
-    @SuppressWarnings({"unchecked", "rawtypes"})
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     private static void enableMacOSFullscreenAndSetDockIcon(Window window, Image icon) {
         try {
             Class util = Class.forName("com.apple.eawt.FullScreenUtilities");
-            Class params[] = new Class[]{Window.class, Boolean.TYPE};
+            Class params[] = new Class[] { Window.class, Boolean.TYPE };
             Method method = util.getMethod("setWindowCanFullScreen", params);
             method.invoke(util, window, true);
 
             Class application = Class.forName("com.apple.eawt.Application");
-            Object applicationObject = application.newInstance().getClass().getMethod("getApplication")
-                    .invoke(null);
-            applicationObject.getClass().getMethod("setDockIconImage", java.awt.Image.class)
-                    .invoke(applicationObject, icon);
+            Object applicationObject = application.newInstance().getClass().getMethod("getApplication").invoke(null);
+            applicationObject.getClass().getMethod("setDockIconImage", java.awt.Image.class).invoke(applicationObject,
+                    icon);
         } catch (Exception ex) {
             ex.printStackTrace();
-            System.err.println("Failed to set macOS specific visual attributes. App icon or Fullscreen Mode may be unavailable.\n"
-              + ex.getMessage());
+            System.err.println(
+                    "Failed to set macOS specific visual attributes. App icon or Fullscreen Mode may be unavailable.\n"
+                            + ex.getMessage());
         }
     }
 }
